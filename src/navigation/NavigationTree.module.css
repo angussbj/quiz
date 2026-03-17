@@ -85,8 +85,6 @@
 }
 
 .highlight {
-  background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  background-color: color-mix(in srgb, var(--color-link) 30%, transparent);
   color: inherit;
-  border-radius: 2px;
-  padding: 0 2px;
 }

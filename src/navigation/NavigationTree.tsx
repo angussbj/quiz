@@ -128,11 +128,5 @@ function HighlightedLabel({ label, query }: { readonly label: string; readonly q
   const match = label.slice(index, index + query.length);
   const after = label.slice(index + query.length);
 
-  return (
-    <>
-      {before}
-      <mark className={styles.highlight}>{match}</mark>
-      {after}
-    </>
-  );
+  return <span>{before}<mark className={styles.highlight}>{match}</mark>{after}</span>;
 }
