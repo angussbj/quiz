@@ -12,7 +12,7 @@ const config: Config = {
   },
   setupFilesAfterEnv: ['<rootDir>/src/test-support/setup.ts'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.app.json' }],
+    '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },
 };
 
