@@ -194,11 +194,20 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 **Scope:** App-level layout: header with site title ("Quizzical"), theme toggle (sun/moon/monitor icon cycling light/dark/system), navigation breadcrumbs on quiz pages with clickable path segments. Category URL routes (e.g. `/geography/capitals`) show filtered quiz lists. Responsive but desktop-first. Smooth theme transition animation. Clean typography.
 **Note from #16:** Breadcrumbs are rendered by the global Layout, not by individual pages. Quiz path segments in breadcrumbs link to category browsing routes. The `findSubtree` utility in `src/navigation/findSubtree.ts` does case-insensitive matching of URL segments to navigation tree labels. HomePage accepts category filtering via URL path — the `/*` catch-all route handles this.
 
-### 17. European Capitals Quiz Definition
-**Branch:** `feat/capitals-quiz`
-**Files:** `data/geography/europe/capitals.csv`, supporting country shapes data, quiz definition in registry
+### 17. European Capitals Quiz Definition — DONE
+**Branch:** `worktree-capitals-quiz`
+**Files:** `public/data/capitals/world-capitals.csv`, `public/data/borders/world-borders.csv`, quiz definition in registry, `scripts/generate*.ts`
 **Scope:** Create a complete, real quiz: European capital cities. Full CSV with all ~45 European capitals. Supporting data with simplified country border SVG paths (can be sourced/simplified from Natural Earth data). Wire up the quiz definition with all available modes, sensible toggles (show/hide country borders, show/hide city dots, show/hide country names, show/hide flags), and Easy/Medium/Hard presets.
-**Note from #4:** A placeholder definition for this quiz already exists in `quizRegistry.ts` (ID: `geo-capitals-europe`). Update it in place rather than adding a duplicate. The CSV data path is `/data/geography/capitals/europe.csv` (served from `public/`). The `sampleNavigationTree.ts` is now unused — the navigation tree is generated from the registry.
-**Note (toggle resolution):** Each toggle definition needs a `hiddenBehavior`. Sensible defaults for a capitals quiz: `showBorders` → `'never'` (borders are either always on or always off), `showCityDots` → `'on-reveal'` (dots appear as cities are answered), `showCountryNames` → `'on-reveal'`, `showFlags` → `{ hintAfter: 2 }` (flag shown as a hint after 2 wrong answers). Easy preset sets them all to true (always show); Hard sets them all to false (hidden behaviors apply).
-**Note from #3b:** Geography quiz paths were flattened from 3-deep to 2-deep (e.g., `['Geography', 'Capitals']` not `['Geography', 'Capitals', 'Europe']`). The region is already in the quiz title, so the extra nesting was redundant. New geography quizzes should follow this pattern.
-**Country borders data:** Use Natural Earth 1:110m scale country boundaries (public domain, no attribution required). Pre-convert GeoJSON coordinates to SVG path `d` strings at build time using a projection script — store the paths in integer viewBox coordinates, not raw lat/lng. This avoids shipping projection math at runtime and is ~2x more compact than GeoJSON. Source: https://github.com/martynafford/natural-earth-geojson or https://github.com/datasets/geo-countries
+**What was built:**
+- `world-capitals.csv`: 197 countries (all UN members + Taiwan, Kosovo, Palestine) with coordinates, regions, subregions, and alternate city names. Sourced from mledoze/countries + dr5hn/cities databases.
+- `world-borders.csv`: 233 countries with equirectangular SVG border paths (x=lng, y=-lat), generated from Natural Earth 1:110m GeoJSON via Douglas-Peucker simplification.
+- `DataFilter` type added to `QuizDefinition` — allows filtering shared CSVs by column values (e.g., `{ column: 'region', values: ['Europe'] }`). Multiple values act as OR. Also added `supportingDataFilter` for border data.
+- `applyDataFilter()` utility applies the filter at data load time.
+- `parseBackgroundPaths()` utility parses border CSV rows (pipe-separated SVG paths) into `BackgroundPath[]` for renderers.
+- Generation scripts in `scripts/` for reproducible data regeneration (source files gitignored, download URLs in script headers).
+- Data validation tests for both CSVs.
+**Note from #4:** A placeholder definition for this quiz already existed in `quizRegistry.ts` (ID: `geo-capitals-europe`). Updated in place. All capital quiz definitions now point to the shared `world-capitals.csv` with region filters.
+**Note (toggle resolution):** Toggle definitions use: `showBorders` → `'never'`, `showCityDots` → `'on-reveal'`, `showCountryNames` → `'on-reveal'`, `showFlags` → `{ hintAfter: 2 }`. Easy/Medium/Hard presets configured.
+**Note from #3b:** Geography quiz paths flattened to 2-deep (`['Geography', 'Capitals']`).
+**Note (data architecture):** All capitals quizzes share one CSV filtered by region. New region quizzes just add a registry entry with `dataFilter: { column: 'region', values: ['NewRegion'] }`. Same pattern for borders via `supportingDataFilter`. Adding a new region quiz requires zero new data files.
+**Note (projection):** Equirectangular projection (x=lng, y=-lat) matches `projectGeo` in `src/visualizations/map/projectGeo.ts`. Raw lat/lng are stored in source data so a different projection can be applied by modifying the generation scripts.
