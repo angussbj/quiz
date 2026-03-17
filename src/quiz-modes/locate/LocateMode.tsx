@@ -20,6 +20,7 @@ export interface LocateModeProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly clustering?: ClusteringConfig;
   readonly onFinish?: (score: ScoreResult) => void;
+  readonly forceGiveUp?: boolean;
 }
 
 /**
@@ -34,6 +35,7 @@ export function LocateMode({
   backgroundPaths,
   clustering,
   onFinish,
+  forceGiveUp = false,
 }: LocateModeProps) {
   const quiz = useLocateQuiz(elements);
   const [showResults, setShowResults] = useState(false);
@@ -41,6 +43,13 @@ export function LocateMode({
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
   const hasCalledFinish = useRef(false);
+
+  // Force give-up when timer expires
+  useEffect(() => {
+    if (forceGiveUp && !quiz.isFinished) {
+      quiz.handleGiveUp();
+    }
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
 
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {

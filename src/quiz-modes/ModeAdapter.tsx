@@ -22,6 +22,8 @@ export interface ModeAdapterProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
+  /** When true, the mode should immediately give up and report its final score. */
+  readonly forceGiveUp?: boolean;
 }
 
 const noop = () => {};
@@ -43,6 +45,7 @@ export function ModeAdapter({
   backgroundPaths,
   clustering,
   onStatusChange,
+  forceGiveUp = false,
 }: ModeAdapterProps) {
   switch (mode) {
     case 'free-recall-unordered':
@@ -57,6 +60,7 @@ export function ModeAdapter({
           backgroundPaths={backgroundPaths}
           clustering={clustering}
           onStatusChange={onStatusChange}
+          forceGiveUp={forceGiveUp}
         />
       );
     case 'identify':
@@ -71,6 +75,7 @@ export function ModeAdapter({
           backgroundPaths={backgroundPaths}
           clustering={clustering}
           onStatusChange={onStatusChange}
+          forceGiveUp={forceGiveUp}
         />
       );
     case 'locate':
@@ -83,6 +88,7 @@ export function ModeAdapter({
           backgroundPaths={backgroundPaths}
           clustering={clustering}
           onStatusChange={onStatusChange}
+          forceGiveUp={forceGiveUp}
         />
       );
     default:
@@ -106,6 +112,7 @@ interface FreeRecallAdapterProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
+  readonly forceGiveUp: boolean;
 }
 
 function FreeRecallAdapter({
@@ -118,6 +125,7 @@ function FreeRecallAdapter({
   backgroundPaths,
   clustering,
   onStatusChange,
+  forceGiveUp,
 }: FreeRecallAdapterProps) {
   const { session, elementToggles, handleTextAnswer, handleGiveUp } = useFreeRecallSession({
     elements,
@@ -130,6 +138,13 @@ function FreeRecallAdapter({
   const onStatusChangeRef = useRef(onStatusChange);
   onStatusChangeRef.current = onStatusChange;
   const hasReportedFinish = useRef(false);
+
+  // Force give-up when timer expires
+  useEffect(() => {
+    if (forceGiveUp && session.status !== 'finished') {
+      handleGiveUp();
+    }
+  }, [forceGiveUp, session.status, handleGiveUp]);
 
   useEffect(() => {
     if (session.status === 'finished' && !hasReportedFinish.current) {
@@ -181,6 +196,7 @@ interface IdentifyAdapterProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
+  readonly forceGiveUp: boolean;
 }
 
 const STUB_SESSION: QuizSessionState = {
@@ -204,6 +220,7 @@ function IdentifyAdapter({
   backgroundPaths,
   clustering,
   onStatusChange,
+  forceGiveUp,
 }: IdentifyAdapterProps) {
   const handleFinish = (score: ScoreResult) => {
     onStatusChange('finished', score);
@@ -218,6 +235,7 @@ function IdentifyAdapter({
       toggleValues={toggleValues}
       session={STUB_SESSION}
       onFinish={handleFinish}
+      forceGiveUp={forceGiveUp}
       onTextAnswer={noop}
       onElementSelect={noop}
       onPositionSelect={noopPosition}
@@ -249,6 +267,7 @@ interface LocateAdapterProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
+  readonly forceGiveUp: boolean;
 }
 
 function LocateAdapter({
@@ -259,6 +278,7 @@ function LocateAdapter({
   backgroundPaths,
   clustering,
   onStatusChange,
+  forceGiveUp,
 }: LocateAdapterProps) {
   const handleFinish = (score: ScoreResult) => {
     onStatusChange('finished', score);
@@ -273,6 +293,7 @@ function LocateAdapter({
       backgroundPaths={backgroundPaths}
       clustering={clustering}
       onFinish={handleFinish}
+      forceGiveUp={forceGiveUp}
     />
   );
 }

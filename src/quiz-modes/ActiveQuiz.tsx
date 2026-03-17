@@ -1,4 +1,4 @@
-import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react';
+import { type ComponentType, useCallback, useEffect, useState } from 'react';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { VisualizationRendererProps, BackgroundPath } from '@/visualizations/VisualizationRendererProps';
 import type { ScoreResult } from '@/scoring/ScoreResult';
@@ -34,14 +34,8 @@ export function ActiveQuiz({
 }: ActiveQuizProps) {
   const [finishState, setFinishState] = useState<ScoreResult | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [forceGiveUp, setForceGiveUp] = useState(false);
   const isFinished = finishState !== null;
-
-  // Track the latest score reported by the mode, so timer expiry can use it
-  const latestScoreRef = useRef<ScoreResult>({
-    correct: 0,
-    total: elements.length,
-    percentage: 0,
-  });
 
   // Elapsed time counter
   useEffect(() => {
@@ -54,7 +48,6 @@ export function ActiveQuiz({
 
   const handleStatusChange = useCallback(
     (status: 'active' | 'finished', score: ScoreResult) => {
-      latestScoreRef.current = score;
       if (status === 'finished') {
         setFinishState(score);
       }
@@ -63,13 +56,10 @@ export function ActiveQuiz({
   );
 
   const handleTimerExpire = useCallback(() => {
-    // Use the latest score from the mode, not a hardcoded zero
     if (!isFinished) {
-      setFinishState(latestScoreRef.current);
+      setForceGiveUp(true);
     }
   }, [isFinished]);
-
-  const handleRetry = config.onReconfigure;
 
   return (
     <div className={styles.container}>
@@ -94,6 +84,7 @@ export function ActiveQuiz({
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
           onStatusChange={handleStatusChange}
+          forceGiveUp={forceGiveUp}
         />
       </div>
 
@@ -103,7 +94,7 @@ export function ActiveQuiz({
           total={finishState.total}
           percentage={finishState.percentage}
           elapsedSeconds={elapsedSeconds}
-          onRetry={handleRetry}
+          onRetry={config.onReconfigure}
         />
       )}
     </div>

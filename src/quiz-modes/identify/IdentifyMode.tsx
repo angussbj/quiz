@@ -10,6 +10,7 @@ import styles from './IdentifyMode.module.css';
 export interface IdentifyModeProps extends QuizModeProps {
   readonly toggleValues?: Readonly<Record<string, boolean>>;
   readonly onFinish?: (score: ScoreResult) => void;
+  readonly forceGiveUp?: boolean;
   readonly renderVisualization: (props: {
     readonly elementStates: Readonly<Record<string, ElementVisualState>>;
     readonly onElementClick: (elementId: string) => void;
@@ -29,6 +30,7 @@ export function IdentifyMode({
   onSkip,
   onGiveUp,
   onFinish,
+  forceGiveUp = false,
   toggleDefinitions,
   toggleValues = {},
   renderVisualization,
@@ -38,6 +40,13 @@ export function IdentifyMode({
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
   const hasCalledFinish = useRef(false);
+
+  // Force give-up when timer expires
+  useEffect(() => {
+    if (forceGiveUp && !quiz.isFinished) {
+      quiz.handleGiveUp();
+    }
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
 
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
