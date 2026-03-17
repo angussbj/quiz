@@ -1,0 +1,185 @@
+import { render, fireEvent } from '@testing-library/react';
+import { PeriodicTableRenderer } from '../PeriodicTableRenderer';
+import type { GridElement } from '../GridElement';
+import type { VisualizationRendererProps } from '../../VisualizationRendererProps';
+
+jest.mock('react-zoom-pan-pinch', () => ({
+  TransformWrapper: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  TransformComponent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useControls: () => ({
+    setTransform: jest.fn(),
+    zoomIn: jest.fn(),
+    zoomOut: jest.fn(),
+    resetTransform: jest.fn(),
+    centerView: jest.fn(),
+    zoomToElement: jest.fn(),
+  }),
+  useTransformEffect: () => {},
+}));
+
+function makeElement(overrides: Partial<GridElement> = {}): GridElement {
+  return {
+    id: 'H',
+    label: 'Hydrogen',
+    viewBoxCenter: { x: 0, y: 0 },
+    viewBoxBounds: { minX: 0, minY: 0, maxX: 60, maxY: 60 },
+    interactive: true,
+    row: 0,
+    column: 0,
+    symbol: 'H',
+    ...overrides,
+  };
+}
+
+function makeProps(overrides: Partial<VisualizationRendererProps> = {}): VisualizationRendererProps {
+  return {
+    elements: [
+      makeElement({ id: 'H', label: 'Hydrogen', symbol: 'H', row: 0, column: 0 }),
+      makeElement({ id: 'He', label: 'Helium', symbol: 'He', row: 0, column: 17, group: 'noble-gas' }),
+      makeElement({ id: 'Li', label: 'Lithium', symbol: 'Li', row: 1, column: 0, group: 'alkali-metal' }),
+    ],
+    elementStates: {
+      H: 'revealed',
+      He: 'revealed',
+      Li: 'hidden',
+    },
+    toggles: {},
+    ...overrides,
+  };
+}
+
+describe('PeriodicTableRenderer', () => {
+  it('renders an SVG with cells for each element', () => {
+    const { container } = render(<PeriodicTableRenderer {...makeProps()} />);
+    const svg = container.querySelector('svg');
+    expect(svg).toBeInTheDocument();
+
+    const groups = container.querySelectorAll('g[data-element-id]');
+    expect(groups).toHaveLength(3);
+  });
+
+  it('shows symbol for revealed elements', () => {
+    const { container } = render(<PeriodicTableRenderer {...makeProps()} />);
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('H');
+    expect(textContents).toContain('He');
+  });
+
+  it('does not show symbol for hidden elements', () => {
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elementStates: { H: 'hidden', He: 'hidden', Li: 'hidden' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).not.toContain('H');
+    expect(textContents).not.toContain('He');
+    expect(textContents).not.toContain('Li');
+  });
+
+  it('shows symbol for correct elements', () => {
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elementStates: { H: 'correct', He: 'hidden', Li: 'hidden' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('H');
+  });
+
+  it('calls onElementClick when an interactive cell is clicked', () => {
+    const handleClick = jest.fn();
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({ onElementClick: handleClick })}
+      />,
+    );
+
+    const hydrogenGroup = container.querySelector('g[data-element-id="H"]');
+    expect(hydrogenGroup).toBeInTheDocument();
+    fireEvent.click(hydrogenGroup!);
+    expect(handleClick).toHaveBeenCalledWith('H');
+  });
+
+  it('does not call onElementClick for non-interactive cells', () => {
+    const handleClick = jest.fn();
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', interactive: false })],
+          elementStates: { H: 'revealed' },
+          onElementClick: handleClick,
+        })}
+      />,
+    );
+
+    const group = container.querySelector('g[data-element-id="H"]');
+    fireEvent.click(group!);
+    expect(handleClick).not.toHaveBeenCalled();
+  });
+
+  it('applies correct state styling via stroke color', () => {
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elementStates: { H: 'correct', He: 'incorrect', Li: 'hidden' },
+        })}
+      />,
+    );
+
+    const correctRect = container.querySelector('g[data-element-id="H"] rect');
+    const incorrectRect = container.querySelector('g[data-element-id="He"] rect');
+
+    expect(correctRect).toHaveAttribute('stroke', 'var(--color-correct)');
+    expect(incorrectRect).toHaveAttribute('stroke', 'var(--color-incorrect)');
+  });
+
+  it('highlights the target element', () => {
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({ targetElementId: 'H' })}
+      />,
+    );
+
+    const targetRect = container.querySelector('g[data-element-id="H"] rect');
+    expect(targetRect).toHaveAttribute('stroke', 'var(--color-highlight)');
+    expect(targetRect).toHaveAttribute('stroke-width', '2.5');
+  });
+
+  it('renders with empty elements', () => {
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({ elements: [], elementStates: {} })}
+      />,
+    );
+    const svg = container.querySelector('svg');
+    expect(svg).toBeInTheDocument();
+  });
+
+  it('filters out non-grid elements', () => {
+    const nonGridElement = {
+      id: 'not-grid',
+      label: 'Not Grid',
+      viewBoxCenter: { x: 0, y: 0 },
+      viewBoxBounds: { minX: 0, minY: 0, maxX: 10, maxY: 10 },
+      interactive: true,
+    };
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [nonGridElement, makeElement({ id: 'H' })],
+          elementStates: { H: 'revealed' },
+        })}
+      />,
+    );
+    const groups = container.querySelectorAll('g[data-element-id]');
+    expect(groups).toHaveLength(1);
+  });
+});
