@@ -1,24 +1,15 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { GridElement } from './GridElement';
 import { isGridElement } from './GridElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
+import { elementToggle } from '../elementToggle';
 import type { ElementVisualState } from '../VisualizationElement';
 import { gridElementToVisualizationElement } from './gridElementToVisualizationElement';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 
-const ZOOM_DETAIL_THRESHOLD = 1.8;
-
-/** Look up a per-element toggle, falling back to the global toggle value. */
-function elementToggle(
-  elementToggles: VisualizationRendererProps['elementToggles'],
-  toggles: Readonly<Record<string, boolean>>,
-  elementId: string,
-  toggleKey: string,
-): boolean {
-  return elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey] ?? false;
-}
+export const ZOOM_DETAIL_THRESHOLD = 1.8;
 
 interface CellProps {
   readonly element: GridElement;
@@ -108,14 +99,10 @@ function GridCell({
   const revealed = isRevealed(state) || showSymbol;
   const interactive = element.interactive;
 
-  const handleClick = useCallback(() => {
-    onClick?.(element.id);
-  }, [onClick, element.id]);
-
   return (
     <g
       data-element-id={element.id}
-      onClick={interactive ? handleClick : undefined}
+      onClick={interactive ? () => onClick?.(element.id) : undefined}
       style={{ cursor: interactive ? 'pointer' : 'default' }}
     >
       <rect
