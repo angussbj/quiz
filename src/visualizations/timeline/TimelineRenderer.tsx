@@ -14,20 +14,40 @@ import styles from './TimelineRenderer.module.css';
 
 /** Default track height for empty timeline fallback. */
 const DEFAULT_TRACK_HEIGHT = 40;
-/** Font size for bar labels in viewBox units. */
-const BAR_LABEL_FONT_SIZE = 14;
-/** Minimum bar width in viewBox units to fit an inside label. */
-const MIN_WIDTH_FOR_INSIDE_LABEL = BAR_LABEL_FONT_SIZE * 0.6 * 5 + 8;
-/** Padding inside bars for labels in viewBox units. */
-const LABEL_PADDING = 4;
-/** Font size for major axis tick labels. */
-const TICK_FONT_MAJOR = 10;
-/** Font size for minor axis tick labels. */
-const TICK_FONT_MINOR = 8;
-/** Major tick mark length. */
-const MAJOR_TICK_LENGTH = 8;
-/** Minor tick mark length. */
-const MINOR_TICK_LENGTH = 5;
+
+/**
+ * All rendering dimensions derived from track height.
+ * Because track height scales with the data range, these produce
+ * consistent screen-pixel sizes regardless of the timeline span.
+ */
+interface Sizes {
+  readonly fontSize: number;
+  readonly labelPadding: number;
+  readonly minWidthForInsideLabel: number;
+  readonly axisHeight: number;
+  readonly tickFontMajor: number;
+  readonly tickFontMinor: number;
+  readonly majorTickLength: number;
+  readonly minorTickLength: number;
+  readonly cornerRadius: number;
+}
+
+function computeSizes(trackHeight: number): Sizes {
+  const fontSize = trackHeight * 0.35;
+  const labelPadding = fontSize * 0.3;
+  const charWidth = fontSize * 0.6;
+  return {
+    fontSize,
+    labelPadding,
+    minWidthForInsideLabel: charWidth * 5 + labelPadding * 2,
+    axisHeight: trackHeight * 0.55,
+    tickFontMajor: trackHeight * 0.18,
+    tickFontMinor: trackHeight * 0.14,
+    majorTickLength: trackHeight * 0.12,
+    minorTickLength: trackHeight * 0.08,
+    cornerRadius: trackHeight * 0.06,
+  };
+}
 
 interface TooltipState {
   readonly x: number;
@@ -112,12 +132,13 @@ function TimelineContent({
       maxY = Math.max(maxY, el.viewBoxBounds.maxY);
     }
     if (!isFinite(min)) return { minX: 0, maxX: 100, maxTrackY: DEFAULT_TRACK_HEIGHT, trackHeight: DEFAULT_TRACK_HEIGHT };
-    // Derive track height from the first element's bounds
     const h = elements.length > 0
       ? elements[0].viewBoxBounds.maxY - elements[0].viewBoxBounds.minY
       : DEFAULT_TRACK_HEIGHT;
     return { minX: min, maxX: max, maxTrackY: maxY, trackHeight: h };
   }, [elements]);
+
+  const sizes = useMemo(() => computeSizes(trackHeight), [trackHeight]);
 
   const minYear = minX / UNITS_PER_YEAR;
   const maxYear = maxX / UNITS_PER_YEAR;
@@ -128,8 +149,9 @@ function TimelineContent({
     [minYear, maxYear, approximatePixels],
   );
 
-  const axisHeight = trackHeight * 0.6;
-  const axisY = -axisHeight;
+  const axisY = -sizes.axisHeight;
+
+  const tooltipTextRef = useRef('');
 
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
@@ -139,8 +161,6 @@ function TimelineContent({
     },
     [onTooltipChange],
   );
-
-  const tooltipTextRef = useRef('');
 
   const handleBarMouseMove = useCallback(
     (event: React.MouseEvent) => {
@@ -173,35 +193,60 @@ function TimelineContent({
     [onPositionClick],
   );
 
+  // Compute available space for outside labels (gap to next bar on same track)
+  const outsideLabelSpace = useMemo(() => {
+    const byTrack = new Map<number, TimelineElement[]>();
+    for (const el of visibleElements) {
+      const track = el.track ?? 0;
+      const list = byTrack.get(track) ?? [];
+      list.push(el);
+      byTrack.set(track, list);
+    }
+    const result = new Map<string, number>();
+    for (const [, trackElements] of byTrack) {
+      const sorted = [...trackElements].sort(
+        (a, b) => a.viewBoxBounds.minX - b.viewBoxBounds.minX,
+      );
+      for (let i = 0; i < sorted.length; i++) {
+        const current = sorted[i];
+        const next = sorted[i + 1];
+        const gap = next
+          ? next.viewBoxBounds.minX - current.viewBoxBounds.maxX
+          : Infinity;
+        result.set(current.id, gap);
+      }
+    }
+    return result;
+  }, [visibleElements]);
+
   return (
-    <>
-      <g onClick={handleSvgClick}>
-        <TimelineAxis
-          ticks={axisTicks}
-          axisY={axisY}
-          axisHeight={axisHeight}
-          minX={minX}
-          maxX={maxX}
-          maxTrackY={maxTrackY}
-        />
+    <g onClick={handleSvgClick}>
+      <TimelineAxis
+        ticks={axisTicks}
+        axisY={axisY}
+        sizes={sizes}
+        minX={minX}
+        maxX={maxX}
+        maxTrackY={maxTrackY}
+      />
 
-        <AnimatePresence>
-          {visibleElements.map((element) => (
-            <TimelineBar
-              key={element.id}
-              element={element}
-              color={categoryColorMap[element.category] ?? 'var(--color-accent)'}
-              state={elementStates[element.id]}
-              onClick={onElementClick}
-              onMouseEnter={handleBarMouseEnter}
-              onMouseMove={handleBarMouseMove}
-              onMouseLeave={handleBarMouseLeave}
-            />
-          ))}
-        </AnimatePresence>
-      </g>
-
-    </>
+      <AnimatePresence>
+        {visibleElements.map((element) => (
+          <TimelineBar
+            key={element.id}
+            element={element}
+            color={categoryColorMap[element.category] ?? 'var(--color-accent)'}
+            state={elementStates[element.id]}
+            sizes={sizes}
+            outsideSpace={outsideLabelSpace.get(element.id) ?? Infinity}
+            onClick={onElementClick}
+            onMouseEnter={handleBarMouseEnter}
+            onMouseMove={handleBarMouseMove}
+            onMouseLeave={handleBarMouseLeave}
+          />
+        ))}
+      </AnimatePresence>
+    </g>
   );
 }
 
@@ -212,35 +257,36 @@ interface TimelineAxisProps {
     readonly isMajor: boolean;
   }>;
   readonly axisY: number;
-  readonly axisHeight: number;
+  readonly sizes: Sizes;
   readonly minX: number;
   readonly maxX: number;
   readonly maxTrackY: number;
 }
 
-function TimelineAxis({ ticks, axisY, axisHeight, minX, maxX, maxTrackY }: TimelineAxisProps) {
+function TimelineAxis({ ticks, axisY, sizes, minX, maxX, maxTrackY }: TimelineAxisProps) {
   return (
     <g>
       <line className={styles.axisLine} x1={minX} y1={0} x2={maxX} y2={0} />
 
       {ticks.map((tick, i) => {
         const x = tick.fractionalYear * UNITS_PER_YEAR;
-        const tickLen = tick.isMajor ? MAJOR_TICK_LENGTH : MINOR_TICK_LENGTH;
+        const tickLen = tick.isMajor ? sizes.majorTickLength : sizes.minorTickLength;
+        const tickGap = sizes.minorTickLength * 0.4;
         return (
           <g key={i}>
             <line
               className={tick.isMajor ? styles.tickMajor : styles.tickMinor}
               x1={x}
-              y1={axisY + axisHeight - tickLen}
+              y1={axisY + sizes.axisHeight - tickLen}
               x2={x}
-              y2={axisY + axisHeight}
+              y2={axisY + sizes.axisHeight}
             />
             <text
               className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}
               x={x}
-              y={axisY + axisHeight - tickLen - 3}
+              y={axisY + sizes.axisHeight - tickLen - tickGap}
               textAnchor="middle"
-              fontSize={tick.isMajor ? TICK_FONT_MAJOR : TICK_FONT_MINOR}
+              fontSize={tick.isMajor ? sizes.tickFontMajor : sizes.tickFontMinor}
             >
               {tick.label}
             </text>
@@ -258,6 +304,8 @@ interface TimelineBarProps {
   readonly element: TimelineElement;
   readonly color: string;
   readonly state: string | undefined;
+  readonly sizes: Sizes;
+  readonly outsideSpace: number;
   readonly onClick?: (elementId: string) => void;
   readonly onMouseEnter: (element: TimelineElement, event: React.MouseEvent) => void;
   readonly onMouseMove: (event: React.MouseEvent) => void;
@@ -268,6 +316,8 @@ function TimelineBar({
   element,
   color,
   state,
+  sizes,
+  outsideSpace,
   onClick,
   onMouseEnter,
   onMouseMove,
@@ -280,7 +330,10 @@ function TimelineBar({
   const stateClass = state ? getStateClass(state) : undefined;
   const fillColor = stateClass ? undefined : color;
 
-  const showInsideLabel = width >= MIN_WIDTH_FOR_INSIDE_LABEL;
+  const showInsideLabel = width >= sizes.minWidthForInsideLabel;
+  const outsideLabel = showInsideLabel
+    ? null
+    : truncateLabel(element.label, outsideSpace - sizes.labelPadding, sizes);
 
   return (
     <motion.g
@@ -304,30 +357,30 @@ function TimelineBar({
         width={width}
         height={height}
         fill={fillColor}
-        rx={3}
-        ry={3}
+        rx={sizes.cornerRadius}
+        ry={sizes.cornerRadius}
       />
       {showInsideLabel ? (
         <text
           className={styles.barLabel}
-          x={minX + LABEL_PADDING}
+          x={minX + sizes.labelPadding}
           y={minY + height / 2}
           dominantBaseline="central"
-          fontSize={BAR_LABEL_FONT_SIZE}
+          fontSize={sizes.fontSize}
         >
-          {truncateLabel(element.label, width)}
+          {truncateLabel(element.label, width, sizes)}
         </text>
-      ) : (
+      ) : outsideLabel ? (
         <text
           className={styles.barLabelOutside}
-          x={maxX + LABEL_PADDING}
+          x={maxX + sizes.labelPadding}
           y={minY + height / 2}
           dominantBaseline="central"
-          fontSize={BAR_LABEL_FONT_SIZE}
+          fontSize={sizes.fontSize}
         >
-          {element.label}
+          {outsideLabel}
         </text>
-      )}
+      ) : null}
     </motion.g>
   );
 }
@@ -343,9 +396,9 @@ function getStateClass(state: string): string | undefined {
   }
 }
 
-function truncateLabel(label: string, availableWidth: number): string {
-  const charWidth = BAR_LABEL_FONT_SIZE * 0.6;
-  const maxChars = Math.floor((availableWidth - LABEL_PADDING * 2) / charWidth);
+function truncateLabel(label: string, availableWidth: number, sizes: Sizes): string {
+  const charWidth = sizes.fontSize * 0.6;
+  const maxChars = Math.floor((availableWidth - sizes.labelPadding * 2) / charWidth);
   if (maxChars <= 0) return '';
   if (label.length <= maxChars) return label;
   if (maxChars <= 3) return label.slice(0, maxChars);
