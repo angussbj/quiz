@@ -38,7 +38,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/quiz-modes/TogglePanel.tsx`, `src/quiz-modes/QuizShell.tsx` (toggle state management part), CSS modules, tests
 **Scope:** Render toggle switches from `ToggleDefinition[]` grouped by category. Preset buttons that set multiple toggles at once. Individual toggles remain immediately accessible alongside presets. Manage toggle state and expose it to child components. Quiet, compact design. Test that presets apply correctly and individual toggle changes work.
 
-### 6. Timer Component
+### 6. Timer Component — DONE
 **Branch:** `feat/timer`
 **Files:** `src/quiz-modes/Timer.tsx`, CSS module, tests
 **Scope:** Optional countdown or elapsed timer. Displays formatted time (MM:SS). Start/pause/reset controls. Calls back when time expires (for countdown mode). Framer Motion for number transitions. Unit tests for time formatting and state transitions.
