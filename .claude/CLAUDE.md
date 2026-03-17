@@ -70,6 +70,9 @@ Three-tier architecture with TypeScript interfaces as contracts between tiers.
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`
 - One logical change per commit
 
+### Detailed docs
+- `docs/zoom-pan-container.md` — ZoomPanContainer architecture, clustering algorithm, coordinate space handling
+
 ## Worktree Development
 
 When working in a worktree, just run `npm run dev`. Vite automatically picks a free port if the default (5173) is in use. Tell the user which port is being used.
