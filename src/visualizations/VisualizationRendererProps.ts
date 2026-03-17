@@ -15,6 +15,13 @@ export interface ClusteringConfig {
   readonly countedState: ElementVisualState;
 }
 
+/** Decorative SVG path rendered behind interactive elements (e.g., country borders on a map). */
+export interface BackgroundPath {
+  readonly id: string;
+  readonly svgPathData: string;
+  readonly group?: string;
+}
+
 /**
  * Props every visualization renderer receives.
  * THE contract between quiz modes and renderers.
@@ -28,6 +35,8 @@ export interface VisualizationRendererProps {
   readonly targetElementId?: string;
   readonly toggles: Readonly<Record<string, boolean>>;
   readonly clustering?: ClusteringConfig;
+  /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
+  readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid';

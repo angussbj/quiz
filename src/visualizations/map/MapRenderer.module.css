@@ -1,0 +1,35 @@
+.borderPath {
+  fill: var(--color-bg-tertiary);
+  fill-opacity: 0.4;
+  stroke: var(--color-border);
+  stroke-width: 0.15;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.interactivePath {
+  cursor: pointer;
+  stroke-linejoin: round;
+  transition: fill-opacity var(--transition-fast);
+}
+
+.interactivePath:hover {
+  fill-opacity: 0.4;
+}
+
+.interactiveDot {
+  cursor: pointer;
+  transition: r var(--transition-fast), fill var(--transition-fast);
+}
+
+.interactiveDot:hover {
+  r: 0.45;
+}
+
+.label {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: 0.5px;
+  pointer-events: none;
+  user-select: none;
+}

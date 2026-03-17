@@ -60,12 +60,13 @@ Features for parallel agent development. Each feature should be developed in its
 
 ## Group B: Visualization Renderers (depend on #2 ZoomPanContainer)
 
-### 9. Map Renderer
+### 9. Map Renderer — DONE
 **Branch:** `feat/map-renderer`
 **Files:** `src/visualizations/map/MapRenderer.tsx`, CSS module, tests, sample country SVG data
 **Scope:** Render country shapes from `MapElement.svgPathData` positioned in viewBox space. City markers as dots/circles. Color-code by group. Support `elementStates` for visual feedback (correct = green, incorrect = red, highlighted = gold). Support `toggles` for show/hide labels, show/hide country borders. Click handlers for elements and positions. Use `ZoomPanContainer` for zoom/pan. Create sample supporting data CSV with a few European country shapes for testing.
 **Note:** This is the first feature that renders real content inside `ZoomPanContainer`. Use it to visually verify zoom, pan, and clustering behaviour — test that clusters form/split at different zoom levels, badges show correct counts, and cluster click zooms to fit.
 **Note from #4:** Quiz IDs follow the pattern `geo-{type}-{region}` (e.g., `geo-capitals-europe`). The registry organizes paths as type-before-region (Geography > Capitals > Europe). CSV data is fetched from `public/data/` paths. Sample data CSVs can be placed there for testing.
+**Note from #9:** `VisualizationRendererProps` now includes an optional `backgroundPaths: ReadonlyArray<BackgroundPath>` prop for non-interactive decorative SVG content (e.g., country borders). This was added to keep the `elements` array clean for quiz items only. Other renderers can use this for similar decorative content if needed. Flags are displayed outside the map (in the quiz mode UI), not rendered by MapRenderer.
 
 ### 10. Timeline Renderer
 **Branch:** `feat/timeline-renderer`
@@ -77,6 +78,51 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/visualizations/periodic-table/PeriodicTableRenderer.tsx`, CSS module, tests
 **Scope:** Render grid of rectangular cells at (row, column) positions. Show symbol prominently in each cell. Color-code by group. Support `elementStates` for visual feedback. Use `ZoomPanContainer` for zoom/pan. When zoomed out, show compact cells with just symbols; when zoomed in, cells could expand to show more data (prepare the slot for a custom render component but don't implement it yet).
 
+## Toggle Resolution Design
+
+Toggles control visual features like labels, borders, city dots, and flags. The user sees a simple on/off switch per toggle on the config screen. But "off" doesn't always mean "never show" — it can mean different things depending on the quiz definition:
+
+- **`'never'`** — never shown during the quiz
+- **`'on-reveal'`** — shown when the element is answered (correct or give-up)
+- **`{ hintAfter: n }`** — shown after the nth incorrect answer for that element (e.g., show the flag as a hint after 2 wrong guesses)
+
+### Data model
+
+`ToggleDefinition` gains a `hiddenBehavior` field describing what happens when the toggle is off:
+
+```ts
+type HiddenBehavior = 'never' | 'on-reveal' | { readonly hintAfter: number };
+
+interface ToggleDefinition {
+  readonly key: string;
+  readonly label: string;
+  readonly defaultValue: boolean;
+  readonly group: string;
+  readonly hiddenBehavior: HiddenBehavior; // what "off" means for this toggle
+}
+```
+
+Presets remain `Record<string, boolean>` — they set toggles on/off. The hidden behavior is fixed per toggle definition, not per preset.
+
+### Resolution flow
+
+1. **Config screen:** User sees boolean switches. "On" = always show. "Off" = hidden behavior applies.
+2. **Quiz mode layer** (features 12–14): Each quiz mode resolves toggles into **per-element booleans** based on quiz state (which elements are correct, how many wrong answers per element, etc.). The resolution logic is: if toggle is ON → true for all elements. If toggle is OFF → apply `hiddenBehavior` per element.
+3. **Renderer:** Receives `elementToggles: Record<elementId, Record<toggleKey, boolean>>` — fully resolved, no knowledge of hidden behaviors. Renderers stay simple.
+
+### Props change
+
+`VisualizationRendererProps` will gain:
+```ts
+readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
+```
+
+Renderer logic per element: check `elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]`. The global `toggles` remains the fallback (e.g., for toggles not in `elementToggles`, or before quiz modes are wired up).
+
+### Advanced config (future)
+
+An advanced option on the config screen lets users override the hidden behavior per toggle (e.g., change "on-reveal" to "hint after 3"). This is a nice-to-have, not needed for initial implementation.
+
 ## Group C: Quiz Modes (depend on Group B renderers existing, and #5 TogglePanel, #7 ScoreCalculator)
 
 ### 12. Free Recall Mode (Unordered)
@@ -84,16 +130,19 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/quiz-modes/free-recall/FreeRecallMode.tsx`, CSS module, tests
 **Scope:** Text input field. User types answers in any order. Fuzzy matching (case-insensitive, ignore accents/diacritics, accept alternate answers from data). On match: mark element as correct in the visualization with a satisfying animation, increment score, clear input. Show progress (e.g., "7/50"). On give up: reveal remaining answers. Gentle feedback — no "wrong" state for typing, only when giving up.
 **Note (from #7):** When building the ordered recall variant, use `HintLevel` from `src/scoring/ScoreResult.ts` to track per-answer hint usage. Visualization should colour answers by hint level: `'none'` = green/white (counts as correct), `'partial'` = yellow (doesn't count), `'full'` = red (doesn't count). The scoring function `calculateOrderedRecallScore` already handles this.
+**Note (toggle resolution):** This mode must resolve per-element toggles. For each element, for each toggle where `hiddenBehavior` applies: if `'on-reveal'` → set true when element is answered (correct or give-up). If `{ hintAfter: n }` → not applicable (no wrong answers in free recall). If `'never'` → always false. Pass resolved `elementToggles` to the renderer.
 
 ### 13. Identify Mode
 **Branch:** `feat/identify-mode`
 **Files:** `src/quiz-modes/identify/IdentifyMode.tsx`, CSS module, tests
 **Scope:** Show a prompt ("Click on Paris"). User clicks elements in the visualization. Correct click: satisfying animation, advance to next prompt. Incorrect click: gentle incorrect animation, element briefly highlighted red. Cycle through all target elements. Support toggles (show/hide hints like flags or labels). Show progress.
+**Note (toggle resolution):** This mode must resolve per-element toggles. Track incorrect answer count per element. For `{ hintAfter: n }` → set true after n wrong clicks on that element's prompt. For `'on-reveal'` → set true after correct answer or skip. Pass resolved `elementToggles` to the renderer.
 
 ### 14. Locate Mode
 **Branch:** `feat/locate-mode`
 **Files:** `src/quiz-modes/locate/LocateMode.tsx`, CSS module, tests
 **Scope:** Show a prompt ("Click where Paris is"). User clicks anywhere on the visualization. Show distance feedback with the score calculator's non-linear curve. Visual feedback: show the correct location and draw a line from the click to it. Satisfying animation for close guesses, gentle feedback for far ones. Advance to next prompt.
+**Note (toggle resolution):** This mode must resolve per-element toggles. Similar to Identify: track attempts per element. For `{ hintAfter: n }` → set true after n attempts. For `'on-reveal'` → set true after answering. Pass resolved `elementToggles` to the renderer.
 
 ## Group D: Integration (depends on Groups A–C)
 
@@ -105,6 +154,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Integration notes:**
 - Wire up `Timer` component: pass `QuizDefinition.defaultCountdownSeconds` as `countdownSeconds` prop, handle `onExpire` to end the quiz. Don't render Timer until quiz has started.
 - Wire up countdown duration UI: quiz setup screen should allow overriding `defaultCountdownSeconds` before starting.
+**Note (toggle resolution):** QuizShell needs to pass `elementToggles` from the quiz mode through to the renderer. The quiz mode computes `elementToggles` from the toggle definitions' `hiddenBehavior` + quiz state, and QuizShell passes them as a prop alongside the global `toggles`. See "Toggle Resolution Design" section above. Also update `ToggleDefinition` to include `hiddenBehavior` — the type change should happen in whichever feature is implemented first (12, 13, 14, or 15).
 
 ### 16. Theme Toggle & Global Layout
 **Branch:** `feat/global-layout`
@@ -116,3 +166,4 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `data/geography/europe/capitals.csv`, supporting country shapes data, quiz definition in registry
 **Scope:** Create a complete, real quiz: European capital cities. Full CSV with all ~45 European capitals. Supporting data with simplified country border SVG paths (can be sourced/simplified from Natural Earth data). Wire up the quiz definition with all available modes, sensible toggles (show/hide country borders, show/hide city dots, show/hide country names, show/hide flags), and Easy/Medium/Hard presets.
 **Note from #4:** A placeholder definition for this quiz already exists in `quizRegistry.ts` (ID: `geo-capitals-europe`). Update it in place rather than adding a duplicate. The CSV data path is `/data/geography/capitals/europe.csv` (served from `public/`). The `sampleNavigationTree.ts` is now unused — the navigation tree is generated from the registry.
+**Note (toggle resolution):** Each toggle definition needs a `hiddenBehavior`. Sensible defaults for a capitals quiz: `showBorders` → `'never'` (borders are either always on or always off), `showCityDots` → `'on-reveal'` (dots appear as cities are answered), `showCountryNames` → `'on-reveal'`, `showFlags` → `{ hintAfter: 2 }` (flag shown as a hint after 2 wrong answers). Easy preset sets them all to true (always show); Hard sets them all to false (hidden behaviors apply).
