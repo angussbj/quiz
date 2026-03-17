@@ -1,0 +1,86 @@
+:root {
+  /* Background */
+  --color-bg-primary: #fafaf9;
+  --color-bg-secondary: #f0efed;
+  --color-bg-tertiary: #e5e4e1;
+
+  /* Text */
+  --color-text-primary: #1c1c1c;
+  --color-text-secondary: #5a5a58;
+  --color-text-muted: #8a8a87;
+
+  /* Interactive */
+  --color-accent: #4a6fa5;
+  --color-accent-hover: #3d5d8a;
+  --color-correct: #4a8c6f;
+  --color-correct-bg: #e8f5e9;
+  --color-incorrect: #c0392b;
+  --color-incorrect-bg: #fdecea;
+  --color-highlight: #f0c040;
+  --color-highlight-bg: #fef9e7;
+
+  /* Visualization groups (8 distinguishable colors) */
+  --color-group-1: #4a6fa5;
+  --color-group-2: #e07b53;
+  --color-group-3: #4a8c6f;
+  --color-group-4: #9b59b6;
+  --color-group-5: #f0c040;
+  --color-group-6: #2eccc7;
+  --color-group-7: #e74c8b;
+  --color-group-8: #8d6e63;
+
+  /* Borders & surfaces */
+  --color-border: #ddd;
+  --color-surface-raised: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  /* Typography */
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+[data-theme='dark'] {
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #242424;
+  --color-bg-tertiary: #2e2e2e;
+
+  --color-text-primary: #e8e8e6;
+  --color-text-secondary: #a8a8a5;
+  --color-text-muted: #6a6a67;
+
+  --color-accent: #6b9fd4;
+  --color-accent-hover: #85b3e0;
+  --color-correct: #6bc09a;
+  --color-correct-bg: #1a3a2a;
+  --color-incorrect: #e57373;
+  --color-incorrect-bg: #3a1a1a;
+  --color-highlight: #f0c040;
+  --color-highlight-bg: #3a3520;
+
+  --color-border: #3a3a3a;
+  --color-surface-raised: #2a2a2a;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+}

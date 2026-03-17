@@ -1,0 +1,14 @@
+@import '../theme/theme.css';
+@import './reset.css';
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  transition: color var(--transition-normal), background-color var(--transition-normal);
+}
+
+#root {
+  min-height: 100vh;
+}
