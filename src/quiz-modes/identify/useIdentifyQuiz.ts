@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import { calculateScore } from '@/scoring/calculateScore';
@@ -49,6 +49,10 @@ export function useIdentifyQuiz(
   const [flashIncorrectId, setFlashIncorrectId] = useState<string | null>(null);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => () => {
+    if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+  }, []);
+
   const totalPrompts = shuffledOrder.length;
   const isFinished = promptIndex >= totalPrompts;
   const currentElementId = isFinished ? undefined : shuffledOrder[promptIndex];
@@ -63,10 +67,8 @@ export function useIdentifyQuiz(
         states[el.id] = 'revealed';
       } else if (el.id === flashIncorrectId) {
         states[el.id] = 'incorrect';
-      } else if (el.id === currentElementId) {
-        // Don't highlight the target — that would give it away
-        states[el.id] = 'hidden';
       } else {
+        // Don't highlight the target — that would give it away
         states[el.id] = 'hidden';
       }
     }

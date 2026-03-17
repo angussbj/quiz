@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { QuizSessionState } from '../../QuizSessionState';
@@ -33,6 +33,9 @@ function renderIdentifyMode(elementCount = 3) {
 
   const props = {
     elements,
+    dataRows: [],
+    columnMappings: {},
+    toggleDefinitions: [],
     session: emptySession,
     onTextAnswer: jest.fn(),
     onElementSelect: jest.fn(),
@@ -106,6 +109,32 @@ describe('IdentifyMode', () => {
     expect(screen.getByText(/0 of 3 correct/)).toBeInTheDocument();
   });
 
+  it('calls onElementSelect when correct element is clicked', () => {
+    const { renderViz, onElementSelect } = renderIdentifyMode(3);
+
+    // Get the onElementClick callback and targetElementId from the visualization props
+    const vizProps = renderViz.mock.calls[0][0];
+    const targetId = vizProps.targetElementId;
+
+    // Simulate clicking the correct element
+    act(() => vizProps.onElementClick(targetId));
+
+    expect(onElementSelect).toHaveBeenCalledWith(targetId);
+  });
+
+  it('does not call onElementSelect when wrong element is clicked', () => {
+    const { renderViz, onElementSelect } = renderIdentifyMode(3);
+
+    const vizProps = renderViz.mock.calls[0][0];
+    const targetId = vizProps.targetElementId;
+    // Find an element that isn't the target
+    const wrongId = ['el-0', 'el-1', 'el-2'].find((id) => id !== targetId)!;
+
+    act(() => vizProps.onElementClick(wrongId));
+
+    expect(onElementSelect).not.toHaveBeenCalled();
+  });
+
   it('passes toggles and elementToggles to visualization', () => {
     const elements = makeElements(2);
     const toggleDefs = [
@@ -118,6 +147,8 @@ describe('IdentifyMode', () => {
     render(
       <IdentifyMode
         elements={elements}
+        dataRows={[]}
+        columnMappings={{}}
         session={emptySession}
         onTextAnswer={jest.fn()}
         onElementSelect={jest.fn()}
