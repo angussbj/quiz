@@ -3,18 +3,10 @@ import type { VisualizationElement, ViewBoxPosition, ElementVisualState } from '
 import { isMapElement } from '@/visualizations/map/MapElement';
 import { calculateGreatCircleDistance } from '@/scoring/calculateGreatCircleDistance';
 import { calculateLocateAnswerScore, isLocateAnswerCorrect } from '@/scoring/calculateLocateAnswerScore';
+import { shuffle } from '@/utilities/shuffle';
 import type { LocateFeedbackItem } from './LocateFeedbackItem';
 
 const FEEDBACK_DURATION_MS = 2000;
-
-function shuffleArray<T>(array: ReadonlyArray<T>): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
 
 export interface LocateQuizState {
   readonly currentTarget: VisualizationElement | undefined;
@@ -39,7 +31,7 @@ export function useLocateQuiz(
   elements: ReadonlyArray<VisualizationElement>,
 ): LocateQuizState & LocateQuizActions {
   const [targetOrder] = useState<ReadonlyArray<string>>(() =>
-    shuffleArray(elements.filter((e) => e.interactive).map((e) => e.id)),
+    shuffle(elements.filter((e) => e.interactive).map((e) => e.id)),
   );
   const [currentTargetIndex, setCurrentTargetIndex] = useState(0);
   const [distances, setDistances] = useState<ReadonlyArray<number>>([]);

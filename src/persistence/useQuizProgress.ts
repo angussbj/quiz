@@ -24,19 +24,21 @@ export function useQuizProgress(quizId: string): UseQuizProgressResult {
 
   const addAttempt = useCallback(
     (attempt: QuizAttempt) => {
-      const current = value ?? {
-        quizId,
-        attempts: [],
-        bestScore: attempt.score,
-      };
-      const newAttempts = [...current.attempts, attempt];
-      const bestScore =
-        attempt.score.percentage > current.bestScore.percentage
-          ? attempt.score
-          : current.bestScore;
-      set({ quizId, attempts: newAttempts, bestScore });
+      set((prev) => {
+        const current = prev ?? {
+          quizId,
+          attempts: [],
+          bestScore: attempt.score,
+        };
+        const newAttempts = [...current.attempts, attempt];
+        const bestScore =
+          attempt.score.percentage > current.bestScore.percentage
+            ? attempt.score
+            : current.bestScore;
+        return { quizId, attempts: newAttempts, bestScore };
+      });
     },
-    [value, quizId, set],
+    [quizId, set],
   );
 
   const reset = useCallback(() => {

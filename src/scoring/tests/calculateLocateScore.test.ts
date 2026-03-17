@@ -5,7 +5,8 @@ describe('calculateLocateScore', () => {
     const result = calculateLocateScore([10, 20, 30, 200, 600], 5);
     expect(result.correct).toBe(3);
     expect(result.total).toBe(5);
-    expect(result.percentage).toBe(60);
+    // Percentage reflects partial credit: mean of [1, 1, 1, 0.75, 0] = 75%
+    expect(result.percentage).toBe(75);
   });
 
   it('includes locate details with distances and average', () => {
@@ -24,8 +25,15 @@ describe('calculateLocateScore', () => {
     expect(result.percentage).toBe(100);
   });
 
-  it('handles all answers beyond 100km', () => {
+  it('handles all answers beyond 100km with partial credit', () => {
     const result = calculateLocateScore([150, 200, 600], 3);
+    expect(result.correct).toBe(0);
+    // Partial credit: mean of [0.875, 0.75, 0] = 54%
+    expect(result.percentage).toBe(54);
+  });
+
+  it('handles all answers beyond 500km as 0%', () => {
+    const result = calculateLocateScore([600, 700, 800], 3);
     expect(result.correct).toBe(0);
     expect(result.percentage).toBe(0);
   });
