@@ -43,7 +43,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/quiz-modes/Timer.tsx`, CSS module, tests
 **Scope:** Optional countdown or elapsed timer. Displays formatted time (MM:SS). Start/pause/reset controls. Calls back when time expires (for countdown mode). Framer Motion for number transitions. Unit tests for time formatting and state transitions.
 
-### 7. Score Calculator
+### 7. Score Calculator — DONE
 **Branch:** `feat/score-calculator`
 **Files:** `src/scoring/calculateScore.ts`, tests
 **Scope:** Implement scoring logic for all answer types: unordered recall (count correct, no penalty), ordered recall (track hints used), locate (distance-based with non-linear scoring curve — e.g., full marks within 50km, diminishing to zero at 500km), identify (binary), multiple choice (binary). Return `ScoreResult` with appropriate `ScoreDetails`. Thorough unit tests for each mode and edge cases.
