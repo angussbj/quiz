@@ -1,7 +1,5 @@
 .page {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md) 0;
 }
 
 .title {
