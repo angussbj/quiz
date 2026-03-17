@@ -63,6 +63,7 @@ export function MapRenderer({
   targetElementId,
   toggles,
   backgroundPaths,
+  svgOverlay,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -90,6 +91,7 @@ export function MapRenderer({
         showCountryNames={showCountryNames}
         backgroundPaths={backgroundPaths}
       />
+      {svgOverlay}
     </ZoomPanContainer>
   );
 }
@@ -139,6 +141,16 @@ function MapContent({
 
   return (
     <g onClick={handleBackgroundClick}>
+      {/* Invisible rect to catch clicks on empty SVG space.
+          Without this, clicks on areas with no visible children
+          don't trigger the <g>'s onClick handler. */}
+      {onPositionClick && (
+        <rect
+          x={-1e4} y={-1e4} width={2e4} height={2e4}
+          fill="transparent"
+        />
+      )}
+
       {/* Background country borders */}
       {showBorders && backgroundPaths?.map((path) => (
         <path

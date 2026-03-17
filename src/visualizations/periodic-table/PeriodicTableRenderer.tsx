@@ -208,6 +208,7 @@ export function PeriodicTableRenderer(props: VisualizationRendererProps) {
       onClusterClick={props.onClusterClick}
     >
       <PeriodicTableGrid {...props} />
+      {props.svgOverlay}
     </ZoomPanContainer>
   );
 }

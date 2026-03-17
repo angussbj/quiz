@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { VisualizationElement, ViewBoxPosition, ElementVisualState } from './VisualizationElement';
 
 export interface ElementCluster {
@@ -39,6 +40,8 @@ export interface VisualizationRendererProps {
   readonly clustering?: ClusteringConfig;
   /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  /** Additional SVG content rendered on top of all elements (e.g., feedback overlays) */
+  readonly svgOverlay?: ReactNode;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid';

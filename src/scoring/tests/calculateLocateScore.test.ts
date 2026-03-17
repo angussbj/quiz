@@ -1,7 +1,7 @@
 import { calculateLocateScore } from '../calculateLocateScore';
 
 describe('calculateLocateScore', () => {
-  it('counts answers within 50km as correct', () => {
+  it('counts answers within 100km as correct', () => {
     const result = calculateLocateScore([10, 20, 30, 200, 600], 5);
     expect(result.correct).toBe(3);
     expect(result.total).toBe(5);
@@ -18,14 +18,14 @@ describe('calculateLocateScore', () => {
     });
   });
 
-  it('handles all answers within 50km', () => {
-    const result = calculateLocateScore([10, 20, 30, 40, 50], 5);
+  it('handles all answers within 100km', () => {
+    const result = calculateLocateScore([10, 20, 30, 40, 100], 5);
     expect(result.correct).toBe(5);
     expect(result.percentage).toBe(100);
   });
 
-  it('handles all answers beyond 50km', () => {
-    const result = calculateLocateScore([100, 200, 600], 3);
+  it('handles all answers beyond 100km', () => {
+    const result = calculateLocateScore([150, 200, 600], 3);
     expect(result.correct).toBe(0);
     expect(result.percentage).toBe(0);
   });
@@ -49,13 +49,13 @@ describe('calculateLocateScore', () => {
     }
   });
 
-  it('handles exactly 50km as correct', () => {
-    const result = calculateLocateScore([50], 1);
+  it('handles exactly 100km as correct', () => {
+    const result = calculateLocateScore([100], 1);
     expect(result.correct).toBe(1);
   });
 
-  it('handles 51km as not correct', () => {
-    const result = calculateLocateScore([51], 1);
+  it('handles 101km as not correct', () => {
+    const result = calculateLocateScore([101], 1);
     expect(result.correct).toBe(0);
   });
 });

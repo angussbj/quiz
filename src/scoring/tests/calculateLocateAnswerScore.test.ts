@@ -8,13 +8,13 @@ describe('calculateLocateAnswerScore', () => {
     expect(calculateLocateAnswerScore(0)).toBe(1);
   });
 
-  it('returns 1 at exactly 50km', () => {
-    expect(calculateLocateAnswerScore(50)).toBe(1);
+  it('returns 1 at exactly 100km', () => {
+    expect(calculateLocateAnswerScore(100)).toBe(1);
   });
 
-  it('returns 1 for distances under 50km', () => {
-    expect(calculateLocateAnswerScore(25)).toBe(1);
-    expect(calculateLocateAnswerScore(49.9)).toBe(1);
+  it('returns 1 for distances under 100km', () => {
+    expect(calculateLocateAnswerScore(50)).toBe(1);
+    expect(calculateLocateAnswerScore(99.9)).toBe(1);
   });
 
   it('returns 0 at exactly 500km', () => {
@@ -26,25 +26,24 @@ describe('calculateLocateAnswerScore', () => {
     expect(calculateLocateAnswerScore(10000)).toBe(0);
   });
 
-  it('returns 0.5 at 275km (midpoint of linear decay)', () => {
-    expect(calculateLocateAnswerScore(275)).toBe(0.5);
+  it('returns 0.5 at 300km (midpoint of linear decay)', () => {
+    expect(calculateLocateAnswerScore(300)).toBe(0.5);
   });
 
-  it('decays linearly between 50km and 500km', () => {
-    const at100 = calculateLocateAnswerScore(100);
-    const at200 = calculateLocateAnswerScore(200);
-    const at300 = calculateLocateAnswerScore(300);
+  it('decays linearly between 100km and 500km', () => {
+    const at150 = calculateLocateAnswerScore(150);
+    const at250 = calculateLocateAnswerScore(250);
+    const at350 = calculateLocateAnswerScore(350);
 
     // Linear: equal steps in distance should produce equal steps in score
-    expect(at100 - at200).toBeCloseTo(at200 - at300, 10);
+    expect(at150 - at250).toBeCloseTo(at250 - at350, 10);
   });
 
   it('returns expected values at specific distances', () => {
-    // 50km -> 1.0, 500km -> 0.0, range = 450km
-    expect(calculateLocateAnswerScore(95)).toBeCloseTo(0.9, 1);
-    expect(calculateLocateAnswerScore(140)).toBeCloseTo(0.8, 1);
-    expect(calculateLocateAnswerScore(275)).toBeCloseTo(0.5, 1);
-    expect(calculateLocateAnswerScore(455)).toBeCloseTo(0.1, 1);
+    // 100km -> 1.0, 500km -> 0.0, range = 400km
+    expect(calculateLocateAnswerScore(140)).toBeCloseTo(0.9, 1);
+    expect(calculateLocateAnswerScore(300)).toBeCloseTo(0.5, 1);
+    expect(calculateLocateAnswerScore(460)).toBeCloseTo(0.1, 1);
   });
 
   it('never returns negative values', () => {
@@ -61,12 +60,12 @@ describe('isLocateAnswerCorrect', () => {
     expect(isLocateAnswerCorrect(0)).toBe(true);
   });
 
-  it('returns true at exactly 50km', () => {
-    expect(isLocateAnswerCorrect(50)).toBe(true);
+  it('returns true at exactly 100km', () => {
+    expect(isLocateAnswerCorrect(100)).toBe(true);
   });
 
-  it('returns false at 51km', () => {
-    expect(isLocateAnswerCorrect(51)).toBe(false);
+  it('returns false at 101km', () => {
+    expect(isLocateAnswerCorrect(101)).toBe(false);
   });
 
   it('returns false at 500km', () => {
