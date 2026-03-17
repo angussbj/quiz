@@ -67,7 +67,7 @@ function TreeNode({ node, path, expandedPaths, onTogglePath, searchQuery }: Tree
     );
   }
 
-  const useGrid = allChildrenAreLeaves(node);
+  const useGrid = allChildrenAreLeaves(node) && node.children.length >= 4;
 
   return (
     <li className={styles.nodeItem}>
@@ -116,17 +116,25 @@ function HighlightedLabel({ label, query }: { readonly label: string; readonly q
     return <>{label}</>;
   }
 
-  const lowerLabel = label.toLowerCase();
-  const lowerQuery = query.toLowerCase();
-  const index = lowerLabel.indexOf(lowerQuery);
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedQuery})`, 'gi');
+  const parts = label.split(regex);
 
-  if (index === -1) {
+  if (parts.length === 1) {
     return <>{label}</>;
   }
 
-  const before = label.slice(0, index);
-  const match = label.slice(index, index + query.length);
-  const after = label.slice(index + query.length);
+  const lowerQuery = query.toLowerCase();
 
-  return <span>{before}<mark className={styles.highlight}>{match}</mark>{after}</span>;
+  return (
+    <span>
+      {parts.map((part, index) =>
+        part.toLowerCase() === lowerQuery ? (
+          <mark key={index} className={styles.highlight}>{part}</mark>
+        ) : (
+          part
+        ),
+      )}
+    </span>
+  );
 }
