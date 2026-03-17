@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--color-overlay);
   backdrop-filter: blur(6px);
   z-index: 100;
 }

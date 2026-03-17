@@ -36,6 +36,13 @@ export function ActiveQuiz({
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const isFinished = finishState !== null;
 
+  // Track the latest score reported by the mode, so timer expiry can use it
+  const latestScoreRef = useRef<ScoreResult>({
+    correct: 0,
+    total: elements.length,
+    percentage: 0,
+  });
+
   // Elapsed time counter
   useEffect(() => {
     if (isFinished) return;
@@ -47,6 +54,7 @@ export function ActiveQuiz({
 
   const handleStatusChange = useCallback(
     (status: 'active' | 'finished', score: ScoreResult) => {
+      latestScoreRef.current = score;
       if (status === 'finished') {
         setFinishState(score);
       }
@@ -55,25 +63,13 @@ export function ActiveQuiz({
   );
 
   const handleTimerExpire = useCallback(() => {
-    // When timer expires, report finished with current score
-    // The mode adapter will handle this via its own give-up mechanism
+    // Use the latest score from the mode, not a hardcoded zero
     if (!isFinished) {
-      setFinishState({
-        correct: 0,
-        total: elements.length,
-        percentage: 0,
-      });
+      setFinishState(latestScoreRef.current);
     }
-  }, [isFinished, elements.length]);
+  }, [isFinished]);
 
   const handleRetry = config.onReconfigure;
-
-  // Track timer expire ref for mode adapter
-  const timerExpiredRef = useRef(false);
-  const handleTimerExpireForMode = useCallback(() => {
-    timerExpiredRef.current = true;
-    handleTimerExpire();
-  }, [handleTimerExpire]);
 
   return (
     <div className={styles.container}>
@@ -81,7 +77,7 @@ export function ActiveQuiz({
         <div className={styles.timerBar}>
           <Timer
             countdownSeconds={config.countdownSeconds}
-            onExpire={handleTimerExpireForMode}
+            onExpire={handleTimerExpire}
             paused={isFinished}
           />
         </div>

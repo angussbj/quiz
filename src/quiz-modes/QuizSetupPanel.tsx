@@ -62,7 +62,10 @@ export function QuizSetupPanel({
               id="mode-select"
               className={styles.modeSelect}
               value={selectedMode}
-              onChange={(event) => onModeChange(event.target.value as QuizModeType)}
+              onChange={(event) => {
+                const mode = availableModes.find((m) => m === event.target.value);
+                if (mode) onModeChange(mode);
+              }}
             >
               {availableModes.map((mode) => (
                 <option key={mode} value={mode}>
