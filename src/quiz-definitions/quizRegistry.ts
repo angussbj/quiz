@@ -1,8 +1,291 @@
 import type { QuizDefinition } from './QuizDefinition';
 
 /**
- * Registry of all available quizzes.
- * Will be auto-generated from directory structure.
- * Placeholder.
+ * Static registry of all available quizzes.
+ * Each entry is a complete QuizDefinition with metadata and data paths.
+ * The navigation tree is built from these definitions' path segments.
+ *
+ * Add new quizzes here. Order determines display order within categories.
  */
-export const quizRegistry: ReadonlyArray<QuizDefinition> = [];
+export const quizRegistry: ReadonlyArray<QuizDefinition> = [
+  {
+    id: 'geo-capitals-europe',
+    title: 'European Capitals',
+    description: 'Name the capital cities of European countries.',
+    path: ['Geography', 'Capitals', 'Europe'],
+    visualizationType: 'map',
+    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
+      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
+      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display' },
+    ],
+    presets: [
+      {
+        name: 'easy',
+        label: 'Easy',
+        values: { showBorders: true, showCityDots: true, showCountryNames: true, showFlags: true },
+      },
+      {
+        name: 'medium',
+        label: 'Medium',
+        values: { showBorders: true, showCityDots: true, showCountryNames: false, showFlags: false },
+      },
+      {
+        name: 'hard',
+        label: 'Hard',
+        values: { showBorders: false, showCityDots: false, showCountryNames: false, showFlags: false },
+      },
+    ],
+    columnMappings: {
+      answer: 'city',
+      label: 'city',
+      coordinates: 'latitude',
+      group: 'country',
+    },
+    dataPath: '/data/geography/capitals/europe.csv',
+    supportingDataPaths: ['/data/geography/capitals/europe-borders.svg'],
+  },
+  {
+    id: 'geo-capitals-asia',
+    title: 'Asian Capitals',
+    description: 'Name the capital cities of Asian countries.',
+    path: ['Geography', 'Capitals', 'Asia'],
+    visualizationType: 'map',
+    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
+      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
+    ],
+    presets: [
+      {
+        name: 'easy',
+        label: 'Easy',
+        values: { showBorders: true, showCityDots: true, showCountryNames: true },
+      },
+      {
+        name: 'hard',
+        label: 'Hard',
+        values: { showBorders: false, showCityDots: false, showCountryNames: false },
+      },
+    ],
+    columnMappings: {
+      answer: 'city',
+      label: 'city',
+      coordinates: 'latitude',
+      group: 'country',
+    },
+    dataPath: '/data/geography/capitals/asia.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'geo-capitals-africa',
+    title: 'African Capitals',
+    description: 'Name the capital cities of African countries.',
+    path: ['Geography', 'Capitals', 'Africa'],
+    visualizationType: 'map',
+    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
+      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
+    ],
+    presets: [
+      {
+        name: 'easy',
+        label: 'Easy',
+        values: { showBorders: true, showCityDots: true, showCountryNames: true },
+      },
+      {
+        name: 'hard',
+        label: 'Hard',
+        values: { showBorders: false, showCityDots: false, showCountryNames: false },
+      },
+    ],
+    columnMappings: {
+      answer: 'city',
+      label: 'city',
+      coordinates: 'latitude',
+      group: 'country',
+    },
+    dataPath: '/data/geography/capitals/africa.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'geo-countries-europe',
+    title: 'European Countries',
+    description: 'Identify the countries of Europe on a map.',
+    path: ['Geography', 'Countries', 'Europe'],
+    visualizationType: 'map',
+    availableModes: ['free-recall-unordered', 'identify'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
+      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display' },
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'country',
+      label: 'country',
+      group: 'region',
+    },
+    dataPath: '/data/geography/countries/europe.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'geo-countries-asia',
+    title: 'Asian Countries',
+    description: 'Identify the countries of Asia on a map.',
+    path: ['Geography', 'Countries', 'Asia'],
+    visualizationType: 'map',
+    availableModes: ['free-recall-unordered', 'identify'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'country',
+      label: 'country',
+      group: 'region',
+    },
+    dataPath: '/data/geography/countries/asia.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'geo-flags-europe',
+    title: 'European Flags',
+    description: 'Match European countries to their flags.',
+    path: ['Geography', 'Flags', 'Europe'],
+    visualizationType: 'grid',
+    availableModes: ['identify', 'free-recall-unordered'],
+    defaultMode: 'identify',
+    toggles: [
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'country',
+      label: 'country',
+      group: 'region',
+    },
+    dataPath: '/data/geography/flags/europe.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'sci-periodic-table',
+    title: 'Periodic Table',
+    description: 'Name the elements of the periodic table.',
+    path: ['Science', 'Chemistry', 'Periodic Table'],
+    visualizationType: 'grid',
+    availableModes: ['free-recall-unordered', 'identify'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showSymbols', label: 'Element symbols', defaultValue: true, group: 'display' },
+      { key: 'showAtomicNumbers', label: 'Atomic numbers', defaultValue: false, group: 'display' },
+    ],
+    presets: [
+      {
+        name: 'easy',
+        label: 'Easy',
+        values: { showSymbols: true, showAtomicNumbers: true },
+      },
+      {
+        name: 'hard',
+        label: 'Hard',
+        values: { showSymbols: false, showAtomicNumbers: false },
+      },
+    ],
+    columnMappings: {
+      answer: 'name',
+      label: 'symbol',
+      group: 'category',
+    },
+    dataPath: '/data/science/chemistry/periodic-table.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'sci-element-symbols',
+    title: 'Element Symbols',
+    description: 'Match chemical elements to their symbols.',
+    path: ['Science', 'Chemistry', 'Element Symbols'],
+    visualizationType: 'grid',
+    availableModes: ['free-recall-unordered', 'identify'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display' },
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'symbol',
+      label: 'name',
+      group: 'category',
+    },
+    dataPath: '/data/science/chemistry/periodic-table.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'sci-human-bones',
+    title: 'Human Bones',
+    description: 'Name the bones of the human skeleton.',
+    path: ['Science', 'Biology', 'Human Bones'],
+    visualizationType: 'grid',
+    availableModes: ['free-recall-unordered', 'identify'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [],
+    presets: [],
+    columnMappings: {
+      answer: 'bone',
+      label: 'bone',
+      group: 'region',
+    },
+    dataPath: '/data/science/biology/human-bones.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'hist-emperors-roman',
+    title: 'Roman Emperors',
+    description: 'Name the emperors of Rome in chronological order.',
+    path: ['History', 'Ancient', 'Roman Emperors'],
+    visualizationType: 'timeline',
+    availableModes: ['free-recall-unordered'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showDates', label: 'Reign dates', defaultValue: false, group: 'display' },
+      { key: 'showDynasty', label: 'Dynasty colours', defaultValue: true, group: 'display' },
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'emperor',
+      label: 'emperor',
+      group: 'dynasty',
+    },
+    dataPath: '/data/history/ancient/roman-emperors.csv',
+    supportingDataPaths: [],
+  },
+  {
+    id: 'hist-timeline-ww2',
+    title: 'World War II Timeline',
+    description: 'Place key events of World War II on a timeline.',
+    path: ['History', 'Modern', 'World War II Timeline'],
+    visualizationType: 'timeline',
+    availableModes: ['free-recall-unordered', 'locate'],
+    defaultMode: 'free-recall-unordered',
+    toggles: [
+      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display' },
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'event',
+      label: 'event',
+      group: 'theatre',
+    },
+    dataPath: '/data/history/modern/ww2-timeline.csv',
+    supportingDataPaths: [],
+  },
+];
