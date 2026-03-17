@@ -132,11 +132,12 @@ An advanced option on the config screen lets users override the hidden behavior 
 **Note (from #7):** When building the ordered recall variant, use `HintLevel` from `src/scoring/ScoreResult.ts` to track per-answer hint usage. Visualization should colour answers by hint level: `'none'` = green/white (counts as correct), `'partial'` = yellow (doesn't count), `'full'` = red (doesn't count). The scoring function `calculateOrderedRecallScore` already handles this.
 **Note (toggle resolution):** This mode must resolve per-element toggles. For each element, for each toggle where `hiddenBehavior` applies: if `'on-reveal'` → set true when element is answered (correct or give-up). If `{ hintAfter: n }` → not applicable (no wrong answers in free recall). If `'never'` → always false. Pass resolved `elementToggles` to the renderer.
 
-### 13. Identify Mode
+### 13. Identify Mode — DONE
 **Branch:** `feat/identify-mode`
 **Files:** `src/quiz-modes/identify/IdentifyMode.tsx`, CSS module, tests
 **Scope:** Show a prompt ("Click on Paris"). User clicks elements in the visualization. Correct click: satisfying animation, advance to next prompt. Incorrect click: gentle incorrect animation, element briefly highlighted red. Cycle through all target elements. Support toggles (show/hide hints like flags or labels). Show progress.
 **Note (toggle resolution):** This mode must resolve per-element toggles. Track incorrect answer count per element. For `{ hintAfter: n }` → set true after n wrong clicks on that element's prompt. For `'on-reveal'` → set true after correct answer or skip. Pass resolved `elementToggles` to the renderer.
+**Note from #13:** `HiddenBehavior` type and optional `hiddenBehavior` field were added to `ToggleDefinition` in this feature. `elementToggles` was added to `VisualizationRendererProps`. The shared `resolveElementToggles()` utility in `src/quiz-modes/resolveElementToggles.ts` can be reused by Locate mode and Free Recall mode — it takes element quiz states (isAnswered + wrongAttempts) and returns per-element toggle overrides. IdentifyMode manages its own state via `useIdentifyQuiz` hook since QuizShell integration (feature 15) isn't wired up yet. It accepts a `renderVisualization` render prop that receives elementStates, onElementClick, targetElementId, toggles, and elementToggles. Feature 15 will need to provide this render prop when wiring modes to renderers.
 
 ### 14. Locate Mode
 **Branch:** `feat/locate-mode`

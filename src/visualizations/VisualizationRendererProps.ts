@@ -34,6 +34,8 @@ export interface VisualizationRendererProps {
   readonly onClusterClick?: (cluster: ElementCluster) => void;
   readonly targetElementId?: string;
   readonly toggles: Readonly<Record<string, boolean>>;
+  /** Per-element toggle overrides. Renderer checks elementToggles[elementId][toggleKey] ?? toggles[toggleKey]. */
+  readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
   readonly clustering?: ClusteringConfig;
   /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;

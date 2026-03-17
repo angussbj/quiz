@@ -1,0 +1,105 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--spacing-sm);
+}
+
+.promptBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  gap: var(--spacing-md);
+}
+
+.promptText {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.promptLabel {
+  color: var(--color-accent);
+}
+
+.progress {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.controls {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.skipButton,
+.giveUpButton {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.skipButton:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.giveUpButton:hover {
+  background: var(--color-incorrect-bg);
+  color: var(--color-incorrect);
+}
+
+.visualizationArea {
+  flex: 1;
+  min-height: 0;
+}
+
+.progressBar {
+  height: 4px;
+  background: var(--color-bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-correct);
+  border-radius: 2px;
+}
+
+.finishedOverlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.finishedTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.finishedScore {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
+
+.finishedPercentage {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-correct);
+}
