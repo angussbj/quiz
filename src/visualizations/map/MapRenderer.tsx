@@ -64,7 +64,9 @@ export function MapRenderer({
   toggles,
   backgroundPaths,
 }: VisualizationRendererProps) {
-  const uniqueGroups = Array.from(new Set(elements.map((e) => e.group).filter(Boolean))) as string[];
+  const uniqueGroups = Array.from(
+    new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
+  );
   const showBorders = toggles['showBorders'] !== false;
   const showCityDots = toggles['showCityDots'] !== false;
   const showCountryNames = toggles['showCountryNames'] === true;
@@ -146,8 +148,9 @@ function MapContent({
         />
       ))}
 
-      {/* Map element shapes (for country quizzes where elements have svgPathData) */}
-      {showBorders && elements.map((element) => {
+      {/* Map element shapes (for country quizzes where elements have svgPathData).
+          Always rendered — these are interactive quiz items, not decorative borders. */}
+      {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!isMapElement(element) || !element.svgPathData) return null;
         const state = elementStates[element.id];
