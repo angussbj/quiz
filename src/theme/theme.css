@@ -10,6 +10,8 @@
   --color-text-muted: #8a8a87;
 
   /* Interactive */
+  --color-link: #2563b0;
+  --color-link-hover: #1a4a8a;
   --color-accent: #4a6fa5;
   --color-accent-hover: #3d5d8a;
   --color-on-accent: #ffffff;
@@ -71,6 +73,8 @@
   --color-text-secondary: #a8a8a5;
   --color-text-muted: #6a6a67;
 
+  --color-link: #5ba3e6;
+  --color-link-hover: #7db8ef;
   --color-accent: #6b9fd4;
   --color-accent-hover: #85b3e0;
   --color-on-accent: #ffffff;
