@@ -25,13 +25,13 @@ type Story = StoryObj<typeof LocateMode>;
 export const Default: Story = {
   args: {
     elements: sampleCityElements,
-    toggles: { showBorders: true, showCityDots: true, showCountryNames: false },
+    toggles: { showBorders: true, showCityDots: false, showCountryNames: false },
     Renderer: MapRenderer,
     backgroundPaths: sampleBackgroundPaths,
   },
 };
 
-export const WithLabels: Story = {
+export const WithHints: Story = {
   args: {
     elements: sampleCityElements,
     toggles: { showBorders: true, showCityDots: true, showCountryNames: true },
@@ -40,7 +40,7 @@ export const WithLabels: Story = {
   },
 };
 
-export const MinimalHints: Story = {
+export const NoBorders: Story = {
   args: {
     elements: sampleCityElements,
     toggles: { showBorders: false, showCityDots: false, showCountryNames: false },

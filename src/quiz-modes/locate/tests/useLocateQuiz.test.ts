@@ -60,12 +60,13 @@ describe('useLocateQuiz', () => {
     expect(result.current.totalTargets).toBe(2);
   });
 
-  it('all elements start in revealed state', () => {
-    const { result } = renderHook(() => useLocateQuiz(elements));
+  it('interactive elements start hidden, non-interactive start revealed', () => {
+    const mixedElements = [paris, makeNonInteractiveElement('border'), london];
+    const { result } = renderHook(() => useLocateQuiz(mixedElements));
 
-    expect(result.current.elementStates['paris']).toBe('revealed');
-    expect(result.current.elementStates['london']).toBe('revealed');
-    expect(result.current.elementStates['berlin']).toBe('revealed');
+    expect(result.current.elementStates['paris']).toBe('hidden');
+    expect(result.current.elementStates['london']).toBe('hidden');
+    expect(result.current.elementStates['border']).toBe('revealed');
   });
 
   it('records distance and advances target on position click', () => {

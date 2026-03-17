@@ -46,7 +46,10 @@ export function useLocateQuiz(
   const [elementStates, setElementStates] = useState<Readonly<Record<string, ElementVisualState>>>(() => {
     const states: Record<string, ElementVisualState> = {};
     for (const element of elements) {
-      states[element.id] = 'revealed';
+      // Interactive elements (quiz targets) start hidden — showing their
+      // positions would give away the answers. Non-interactive elements
+      // (decorative) start revealed.
+      states[element.id] = element.interactive ? 'hidden' : 'revealed';
     }
     return states;
   });
