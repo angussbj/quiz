@@ -10,6 +10,7 @@ npm run dev          # Vite dev server (default: port 5173)
 npm test             # Jest tests
 npm run typecheck    # tsc --noEmit
 npm run build        # Production build
+npm run storybook    # Storybook dev server (port 6006)
 ```
 
 ## Architecture
@@ -65,6 +66,12 @@ Three-tier architecture with TypeScript interfaces as contracts between tiers.
 - Fewer integration tests: full quiz flows
 - Use `@testing-library/react`. Query by role/label, not test IDs.
 - Jest uses `tsconfig.test.json` (needed for verbatimModuleSyntax compatibility)
+
+### Storybook
+- Stories live next to their components: `Component.stories.tsx`
+- Use Storybook to visually test components before they're wired to routes
+- Config: `.storybook/main.ts`, `.storybook/preview.ts`
+- Theme CSS is loaded globally in `preview.ts`
 
 ### Git
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`
