@@ -3,6 +3,7 @@ import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
+import { elementToggle } from '../elementToggle';
 import { isMapElement } from './MapElement';
 import styles from './MapRenderer.module.css';
 
@@ -93,16 +94,6 @@ export function MapRenderer({
       {svgOverlay}
     </ZoomPanContainer>
   );
-}
-
-/** Look up a per-element toggle, falling back to the global toggle value. */
-function elementToggle(
-  elementToggles: VisualizationRendererProps['elementToggles'],
-  toggles: Readonly<Record<string, boolean>>,
-  elementId: string,
-  toggleKey: string,
-): boolean {
-  return elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey] ?? false;
 }
 
 interface MapContentProps {

@@ -19,29 +19,33 @@
 
 .interactiveDot {
   cursor: pointer;
-  transition: r var(--transition-fast), fill var(--transition-normal);
+  transition: transform var(--transition-fast), fill var(--transition-normal);
+  transform-origin: center;
+  transform-box: fill-box;
 }
 
 .interactiveDot:hover {
-  r: 0.45;
+  transform: scale(1.5);
 }
 
 @keyframes correctPulse {
   0% {
-    r: 0.3;
+    transform: scale(1);
     opacity: 1;
   }
   40% {
-    r: 0.6;
+    transform: scale(2);
     opacity: 0.8;
   }
   100% {
-    r: 0.3;
+    transform: scale(1);
     opacity: 1;
   }
 }
 
 .correctPulse {
+  transform-origin: center;
+  transform-box: fill-box;
   animation: correctPulse 400ms ease-out;
 }
 

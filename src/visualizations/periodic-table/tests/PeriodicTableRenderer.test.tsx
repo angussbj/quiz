@@ -1,7 +1,9 @@
 import { render, fireEvent } from '@testing-library/react';
-import { PeriodicTableRenderer } from '../PeriodicTableRenderer';
+import { PeriodicTableRenderer, ZOOM_DETAIL_THRESHOLD } from '../PeriodicTableRenderer';
 import type { GridElement } from '../GridElement';
 import type { VisualizationRendererProps } from '../../VisualizationRendererProps';
+
+let mockScale = 1;
 
 jest.mock('react-zoom-pan-pinch', () => ({
   TransformWrapper: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -14,8 +16,14 @@ jest.mock('react-zoom-pan-pinch', () => ({
     centerView: jest.fn(),
     zoomToElement: jest.fn(),
   }),
-  useTransformEffect: () => {},
+  useTransformEffect: (cb: (ref: { state: { scale: number } }) => void) => {
+    cb({ state: { scale: mockScale } });
+  },
 }));
+
+afterEach(() => {
+  mockScale = 1;
+});
 
 function makeElement(overrides: Partial<GridElement> = {}): GridElement {
   return {
@@ -181,5 +189,37 @@ describe('PeriodicTableRenderer', () => {
     );
     const groups = container.querySelectorAll('g[data-element-id]');
     expect(groups).toHaveLength(1);
+  });
+
+  it('shows element name label when zoomed in above detail threshold', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elementStates: { H: 'revealed', He: 'revealed', Li: 'revealed' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('Hydrogen');
+    expect(textContents).toContain('Helium');
+    expect(textContents).toContain('Lithium');
+  });
+
+  it('does not show element name label when below detail threshold', () => {
+    mockScale = 1;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elementStates: { H: 'revealed', He: 'revealed', Li: 'revealed' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).not.toContain('Hydrogen');
+    expect(textContents).not.toContain('Helium');
+    expect(textContents).not.toContain('Lithium');
   });
 });

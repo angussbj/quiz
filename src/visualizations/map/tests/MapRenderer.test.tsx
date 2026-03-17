@@ -133,4 +133,29 @@ describe('MapRenderer', () => {
     const circles = container.querySelectorAll('circle');
     expect(circles).toHaveLength(sampleCityElements.length);
   });
+
+  it('applies per-element toggle overrides from elementToggles', () => {
+    renderMap({
+      toggles: { showBorders: true, showCityDots: true, showCountryNames: false },
+      elementToggles: {
+        paris: { showCountryNames: true },
+      },
+    });
+    // Paris should show a label due to per-element override
+    expect(screen.getByText('Paris')).toBeInTheDocument();
+    // Others should not since the global toggle is false
+    expect(screen.queryByText('Berlin')).not.toBeInTheDocument();
+    expect(screen.queryByText('Madrid')).not.toBeInTheDocument();
+    expect(screen.queryByText('Rome')).not.toBeInTheDocument();
+  });
+
+  it('renders svgOverlay content within the SVG', () => {
+    renderMap({
+      svgOverlay: <text data-testid="overlay-text">Overlay Content</text>,
+    });
+    const overlayText = screen.getByTestId('overlay-text');
+    expect(overlayText).toBeInTheDocument();
+    expect(overlayText.textContent).toBe('Overlay Content');
+    expect(overlayText.closest('svg')).toBeInTheDocument();
+  });
 });
