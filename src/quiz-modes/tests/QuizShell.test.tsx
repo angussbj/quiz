@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ToggleDefinition, TogglePreset } from '../ToggleDefinition';
+import type { QuizConfig } from '../QuizShell';
 import { QuizShell } from '../QuizShell';
 
 const toggles: ReadonlyArray<ToggleDefinition> = [
@@ -13,9 +14,9 @@ const presets: ReadonlyArray<TogglePreset> = [
 ];
 
 function renderShell() {
-  const childFn = jest.fn((toggleValues: Readonly<Record<string, boolean>>) => (
+  const childFn = jest.fn((config: QuizConfig) => (
     <div data-testid="quiz-content">
-      Labels: {String(toggleValues['show-labels'])}, Flags: {String(toggleValues['show-flags'])}
+      Labels: {String(config.toggleValues['show-labels'])}, Flags: {String(config.toggleValues['show-flags'])}
     </div>
   ));
 
@@ -23,6 +24,8 @@ function renderShell() {
     <QuizShell
       title="Test Quiz"
       description="A test quiz"
+      availableModes={['free-recall-unordered', 'identify']}
+      defaultMode="free-recall-unordered"
       toggles={toggles}
       presets={presets}
     >
