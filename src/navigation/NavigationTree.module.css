@@ -1,0 +1,72 @@
+.tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.subtree {
+  list-style: none;
+  padding-left: var(--spacing-lg);
+  margin: 0;
+  overflow: hidden;
+}
+
+.categoryButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: none;
+  background: none;
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+  text-align: left;
+}
+
+.categoryButton:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.chevron {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.quizLink {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  padding-left: calc(var(--spacing-sm) + 16px + var(--spacing-sm));
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.quizLink:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-accent);
+}
+
+.nodeItem {
+  margin: 0;
+}
+
+.highlight {
+  background-color: var(--color-highlight-bg);
+  color: var(--color-text-primary);
+  border-radius: 2px;
+  padding: 0 1px;
+}
