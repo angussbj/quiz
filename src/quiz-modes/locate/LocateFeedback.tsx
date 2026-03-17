@@ -2,9 +2,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { LocateFeedbackItem } from './LocateFeedbackItem';
 import { formatDistance } from './formatDistance';
 
-function scoreColor(score: number): string {
-  if (score >= 0.9) return 'var(--color-correct)';
-  if (score >= 0.4) return 'var(--color-highlight)';
+function distanceColor(distanceKm: number): string {
+  if (distanceKm <= 100) return 'var(--color-correct)';
+  if (distanceKm <= 300) return 'var(--color-highlight)';
   return 'var(--color-incorrect)';
 }
 
@@ -32,7 +32,7 @@ interface FeedbackLineProps {
 }
 
 function FeedbackLine({ item }: FeedbackLineProps) {
-  const color = scoreColor(item.score);
+  const color = distanceColor(item.distanceKm);
   const midX = (item.clickPosition.x + item.targetPosition.x) / 2;
   const midY = (item.clickPosition.y + item.targetPosition.y) / 2;
 
