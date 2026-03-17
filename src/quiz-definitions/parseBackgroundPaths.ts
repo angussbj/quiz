@@ -3,7 +3,7 @@ import type { BackgroundPath } from '@/visualizations/VisualizationRendererProps
 /**
  * Parse border CSV rows into BackgroundPath objects for renderers.
  *
- * Expected CSV columns: id, name, group, paths
+ * Expected CSV columns: id, name, region, group, paths (region is used for filtering, not by this function)
  * The `paths` column contains one or more SVG path `d` strings separated by `|`.
  * Multi-path rows produce one BackgroundPath per segment, with IDs like `france-0`, `france-1`.
  * Single-path rows use the row ID directly (e.g., `france`).

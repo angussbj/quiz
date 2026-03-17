@@ -1,0 +1,6 @@
+# Large source data files — download fresh when regenerating.
+# See scripts/generateBorderPaths.ts and scripts/generateWorldCapitals.ts
+# for download URLs.
+countries.geojson
+countries.json
+cities.csv
