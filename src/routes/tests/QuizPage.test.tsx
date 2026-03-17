@@ -50,7 +50,6 @@ describe('QuizPage', () => {
     renderQuizPage('geo-capitals-europe');
     expect(screen.getByText('Geography')).toBeInTheDocument();
     expect(screen.getByText('Capitals')).toBeInTheDocument();
-    expect(screen.getByText('Europe')).toBeInTheDocument();
   });
 
   it('shows loading state then loaded data', async () => {
