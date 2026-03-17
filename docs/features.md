@@ -168,61 +168,6 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 **Depends on:** Features 12, 13, 14 (at least one mode must exist to wire into).
 **Note:** This was split out because features 12–14 may be developed in parallel, and unifying toggle resolution afterward avoids conflicting implementations.
 
-### Audit: Changes and improvements from code review of features 1–14b
-
-Reviewed all completed features. Issues grouped by severity. Status: DONE / SKIPPED (with reason).
-
-#### Bugs
-
-1. DONE — **Periodic Table: Rules of Hooks violation** — Replaced `useCallback` with inline arrow in `GridCell`.
-2. DONE — **Timer: `setExpired(true)` inside state updater** — Moved expiry detection to a `useEffect`.
-3. DONE — **Identify Mode: `flashTimeoutRef` not cleaned up on unmount** — Added cleanup effect.
-4. DONE — **Map Renderer: CSS `r` animation doesn't work in Firefox** — Replaced with `transform: scale(...)`.
-5. DONE — **ClusterBadge: CSS `font-size: 11px` overrides computed `fontSize`** — Removed hardcoded font-size.
-6. DONE — **ClusterBadge: `originX`/`originY` viewBox units with `px` suffix** — Restructured to translate-then-scale pattern.
-7. DONE — **Timeline Renderer: same `originX`/`originY` bug** — Used fractional `originX: 0, originY: 0.5`.
-8. DONE — **Timeline Renderer: spacer elements rendered as interactive bars** — Filtered `__spacer` elements from visible elements.
-9. DONE — **useQuizProgress: `addAttempt` stale-closure bug** — `useLocalStorage.set` now accepts functional updater.
-
-#### Spec mismatches
-
-10. DONE — **Locate scoring: `percentage` ignores partial credit** — Percentage now computed as mean of answer scores.
-11. DONE — **Locate mode: no animation differentiation** — `feedbackIntensity()` varies animation by score (energetic/standard/muted).
-
-#### Missing wiring / incomplete integration
-
-12. DONE — **Toggle resolution not wired in Locate Mode** — Added `toggleDefinitions` to props, wired `resolveElementToggles`, passes `elementToggles` to renderer.
-13. SKIPPED — **Toggle resolution not wired in Free Recall Mode** — FreeRecallMode has no `renderVisualization` prop; nowhere to pass `elementToggles`. Will be wired when QuizShell integration (#15) adds the renderer.
-14. DONE — **Timeline Renderer ignores `elementToggles`** — Threaded prop through to `TimelineContent`. No toggle-dependent rendering yet (TODO comment added).
-15. DONE — **`IdentifyModeProps` contract mismatch** — Removed conflicting optional re-declaration of `toggleDefinitions`.
-16. DONE — **QuizPage breadcrumbs non-navigable** — Changed `<nav>` to `<div>` (proper links deferred to #15/#16).
-
-#### Code quality
-
-17. DONE — **`resolveElementToggles` non-null assertion** — Changed filter to use type predicate, removed `!`.
-18. DONE — **`elementToggle` helper duplicated** — Extracted to `src/visualizations/elementToggle.ts`, both renderers import it.
-19. DONE — **`shuffleArray` duplicated in Locate Mode** — Replaced with import from `@/utilities/shuffle`.
-20. DONE — **`normalizeText` keeps underscores** — Changed regex to `/[^a-zA-Z0-9\s]/g`.
-21. DONE — **Timer: no Framer Motion number transitions** — Added `AnimatePresence` + `motion.span` with slide/fade.
-22. DONE — **Identify Mode: dead `else if` branch** — Collapsed into single `else`.
-23. DONE — **Identify Mode: dead `.finishedTitle` CSS class** — Removed.
-24. DONE — **Identify Mode: `AnimatePresence` no-op** — Removed useless `AnimatePresence` wrapper.
-25. DONE — **ClusterBadge: exit animations never fire** — Wrapped cluster `.map()` in `<AnimatePresence>`.
-26. DONE — **Hardcoded `rgba` in Search focus ring** — Replaced with `color-mix(in srgb, var(--color-accent) 15%, transparent)`.
-27. DONE — **Timeline: hardcoded `1200` for tick spacing** — Now uses `(maxX - minX) * scale`.
-28. DONE — **Toggle Panel: row not clickable** — Added `onClick` to `.toggleRow` div, `stopPropagation` on switch.
-
-#### Missing tests / UX gaps
-
-29. DONE — **`useNavigationState` has no tests** — Created 10 tests covering initial state, search threshold, filtering, toggle behavior.
-30. DONE — **`HighlightedLabel` not tested** — Added 4 tests for mark rendering, threshold, all-occurrences, case-insensitivity.
-31. DONE — **Periodic Table: zoomed-in rendering untested** — Added tests for above/below `ZOOM_DETAIL_THRESHOLD`.
-32. DONE — **Map Renderer: no test for `elementToggles`** — Added test with per-element override.
-33. DONE — **Map Renderer: no test for `svgOverlay`** — Added test verifying overlay renders in SVG.
-34. DONE — **Identify Mode: no test for correct click** — Added tests for correct and wrong click callbacks.
-35. DONE — **Free Recall: final-answer animation suppressed** — Removed `!isFinished` guard.
-36. DONE — **Navigation: search highlight only marks first occurrence** — Replaced with regex-based all-occurrences approach.
-37. DONE — **Navigation: grid applied to single-quiz categories** — Added `>= 4` child threshold.
 
 ## Group D: Integration (depends on Groups A–C)
 
