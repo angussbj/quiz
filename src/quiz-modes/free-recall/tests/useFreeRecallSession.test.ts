@@ -121,12 +121,11 @@ describe('useFreeRecallSession', () => {
     expect(result.current.elementToggles['berlin']?.showDots).toBe(false);
   });
 
-  it('resolves all elementToggles to true when toggle is ON', () => {
+  it('returns empty elementToggles when toggle is ON (renderer uses global fallback)', () => {
     const config = { ...defaultConfig, toggleValues: { showDots: true } };
     const { result } = renderHook(() => useFreeRecallSession(config));
 
-    expect(result.current.elementToggles['paris']?.showDots).toBe(true);
-    expect(result.current.elementToggles['berlin']?.showDots).toBe(true);
+    expect(result.current.elementToggles).toEqual({});
   });
 
   it('resolves elementToggles for all on give up', () => {

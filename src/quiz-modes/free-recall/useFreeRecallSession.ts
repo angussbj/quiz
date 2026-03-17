@@ -74,28 +74,22 @@ export function useFreeRecallSession({
     ? 'finished'
     : 'active';
 
-  // For free recall, revealedElementIds = correctIds + (givenUp ? all remaining : nothing)
-  const revealedElementIds = useMemo(() => {
-    const revealed = new Set(correctIds);
-    if (givenUp) {
-      for (const el of elements) {
-        revealed.add(el.id);
-      }
+  // Build per-element quiz state for toggle resolution.
+  // In free recall: no wrong attempts, isAnswered = correct or given up.
+  const elementQuizStates = useMemo(() => {
+    const states: Record<string, { isAnswered: boolean; wrongAttempts: number }> = {};
+    for (const element of elements) {
+      states[element.id] = {
+        isAnswered: correctIdSet.has(element.id) || givenUp,
+        wrongAttempts: 0, // no wrong answer tracking in free recall
+      };
     }
-    return revealed;
-  }, [correctIds, givenUp, elements]);
-
-  const allElementIds = useMemo(() => elements.map((el) => el.id), [elements]);
+    return states;
+  }, [elements, correctIdSet, givenUp]);
 
   const elementToggles = useMemo(
-    () => resolveElementToggles(
-      allElementIds,
-      toggleDefinitions,
-      toggleValues,
-      revealedElementIds,
-      {}, // no wrong answer counts in free recall
-    ),
-    [allElementIds, toggleDefinitions, toggleValues, revealedElementIds],
+    () => resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates),
+    [toggleDefinitions, toggleValues, elementQuizStates],
   );
 
   // Use ref for remainingRows in callback to avoid stale closures
