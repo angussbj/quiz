@@ -73,5 +73,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    gh pr merge <PR-number> --squash --delete-branch
    ```
    This will error with `fatal: 'main' is already checked out at ...` — that's expected when running from a worktree. The merge still succeeds via the GitHub API. You can verify with `gh pr view <PR-number> --json state`.
-4. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
-5. Confirm: "Feature merged and worktree cleaned up."
+4. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't).
+5. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
+6. Check that the worktree directory under `.claude/worktrees/<name>` is fully removed. Tools like Playwright can leave behind directories (e.g. `.playwright-mcp`) that survive the git worktree cleanup. If the directory still exists, `rm -rf` it.
+7. Confirm: "Feature merged and worktree cleaned up."
