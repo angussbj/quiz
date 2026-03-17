@@ -63,6 +63,7 @@
 .visualization {
   flex: 1;
   min-height: 0;
+  position: relative;
 }
 
 /* --- Score bar --- */
@@ -100,14 +101,17 @@
 
 /* --- Results --- */
 
-.resultsContainer {
+.resultsOverlay {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
   gap: var(--spacing-lg);
   padding: var(--spacing-xl);
+  background: color-mix(in srgb, var(--color-bg-primary) 90%, transparent);
+  backdrop-filter: blur(4px);
 }
 
 .resultsTitle {
@@ -146,4 +150,22 @@
 .resultLabel {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+}
+
+.closeResultsButton {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: var(--spacing-sm);
+}
+
+.closeResultsButton:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }

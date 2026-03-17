@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { VisualizationRendererProps } from '@/visualizations/VisualizationRendererProps';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
@@ -52,6 +52,14 @@ function renderLocateMode() {
 }
 
 describe('LocateMode', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('shows the initial prompt with a target label', () => {
     renderLocateMode();
 
@@ -80,7 +88,7 @@ describe('LocateMode', () => {
   });
 
   it('advances to next target after skip', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     renderLocateMode();
 
     const initialPrompt = screen.getByText(/Click where/).textContent;
@@ -90,27 +98,50 @@ describe('LocateMode', () => {
     expect(newPrompt).not.toBe(initialPrompt);
   });
 
-  it('shows results after give up', async () => {
-    const user = userEvent.setup();
+  it('shows finished message after give up, then results after delay', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     renderLocateMode();
 
     await user.click(screen.getByRole('button', { name: 'Give up' }));
 
-    expect(screen.getByText('Results')).toBeInTheDocument();
+    // Finished message appears immediately
+    expect(screen.getByText(/Finished/)).toBeInTheDocument();
+    // Results not shown yet
+    expect(screen.queryByText('Results')).not.toBeInTheDocument();
+
+    // After 1s delay, results overlay appears
+    act(() => { jest.advanceTimersByTime(1100); });
+    await waitFor(() => {
+      expect(screen.getByText('Results')).toBeInTheDocument();
+    });
   });
 
-  it('shows results after all targets are answered', async () => {
-    const user = userEvent.setup();
+  it('can dismiss and reopen results', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     renderLocateMode();
 
-    await user.click(screen.getByRole('button', { name: 'Click on Paris' }));
-    await user.click(screen.getByRole('button', { name: 'Click on Paris' }));
+    await user.click(screen.getByRole('button', { name: 'Give up' }));
+    act(() => { jest.advanceTimersByTime(1100); });
 
-    expect(screen.getByText('Results')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Results')).toBeInTheDocument();
+    });
+
+    // Close results
+    await user.click(screen.getByRole('button', { name: 'View map' }));
+    await waitFor(() => {
+      expect(screen.queryByText('Results')).not.toBeInTheDocument();
+    });
+
+    // Reopen results
+    await user.click(screen.getByRole('button', { name: 'Show results' }));
+    await waitFor(() => {
+      expect(screen.getByText('Results')).toBeInTheDocument();
+    });
   });
 
   it('shows score bar with correct count', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     renderLocateMode();
 
     await user.click(screen.getByRole('button', { name: 'Click on Paris' }));

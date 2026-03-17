@@ -1,11 +1,13 @@
-import type { ComponentType } from 'react';
-import { motion } from 'framer-motion';
+import { type ComponentType, useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import { useLocateQuiz } from './useLocateQuiz';
 import { LocateFeedback } from './LocateFeedback';
 import { LocateResults } from './LocateResults';
 import styles from './LocateMode.module.css';
+
+const RESULTS_DELAY_MS = 1000;
 
 export interface LocateModeProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
@@ -27,39 +29,57 @@ export function LocateMode({
   clustering,
 }: LocateModeProps) {
   const quiz = useLocateQuiz(elements);
+  const [showResults, setShowResults] = useState(false);
 
-  if (quiz.isFinished) {
-    return (
-      <LocateResults
-        correctCount={quiz.correctCount}
-        totalTargets={quiz.totalTargets}
-        averageDistance={quiz.averageDistance}
-        totalScore={quiz.totalScore}
-      />
-    );
-  }
+  // Show results after a short delay when the quiz finishes
+  useEffect(() => {
+    if (!quiz.isFinished) return;
+    const timer = setTimeout(() => setShowResults(true), RESULTS_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [quiz.isFinished]);
+
+  const handleCloseResults = useCallback(() => setShowResults(false), []);
+  const handleOpenResults = useCallback(() => setShowResults(true), []);
 
   return (
     <div className={styles.container}>
       <div className={styles.promptBar}>
-        <PromptDisplay
-          targetLabel={quiz.currentTarget?.label ?? ''}
-          currentIndex={quiz.currentTargetIndex}
-          total={quiz.totalTargets}
-        />
+        {quiz.isFinished ? (
+          <FinishedPrompt
+            correctCount={quiz.correctCount}
+            totalTargets={quiz.totalTargets}
+          />
+        ) : (
+          <PromptDisplay
+            targetLabel={quiz.currentTarget?.label ?? ''}
+            currentIndex={quiz.currentTargetIndex}
+            total={quiz.totalTargets}
+          />
+        )}
         <div className={styles.controls}>
-          <button
-            className={styles.skipButton}
-            onClick={quiz.handleSkip}
-          >
-            Skip
-          </button>
-          <button
-            className={styles.giveUpButton}
-            onClick={quiz.handleGiveUp}
-          >
-            Give up
-          </button>
+          {quiz.isFinished ? (
+            <button
+              className={styles.skipButton}
+              onClick={handleOpenResults}
+            >
+              Show results
+            </button>
+          ) : (
+            <>
+              <button
+                className={styles.skipButton}
+                onClick={quiz.handleSkip}
+              >
+                Skip
+              </button>
+              <button
+                className={styles.giveUpButton}
+                onClick={quiz.handleGiveUp}
+              >
+                Give up
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -67,12 +87,24 @@ export function LocateMode({
         <Renderer
           elements={elements}
           elementStates={quiz.elementStates}
-          onPositionClick={quiz.handlePositionClick}
+          onPositionClick={quiz.isFinished ? undefined : quiz.handlePositionClick}
           toggles={toggles}
           backgroundPaths={backgroundPaths}
           clustering={clustering}
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
         />
+
+        <AnimatePresence>
+          {showResults && (
+            <LocateResults
+              correctCount={quiz.correctCount}
+              totalTargets={quiz.totalTargets}
+              averageDistance={quiz.averageDistance}
+              totalScore={quiz.totalScore}
+              onClose={handleCloseResults}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       <div className={styles.scoreBar}>
@@ -107,6 +139,21 @@ function PromptDisplay({ targetLabel, currentIndex, total }: PromptDisplayProps)
       >
         Click where <strong>{targetLabel}</strong> is
       </motion.span>
+    </div>
+  );
+}
+
+interface FinishedPromptProps {
+  readonly correctCount: number;
+  readonly totalTargets: number;
+}
+
+function FinishedPrompt({ correctCount, totalTargets }: FinishedPromptProps) {
+  return (
+    <div className={styles.prompt}>
+      <span className={styles.promptText}>
+        Finished — {correctCount}/{totalTargets} correct
+      </span>
     </div>
   );
 }

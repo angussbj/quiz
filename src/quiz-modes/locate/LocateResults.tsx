@@ -7,6 +7,7 @@ interface LocateResultsProps {
   readonly totalTargets: number;
   readonly averageDistance: number;
   readonly totalScore: number;
+  readonly onClose: () => void;
 }
 
 export function LocateResults({
@@ -14,15 +15,17 @@ export function LocateResults({
   totalTargets,
   averageDistance,
   totalScore,
+  onClose,
 }: LocateResultsProps) {
   const percentage = totalTargets > 0 ? Math.round((correctCount / totalTargets) * 100) : 0;
   const averageScore = totalTargets > 0 ? (totalScore / totalTargets) * 100 : 0;
 
   return (
     <motion.div
-      className={styles.resultsContainer}
+      className={styles.resultsOverlay}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 12 }}
       transition={{ duration: 0.3 }}
     >
       <h2 className={styles.resultsTitle}>Results</h2>
@@ -30,7 +33,7 @@ export function LocateResults({
       <div className={styles.resultsGrid}>
         <div className={styles.resultCard}>
           <span className={styles.resultValue}>{correctCount}/{totalTargets}</span>
-          <span className={styles.resultLabel}>within 50 km</span>
+          <span className={styles.resultLabel}>within 100 km</span>
         </div>
 
         <div className={styles.resultCard}>
@@ -48,6 +51,10 @@ export function LocateResults({
           <span className={styles.resultLabel}>avg score</span>
         </div>
       </div>
+
+      <button className={styles.closeResultsButton} onClick={onClose}>
+        View map
+      </button>
     </motion.div>
   );
 }
