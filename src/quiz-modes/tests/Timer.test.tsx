@@ -94,12 +94,12 @@ describe('Timer — countdown mode', () => {
 
   it('marks as expired when countdown reaches zero', () => {
     render(<Timer countdownSeconds={2} />);
-    const timerElement = screen.getByText('00:02').parentElement!;
-    expect(timerElement).not.toHaveAttribute('data-expired');
+    const timerElement = screen.getByText('00:02').closest('[data-expired]');
+    expect(timerElement).not.toBeInTheDocument();
 
     act(() => jest.advanceTimersByTime(2000));
-    const expiredElement = screen.getByText('00:00').parentElement!;
-    expect(expiredElement).toHaveAttribute('data-expired');
+    const expiredElement = screen.getByText('00:00').closest('[data-expired]');
+    expect(expiredElement).toBeInTheDocument();
   });
 
   it('does not call onExpire when paused before reaching zero', () => {

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import styles from './Timer.module.css';
 
 export interface TimerProps {
@@ -28,13 +29,9 @@ export function Timer({ countdownSeconds, onExpire, paused = false }: TimerProps
     const interval = setInterval(() => {
       setElapsedSeconds((previous) => {
         const next = previous + 1;
-
         if (countdownSeconds !== undefined && next >= countdownSeconds) {
-          setExpired(true);
-          onExpireRef.current?.();
           return countdownSeconds;
         }
-
         return next;
       });
     }, 1000);
@@ -42,17 +39,42 @@ export function Timer({ countdownSeconds, onExpire, paused = false }: TimerProps
     return () => clearInterval(interval);
   }, [paused, expired, countdownSeconds]);
 
+  useEffect(() => {
+    if (
+      countdownSeconds !== undefined &&
+      elapsedSeconds >= countdownSeconds &&
+      !expired
+    ) {
+      setExpired(true);
+      onExpireRef.current?.();
+    }
+  }, [elapsedSeconds, countdownSeconds, expired]);
+
   const displaySeconds =
     countdownSeconds !== undefined
       ? Math.max(0, countdownSeconds - elapsedSeconds)
       : elapsedSeconds;
+
+  const timeString = formatTime(displaySeconds);
 
   return (
     <div
       className={`${styles.timer} ${expired ? styles.expired : ''}`}
       data-expired={expired || undefined}
     >
-      <time>{formatTime(displaySeconds)}</time>
+      <time>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.span
+            key={timeString}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+          >
+            {timeString}
+          </motion.span>
+        </AnimatePresence>
+      </time>
     </div>
   );
 }
