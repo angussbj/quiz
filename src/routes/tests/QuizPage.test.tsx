@@ -12,6 +12,14 @@ function renderQuizPage(quizId: string) {
   );
 }
 
+function mockCsvResponse(csvText: string) {
+  return {
+    ok: true,
+    headers: new Headers({ 'content-type': 'text/csv' }),
+    text: () => Promise.resolve(csvText),
+  };
+}
+
 describe('QuizPage', () => {
   const originalFetch = globalThis.fetch;
 
@@ -25,10 +33,9 @@ describe('QuizPage', () => {
   });
 
   it('renders quiz title and description for a valid quiz', () => {
-    globalThis.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve('id,city,country\nparis,Paris,France'),
-    });
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      mockCsvResponse('id,city,country\nparis,Paris,France'),
+    );
 
     renderQuizPage('geo-capitals-europe');
     expect(screen.getByRole('heading', { name: 'European Capitals' })).toBeInTheDocument();
@@ -36,10 +43,9 @@ describe('QuizPage', () => {
   });
 
   it('renders breadcrumbs from the quiz path', () => {
-    globalThis.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve('id,city\nparis,Paris'),
-    });
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      mockCsvResponse('id,city\nparis,Paris'),
+    );
 
     renderQuizPage('geo-capitals-europe');
     expect(screen.getByText('Geography')).toBeInTheDocument();
@@ -48,10 +54,9 @@ describe('QuizPage', () => {
   });
 
   it('shows loading state then loaded data', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve('id,city,country\nparis,Paris,France\nberlin,Berlin,Germany'),
-    });
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      mockCsvResponse('id,city,country\nparis,Paris,France\nberlin,Berlin,Germany'),
+    );
 
     renderQuizPage('geo-capitals-europe');
 
@@ -81,10 +86,9 @@ describe('QuizPage', () => {
   });
 
   it('displays quiz metadata', () => {
-    globalThis.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve('id,city\nparis,Paris'),
-    });
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      mockCsvResponse('id,city\nparis,Paris'),
+    );
 
     renderQuizPage('geo-capitals-europe');
     expect(screen.getByText('map')).toBeInTheDocument();

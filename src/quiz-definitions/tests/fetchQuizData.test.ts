@@ -1,5 +1,13 @@
 import { fetchQuizData } from '../fetchQuizData';
 
+function mockCsvResponse(csvText: string) {
+  return {
+    ok: true,
+    headers: new Headers({ 'content-type': 'text/csv' }),
+    text: () => Promise.resolve(csvText),
+  };
+}
+
 describe('fetchQuizData', () => {
   const originalFetch = globalThis.fetch;
 
@@ -8,10 +16,9 @@ describe('fetchQuizData', () => {
   });
 
   it('parses CSV response into QuizDataRow objects', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve('id,city,country\nparis,Paris,France\nberlin,Berlin,Germany'),
-    });
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      mockCsvResponse('id,city,country\nparis,Paris,France\nberlin,Berlin,Germany'),
+    );
 
     const rows = await fetchQuizData('/data/test.csv');
     expect(rows).toEqual([
@@ -22,10 +29,9 @@ describe('fetchQuizData', () => {
   });
 
   it('returns empty array for CSV with only headers', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      text: () => Promise.resolve('id,city,country'),
-    });
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      mockCsvResponse('id,city,country'),
+    );
 
     const rows = await fetchQuizData('/data/empty.csv');
     expect(rows).toEqual([]);
@@ -47,5 +53,17 @@ describe('fetchQuizData', () => {
     globalThis.fetch = jest.fn().mockRejectedValue(new TypeError('Failed to fetch'));
 
     await expect(fetchQuizData('/data/broken.csv')).rejects.toThrow('Failed to fetch');
+  });
+
+  it('throws when response is HTML (SPA fallback)', async () => {
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      headers: new Headers({ 'content-type': 'text/html' }),
+      text: () => Promise.resolve('<!doctype html>'),
+    });
+
+    await expect(fetchQuizData('/data/missing.csv')).rejects.toThrow(
+      'Quiz data not found at /data/missing.csv (received HTML instead of CSV)',
+    );
   });
 });
