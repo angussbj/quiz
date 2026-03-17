@@ -51,7 +51,7 @@ Features for parallel agent development. Each feature should be developed in its
 ### 7. Score Calculator — DONE
 **Branch:** `feat/score-calculator`
 **Files:** `src/scoring/calculateScore.ts`, tests
-**Scope:** Implement scoring logic for all answer types: unordered recall (count correct, no penalty), ordered recall (track hints used), locate (distance-based with non-linear scoring curve — e.g., full marks within 50km, diminishing to zero at 500km), identify (binary), multiple choice (binary). Return `ScoreResult` with appropriate `ScoreDetails`. Thorough unit tests for each mode and edge cases.
+**Scope:** Implement scoring logic for all answer types: unordered recall (count correct, no penalty), ordered recall (track hints used), locate (distance-based with linear decay — full marks within 100km, diminishing linearly to zero at 500km), identify (binary), multiple choice (binary). Return `ScoreResult` with appropriate `ScoreDetails`. Thorough unit tests for each mode and edge cases.
 
 ### 8. useLocalStorage Tests & Hardening — DONE
 **Branch:** `feat/local-storage`
@@ -167,6 +167,94 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 **Scope:** Unify toggle resolution across all quiz modes (12, 13, 14). Add `hiddenBehavior` field to `ToggleDefinition`. Create a shared `resolveElementToggles` utility that computes per-element toggle booleans from toggle definitions, global toggle values, and per-element quiz state (answered, attempt count). Wire into each quiz mode. Ensure no unnecessary duplication across modes. Also add `elementToggles` support to renderers (reading `elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]`).
 **Depends on:** Features 12, 13, 14 (at least one mode must exist to wire into).
 **Note:** This was split out because features 12–14 may be developed in parallel, and unifying toggle resolution afterward avoids conflicting implementations.
+
+### Audit: Changes and improvements from code review of features 1–14b
+
+Reviewed all completed features. Issues are grouped by severity and ordered by feature.
+
+#### Bugs
+
+1. **Periodic Table: Rules of Hooks violation** — `PeriodicTableRenderer.tsx` line 101–111: `useCallback` is called after a conditional early return (`if (isClustered) return null`) inside `GridCell`. This violates React's Rules of Hooks and will error when `isClustered` changes. Fix: move the early return to after the hook, or replace the `useCallback` with an inline arrow.
+
+2. **Timer: `setExpired(true)` called inside `setElapsedSeconds` updater** — `Timer.tsx` line 33: calling a separate `setState` from inside another state updater is a side effect that React double-fires in Strict Mode development builds, causing `onExpire` to fire twice. Fix: detect expiry in a `useEffect` watching `elapsedSeconds` instead.
+
+3. **Identify Mode: `flashTimeoutRef` not cleaned up on unmount** — `useIdentifyQuiz.ts`: the 600ms `setTimeout` is never cleared on unmount, risking a setState-on-unmounted-component warning. Fix: add `useEffect(() => () => clearFlash(), [])`.
+
+4. **Map Renderer: CSS `r` animation doesn't work in Firefox** — `MapRenderer.module.css` lines 29–46: animating the SVG `r` attribute via CSS keyframes is not supported in Firefox. Fix: use `transform: scale(...)` instead.
+
+5. **ClusterBadge: CSS `font-size: 11px` overrides computed viewBox-unit `fontSize`** — `ClusterBadge.module.css` line 17: the CSS class declaration overrides the inline SVG `fontSize` attribute (CSS has higher specificity than SVG presentation attributes). The badge text won't scale with zoom. Fix: remove `font-size: 11px` from the CSS.
+
+6. **ClusterBadge: `originX`/`originY` use viewBox units with `px` suffix** — `ClusterBadge.tsx` line 45: `originX: "${x}px"` where `x` is a viewBox coordinate, not a screen pixel value. Scale animations will pivot from the wrong point at any non-default zoom. Fix: use unitless values or restructure the `<g>` to translate to centroid and scale from origin.
+
+7. **Timeline Renderer: same `originX`/`originY` bug** — `TimelineRenderer.tsx` line 344: `originX: "${minX}px"` where `minX` is a viewBox coordinate (e.g. 38000). Scale animation origin is completely wrong. Same fix as above.
+
+8. **Timeline Renderer: spacer elements rendered as interactive bars** — `buildTimelineElements` adds `__spacer-left/right` elements that pass through to rendering with cursor/pointer and mouse handlers. They also corrupt `outsideLabelSpace` gap calculations on track 0. Fix: filter spacers from `visibleElements` or mark them non-interactive.
+
+9. **useQuizProgress: `addAttempt` stale-closure bug** — `useQuizProgress.ts` lines 25–40: `addAttempt` closes over `value`, so two calls in one render cycle will lose the first. Fix: support functional updater form in `useLocalStorage.set`. Low priority — quiz completion is a single event so this won't happen in practice.
+
+#### Spec mismatches
+
+10. **Locate scoring: `percentage` ignores partial credit** — `calculateLocateScore.ts`: percentage is computed from binary correct/incorrect (within `FULL_MARKS_RADIUS_KM`), not from the continuous 0–1 scores. A player placing every answer within 200km gets 0%. This conflicts with the "completion-oriented, not punishing" UX goal.
+
+11. **Locate mode: no animation differentiation for close vs far guesses** — spec says "satisfying animation for close guesses, gentle feedback for far ones." Currently all feedback animations are identical.
+
+#### Missing wiring / incomplete integration
+
+12. **Toggle resolution not wired in Locate Mode** — `LocateMode.tsx` doesn't call `resolveElementToggles` or pass `elementToggles` to the renderer. `LocateModeProps` doesn't even accept `toggleDefinitions`. The entire per-element toggle system is inoperative in this mode.
+
+13. **Toggle resolution not wired in Free Recall Mode** — `FreeRecallMode.tsx` doesn't call `resolveElementToggles` or pass `elementToggles`. It has no `renderVisualization` prop, so even if toggles were resolved, there's no renderer to receive them.
+
+14. **Timeline Renderer ignores `elementToggles` entirely** — `TimelineRenderer.tsx` receives `VisualizationRendererProps` (which includes `elementToggles`) but never reads or passes it through. Timeline quizzes will silently ignore per-element toggle overrides.
+
+15. **`IdentifyModeProps` contract mismatch with `QuizModeProps`** — `IdentifyMode.tsx`: re-declares `toggleDefinitions` as optional (base has it required), adds `toggleValues` which isn't in the base contract. This will cause integration friction with QuizShell (#15).
+
+16. **QuizPage breadcrumbs are non-navigable** — `QuizPage.tsx` lines 30–37: breadcrumb segments are plain `<span>` elements inside a `<nav>`. A `<nav>` with no links is semantically incorrect and the segments should link back to filtered home views.
+
+#### Code quality
+
+17. **`resolveElementToggles` non-null assertion** — `resolveElementToggles.ts` line 36: `toggle.hiddenBehavior!` — the filter ensures it's defined, but `!` violates the spirit of the "no type casting" rule. Fix: use a type-predicate filter `(t): t is ToggleDefinition & { readonly hiddenBehavior: HiddenBehavior }`.
+
+18. **`elementToggle` helper duplicated** — identical function in `MapRenderer.tsx` lines 99–106 and `PeriodicTableRenderer.tsx` lines 14–21. Extract to a shared utility in `src/visualizations/`.
+
+19. **`shuffleArray` duplicated in Locate Mode** — `useLocateQuiz.ts` lines 10–17 reimplements Fisher-Yates shuffle. `src/utilities/shuffle.ts` already exists and is used by `useIdentifyQuiz`. Fix: import the shared utility.
+
+20. **`normalizeText` keeps underscores** — `matchAnswer.ts` line 15: `/[^\w\s]/g` keeps `_` since `\w` includes it. An answer like `some_place` won't match user input `some place`. Fix: use `/[^a-zA-Z0-9\s]/g`.
+
+21. **Timer: no Framer Motion number transitions** — spec and CLAUDE.md both require Framer Motion for animations. The timer renders plain `<time>` with no transitions. Numbers just snap.
+
+22. **Identify Mode: dead `else if` branch** — `useIdentifyQuiz.ts` lines 66–69: both the `el.id === currentElementId` branch and the `else` branch assign `'hidden'`. The `else if` is dead code.
+
+23. **Identify Mode: dead `.finishedTitle` CSS class** — `IdentifyMode.module.css` line 91 defines `.finishedTitle` but it's never referenced in the component.
+
+24. **Identify Mode: `AnimatePresence` wrapping `motion.span` with no exit/key** — `IdentifyMode.tsx` lines 111–119: `AnimatePresence` provides no value without `key` and `exit` props on its children.
+
+25. **ClusterBadge: exit animations never fire** — `ZoomPanContainer.tsx`: cluster badges are rendered via `.map()` without an `AnimatePresence` wrapper, so the `exit` prop on `ClusterBadge` is inert.
+
+26. **Hardcoded `rgba` in Search focus ring** — `Search.module.css` line 27: `rgba(74, 111, 165, 0.15)` should use `color-mix(in srgb, var(--color-accent) 15%, transparent)` per the "never hardcode colors" rule.
+
+27. **Timeline: hardcoded `1200` for tick level selection** — `TimelineRenderer.tsx` line 145: `approximatePixels = 1200 * scale` assumes a fixed viewBox width. Short or very long timelines will get wrong tick spacing. Should use actual viewBox width.
+
+28. **Toggle Panel: cursor pointer on row but label not clickable** — `TogglePanel.module.css` line 89: `.toggleRow` has `cursor: pointer` but clicking the label text doesn't toggle — only the switch button does.
+
+#### Missing tests / UX gaps
+
+29. **`useNavigationState` has no tests** — manages search threshold, expanded-path merge, and toggle-during-search blocking. Project guidelines require heavy hook testing.
+
+30. **`HighlightedLabel` not tested** — `NavigationTree.tsx`: no test passes a `searchQuery` prop to verify `<mark>` highlighting or the 3-char threshold.
+
+31. **Periodic Table: zoomed-in rendering path untested** — test mock never triggers scale > `ZOOM_DETAIL_THRESHOLD`, so detail rendering (element name below symbol) has zero coverage.
+
+32. **Map Renderer: no test for `elementToggles` per-element override** — the `elementToggle` function is exercised by no test.
+
+33. **Map Renderer: no test for `svgOverlay` rendering** — the prop has placement subtleties (outside the click handler `<g>`) that should be regression-guarded.
+
+34. **Identify Mode: no test for `onElementSelect` on correct click** — the core interaction callback is untested at the component level.
+
+35. **Free Recall: final-answer animation suppressed** — `FreeRecallMode.tsx` line 91: `!isFinished` guard prevents the last-match flash from showing when the user completes the quiz perfectly.
+
+36. **Navigation: search highlight only marks first occurrence** — `NavigationTree.tsx` lines 119–131: `indexOf` finds only the first match. Searching "cap" against "Cap Canaveral Capitals" highlights only the first "cap."
+
+37. **Navigation: grid applied to single-quiz categories** — `NavigationTree.tsx` line 70: `allChildrenAreLeaves` triggers grid layout even for 1–2 quiz categories. Should have a minimum threshold (e.g. ≥ 4).
 
 ## Group D: Integration (depends on Groups A–C)
 
