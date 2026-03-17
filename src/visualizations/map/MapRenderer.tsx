@@ -63,6 +63,7 @@ export function MapRenderer({
   targetElementId,
   toggles,
   backgroundPaths,
+  svgOverlay,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -90,6 +91,7 @@ export function MapRenderer({
         showCountryNames={showCountryNames}
         backgroundPaths={backgroundPaths}
       />
+      {svgOverlay}
     </ZoomPanContainer>
   );
 }
