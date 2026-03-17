@@ -40,12 +40,11 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 
 ## Phase 4: Self-Review
 
-1. Launch a code-review sub-agent. Give it:
+1. Launch the `local-code-review` agent (from `.claude/agents/local-code-review.md`). In the prompt, give it:
    - The feature spec from `docs/features.md`
    - The user's answers to your clarifying questions from Phase 2
-   - A `git diff main...HEAD` of all changes
-   - **Do NOT** include your own reasoning, design notes, or implementation plans — let the reviewer form their own opinions from the code and spec alone.
-2. Review the sub-agent's feedback. Where you agree, make the changes and commit. Where you disagree, think carefully about whether the reviewer has a point you missed. If there's a genuine disagreement about the best approach, briefly present both sides to the user and ask them to decide.
+   - **Do NOT** include your own reasoning, design notes, or implementation plans — let the reviewer form their own opinions from the code and spec alone. The agent knows to read the diff and CLAUDE.md itself.
+2. Review the agent's feedback. Where you agree, make the changes and commit. Where you disagree, think carefully about whether the reviewer has a point you missed. If there's a genuine disagreement about the best approach, briefly present both sides to the user and ask them to decide.
 
 ## Phase 5: PR
 
