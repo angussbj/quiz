@@ -15,22 +15,9 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 
 1. Read `docs/features.md` and find the feature.
 2. Announce: "Starting feature: **<title>**" and summarise the scope in 1–2 sentences.
-3. Create a worktree and branch:
-   ```bash
-   cd /Users/angusjohnson/projects/quiz
-   git worktree add ../quiz-worktrees/<branch-name> -b <branch-name>
-   cd /Users/angusjohnson/projects/quiz-worktrees/<branch-name>
-   npm install
-   ```
-4. Start the dev server and note the port:
-   ```bash
-   npm run dev
-   ```
-5. Verify the setup:
-   ```bash
-   npm run typecheck
-   npm test
-   ```
+3. Enter a worktree using the `EnterWorktree` tool with `branch: <branch-name>`. This creates the worktree, switches the shell's working directory to it, and creates the branch. Then run `npm install`.
+4. Start the dev server (`npm run dev`) in the background and note the port.
+5. Verify the setup: run `npm run typecheck` and `npm test`.
 
 ## Phase 2: Research
 
@@ -48,7 +35,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 2. Create CSS modules alongside components. Use theme CSS custom properties for all colours.
 3. Write tests as you go — don't leave them all to the end.
 4. If you get stuck or uncertain about a design decision, ask the user rather than guessing.
-5. Document what you do as you go, so that other agents can find it. Add to or create new .md files in `docs`, and mention new files in CLAUDE.md (or one of the other files if it's too detailed) so that agents can automatically find these docs.
+5. Document the code as you go, so that other agents can find it and understand how things work. Add to or create new .md files in `docs`, and mention new files in CLAUDE.md (or one of the other files if it's too detailed) so that agents can automatically find these docs.
 
 ## Phase 4: PR
 
@@ -78,10 +65,5 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    ```bash
    gh pr merge <PR-number> --squash --delete-branch
    ```
-4. Clean up the worktree:
-   ```bash
-   cd /Users/angusjohnson/projects/quiz
-   git worktree remove ../quiz-worktrees/<branch-name>
-   git pull
-   ```
+4. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo.
 5. Confirm: "Feature merged and worktree cleaned up."
