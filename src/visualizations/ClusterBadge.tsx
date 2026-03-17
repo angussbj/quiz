@@ -35,31 +35,33 @@ export function ClusterBadge({
   const label = `${matchedCount}/${cluster.count}`;
 
   return (
-    <motion.g
-      className={styles.badge}
-      onClick={() => onClick?.(cluster)}
-      initial={{ opacity: 0, scale: 0.6 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.6 }}
-      transition={{ duration: 0.2 }}
-      style={{ originX: `${x}px`, originY: `${y}px` }}
-    >
-      <circle
-        className={styles.background}
-        cx={x}
-        cy={y}
-        r={viewBoxRadius}
-      />
-      <text
-        className={styles.count}
-        x={x}
-        y={y}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={viewBoxRadius * 0.9}
+    <g transform={`translate(${x}, ${y})`}>
+      <motion.g
+        className={styles.badge}
+        onClick={() => onClick?.(cluster)}
+        initial={{ opacity: 0, scale: 0.6 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.6 }}
+        transition={{ duration: 0.2 }}
+        style={{ originX: 0, originY: 0 }}
       >
-        {label}
-      </text>
-    </motion.g>
+        <circle
+          className={styles.background}
+          cx={0}
+          cy={0}
+          r={viewBoxRadius}
+        />
+        <text
+          className={styles.count}
+          x={0}
+          y={0}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={viewBoxRadius * 0.9}
+        >
+          {label}
+        </text>
+      </motion.g>
+    </g>
   );
 }
