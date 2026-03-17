@@ -50,6 +50,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Branch:** `feat/map-renderer`
 **Files:** `src/visualizations/map/MapRenderer.tsx`, CSS module, tests, sample country SVG data
 **Scope:** Render country shapes from `MapElement.svgPathData` positioned in viewBox space. City markers as dots/circles. Color-code by group. Support `elementStates` for visual feedback (correct = green, incorrect = red, highlighted = gold). Support `toggles` for show/hide labels, show/hide country borders. Click handlers for elements and positions. Use `ZoomPanContainer` for zoom/pan. Create sample supporting data CSV with a few European country shapes for testing.
+**Note:** This is the first feature that renders real content inside `ZoomPanContainer`. Use it to visually verify zoom, pan, and clustering behaviour — test that clusters form/split at different zoom levels, badges show correct counts, and cluster click zooms to fit.
 
 ### 10. Timeline Renderer
 **Branch:** `feat/timeline-renderer`
