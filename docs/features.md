@@ -172,15 +172,21 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 
 ## Group D: Integration (depends on Groups A–C)
 
-### 15. Quiz Page Integration
+### 15. Quiz Page Integration — DONE
 **Branch:** `feat/quiz-page`
-**Files:** `src/routes/QuizPage.tsx`, `src/quiz-modes/QuizShell.tsx`, CSS modules
-**Scope:** Wire everything together: QuizPage loads quiz definition and data, renders QuizShell with the correct visualization renderer and quiz mode based on URL params and toggle state. Mode selector (dropdown or tabs). Score display. Results screen at end with completion stats and Framer Motion celebration animation (subtle, not confetti — maybe a gentle glow or progress bar fill). "Try again" button.
-**Note:** QuizShell already implements a `configuring` → `active` state machine (from feature #5). The config screen (TogglePanel) is shown as a full page before the quiz starts — toggles are NOT visible during the quiz. A "Reconfigure" button returns to the config screen and resets quiz state via key remount. QuizShell's `children` prop is a render function receiving toggle values: `(toggleValues: Record<string, boolean>) => ReactNode`.
-**Integration notes:**
-- Wire up `Timer` component: pass `QuizDefinition.defaultCountdownSeconds` as `countdownSeconds` prop, handle `onExpire` to end the quiz. Don't render Timer until quiz has started.
-- Wire up countdown duration UI: quiz setup screen should allow overriding `defaultCountdownSeconds` before starting.
-**Note (toggle resolution):** QuizShell needs to pass `elementToggles` from the quiz mode through to the renderer. The quiz mode computes `elementToggles` from the toggle definitions' `hiddenBehavior` + quiz state, and QuizShell passes them as a prop alongside the global `toggles`. See "Toggle Resolution Design" section above. Also update `ToggleDefinition` to include `hiddenBehavior` — the type change should happen in whichever feature is implemented first (12, 13, 14, or 15).
+**Files:** `src/routes/QuizPage.tsx`, `src/quiz-modes/QuizShell.tsx`, `src/quiz-modes/QuizSetupPanel.tsx`, `src/quiz-modes/ActiveQuiz.tsx`, `src/quiz-modes/ModeAdapter.tsx`, `src/quiz-modes/QuizResults.tsx`, `src/visualizations/buildElements.ts`, `src/visualizations/resolveRenderer.ts`, CSS modules
+**Scope:** Wire everything together: QuizPage loads quiz definition and data, renders QuizShell with the correct visualization renderer and quiz mode based on URL params and toggle state. Mode selector (dropdown). Score display. Results screen at end with completion stats, progress bar animation, and confetti at 100%. "Try again" button.
+**Note:** QuizShell implements a `configuring` → `active` state machine. The config screen (QuizSetupPanel, which composes TogglePanel) is shown as a full page before the quiz starts — toggles are NOT visible during the quiz. A "Reconfigure" button returns to the config screen and resets quiz state via key remount. QuizShell's `children` prop is a render function receiving `QuizConfig` with `toggleValues`, `selectedMode`, `countdownSeconds`, and `onReconfigure`.
+**Architecture notes (from #15):**
+- `QuizSetupPanel` replaced `TogglePanel` as the config screen, adding mode selector and timer input. `TogglePanel` was slimmed to toggle-only (presets + switches).
+- `ModeAdapter` routes mode types to the correct composition pattern: FreeRecallAdapter (external hook), IdentifyAdapter (render prop), LocateAdapter (component prop). Unimplemented modes show "not yet available".
+- `ActiveQuiz` manages the active phase: timer, mode adapter, elapsed time tracking, finish detection, results overlay.
+- `QuizResults` shows score percentage, progress bar, elapsed time, "Try again" button, and confetti at 100%.
+- Element converters (`buildMapElements`, `buildGridElements`, `buildTimelineElementsFromRows`) convert CSV rows to `VisualizationElement[]`. The `buildElements` dispatcher picks the right one by `VisualizationType`. `resolveRenderer` maps types to renderer components.
+- Background path loading uses CSV format with `|`-separated SVG paths. `parseBackgroundPaths` + `useBackgroundPaths` hook.
+- `QuizModeProps.dataRows` uses `Record<string, string>[]` (not `QuizDataRow`) to match `useQuizData` return type without casting.
+- `IdentifyMode` and `LocateMode` gained optional `onFinish` callbacks for finish detection from outside.
+- `QuizConfig` exported from `QuizShell` includes `onReconfigure` so results screen can trigger return to setup.
 
 ### 16. Theme Toggle & Global Layout — DONE
 **Branch:** `feat/global-layout`

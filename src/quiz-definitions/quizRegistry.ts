@@ -46,7 +46,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       group: 'country',
     },
     dataPath: '/data/geography/capitals/europe.csv',
-    supportingDataPaths: ['/data/geography/capitals/europe-borders.svg'],
+    supportingDataPaths: ['/data/geography/capitals/europe-borders.csv'],
   },
   {
     id: 'geo-capitals-asia',

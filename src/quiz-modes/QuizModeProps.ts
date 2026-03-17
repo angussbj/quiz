@@ -1,5 +1,4 @@
 import type { ViewBoxPosition, VisualizationElement } from '@/visualizations/VisualizationElement';
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { QuizSessionState } from './QuizSessionState';
 import type { ToggleDefinition } from './ToggleDefinition';
 
@@ -9,7 +8,7 @@ import type { ToggleDefinition } from './ToggleDefinition';
  */
 export interface QuizModeProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
-  readonly dataRows: ReadonlyArray<QuizDataRow>;
+  readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly session: QuizSessionState;

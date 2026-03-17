@@ -1,4 +1,3 @@
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 
 /**
  * Normalize text for fuzzy matching:
@@ -34,7 +33,7 @@ export interface AnswerMatch {
  */
 export function matchAnswer(
   input: string,
-  remainingRows: ReadonlyArray<QuizDataRow>,
+  remainingRows: ReadonlyArray<Readonly<Record<string, string>>>,
   answerColumn: string,
 ): AnswerMatch | undefined {
   const normalizedInput = normalizeText(input);
@@ -47,7 +46,7 @@ export function matchAnswer(
     if (primaryAnswer === undefined) continue;
 
     if (normalizeText(primaryAnswer) === normalizedInput) {
-      return { elementId: row.id, displayAnswer: primaryAnswer };
+      return { elementId: row['id'] ?? '', displayAnswer: primaryAnswer };
     }
 
     const alternates = row[alternatesColumn];
@@ -55,7 +54,7 @@ export function matchAnswer(
       const alternateValues = alternates.split('|').map((s) => s.trim());
       for (const alt of alternateValues) {
         if (normalizeText(alt) === normalizedInput) {
-          return { elementId: row.id, displayAnswer: primaryAnswer };
+          return { elementId: row['id'] ?? '', displayAnswer: primaryAnswer };
         }
       }
     }

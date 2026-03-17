@@ -1,7 +1,8 @@
-import { type ComponentType, useState, useEffect, useCallback, useMemo } from 'react';
+import { type ComponentType, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
+import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from '../ToggleDefinition';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { useLocateQuiz } from './useLocateQuiz';
@@ -18,6 +19,8 @@ export interface LocateModeProps {
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly clustering?: ClusteringConfig;
+  readonly onFinish?: (score: ScoreResult) => void;
+  readonly forceGiveUp?: boolean;
 }
 
 /**
@@ -31,9 +34,33 @@ export function LocateMode({
   Renderer,
   backgroundPaths,
   clustering,
+  onFinish,
+  forceGiveUp = false,
 }: LocateModeProps) {
   const quiz = useLocateQuiz(elements);
   const [showResults, setShowResults] = useState(false);
+
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
+  const hasCalledFinish = useRef(false);
+
+  // Force give-up when timer expires
+  useEffect(() => {
+    if (forceGiveUp && !quiz.isFinished) {
+      quiz.handleGiveUp();
+    }
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
+
+  useEffect(() => {
+    if (quiz.isFinished && !hasCalledFinish.current) {
+      hasCalledFinish.current = true;
+      onFinishRef.current?.({
+        correct: quiz.correctCount,
+        total: quiz.totalTargets,
+        percentage: quiz.totalTargets > 0 ? Math.round((quiz.correctCount / quiz.totalTargets) * 100) : 0,
+      });
+    }
+  }, [quiz.isFinished, quiz.correctCount, quiz.totalTargets]);
 
   const elementToggles = useMemo(() => {
     const elementQuizStates: Record<string, ElementQuizState> = {};

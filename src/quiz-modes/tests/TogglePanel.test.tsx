@@ -22,15 +22,12 @@ const defaultValues: Record<string, boolean> = {
 
 function renderPanel(overrides: Partial<Parameters<typeof TogglePanel>[0]> = {}) {
   const props = {
-    title: 'European Capitals',
-    description: 'Name the capital cities of Europe',
     toggles,
     presets,
     values: defaultValues,
-    activePreset: undefined,
+    activePreset: undefined as string | undefined,
     onChange: jest.fn(),
     onPreset: jest.fn(),
-    onStart: jest.fn(),
     ...overrides,
   };
   render(<TogglePanel {...props} />);
@@ -38,16 +35,6 @@ function renderPanel(overrides: Partial<Parameters<typeof TogglePanel>[0]> = {})
 }
 
 describe('TogglePanel', () => {
-  it('renders the quiz title', () => {
-    renderPanel();
-    expect(screen.getByRole('heading', { name: 'European Capitals' })).toBeInTheDocument();
-  });
-
-  it('renders the description', () => {
-    renderPanel();
-    expect(screen.getByText('Name the capital cities of Europe')).toBeInTheDocument();
-  });
-
   it('renders preset buttons', () => {
     renderPanel();
     expect(screen.getByRole('button', { name: 'Easy' })).toBeInTheDocument();
@@ -107,22 +94,8 @@ describe('TogglePanel', () => {
     expect(props.onChange).toHaveBeenCalledWith('show-labels', false);
   });
 
-  it('renders and triggers the start button', async () => {
-    const user = userEvent.setup();
-    const props = renderPanel();
-
-    const startButton = screen.getByRole('button', { name: 'Start Quiz' });
-    await user.click(startButton);
-    expect(props.onStart).toHaveBeenCalledTimes(1);
-  });
-
   it('hides presets section when no presets given', () => {
     renderPanel({ presets: [] });
     expect(screen.queryByText('Presets')).not.toBeInTheDocument();
-  });
-
-  it('omits description when not provided', () => {
-    renderPanel({ description: undefined });
-    expect(screen.queryByText('Name the capital cities of Europe')).not.toBeInTheDocument();
   });
 });
