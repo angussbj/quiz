@@ -10,7 +10,7 @@ export interface TimerProps {
   readonly paused?: boolean;
 }
 
-function formatTime(totalSeconds: number): string {
+export function formatTime(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
@@ -32,7 +32,6 @@ export function Timer({ countdownSeconds, onExpire, paused = false }: TimerProps
         if (countdownSeconds !== undefined && next >= countdownSeconds) {
           setExpired(true);
           onExpireRef.current?.();
-          clearInterval(interval);
           return countdownSeconds;
         }
 
@@ -58,4 +57,3 @@ export function Timer({ countdownSeconds, onExpire, paused = false }: TimerProps
   );
 }
 
-export { formatTime };
