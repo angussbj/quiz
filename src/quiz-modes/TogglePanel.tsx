@@ -78,7 +78,13 @@ export function TogglePanel({
             <h2 className={styles.sectionTitle}>{formatGroupLabel(group)}</h2>
             <div className={styles.toggleList}>
               {items.map((toggle) => (
-                <div key={toggle.key} className={styles.toggleRow}>
+                <div
+                  key={toggle.key}
+                  className={styles.toggleRow}
+                  onClick={() =>
+                    onChange(toggle.key, !(values[toggle.key] ?? toggle.defaultValue))
+                  }
+                >
                   <span className={styles.toggleLabel}>{toggle.label}</span>
                   <ToggleSwitch
                     checked={values[toggle.key] ?? toggle.defaultValue}
@@ -116,7 +122,10 @@ function ToggleSwitch({
       aria-checked={checked}
       className={styles.switch}
       data-checked={checked || undefined}
-      onClick={() => onToggle(!checked)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle(!checked);
+      }}
     >
       <motion.span
         className={styles.switchThumb}
