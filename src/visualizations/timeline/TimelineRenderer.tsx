@@ -56,7 +56,7 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, onElementClick, onPositionClick, clustering } = props;
+  const { elements, elementStates, elementToggles, onElementClick, onPositionClick, clustering } = props;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const timelineElements = useMemo(
@@ -79,6 +79,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         <TimelineContent
           elements={timelineElements}
           elementStates={elementStates}
+          elementToggles={elementToggles}
           categoryColorMap={categoryColorMap}
           onElementClick={onElementClick}
           onPositionClick={onPositionClick}
@@ -101,6 +102,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 interface TimelineContentProps {
   readonly elements: ReadonlyArray<TimelineElement>;
   readonly elementStates: Readonly<Record<string, string>>;
+  /** Per-element toggle overrides — available for future toggle-dependent rendering. */
+  readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
   readonly categoryColorMap: Readonly<Record<string, string>>;
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: (position: { readonly x: number; readonly y: number }) => void;
@@ -110,6 +113,10 @@ interface TimelineContentProps {
 function TimelineContent({
   elements,
   elementStates,
+  // TODO: elementToggles is threaded through and available for future use
+  // when toggle-dependent rendering is added (e.g., show/hide labels per element).
+  // Pattern: elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]
+  elementToggles: _elementToggles,
   categoryColorMap,
   onElementClick,
   onPositionClick,
@@ -118,7 +125,9 @@ function TimelineContent({
   const { scale, clusteredElementIds } = useZoomPan();
 
   const visibleElements = useMemo(
-    () => elements.filter((e) => !clusteredElementIds.has(e.id)),
+    () => elements.filter((e) =>
+      !clusteredElementIds.has(e.id) && !e.id.startsWith('__spacer'),
+    ),
     [elements, clusteredElementIds],
   );
 
@@ -142,7 +151,7 @@ function TimelineContent({
 
   const minYear = minX / UNITS_PER_YEAR;
   const maxYear = maxX / UNITS_PER_YEAR;
-  const approximatePixels = 1200 * scale;
+  const approximatePixels = (maxX - minX) * scale;
 
   const axisTicks = useMemo(
     () => computeAxisTicks(minYear, maxYear, approximatePixels),
@@ -335,53 +344,57 @@ function TimelineBar({
     ? null
     : truncateLabel(element.label, outsideSpace - sizes.labelPadding, sizes);
 
+  // Translate to the bar's left-center so scaleX expands from the left edge.
+  // All child coordinates are relative to (minX, minY).
   return (
-    <motion.g
-      initial={{ opacity: 0, scaleX: 0 }}
-      animate={{ opacity: 1, scaleX: 1 }}
-      exit={{ opacity: 0, scaleX: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      style={{ originX: `${minX}px`, originY: `${minY + height / 2}px` }}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick?.(element.id);
-      }}
-      onMouseEnter={(e) => onMouseEnter(element, e)}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-    >
-      <rect
-        className={`${styles.bar} ${stateClass ?? ''}`}
-        x={minX}
-        y={minY}
-        width={width}
-        height={height}
-        fill={fillColor}
-        rx={sizes.cornerRadius}
-        ry={sizes.cornerRadius}
-      />
-      {showInsideLabel ? (
-        <text
-          className={styles.barLabel}
-          x={minX + sizes.labelPadding}
-          y={minY + height / 2}
-          dominantBaseline="central"
-          fontSize={sizes.fontSize}
-        >
-          {truncateLabel(element.label, width, sizes)}
-        </text>
-      ) : outsideLabel ? (
-        <text
-          className={styles.barLabelOutside}
-          x={maxX + sizes.labelPadding}
-          y={minY + height / 2}
-          dominantBaseline="central"
-          fontSize={sizes.fontSize}
-        >
-          {outsideLabel}
-        </text>
-      ) : null}
-    </motion.g>
+    <g transform={`translate(${minX}, ${minY})`}>
+      <motion.g
+        initial={{ opacity: 0, scaleX: 0 }}
+        animate={{ opacity: 1, scaleX: 1 }}
+        exit={{ opacity: 0, scaleX: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        style={{ originX: 0, originY: 0.5 }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick?.(element.id);
+        }}
+        onMouseEnter={(e) => onMouseEnter(element, e)}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+      >
+        <rect
+          className={`${styles.bar} ${stateClass ?? ''}`}
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          fill={fillColor}
+          rx={sizes.cornerRadius}
+          ry={sizes.cornerRadius}
+        />
+        {showInsideLabel ? (
+          <text
+            className={styles.barLabel}
+            x={sizes.labelPadding}
+            y={height / 2}
+            dominantBaseline="central"
+            fontSize={sizes.fontSize}
+          >
+            {truncateLabel(element.label, width, sizes)}
+          </text>
+        ) : outsideLabel ? (
+          <text
+            className={styles.barLabelOutside}
+            x={width + sizes.labelPadding}
+            y={height / 2}
+            dominantBaseline="central"
+            fontSize={sizes.fontSize}
+          >
+            {outsideLabel}
+          </text>
+        ) : null}
+      </motion.g>
+    </g>
   );
 }
 
