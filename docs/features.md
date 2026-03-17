@@ -33,7 +33,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/quiz-definitions/quizRegistry.ts`, `src/routes/QuizPage.tsx`, `src/App.tsx`
 **Scope:** Build the quiz registry from a static list of `QuizDefinition` objects (we'll auto-generate later). Wire up `QuizPage` to read the quiz ID from the URL, look it up in the registry, and fetch + parse its CSV data. Generate the `NavigationNode` tree from the registry's path segments. Lazy-load quiz data on navigation.
 
-### 5. Toggle Panel & Presets
+### 5. Toggle Panel & Presets — DONE
 **Branch:** `feat/toggle-panel`
 **Files:** `src/quiz-modes/TogglePanel.tsx`, `src/quiz-modes/QuizShell.tsx` (toggle state management part), CSS modules, tests
 **Scope:** Render toggle switches from `ToggleDefinition[]` grouped by category. Preset buttons that set multiple toggles at once. Individual toggles remain immediately accessible alongside presets. Manage toggle state and expose it to child components. Quiet, compact design. Test that presets apply correctly and individual toggle changes work.
