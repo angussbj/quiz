@@ -1,9 +1,6 @@
 import type { GridElement } from './GridElement';
 import type { VisualizationElement } from '../VisualizationElement';
-
-const CELL_SIZE = 60;
-const CELL_GAP = 4;
-const CELL_STEP = CELL_SIZE + CELL_GAP;
+import { CELL_SIZE, CELL_STEP } from './cellLayout';
 
 /**
  * Ensures a GridElement has correct viewBoxCenter and viewBoxBounds
