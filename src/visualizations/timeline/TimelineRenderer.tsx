@@ -1,4 +1,5 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import { ZoomPanContainer } from '../ZoomPanContainer';
@@ -36,6 +37,7 @@ interface TooltipState {
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
   const { elements, elementStates, onElementClick, onPositionClick, clustering } = props;
+  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const timelineElements = useMemo(
     () => elements.filter(isTimelineElement),
@@ -48,19 +50,31 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   );
 
   return (
-    <ZoomPanContainer
-      elements={elements}
-      elementStates={elementStates}
-      clustering={clustering}
-    >
-      <TimelineContent
-        elements={timelineElements}
+    <>
+      <ZoomPanContainer
+        elements={elements}
         elementStates={elementStates}
-        categoryColorMap={categoryColorMap}
-        onElementClick={onElementClick}
-        onPositionClick={onPositionClick}
-      />
-    </ZoomPanContainer>
+        clustering={clustering}
+      >
+        <TimelineContent
+          elements={timelineElements}
+          elementStates={elementStates}
+          categoryColorMap={categoryColorMap}
+          onElementClick={onElementClick}
+          onPositionClick={onPositionClick}
+          onTooltipChange={setTooltip}
+        />
+      </ZoomPanContainer>
+      {tooltip && createPortal(
+        <div
+          className={styles.tooltip}
+          style={{ left: tooltip.x + 12, top: tooltip.y - 28 }}
+        >
+          {tooltip.text}
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }
 
@@ -70,6 +84,7 @@ interface TimelineContentProps {
   readonly categoryColorMap: Readonly<Record<string, string>>;
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: (position: { readonly x: number; readonly y: number }) => void;
+  readonly onTooltipChange: (tooltip: TooltipState | null) => void;
 }
 
 function TimelineContent({
@@ -78,9 +93,9 @@ function TimelineContent({
   categoryColorMap,
   onElementClick,
   onPositionClick,
+  onTooltipChange,
 }: TimelineContentProps) {
   const { scale, clusteredElementIds } = useZoomPan();
-  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const visibleElements = useMemo(
     () => elements.filter((e) => !clusteredElementIds.has(e.id)),
@@ -91,14 +106,16 @@ function TimelineContent({
     let min = Infinity;
     let max = -Infinity;
     let maxY = 0;
-    let h = DEFAULT_TRACK_HEIGHT;
     for (const el of elements) {
       min = Math.min(min, el.viewBoxBounds.minX);
       max = Math.max(max, el.viewBoxBounds.maxX);
       maxY = Math.max(maxY, el.viewBoxBounds.maxY);
-      h = el.viewBoxBounds.maxY - el.viewBoxBounds.minY;
     }
     if (!isFinite(min)) return { minX: 0, maxX: 100, maxTrackY: DEFAULT_TRACK_HEIGHT, trackHeight: DEFAULT_TRACK_HEIGHT };
+    // Derive track height from the first element's bounds
+    const h = elements.length > 0
+      ? elements[0].viewBoxBounds.maxY - elements[0].viewBoxBounds.minY
+      : DEFAULT_TRACK_HEIGHT;
     return { minX: min, maxX: max, maxTrackY: maxY, trackHeight: h };
   }, [elements]);
 
@@ -116,27 +133,29 @@ function TimelineContent({
 
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
-      setTooltip({
-        x: event.clientX,
-        y: event.clientY,
-        text: `${element.label}: ${formatTimestampRange(element.start, element.end)}`,
-      });
+      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
+      tooltipTextRef.current = text;
+      onTooltipChange({ x: event.clientX, y: event.clientY, text });
     },
-    [],
+    [onTooltipChange],
   );
+
+  const tooltipTextRef = useRef('');
 
   const handleBarMouseMove = useCallback(
     (event: React.MouseEvent) => {
-      setTooltip((prev) =>
-        prev ? { ...prev, x: event.clientX, y: event.clientY } : null,
-      );
+      onTooltipChange({
+        x: event.clientX,
+        y: event.clientY,
+        text: tooltipTextRef.current,
+      });
     },
-    [],
+    [onTooltipChange],
   );
 
   const handleBarMouseLeave = useCallback(() => {
-    setTooltip(null);
-  }, []);
+    onTooltipChange(null);
+  }, [onTooltipChange]);
 
   const handleSvgClick = useCallback(
     (event: React.MouseEvent<SVGGElement>) => {
@@ -182,16 +201,6 @@ function TimelineContent({
         </AnimatePresence>
       </g>
 
-      {tooltip && (
-        <foreignObject x={0} y={0} width={1} height={1} overflow="visible">
-          <div
-            className={styles.tooltip}
-            style={{ left: tooltip.x + 12, top: tooltip.y - 28 }}
-          >
-            {tooltip.text}
-          </div>
-        </foreignObject>
-      )}
     </>
   );
 }

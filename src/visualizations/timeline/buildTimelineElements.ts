@@ -111,18 +111,21 @@ export function buildTimelineElements(
     };
   });
 
-  // For narrow timelines, ensure landscape by padding X extent
-  ensureLandscapeExtent(elements);
+  // For narrow timelines, add invisible spacer elements to ensure landscape viewBox
+  const spacers = buildLandscapeSpacers(elements);
 
-  return elements;
+  return [...elements, ...spacers];
 }
 
 /**
- * If the overall extent is portrait, extend element bounds
- * symmetrically so the viewBox ends up landscape.
+ * If the overall extent is portrait, create invisible spacer elements
+ * that widen the viewBox to achieve a landscape aspect ratio.
+ * Spacers are non-interactive and have zero height.
  */
-function ensureLandscapeExtent(elements: TimelineElement[]): void {
-  if (elements.length === 0) return;
+function buildLandscapeSpacers(
+  elements: ReadonlyArray<TimelineElement>,
+): ReadonlyArray<TimelineElement> {
+  if (elements.length === 0) return [];
 
   let minX = Infinity;
   let maxX = -Infinity;
@@ -136,18 +139,23 @@ function ensureLandscapeExtent(elements: TimelineElement[]): void {
   const currentWidth = maxX - minX;
   const requiredWidth = maxY * TARGET_ASPECT_RATIO;
 
-  if (currentWidth >= requiredWidth) return;
+  if (currentWidth >= requiredWidth) return [];
 
   const padding = (requiredWidth - currentWidth) / 2;
-  const first = elements[0];
-  (first as { viewBoxBounds: { minX: number } }).viewBoxBounds = {
-    ...first.viewBoxBounds,
-    minX: first.viewBoxBounds.minX - padding,
-  };
+  const midY = maxY / 2;
 
-  const last = elements[elements.length - 1];
-  (last as { viewBoxBounds: { maxX: number } }).viewBoxBounds = {
-    ...last.viewBoxBounds,
-    maxX: last.viewBoxBounds.maxX + padding,
-  };
+  const makeSpacer = (id: string, x: number): TimelineElement => ({
+    id,
+    label: '',
+    start: [0],
+    category: '',
+    interactive: false,
+    viewBoxCenter: { x, y: midY },
+    viewBoxBounds: { minX: x, minY: midY, maxX: x, maxY: midY },
+  });
+
+  return [
+    makeSpacer('__spacer-left', minX - padding),
+    makeSpacer('__spacer-right', maxX + padding),
+  ];
 }
