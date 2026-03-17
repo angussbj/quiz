@@ -42,14 +42,13 @@ describe('QuizPage', () => {
     expect(screen.getByText('Name the capital cities of European countries.')).toBeInTheDocument();
   });
 
-  it('renders breadcrumbs from the quiz path', () => {
+  it('does not render breadcrumbs (handled by Layout)', () => {
     globalThis.fetch = jest.fn().mockResolvedValue(
       mockCsvResponse('id,city\nparis,Paris'),
     );
 
     renderQuizPage('geo-capitals-europe');
-    expect(screen.getByText('Geography')).toBeInTheDocument();
-    expect(screen.getByText('Capitals')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Breadcrumbs' })).not.toBeInTheDocument();
   });
 
   it('shows loading state then loaded data', async () => {

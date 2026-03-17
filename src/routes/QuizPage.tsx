@@ -10,31 +10,23 @@ export default function QuizPage() {
 
   if (!quizId) {
     return (
-      <main className={styles.page}>
+      <div className={styles.page}>
         <p className={styles.message}>No quiz specified.</p>
-      </main>
+      </div>
     );
   }
 
   if (!definition) {
     return (
-      <main className={styles.page}>
+      <div className={styles.page}>
         <p className={styles.message}>Quiz not found: {quizId}</p>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.breadcrumbs}>
-          {definition.path.map((segment, index) => (
-            <span key={index}>
-              {index > 0 && <span className={styles.separator}>/</span>}
-              {segment}
-            </span>
-          ))}
-        </div>
         <h1 className={styles.title}>{definition.title}</h1>
         <p className={styles.description}>{definition.description}</p>
       </header>
@@ -66,7 +58,7 @@ export default function QuizPage() {
         <h2 className={styles.sectionTitle}>Quiz Data</h2>
         <QuizDataDisplay state={dataState} />
       </section>
-    </main>
+    </div>
   );
 }
 
@@ -75,7 +67,7 @@ function QuizDataDisplay({ state }: { readonly state: QuizDataState }) {
     case 'idle':
       return <p className={styles.message}>No data path configured.</p>;
     case 'loading':
-      return <p className={styles.message}>Loading quiz data…</p>;
+      return <p className={styles.message}>Loading quiz data...</p>;
     case 'error':
       return <p className={styles.errorMessage}>{state.error}</p>;
     case 'loaded':
@@ -104,7 +96,7 @@ function QuizDataDisplay({ state }: { readonly state: QuizDataState }) {
               {state.rows.length > 5 && (
                 <tr>
                   <td colSpan={Object.keys(state.rows[0]).length} className={styles.moreRows}>
-                    …and {state.rows.length - 5} more
+                    ...and {state.rows.length - 5} more
                   </td>
                 </tr>
               )}

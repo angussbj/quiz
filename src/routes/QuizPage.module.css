@@ -1,21 +1,9 @@
 .page {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md) 0;
 }
 
 .header {
   margin-bottom: var(--spacing-lg);
-}
-
-.breadcrumbs {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin-bottom: var(--spacing-sm);
-}
-
-.separator {
-  margin: 0 var(--spacing-xs);
 }
 
 .title {
