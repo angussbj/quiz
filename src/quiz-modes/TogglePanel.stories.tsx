@@ -75,26 +75,23 @@ function buildDefaults(toggles: ReadonlyArray<ToggleDefinition>): Record<string,
 function InteractiveTogglePanel({
   toggles,
   presets,
-  ...rest
 }: {
   readonly toggles: ReadonlyArray<ToggleDefinition>;
   readonly presets: ReadonlyArray<TogglePreset>;
-  readonly title: string;
-  readonly description?: string;
 }) {
   const [values, setValues] = useState(() => buildDefaults(toggles));
 
   return (
-    <TogglePanel
-      {...rest}
-      toggles={toggles}
-      presets={presets}
-      values={values}
-      activePreset={findMatchingPreset(values, presets)}
-      onChange={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
-      onPreset={(preset) => setValues((prev) => ({ ...prev, ...preset.values }))}
-      onStart={() => alert('Quiz started!')}
-    />
+    <div style={{ maxWidth: 420, margin: '2rem auto', fontFamily: 'var(--font-family)' }}>
+      <TogglePanel
+        toggles={toggles}
+        presets={presets}
+        values={values}
+        activePreset={findMatchingPreset(values, presets)}
+        onChange={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
+        onPreset={(preset) => setValues((prev) => ({ ...prev, ...preset.values }))}
+      />
+    </div>
   );
 }
 
@@ -110,8 +107,6 @@ type Story = StoryObj<typeof TogglePanel>;
 export const Default: Story = {
   render: () => (
     <InteractiveTogglePanel
-      title="European Capitals"
-      description="Name the capital cities of Europe. You'll be shown a map and need to type the name of each capital."
       toggles={sampleToggles}
       presets={samplePresets}
     />
@@ -121,20 +116,8 @@ export const Default: Story = {
 export const NoPresets: Story = {
   render: () => (
     <InteractiveTogglePanel
-      title="Periodic Table"
-      description="Identify the elements by their symbols."
       toggles={sampleToggles.slice(0, 3)}
       presets={[]}
-    />
-  ),
-};
-
-export const NoDescription: Story = {
-  render: () => (
-    <InteractiveTogglePanel
-      title="Quick Quiz"
-      toggles={sampleToggles.slice(0, 2)}
-      presets={samplePresets.slice(0, 2)}
     />
   ),
 };
@@ -142,8 +125,6 @@ export const NoDescription: Story = {
 export const SingleToggle: Story = {
   render: () => (
     <InteractiveTogglePanel
-      title="Simple Quiz"
-      description="Just one option to configure."
       toggles={[sampleToggles[0]]}
       presets={[]}
     />
