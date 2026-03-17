@@ -36,7 +36,8 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 3. Write tests as you go — don't leave them all to the end.
 4. If you get stuck or uncertain about a design decision, ask the user rather than guessing.
 5. Document the code as you go, so that other agents can find it and understand how things work. Add to or create new .md files in `docs`, and mention new files in CLAUDE.md (or one of the other files if it's too detailed) so that agents can automatically find these docs.
-6. Proceed straight to phase 4. The user will give feedback after that.
+6. Update `docs/features.md` if anything you've done or learned affects other features. Examples: design decisions that change how a downstream feature should be implemented, new testing that should happen as part of another feature (e.g., "visually test X when feature Y is built"), API changes that alter assumptions in other feature specs, or notes/warnings for whoever picks up a dependent feature.
+7. Proceed straight to phase 4. The user will give feedback after that.
 
 ## Phase 4: PR
 
@@ -47,7 +48,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    npm run build
    ```
 2. Push the branch (use `git rev-parse --abbrev-ref HEAD` if you need the branch name).
-3. If the feature has visual output, take screenshots of it working in the browser (use the dev server you started). If it involves animations or interactions that can't be captured in a screenshot, describe what a screen recording would show and ask the user if they'd like one. Pure logic features (parsers, scoring, etc.) can skip screenshots.
+3. If the feature has visual output, take screenshots of it working in the browser (use the dev server you started). If it involves animations or interactions that can't be captured in a screenshot, create a screen recording. Pure logic features (parsers, scoring, etc.) can skip screenshots.
 4. Create a PR with `gh pr create`. Include:
    - Summary of what was built
    - Screenshots (if applicable)
