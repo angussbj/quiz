@@ -48,6 +48,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 2. Create CSS modules alongside components. Use theme CSS custom properties for all colours.
 3. Write tests as you go — don't leave them all to the end.
 4. If you get stuck or uncertain about a design decision, ask the user rather than guessing.
+5. Document what you do as you go, so that other agents can find it. Add to or create new .md files in `docs`, and mention new files in CLAUDE.md (or one of the other files if it's too detailed) so that agents can automatically find these docs.
 
 ## Phase 4: PR
 
