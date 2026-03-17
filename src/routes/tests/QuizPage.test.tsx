@@ -55,7 +55,7 @@ describe('QuizPage', () => {
 
   it('renders setup screen after data loads', async () => {
     globalThis.fetch = jest.fn().mockResolvedValue(
-      mockCsvResponse('id,city,country,latitude,longitude\nparis,Paris,France,48.8566,2.3522'),
+      mockCsvResponse('id,city,country,latitude,longitude,region\nparis,Paris,France,48.8566,2.3522,Europe'),
     );
 
     renderQuizPage('geo-capitals-europe');
@@ -69,7 +69,7 @@ describe('QuizPage', () => {
   it('transitions to active quiz on start', async () => {
     const user = userEvent.setup();
     globalThis.fetch = jest.fn().mockResolvedValue(
-      mockCsvResponse('id,city,country,latitude,longitude\nparis,Paris,France,48.8566,2.3522'),
+      mockCsvResponse('id,city,country,latitude,longitude,region\nparis,Paris,France,48.8566,2.3522,Europe'),
     );
 
     renderQuizPage('geo-capitals-europe');

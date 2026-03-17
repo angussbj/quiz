@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchQuizData } from './fetchQuizData';
+import type { DataFilter } from './QuizDefinition';
+import { applyDataFilter } from './applyDataFilter';
 
 interface QuizDataIdle {
   readonly status: 'idle';
@@ -23,9 +25,14 @@ export type QuizDataState = QuizDataIdle | QuizDataLoading | QuizDataLoaded | Qu
 
 /**
  * Lazily fetch and parse quiz CSV data when a dataPath is provided.
+ * Optionally filters rows by a column value (e.g., region) using DataFilter.
  * Returns a discriminated union so the consumer can render loading/error/loaded states.
  */
-export function useQuizData(dataPath: string | undefined): QuizDataState {
+export function useQuizData(
+  dataPath: string | undefined,
+  dataFilter?: DataFilter,
+): QuizDataState {
+  const filterKey = dataFilter ? `${dataFilter.column}:${dataFilter.values.join(',')}` : '';
   const [state, setState] = useState<QuizDataState>({ status: 'idle' });
 
   useEffect(() => {
@@ -40,7 +47,8 @@ export function useQuizData(dataPath: string | undefined): QuizDataState {
     fetchQuizData(dataPath)
       .then((rows) => {
         if (!cancelled) {
-          setState({ status: 'loaded', rows });
+          const filtered = dataFilter ? applyDataFilter(rows, dataFilter) : rows;
+          setState({ status: 'loaded', rows: filtered });
         }
       })
       .catch((error: unknown) => {
@@ -53,7 +61,7 @@ export function useQuizData(dataPath: string | undefined): QuizDataState {
     return () => {
       cancelled = true;
     };
-  }, [dataPath]);
+  }, [dataPath, filterKey]);
 
   return state;
 }
