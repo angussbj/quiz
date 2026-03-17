@@ -161,12 +161,13 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 - Toggle resolution was deferred — see feature #14b.
 **Note (toggle resolution):** Deferred to feature #14b.
 
-### 14b. Toggle Resolution Unification
+### 14b. Toggle Resolution Unification — DONE
 **Branch:** `feat/toggle-resolution`
 **Files:** `src/quiz-modes/resolveElementToggles.ts`, `src/quiz-modes/ToggleDefinition.ts`, tests
 **Scope:** Unify toggle resolution across all quiz modes (12, 13, 14). Add `hiddenBehavior` field to `ToggleDefinition`. Create a shared `resolveElementToggles` utility that computes per-element toggle booleans from toggle definitions, global toggle values, and per-element quiz state (answered, attempt count). Wire into each quiz mode. Ensure no unnecessary duplication across modes. Also add `elementToggles` support to renderers (reading `elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]`).
 **Depends on:** Features 12, 13, 14 (at least one mode must exist to wire into).
 **Note:** This was split out because features 12–14 may be developed in parallel, and unifying toggle resolution afterward avoids conflicting implementations.
+**Note (from #14b):** `ElementQuizState` is exported from `resolveElementToggles.ts` — all modes import it rather than redeclaring the shape. `elementToggle()` defaults to `true` when a toggle key isn't in global toggles (features visible unless explicitly off). TimelineRenderer supports `showLabels` (hide/show bar labels) and `showBars` (full opacity vs dimmed) toggle keys. Quiz definitions for timeline quizzes should include these in their `ToggleDefinition[]`.
 
 
 ## Group D: Integration (depends on Groups A–C)
