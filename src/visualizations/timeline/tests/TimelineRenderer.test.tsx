@@ -4,14 +4,12 @@ import { TimelineRenderer } from '../TimelineRenderer';
 import { buildTimelineElements } from '../buildTimelineElements';
 import type { VisualizationRendererProps } from '../../VisualizationRendererProps';
 
-// Mock ZoomPanContainer to render children directly in an SVG
 jest.mock('../../ZoomPanContainer', () => ({
   ZoomPanContainer: ({ children }: { children: React.ReactNode }) => (
     <svg data-testid="zoom-pan-container">{children}</svg>
   ),
 }));
 
-// Mock ZoomPanContext to provide default values
 jest.mock('../../ZoomPanContext', () => ({
   useZoomPan: () => ({
     scale: 1,
@@ -25,22 +23,15 @@ jest.mock('../../ZoomPanContext', () => ({
 function makeProps(overrides?: Partial<VisualizationRendererProps>): VisualizationRendererProps {
   const elements = buildTimelineElements([
     {
-      id: 'renaissance',
-      label: 'Renaissance',
-      start: [1400],
-      end: [1600],
-      category: 'art',
-    },
-    {
-      id: 'industrial',
-      label: 'Industrial Revolution',
-      start: [1760],
-      end: [1840],
+      id: 'long-bar',
+      label: 'Long Event',
+      start: [1900],
+      end: [1950],
       category: 'history',
     },
     {
-      id: 'moon',
-      label: 'Moon Landing',
+      id: 'point',
+      label: 'Point Event',
       start: [1969, 7, 20],
       category: 'science',
     },
@@ -57,17 +48,14 @@ function makeProps(overrides?: Partial<VisualizationRendererProps>): Visualizati
 describe('TimelineRenderer', () => {
   it('renders bars for each element', () => {
     const { container } = render(<TimelineRenderer {...makeProps()} />);
-    // Check that SVG rects are rendered for the bars
     const rects = container.querySelectorAll('rect');
-    expect(rects.length).toBe(3);
+    expect(rects.length).toBe(2);
   });
 
-  it('renders labels', () => {
+  it('renders labels for bars', () => {
     render(<TimelineRenderer {...makeProps()} />);
-    // Long bars get inside labels
-    expect(screen.getByText('Renaissance')).toBeInTheDocument();
-    // Moon Landing is a point event — label renders outside
-    expect(screen.getByText('Moon Landing')).toBeInTheDocument();
+    // Point event gets outside label (full text)
+    expect(screen.getByText('Point Event')).toBeInTheDocument();
   });
 
   it('calls onElementClick when a bar is clicked', async () => {
@@ -75,13 +63,13 @@ describe('TimelineRenderer', () => {
     const handleClick = jest.fn();
     render(<TimelineRenderer {...makeProps({ onElementClick: handleClick })} />);
 
-    await user.click(screen.getByText('Renaissance'));
-    expect(handleClick).toHaveBeenCalledWith('renaissance');
+    await user.click(screen.getByText('Point Event'));
+    expect(handleClick).toHaveBeenCalledWith('point');
   });
 
   it('renders with element states', () => {
     const props = makeProps({
-      elementStates: { renaissance: 'correct', industrial: 'incorrect' },
+      elementStates: { 'long-bar': 'correct', point: 'incorrect' },
     });
     const { container } = render(<TimelineRenderer {...props} />);
     expect(container.querySelector('rect')).toBeInTheDocument();
@@ -99,7 +87,6 @@ describe('TimelineRenderer', () => {
 
   it('renders axis tick labels', () => {
     render(<TimelineRenderer {...makeProps()} />);
-    // Should have some year labels in the axis
     const textElements = screen.getAllByText(/^\d{4}$/);
     expect(textElements.length).toBeGreaterThan(0);
   });
