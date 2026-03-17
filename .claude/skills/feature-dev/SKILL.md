@@ -55,7 +55,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    npm run build
    ```
 2. Push the branch (use `git rev-parse --abbrev-ref HEAD` if you need the branch name).
-3. If the feature has visual output, take screenshots of it working in the browser (use the dev server you started). If it involves animations or interactions that can't be captured in a screenshot, create a screen recording. Pure logic features (parsers, scoring, etc.) can skip screenshots.
+3. If the feature has visual output, take screenshots of it working in the browser (use the dev server you started). If it involves animations or interactions that can't be captured in a screenshot, create a screen recording. Pure logic features (parsers, scoring, etc.) can skip screenshots. Save all screenshots and screen recordings to a `screenshots/` directory in the worktree root (create it if it doesn't exist).
 4. Create a PR with `gh pr create`. Include:
    - Summary of what was built
    - Screenshots (if applicable)
@@ -65,15 +65,16 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 
 ## Phase 6: Feedback & Merge
 
-1. Wait for user feedback on the PR.
-2. If changes are requested: implement them, commit, push, and ask for another review.
-3. When the user approves, merge from inside the worktree:
+1. Delete any screenshots from `screenshots/` that show intermediate broken states that were later fixed — only keep screenshots of the final working state. Then open the directory in Finder with `open screenshots/` so the user can drag them into the PR.
+2. Wait for user feedback on the PR.
+3. If changes are requested: implement them, commit, push, and ask for another review.
+4. When the user approves, merge from inside the worktree:
    ```bash
    gh pr merge <PR-number> --squash --delete-branch
    ```
    This will error with `fatal: 'main' is already checked out at ...` — that's expected when running from a worktree. The merge still succeeds via the GitHub API. You can verify with `gh pr view <PR-number> --json state`.
-4. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't).
-5. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
-6. Check that the worktree directory under `.claude/worktrees/<name>` is fully removed. Tools like Playwright can leave behind directories (e.g. `.playwright-mcp`) that survive the git worktree cleanup. If the directory still exists, `rm -rf` it.
-7. Mark the feature as done in `docs/features.md` by adding **DONE** to the feature heading (e.g., `### 1. CSV Data Loader — DONE`). Commit and push this to main.
-8. Confirm: "Feature merged and worktree cleaned up."
+5. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't).
+6. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
+7. Check that the worktree directory under `.claude/worktrees/<name>` is fully removed. Tools like Playwright can leave behind directories (e.g. `.playwright-mcp`) that survive the git worktree cleanup. If the directory still exists, `rm -rf` it.
+8. Mark the feature as done in `docs/features.md` by adding **DONE** to the feature heading (e.g., `### 1. CSV Data Loader — DONE`). Commit and push this to main.
+9. Confirm: "Feature merged and worktree cleaned up."

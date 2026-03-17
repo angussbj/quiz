@@ -1,12 +1,12 @@
 import { NavigationTree } from '@/navigation/NavigationTree';
 import { Search } from '@/navigation/Search';
 import { useNavigationState } from '@/navigation/useNavigationState';
-import { sampleNavigationTree } from '@/navigation/sampleNavigationTree';
+import { navigationTree } from '@/quiz-definitions/navigationTree';
 import styles from './HomePage.module.css';
 
 export default function HomePage() {
   const { searchQuery, setSearchQuery, displayTree, expandedPaths, onTogglePath } =
-    useNavigationState(sampleNavigationTree);
+    useNavigationState(navigationTree);
 
   const hasResults = displayTree.children.length > 0;
 

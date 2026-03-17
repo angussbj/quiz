@@ -51,6 +51,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/visualizations/map/MapRenderer.tsx`, CSS module, tests, sample country SVG data
 **Scope:** Render country shapes from `MapElement.svgPathData` positioned in viewBox space. City markers as dots/circles. Color-code by group. Support `elementStates` for visual feedback (correct = green, incorrect = red, highlighted = gold). Support `toggles` for show/hide labels, show/hide country borders. Click handlers for elements and positions. Use `ZoomPanContainer` for zoom/pan. Create sample supporting data CSV with a few European country shapes for testing.
 **Note:** This is the first feature that renders real content inside `ZoomPanContainer`. Use it to visually verify zoom, pan, and clustering behaviour — test that clusters form/split at different zoom levels, badges show correct counts, and cluster click zooms to fit.
+**Note from #4:** Quiz IDs follow the pattern `geo-{type}-{region}` (e.g., `geo-capitals-europe`). The registry organizes paths as type-before-region (Geography > Capitals > Europe). CSV data is fetched from `public/data/` paths. Sample data CSVs can be placed there for testing.
 
 ### 10. Timeline Renderer
 **Branch:** `feat/timeline-renderer`
@@ -96,3 +97,4 @@ Features for parallel agent development. Each feature should be developed in its
 **Branch:** `feat/capitals-quiz`
 **Files:** `data/geography/europe/capitals.csv`, supporting country shapes data, quiz definition in registry
 **Scope:** Create a complete, real quiz: European capital cities. Full CSV with all ~45 European capitals. Supporting data with simplified country border SVG paths (can be sourced/simplified from Natural Earth data). Wire up the quiz definition with all available modes, sensible toggles (show/hide country borders, show/hide city dots, show/hide country names, show/hide flags), and Easy/Medium/Hard presets.
+**Note from #4:** A placeholder definition for this quiz already exists in `quizRegistry.ts` (ID: `geo-capitals-europe`). Update it in place rather than adding a duplicate. The CSV data path is `/data/geography/capitals/europe.csv` (served from `public/`). The `sampleNavigationTree.ts` is now unused — the navigation tree is generated from the registry.
