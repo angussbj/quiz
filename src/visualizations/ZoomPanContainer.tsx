@@ -79,6 +79,8 @@ export function ZoomPanContainer({
         centerOnInit
         limitToBounds={false}
         smooth
+        pinch={{ step: 3 }}
+        wheel={{ smoothStep: 0.03 }}
       >
         <ZoomPanInner
           viewBox={viewBox}
