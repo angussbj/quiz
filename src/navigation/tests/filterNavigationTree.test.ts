@@ -95,6 +95,13 @@ describe('filterNavigationTree', () => {
     expect(geo.children[1].children).toHaveLength(1);
   });
 
+  it('returns entire tree when root label matches', () => {
+    // The root node "Quizzes" matches — all children kept
+    const result = filterNavigationTree(tree, 'quizzes')!;
+    expect(result).not.toBeNull();
+    expect(result.children).toHaveLength(2); // Geography and Science
+  });
+
   it('matches both category and leaf when both match', () => {
     // "Chem" matches "Chemistry" (category), keeping all its children
     const result = filterNavigationTree(tree, 'chem')!;
