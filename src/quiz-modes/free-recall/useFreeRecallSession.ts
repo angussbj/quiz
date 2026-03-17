@@ -1,0 +1,137 @@
+import { useCallback, useMemo, useRef, useState } from 'react';
+import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
+import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
+import type { QuizSessionState } from '../QuizSessionState';
+import type { ToggleDefinition } from '../ToggleDefinition';
+import { resolveElementToggles } from '../resolveElementToggles';
+import { calculateUnorderedRecallScore } from '@/scoring/calculateUnorderedRecallScore';
+import { matchAnswer } from './matchAnswer';
+
+interface FreeRecallSessionConfig {
+  readonly elements: ReadonlyArray<VisualizationElement>;
+  readonly dataRows: ReadonlyArray<QuizDataRow>;
+  readonly answerColumn: string;
+  readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
+  readonly toggleValues: Readonly<Record<string, boolean>>;
+}
+
+interface FreeRecallSessionResult {
+  readonly session: QuizSessionState;
+  readonly elementToggles: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
+  readonly lastMatchedElementId: string | undefined;
+  readonly handleTextAnswer: (text: string) => void;
+  readonly handleGiveUp: () => void;
+}
+
+/**
+ * Manages quiz session state for free recall (unordered) mode.
+ *
+ * Handles answer matching, score tracking, element state updates,
+ * and per-element toggle resolution.
+ */
+export function useFreeRecallSession({
+  elements,
+  dataRows,
+  answerColumn,
+  toggleDefinitions,
+  toggleValues,
+}: FreeRecallSessionConfig): FreeRecallSessionResult {
+  const [correctIds, setCorrectIds] = useState<ReadonlyArray<string>>([]);
+  const [givenUp, setGivenUp] = useState(false);
+  const [lastMatchedElementId, setLastMatchedElementId] = useState<string | undefined>(undefined);
+
+  const correctIdSet = useMemo(() => new Set(correctIds), [correctIds]);
+  const totalElements = elements.length;
+
+  const remainingRows = useMemo(
+    () => dataRows.filter((row) => !correctIdSet.has(row.id)),
+    [dataRows, correctIdSet],
+  );
+
+  const remainingElementIds = useMemo(
+    () => elements.filter((el) => !correctIdSet.has(el.id)).map((el) => el.id),
+    [elements, correctIdSet],
+  );
+
+  const elementStates = useMemo(() => {
+    const states: Record<string, ElementVisualState> = {};
+    for (const element of elements) {
+      if (correctIdSet.has(element.id)) {
+        states[element.id] = 'correct';
+      } else if (givenUp) {
+        states[element.id] = 'revealed';
+      }
+    }
+    return states;
+  }, [elements, correctIdSet, givenUp]);
+
+  const score = useMemo(
+    () => calculateUnorderedRecallScore(correctIds.length, totalElements),
+    [correctIds.length, totalElements],
+  );
+
+  const status: QuizSessionState['status'] = givenUp || correctIds.length === totalElements
+    ? 'finished'
+    : 'active';
+
+  // For free recall, revealedElementIds = correctIds + (givenUp ? all remaining : nothing)
+  const revealedElementIds = useMemo(() => {
+    const revealed = new Set(correctIds);
+    if (givenUp) {
+      for (const el of elements) {
+        revealed.add(el.id);
+      }
+    }
+    return revealed;
+  }, [correctIds, givenUp, elements]);
+
+  const allElementIds = useMemo(() => elements.map((el) => el.id), [elements]);
+
+  const elementToggles = useMemo(
+    () => resolveElementToggles(
+      allElementIds,
+      toggleDefinitions,
+      toggleValues,
+      revealedElementIds,
+      {}, // no wrong answer counts in free recall
+    ),
+    [allElementIds, toggleDefinitions, toggleValues, revealedElementIds],
+  );
+
+  // Use ref for remainingRows in callback to avoid stale closures
+  const remainingRowsRef = useRef(remainingRows);
+  remainingRowsRef.current = remainingRows;
+
+  const handleTextAnswer = useCallback((text: string) => {
+    if (givenUp) return;
+
+    const match = matchAnswer(text, remainingRowsRef.current, answerColumn);
+    if (match) {
+      setCorrectIds((prev) => [...prev, match.elementId]);
+      setLastMatchedElementId(match.elementId);
+    }
+  }, [answerColumn, givenUp]);
+
+  const handleGiveUp = useCallback(() => {
+    setGivenUp(true);
+  }, []);
+
+  const session: QuizSessionState = useMemo(() => ({
+    toggles: toggleValues,
+    elementStates,
+    remainingElementIds,
+    correctElementIds: correctIds,
+    incorrectElementIds: [],
+    status,
+    elapsedMs: 0,
+    score,
+  }), [toggleValues, elementStates, remainingElementIds, correctIds, status, score]);
+
+  return {
+    session,
+    elementToggles,
+    lastMatchedElementId,
+    handleTextAnswer,
+    handleGiveUp,
+  };
+}
