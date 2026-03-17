@@ -62,6 +62,7 @@ export function MapRenderer({
   onClusterClick,
   targetElementId,
   toggles,
+  elementToggles,
   backgroundPaths,
   svgOverlay,
 }: VisualizationRendererProps) {
@@ -69,8 +70,6 @@ export function MapRenderer({
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
   );
   const showBorders = toggles['showBorders'] !== false;
-  const showCityDots = toggles['showCityDots'] !== false;
-  const showCountryNames = toggles['showCountryNames'] === true;
 
   return (
     <ZoomPanContainer
@@ -87,13 +86,23 @@ export function MapRenderer({
         targetElementId={targetElementId}
         uniqueGroups={uniqueGroups}
         showBorders={showBorders}
-        showCityDots={showCityDots}
-        showCountryNames={showCountryNames}
+        toggles={toggles}
+        elementToggles={elementToggles}
         backgroundPaths={backgroundPaths}
       />
       {svgOverlay}
     </ZoomPanContainer>
   );
+}
+
+/** Look up a per-element toggle, falling back to the global toggle value. */
+function elementToggle(
+  elementToggles: VisualizationRendererProps['elementToggles'],
+  toggles: Readonly<Record<string, boolean>>,
+  elementId: string,
+  toggleKey: string,
+): boolean {
+  return elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey] ?? false;
 }
 
 interface MapContentProps {
@@ -104,8 +113,8 @@ interface MapContentProps {
   readonly targetElementId?: string;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly showBorders: boolean;
-  readonly showCityDots: boolean;
-  readonly showCountryNames: boolean;
+  readonly toggles: Readonly<Record<string, boolean>>;
+  readonly elementToggles: VisualizationRendererProps['elementToggles'];
   readonly backgroundPaths: VisualizationRendererProps['backgroundPaths'];
 }
 
@@ -117,8 +126,8 @@ function MapContent({
   targetElementId,
   uniqueGroups,
   showBorders,
-  showCityDots,
-  showCountryNames,
+  toggles,
+  elementToggles,
   backgroundPaths,
 }: MapContentProps) {
   const { clusteredElementIds } = useZoomPan();
@@ -190,8 +199,9 @@ function MapContent({
       })}
 
       {/* City dot markers */}
-      {showCityDots && elements.map((element) => {
+      {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
+        if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         const isTarget = element.id === targetElementId;
@@ -219,8 +229,9 @@ function MapContent({
       })}
 
       {/* Labels */}
-      {showCountryNames && elements.map((element) => {
+      {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
+        if (!elementToggle(elementToggles, toggles, element.id, 'showCountryNames')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         return (
