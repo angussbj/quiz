@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
+import { elementToggle } from '../elementToggle';
 import type { TimelineElement } from './TimelineElement';
 import { isTimelineElement } from './TimelineElement';
 import { buildCategoryColorMap } from './categoryColors';
@@ -56,7 +57,7 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, elementToggles, onElementClick, onPositionClick, clustering } = props;
+  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, clustering } = props;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   const timelineElements = useMemo(
@@ -79,6 +80,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         <TimelineContent
           elements={timelineElements}
           elementStates={elementStates}
+          toggles={toggles}
           elementToggles={elementToggles}
           categoryColorMap={categoryColorMap}
           onElementClick={onElementClick}
@@ -102,7 +104,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 interface TimelineContentProps {
   readonly elements: ReadonlyArray<TimelineElement>;
   readonly elementStates: Readonly<Record<string, string>>;
-  /** Per-element toggle overrides — available for future toggle-dependent rendering. */
+  readonly toggles: Readonly<Record<string, boolean>>;
   readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
   readonly categoryColorMap: Readonly<Record<string, string>>;
   readonly onElementClick?: (elementId: string) => void;
@@ -113,10 +115,8 @@ interface TimelineContentProps {
 function TimelineContent({
   elements,
   elementStates,
-  // TODO: elementToggles is threaded through and available for future use
-  // when toggle-dependent rendering is added (e.g., show/hide labels per element).
-  // Pattern: elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]
-  elementToggles: _elementToggles,
+  toggles,
+  elementToggles,
   categoryColorMap,
   onElementClick,
   onPositionClick,
@@ -240,20 +240,26 @@ function TimelineContent({
       />
 
       <AnimatePresence>
-        {visibleElements.map((element) => (
-          <TimelineBar
-            key={element.id}
-            element={element}
-            color={categoryColorMap[element.category] ?? 'var(--color-accent)'}
-            state={elementStates[element.id]}
-            sizes={sizes}
-            outsideSpace={outsideLabelSpace.get(element.id) ?? Infinity}
-            onClick={onElementClick}
-            onMouseEnter={handleBarMouseEnter}
-            onMouseMove={handleBarMouseMove}
-            onMouseLeave={handleBarMouseLeave}
-          />
-        ))}
+        {visibleElements.map((element) => {
+          const showBar = elementToggle(elementToggles, toggles, element.id, 'showBars');
+          const showLabel = elementToggle(elementToggles, toggles, element.id, 'showLabels');
+          return (
+            <TimelineBar
+              key={element.id}
+              element={element}
+              color={categoryColorMap[element.category] ?? 'var(--color-accent)'}
+              state={elementStates[element.id]}
+              sizes={sizes}
+              outsideSpace={outsideLabelSpace.get(element.id) ?? Infinity}
+              showBar={showBar}
+              showLabel={showLabel}
+              onClick={onElementClick}
+              onMouseEnter={handleBarMouseEnter}
+              onMouseMove={handleBarMouseMove}
+              onMouseLeave={handleBarMouseLeave}
+            />
+          );
+        })}
       </AnimatePresence>
     </g>
   );
@@ -315,6 +321,8 @@ interface TimelineBarProps {
   readonly state: string | undefined;
   readonly sizes: Sizes;
   readonly outsideSpace: number;
+  readonly showBar: boolean;
+  readonly showLabel: boolean;
   readonly onClick?: (elementId: string) => void;
   readonly onMouseEnter: (element: TimelineElement, event: React.MouseEvent) => void;
   readonly onMouseMove: (event: React.MouseEvent) => void;
@@ -327,6 +335,8 @@ function TimelineBar({
   state,
   sizes,
   outsideSpace,
+  showBar,
+  showLabel,
   onClick,
   onMouseEnter,
   onMouseMove,
@@ -338,11 +348,12 @@ function TimelineBar({
 
   const stateClass = state ? getStateClass(state) : undefined;
   const fillColor = stateClass ? undefined : color;
+  const barOpacity = showBar ? 1 : 0.15;
 
-  const showInsideLabel = width >= sizes.minWidthForInsideLabel;
-  const outsideLabel = showInsideLabel
-    ? null
-    : truncateLabel(element.label, outsideSpace - sizes.labelPadding, sizes);
+  const showInsideLabel = showLabel && width >= sizes.minWidthForInsideLabel;
+  const outsideLabel = showLabel && !showInsideLabel
+    ? truncateLabel(element.label, outsideSpace - sizes.labelPadding, sizes)
+    : null;
 
   // Translate to the bar's left-center so scaleX expands from the left edge.
   // All child coordinates are relative to (minX, minY).
@@ -369,6 +380,7 @@ function TimelineBar({
           width={width}
           height={height}
           fill={fillColor}
+          opacity={barOpacity}
           rx={sizes.cornerRadius}
           ry={sizes.cornerRadius}
         />

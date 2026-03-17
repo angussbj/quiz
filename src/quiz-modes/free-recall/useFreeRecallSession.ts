@@ -3,7 +3,7 @@ import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { QuizSessionState } from '../QuizSessionState';
 import type { ToggleDefinition } from '../ToggleDefinition';
-import { resolveElementToggles } from '../resolveElementToggles';
+import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { calculateUnorderedRecallScore } from '@/scoring/calculateUnorderedRecallScore';
 import { matchAnswer } from './matchAnswer';
 
@@ -77,7 +77,7 @@ export function useFreeRecallSession({
   // Build per-element quiz state for toggle resolution.
   // In free recall: no wrong attempts, isAnswered = correct or given up.
   const elementQuizStates = useMemo(() => {
-    const states: Record<string, { isAnswered: boolean; wrongAttempts: number }> = {};
+    const states: Record<string, ElementQuizState> = {};
     for (const element of elements) {
       states[element.id] = {
         isAnswered: correctIdSet.has(element.id) || givenUp,

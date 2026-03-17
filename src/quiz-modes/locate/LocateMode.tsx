@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ToggleDefinition } from '../ToggleDefinition';
-import { resolveElementToggles } from '../resolveElementToggles';
+import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { useLocateQuiz } from './useLocateQuiz';
 import { LocateFeedback } from './LocateFeedback';
 import { LocateResults } from './LocateResults';
@@ -36,7 +36,7 @@ export function LocateMode({
   const [showResults, setShowResults] = useState(false);
 
   const elementToggles = useMemo(() => {
-    const elementQuizStates: Record<string, { isAnswered: boolean; wrongAttempts: number }> = {};
+    const elementQuizStates: Record<string, ElementQuizState> = {};
     for (const el of elements) {
       elementQuizStates[el.id] = {
         isAnswered: quiz.elementStates[el.id] !== 'hidden',
