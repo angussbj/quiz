@@ -1,0 +1,110 @@
+/* Timeline bar */
+.bar {
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+  rx: 4;
+  ry: 4;
+}
+
+.bar:hover {
+  opacity: 0.85;
+}
+
+/* Visual state overrides */
+.barCorrect {
+  fill: var(--color-correct);
+}
+
+.barIncorrect {
+  fill: var(--color-incorrect);
+}
+
+.barHighlighted {
+  fill: var(--color-highlight);
+}
+
+.barHidden {
+  opacity: 0.15;
+}
+
+.barRevealed {
+  opacity: 0.5;
+}
+
+/* Bar label inside the bar */
+.barLabel {
+  fill: var(--color-on-accent);
+  font-family: var(--font-family);
+  font-weight: 500;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Bar label beside/outside the bar */
+.barLabelOutside {
+  fill: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-weight: 500;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Axis line */
+.axisLine {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+/* Major tick mark */
+.tickMajor {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1;
+}
+
+/* Minor tick mark */
+.tickMinor {
+  stroke: var(--color-border);
+  stroke-width: 0.5;
+}
+
+/* Major tick label */
+.tickLabelMajor {
+  fill: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-weight: 600;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Minor tick label */
+.tickLabelMinor {
+  fill: var(--color-text-muted);
+  font-family: var(--font-family);
+  font-weight: 400;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Vertical grid line from tick into the track area */
+.gridLine {
+  stroke: var(--color-border);
+  stroke-width: 0.5;
+  stroke-dasharray: 4 4;
+  opacity: 0.4;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: fixed;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+}

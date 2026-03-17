@@ -1,9 +1,10 @@
 import type { VisualizationElement } from '../VisualizationElement';
+import type { TimelineTimestamp } from './TimelineTimestamp';
 
 /** Timeline element with date range and track assignment */
 export interface TimelineElement extends VisualizationElement {
-  readonly startYear: number;
-  readonly endYear?: number;
+  readonly start: TimelineTimestamp;
+  readonly end?: TimelineTimestamp;
   readonly category: string;
   /**
    * Track index for vertical positioning.
@@ -13,5 +14,5 @@ export interface TimelineElement extends VisualizationElement {
 }
 
 export function isTimelineElement(element: VisualizationElement): element is TimelineElement {
-  return 'startYear' in element && 'category' in element;
+  return 'start' in element && 'category' in element;
 }

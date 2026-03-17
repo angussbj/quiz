@@ -68,10 +68,15 @@ Features for parallel agent development. Each feature should be developed in its
 **Note from #4:** Quiz IDs follow the pattern `geo-{type}-{region}` (e.g., `geo-capitals-europe`). The registry organizes paths as type-before-region (Geography > Capitals > Europe). CSV data is fetched from `public/data/` paths. Sample data CSVs can be placed there for testing.
 **Note from #9:** `VisualizationRendererProps` now includes an optional `backgroundPaths: ReadonlyArray<BackgroundPath>` prop for non-interactive decorative SVG content (e.g., country borders). This was added to keep the `elements` array clean for quiz items only. Other renderers can use this for similar decorative content if needed. Flags are displayed outside the map (in the quiz mode UI), not rendered by MapRenderer.
 
-### 10. Timeline Renderer
+### 10. Timeline Renderer — DONE
 **Branch:** `feat/timeline-renderer`
 **Files:** `src/visualizations/timeline/TimelineRenderer.tsx`, CSS module, tests
 **Scope:** Render horizontal time axis with bars for date ranges. Auto-calculate tracks to minimise overlaps when `track` is undefined. Color-code bars by category. Support `elementStates` for visual feedback. Labels on or beside bars. Use `ZoomPanContainer` for horizontal scroll/zoom. Handle zoom levels gracefully — show decade markers when zoomed out, year markers when zoomed in.
+**Implementation notes:**
+- `TimelineTimestamp` is a variable-precision array `[year, month?, day?, hour?, minute?, second?]` — not just years. Start timestamps round to period start, end timestamps round to period end.
+- `buildTimelineElements()` converts inputs to `TimelineElement` with viewBox coordinates. X axis uses `UNITS_PER_YEAR` (20) scale factor. Track height is dynamically computed to maintain a landscape viewBox aspect ratio.
+- Categories map to theme `--color-group-N` colors (first 8), then generate random vibrant HSL colors for overflow.
+- Inside labels are shown when bars are wide enough; otherwise labels appear beside the bar. Tooltips show full label + date range on hover.
 
 ### 11. Periodic Table Renderer — DONE
 **Branch:** `feat/periodic-table-renderer`

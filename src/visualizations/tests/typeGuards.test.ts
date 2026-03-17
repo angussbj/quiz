@@ -31,8 +31,8 @@ describe('isTimelineElement', () => {
   it('returns true for timeline elements', () => {
     const timelineElement = {
       ...baseElement,
-      startYear: 1900,
-      endYear: 2000,
+      start: [1900] as const,
+      end: [2000] as const,
       category: 'science',
     };
     expect(isTimelineElement(timelineElement)).toBe(true);
