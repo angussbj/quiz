@@ -1,2 +1,3 @@
-// Re-export the generic hook for convenience
+// Re-export hooks for convenience
 export { useLocalStorage } from './useLocalStorage';
+export { useQuizProgress } from './useQuizProgress';

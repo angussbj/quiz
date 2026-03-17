@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+/**
+ * Parse JSON without an explicit `as` cast. The `any` return type of
+ * JSON.parse flows through the generic return type implicitly.
+ */
+function parseJson<T>(json: string): T {
+  return JSON.parse(json);
+}
 
 interface UseLocalStorageResult<T> {
   readonly value: T;
@@ -10,10 +18,15 @@ interface UseLocalStorageResult<T> {
  * Generic localStorage hook. Takes a key and default value,
  * returns the stored value (or default), a loading flag, and a setter.
  *
+ * Syncs across tabs via the `storage` event.
+ *
  * Usage:
  *   const { value, loading, set } = useLocalStorage('progress:europe-capitals', defaultProgress);
  */
 export function useLocalStorage<T>(key: string, defaultValue: T): UseLocalStorageResult<T> {
+  const defaultRef = useRef(defaultValue);
+  defaultRef.current = defaultValue;
+
   const [value, setValue] = useState<T>(defaultValue);
   const [loading, setLoading] = useState(true);
 
@@ -21,12 +34,32 @@ export function useLocalStorage<T>(key: string, defaultValue: T): UseLocalStorag
     try {
       const stored = localStorage.getItem(key);
       if (stored !== null) {
-        setValue(JSON.parse(stored) as T);
+        setValue(parseJson<T>(stored));
+      } else {
+        setValue(defaultRef.current);
       }
     } catch {
-      // Invalid JSON or localStorage unavailable — keep default
+      setValue(defaultRef.current);
     }
     setLoading(false);
+  }, [key]);
+
+  useEffect(() => {
+    function handleStorageEvent(event: StorageEvent) {
+      if (event.key !== key) return;
+      if (event.newValue === null) {
+        setValue(defaultRef.current);
+        return;
+      }
+      try {
+        setValue(parseJson<T>(event.newValue));
+      } catch {
+        // Invalid JSON from another tab — ignore
+      }
+    }
+
+    window.addEventListener('storage', handleStorageEvent);
+    return () => window.removeEventListener('storage', handleStorageEvent);
   }, [key]);
 
   const set = useCallback(
