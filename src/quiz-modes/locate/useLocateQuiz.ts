@@ -67,7 +67,9 @@ export function useLocateQuiz(
     new Map(elements.map((e) => [e.id, e])),
   ).current;
 
-  const currentTargetId = targetOrder[currentTargetIndex] as string | undefined;
+  const currentTargetId = currentTargetIndex < targetOrder.length
+    ? targetOrder[currentTargetIndex]
+    : undefined;
   const currentTarget = currentTargetId ? elementsById.get(currentTargetId) : undefined;
   const isFinished = currentTargetIndex >= targetOrder.length;
   const totalTargets = targetOrder.length;

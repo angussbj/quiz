@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { formatDistance } from './formatDistance';
 import styles from './LocateMode.module.css';
 
 interface LocateResultsProps {
@@ -6,12 +7,6 @@ interface LocateResultsProps {
   readonly totalTargets: number;
   readonly averageDistance: number;
   readonly totalScore: number;
-}
-
-function formatAverageDistance(distanceKm: number): string {
-  if (distanceKm < 1) return '<1 km';
-  if (distanceKm < 10) return `${distanceKm.toFixed(1)} km`;
-  return `${Math.round(distanceKm)} km`;
 }
 
 export function LocateResults({
@@ -44,7 +39,7 @@ export function LocateResults({
         </div>
 
         <div className={styles.resultCard}>
-          <span className={styles.resultValue}>{formatAverageDistance(averageDistance)}</span>
+          <span className={styles.resultValue}>{formatDistance(averageDistance)}</span>
           <span className={styles.resultLabel}>avg distance</span>
         </div>
 

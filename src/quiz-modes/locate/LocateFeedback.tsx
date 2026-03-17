@@ -1,16 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { LocateFeedbackItem } from './LocateFeedbackItem';
+import { formatDistance } from './formatDistance';
 
 function scoreColor(score: number): string {
   if (score >= 0.9) return 'var(--color-correct)';
   if (score >= 0.4) return 'var(--color-highlight)';
   return 'var(--color-incorrect)';
-}
-
-function formatDistance(distanceKm: number): string {
-  if (distanceKm < 1) return '<1 km';
-  if (distanceKm < 10) return `${distanceKm.toFixed(1)} km`;
-  return `${Math.round(distanceKm)} km`;
 }
 
 interface LocateFeedbackProps {

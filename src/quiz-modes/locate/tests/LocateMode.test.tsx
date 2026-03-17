@@ -23,23 +23,20 @@ const elements: ReadonlyArray<VisualizationElement> = [
   makeMapElement('london', 'London', 51.5074, -0.1278),
 ];
 
-/** A mock renderer that exposes onPositionClick via a clickable button. */
-function MockRenderer({ onPositionClick, svgOverlay }: VisualizationRendererProps) {
+/** A mock renderer that exposes onPositionClick via clickable buttons. */
+function MockRenderer({ onPositionClick }: VisualizationRendererProps) {
   return (
-    <div data-testid="mock-renderer">
+    <div role="img" aria-label="visualization">
       <button
-        data-testid="click-target"
         onClick={() => onPositionClick?.({ x: 2.3522, y: -48.8566 })}
       >
         Click on Paris
       </button>
       <button
-        data-testid="click-far"
         onClick={() => onPositionClick?.({ x: 50, y: 50 })}
       >
         Click far away
       </button>
-      {svgOverlay && <div data-testid="svg-overlay">{svgOverlay}</div>}
     </div>
   );
 }
@@ -58,7 +55,6 @@ describe('LocateMode', () => {
   it('shows the initial prompt with a target label', () => {
     renderLocateMode();
 
-    // Should show "Click where X is" for one of the elements
     const prompt = screen.getByText(/Click where/);
     expect(prompt).toBeInTheDocument();
     expect(prompt.textContent).toMatch(/Click where (Paris|London) is/);
@@ -80,7 +76,7 @@ describe('LocateMode', () => {
   it('renders the visualization renderer', () => {
     renderLocateMode();
 
-    expect(screen.getByTestId('mock-renderer')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'visualization' })).toBeInTheDocument();
   });
 
   it('advances to next target after skip', async () => {
@@ -107,9 +103,8 @@ describe('LocateMode', () => {
     const user = userEvent.setup();
     renderLocateMode();
 
-    // Click on the target twice (once per element)
-    await user.click(screen.getByTestId('click-target'));
-    await user.click(screen.getByTestId('click-target'));
+    await user.click(screen.getByRole('button', { name: 'Click on Paris' }));
+    await user.click(screen.getByRole('button', { name: 'Click on Paris' }));
 
     expect(screen.getByText('Results')).toBeInTheDocument();
   });
@@ -118,10 +113,8 @@ describe('LocateMode', () => {
     const user = userEvent.setup();
     renderLocateMode();
 
-    // Click on a target (should register as close for Paris)
-    await user.click(screen.getByTestId('click-target'));
+    await user.click(screen.getByRole('button', { name: 'Click on Paris' }));
 
-    // Should show "1/1 correct" or similar
     expect(screen.getByText(/correct/)).toBeInTheDocument();
   });
 });
