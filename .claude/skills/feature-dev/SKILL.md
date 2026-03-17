@@ -37,9 +37,17 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 4. If you get stuck or uncertain about a design decision, ask the user rather than guessing.
 5. Document the code as you go, so that other agents can find it and understand how things work. Add to or create new .md files in `docs`, and mention new files in CLAUDE.md (or one of the other files if it's too detailed) so that agents can automatically find these docs.
 6. Update `docs/features.md` if anything you've done or learned affects other features. Examples: design decisions that change how a downstream feature should be implemented, new testing that should happen as part of another feature (e.g., "visually test X when feature Y is built"), API changes that alter assumptions in other feature specs, or notes/warnings for whoever picks up a dependent feature.
-7. Proceed straight to phase 4. The user will give feedback after that.
 
-## Phase 4: PR
+## Phase 4: Self-Review
+
+1. Launch a code-review sub-agent. Give it:
+   - The feature spec from `docs/features.md`
+   - The user's answers to your clarifying questions from Phase 2
+   - A `git diff main...HEAD` of all changes
+   - **Do NOT** include your own reasoning, design notes, or implementation plans — let the reviewer form their own opinions from the code and spec alone.
+2. Review the sub-agent's feedback. Where you agree, make the changes and commit. Where you disagree, think carefully about whether the reviewer has a point you missed. If there's a genuine disagreement about the best approach, briefly present both sides to the user and ask them to decide.
+
+## Phase 5: PR
 
 1. Run final verification:
    ```bash
@@ -56,13 +64,14 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    - Any known limitations or follow-up work
 5. Share the PR URL with the user and ask for feedback.
 
-## Phase 5: Feedback & Merge
+## Phase 6: Feedback & Merge
 
 1. Wait for user feedback on the PR.
 2. If changes are requested: implement them, commit, push, and ask for another review.
-3. When the user approves:
+3. When the user approves, merge from inside the worktree:
    ```bash
    gh pr merge <PR-number> --squash --delete-branch
    ```
+   This will error with `fatal: 'main' is already checked out at ...` — that's expected when running from a worktree. The merge still succeeds via the GitHub API. You can verify with `gh pr view <PR-number> --json state`.
 4. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
 5. Confirm: "Feature merged and worktree cleaned up."
