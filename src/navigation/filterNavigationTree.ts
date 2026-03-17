@@ -31,21 +31,27 @@ export function filterNavigationTree(
 }
 
 /**
- * Collects the labels of all category (non-leaf) nodes in a tree.
- * Used to determine which nodes should be force-expanded during search.
+ * Collects paths of all category (non-leaf) nodes in a tree,
+ * using the same path scheme as NavigationTree (root's children are top-level).
  */
-export function collectCategoryLabels(node: NavigationNode): ReadonlySet<string> {
-  const labels = new Set<string>();
+export function collectCategoryPaths(root: NavigationNode): ReadonlySet<string> {
+  const paths = new Set<string>();
 
   function walk(current: NavigationNode, path: string) {
     if (current.quizId !== undefined) return;
-    const nodePath = path ? `${path}/${current.label}` : current.label;
-    labels.add(nodePath);
+    paths.add(path);
     for (const child of current.children) {
-      walk(child, nodePath);
+      if (child.quizId === undefined) {
+        walk(child, `${path}/${child.label}`);
+      }
     }
   }
 
-  walk(node, '');
-  return labels;
+  for (const child of root.children) {
+    if (child.quizId === undefined) {
+      walk(child, child.label);
+    }
+  }
+
+  return paths;
 }

@@ -1,4 +1,4 @@
-import { filterNavigationTree, collectCategoryLabels } from '../filterNavigationTree';
+import { filterNavigationTree, collectCategoryPaths } from '../filterNavigationTree';
 import type { NavigationNode } from '../NavigationNode';
 
 const tree: NavigationNode = {
@@ -72,23 +72,27 @@ describe('filterNavigationTree', () => {
   });
 });
 
-describe('collectCategoryLabels', () => {
-  it('collects all non-leaf node paths', () => {
-    const labels = collectCategoryLabels(tree);
-    expect(labels.has('Quizzes')).toBe(true);
-    expect(labels.has('Quizzes/Geography')).toBe(true);
-    expect(labels.has('Quizzes/Geography/Europe')).toBe(true);
-    expect(labels.has('Quizzes/Geography/Asia')).toBe(true);
-    expect(labels.has('Quizzes/Science')).toBe(true);
-    expect(labels.has('Quizzes/Science/Chemistry')).toBe(true);
+describe('collectCategoryPaths', () => {
+  it('collects paths matching NavigationTree path scheme', () => {
+    const paths = collectCategoryPaths(tree);
+    expect(paths.has('Geography')).toBe(true);
+    expect(paths.has('Geography/Europe')).toBe(true);
+    expect(paths.has('Geography/Asia')).toBe(true);
+    expect(paths.has('Science')).toBe(true);
+    expect(paths.has('Science/Chemistry')).toBe(true);
+  });
+
+  it('does not include root node path', () => {
+    const paths = collectCategoryPaths(tree);
+    expect(paths.has('Quizzes')).toBe(false);
   });
 
   it('does not include leaf nodes', () => {
-    const labels = collectCategoryLabels(tree);
-    for (const label of labels) {
-      expect(label).not.toContain('Capitals');
-      expect(label).not.toContain('Flags');
-      expect(label).not.toContain('Periodic');
+    const paths = collectCategoryPaths(tree);
+    for (const path of paths) {
+      expect(path).not.toContain('Capitals');
+      expect(path).not.toContain('Flags');
+      expect(path).not.toContain('Periodic');
     }
   });
 });

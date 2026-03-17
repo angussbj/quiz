@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { NavigationNode } from './NavigationNode';
-import { filterNavigationTree, collectCategoryLabels } from './filterNavigationTree';
+import { filterNavigationTree, collectCategoryPaths } from './filterNavigationTree';
 
 interface NavigationState {
   readonly searchQuery: string;
@@ -43,7 +43,7 @@ export function useNavigationState(root: NavigationNode): NavigationState {
 
   const searchExpandedPaths = useMemo(() => {
     if (!filteredTree) return new Set<string>();
-    return collectCategoryLabels(filteredTree);
+    return collectCategoryPaths(filteredTree);
   }, [filteredTree]);
 
   const expandedPaths = isSearchActive ? searchExpandedPaths : userExpandedPaths;
