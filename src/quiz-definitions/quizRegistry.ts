@@ -42,7 +42,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     columnMappings: {
       answer: 'city',
       label: 'city',
-      coordinates: 'latitude',
+      latitude: 'latitude',
+      longitude: 'longitude',
       group: 'country',
     },
     dataPath: '/data/capitals/world-capitals.csv',
@@ -78,7 +79,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     columnMappings: {
       answer: 'city',
       label: 'city',
-      coordinates: 'latitude',
+      latitude: 'latitude',
+      longitude: 'longitude',
       group: 'country',
     },
     dataPath: '/data/capitals/world-capitals.csv',
@@ -113,7 +115,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     columnMappings: {
       answer: 'city',
       label: 'city',
-      coordinates: 'latitude',
+      latitude: 'latitude',
+      longitude: 'longitude',
       group: 'country',
     },
     dataPath: '/data/capitals/world-capitals.csv',
