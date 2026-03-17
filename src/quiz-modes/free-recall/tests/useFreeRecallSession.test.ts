@@ -47,7 +47,8 @@ describe('useFreeRecallSession', () => {
     expect(result.current.session.correctElementIds).toEqual(['paris']);
     expect(result.current.session.elementStates['paris']).toBe('correct');
     expect(result.current.session.score.correct).toBe(1);
-    expect(result.current.lastMatchedElementId).toBe('paris');
+    expect(result.current.session.lastMatchedElementId).toBe('paris');
+    expect(result.current.session.lastMatchedAnswer).toBe('Paris');
   });
 
   it('does not match non-existent answer', () => {

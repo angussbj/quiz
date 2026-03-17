@@ -205,7 +205,12 @@ function MapContent({
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         const isTarget = element.id === targetElementId;
+        const isCorrectPulse = isTarget && state === 'correct';
         const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
+        const dotClassName = [
+          element.interactive ? styles.interactiveDot : '',
+          isCorrectPulse ? styles.correctPulse : '',
+        ].filter(Boolean).join(' ') || undefined;
         return (
           <circle
             key={`dot-${element.id}`}
@@ -215,7 +220,7 @@ function MapContent({
             fill={color}
             stroke={isTarget ? 'var(--color-highlight)' : 'var(--color-bg-primary)'}
             strokeWidth={isTarget ? 0.15 : 0.08}
-            className={element.interactive ? styles.interactiveDot : undefined}
+            className={dotClassName}
             onClick={
               element.interactive && onElementClick
                 ? (e) => {

@@ -16,7 +16,6 @@ export function FreeRecallMode({
   onGiveUp,
 }: QuizModeProps) {
   const [inputText, setInputText] = useState('');
-  const [lastCorrectAnswer, setLastCorrectAnswer] = useState<string | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const prevCorrectCount = useRef(session.correctElementIds.length);
 
@@ -45,16 +44,6 @@ export function FreeRecallMode({
       setInputText('');
     }
   }, []);
-
-  // Track the display label of the last correct answer for feedback
-  useEffect(() => {
-    if (session.correctElementIds.length > 0) {
-      const lastId = session.correctElementIds[session.correctElementIds.length - 1];
-      if (lastId !== undefined) {
-        setLastCorrectAnswer(lastId);
-      }
-    }
-  }, [session.correctElementIds]);
 
   return (
     <div className={styles.container}>
@@ -99,16 +88,16 @@ export function FreeRecallMode({
       )}
 
       <AnimatePresence mode="wait">
-        {lastCorrectAnswer && !isFinished && (
+        {session.lastMatchedAnswer && !isFinished && (
           <motion.div
-            key={lastCorrectAnswer}
+            key={session.lastMatchedElementId}
             className={styles.lastAnswer}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
           >
-            ✓ {lastCorrectAnswer}
+            ✓ {session.lastMatchedAnswer}
           </motion.div>
         )}
       </AnimatePresence>

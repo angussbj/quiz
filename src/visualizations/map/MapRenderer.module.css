@@ -10,7 +10,7 @@
 .interactivePath {
   cursor: pointer;
   stroke-linejoin: round;
-  transition: fill-opacity var(--transition-fast);
+  transition: fill var(--transition-normal), fill-opacity var(--transition-normal), stroke var(--transition-normal);
 }
 
 .interactivePath:hover {
@@ -19,11 +19,30 @@
 
 .interactiveDot {
   cursor: pointer;
-  transition: r var(--transition-fast), fill var(--transition-fast);
+  transition: r var(--transition-fast), fill var(--transition-normal);
 }
 
 .interactiveDot:hover {
   r: 0.45;
+}
+
+@keyframes correctPulse {
+  0% {
+    r: 0.3;
+    opacity: 1;
+  }
+  40% {
+    r: 0.6;
+    opacity: 0.8;
+  }
+  100% {
+    r: 0.3;
+    opacity: 1;
+  }
+}
+
+.correctPulse {
+  animation: correctPulse 400ms ease-out;
 }
 
 .label {

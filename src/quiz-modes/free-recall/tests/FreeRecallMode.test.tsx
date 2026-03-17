@@ -134,6 +134,18 @@ describe('FreeRecallMode', () => {
     expect(screen.getByText(/answered/)).toBeInTheDocument();
   });
 
+  it('shows display answer from session.lastMatchedAnswer', () => {
+    renderMode({
+      session: makeSession({
+        correctElementIds: ['bucharest'],
+        remainingElementIds: ['berlin', 'madrid'],
+        lastMatchedElementId: 'bucharest',
+        lastMatchedAnswer: 'București',
+      }),
+    });
+    expect(screen.getByText(/București/)).toBeInTheDocument();
+  });
+
   it('clears input on Escape key', async () => {
     const user = userEvent.setup();
     renderMode();

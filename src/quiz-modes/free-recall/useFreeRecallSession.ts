@@ -18,7 +18,6 @@ interface FreeRecallSessionConfig {
 interface FreeRecallSessionResult {
   readonly session: QuizSessionState;
   readonly elementToggles: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
-  readonly lastMatchedElementId: string | undefined;
   readonly handleTextAnswer: (text: string) => void;
   readonly handleGiveUp: () => void;
 }
@@ -39,6 +38,7 @@ export function useFreeRecallSession({
   const [correctIds, setCorrectIds] = useState<ReadonlyArray<string>>([]);
   const [givenUp, setGivenUp] = useState(false);
   const [lastMatchedElementId, setLastMatchedElementId] = useState<string | undefined>(undefined);
+  const [lastMatchedAnswer, setLastMatchedAnswer] = useState<string | undefined>(undefined);
 
   const correctIdSet = useMemo(() => new Set(correctIds), [correctIds]);
   const totalElements = elements.length;
@@ -109,6 +109,7 @@ export function useFreeRecallSession({
     if (match) {
       setCorrectIds((prev) => [...prev, match.elementId]);
       setLastMatchedElementId(match.elementId);
+      setLastMatchedAnswer(match.displayAnswer);
     }
   }, [answerColumn, givenUp]);
 
@@ -125,12 +126,13 @@ export function useFreeRecallSession({
     status,
     elapsedMs: 0,
     score,
-  }), [toggleValues, elementStates, remainingElementIds, correctIds, status, score]);
+    lastMatchedElementId,
+    lastMatchedAnswer,
+  }), [toggleValues, elementStates, remainingElementIds, correctIds, status, score, lastMatchedElementId, lastMatchedAnswer]);
 
   return {
     session,
     elementToggles,
-    lastMatchedElementId,
     handleTextAnswer,
     handleGiveUp,
   };
