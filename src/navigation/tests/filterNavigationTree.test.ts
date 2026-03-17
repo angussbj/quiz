@@ -70,6 +70,47 @@ describe('filterNavigationTree', () => {
     expect(result.children).toHaveLength(1);
     expect(result.children[0].label).toBe('Science');
   });
+
+  it('keeps all children when a category label matches', () => {
+    const result = filterNavigationTree(tree, 'europe')!;
+    expect(result).not.toBeNull();
+    // Geography > Europe should be kept with all its children
+    const geo = result.children[0];
+    expect(geo.label).toBe('Geography');
+    const europe = geo.children[0];
+    expect(europe.label).toBe('Europe');
+    expect(europe.children).toHaveLength(2); // Both Capitals and Flags kept
+    expect(europe.children[0].label).toBe('Capitals');
+    expect(europe.children[1].label).toBe('Flags');
+  });
+
+  it('keeps all descendants when a top-level category matches', () => {
+    const result = filterNavigationTree(tree, 'geography')!;
+    expect(result).not.toBeNull();
+    const geo = result.children[0];
+    expect(geo.label).toBe('Geography');
+    // All subcategories and quizzes should be preserved
+    expect(geo.children).toHaveLength(2);
+    expect(geo.children[0].children).toHaveLength(2);
+    expect(geo.children[1].children).toHaveLength(1);
+  });
+
+  it('returns entire tree when root label matches', () => {
+    // The root node "Quizzes" matches — all children kept
+    const result = filterNavigationTree(tree, 'quizzes')!;
+    expect(result).not.toBeNull();
+    expect(result.children).toHaveLength(2); // Geography and Science
+  });
+
+  it('matches both category and leaf when both match', () => {
+    // "Chem" matches "Chemistry" (category), keeping all its children
+    const result = filterNavigationTree(tree, 'chem')!;
+    expect(result).not.toBeNull();
+    expect(result.children).toHaveLength(1);
+    const science = result.children[0];
+    expect(science.children[0].label).toBe('Chemistry');
+    expect(science.children[0].children).toHaveLength(1);
+  });
 });
 
 describe('collectCategoryPaths', () => {

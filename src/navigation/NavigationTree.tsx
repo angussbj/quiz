@@ -42,6 +42,13 @@ interface TreeNodeProps {
   readonly searchQuery?: string;
 }
 
+/**
+ * Returns true if all children of a node are leaf nodes (quizzes).
+ */
+function allChildrenAreLeaves(node: NavigationNode): boolean {
+  return node.children.every((child) => child.quizId !== undefined);
+}
+
 function TreeNode({ node, path, expandedPaths, onTogglePath, searchQuery }: TreeNodeProps) {
   const isLeaf = node.quizId !== undefined;
   const isExpanded = expandedPaths.has(path);
@@ -60,6 +67,8 @@ function TreeNode({ node, path, expandedPaths, onTogglePath, searchQuery }: Tree
     );
   }
 
+  const useGrid = allChildrenAreLeaves(node);
+
   return (
     <li className={styles.nodeItem}>
       <button
@@ -74,12 +83,12 @@ function TreeNode({ node, path, expandedPaths, onTogglePath, searchQuery }: Tree
         >
           &#x25B8;
         </motion.span>
-        {node.label}
+        <HighlightedLabel label={node.label} query={searchQuery} />
       </button>
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.ul
-            className={styles.subtree}
+            className={useGrid ? styles.quizGrid : styles.subtree}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -119,11 +128,5 @@ function HighlightedLabel({ label, query }: { readonly label: string; readonly q
   const match = label.slice(index, index + query.length);
   const after = label.slice(index + query.length);
 
-  return (
-    <>
-      {before}
-      <mark className={styles.highlight}>{match}</mark>
-      {after}
-    </>
-  );
+  return <span>{before}<mark className={styles.highlight}>{match}</mark>{after}</span>;
 }

@@ -11,6 +11,22 @@
   overflow: hidden;
 }
 
+.quizGrid {
+  list-style: none;
+  padding-left: var(--spacing-lg);
+  margin: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: var(--spacing-md);
+}
+
+@media (max-width: 500px) {
+  .quizGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .categoryButton {
   display: flex;
   align-items: center;
@@ -21,7 +37,7 @@
   background: none;
   color: var(--color-text-primary);
   font-family: var(--font-family);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   border-radius: var(--radius-sm);
@@ -35,29 +51,33 @@
 
 .chevron {
   display: inline-flex;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   align-items: center;
   justify-content: center;
   color: var(--color-text-muted);
   flex-shrink: 0;
+  font-size: var(--font-size-xs);
 }
 
 .quizLink {
   display: flex;
   align-items: center;
   padding: var(--spacing-xs) var(--spacing-sm);
-  padding-left: calc(var(--spacing-sm) + 16px + var(--spacing-sm));
-  color: var(--color-text-secondary);
-  text-decoration: none;
+  padding-left: calc(var(--spacing-sm) + 14px + var(--spacing-sm));
+  color: var(--color-link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-link) 40%, transparent);
+  text-underline-offset: 2px;
   font-size: var(--font-size-sm);
   border-radius: var(--radius-sm);
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast), text-decoration-color var(--transition-fast);
 }
 
 .quizLink:hover {
   background-color: var(--color-bg-secondary);
-  color: var(--color-accent);
+  color: var(--color-link-hover);
+  text-decoration-color: var(--color-link-hover);
 }
 
 .nodeItem {
@@ -65,8 +85,6 @@
 }
 
 .highlight {
-  background-color: var(--color-highlight-bg);
-  color: var(--color-text-primary);
-  border-radius: 2px;
-  padding: 0 1px;
+  background-color: color-mix(in srgb, var(--color-link) 30%, transparent);
+  color: inherit;
 }

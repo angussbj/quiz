@@ -12,7 +12,7 @@ describe('navigationTree', () => {
     expect(topLabels).toContain('History');
   });
 
-  it('organizes geography quizzes by type then region', () => {
+  it('organizes geography quizzes by type', () => {
     const geo = navigationTree.children.find((c) => c.label === 'Geography');
     expect(geo).toBeDefined();
     const subLabels = geo!.children.map((c) => c.label);

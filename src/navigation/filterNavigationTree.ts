@@ -2,7 +2,10 @@ import type { NavigationNode } from './NavigationNode';
 
 /**
  * Filters a navigation tree to only include branches containing
- * leaf nodes whose labels match the query (case-insensitive substring).
+ * nodes whose labels match the query (case-insensitive substring).
+ *
+ * Category-aware: when a category label matches, all its descendants are kept.
+ * When only leaf labels match, only those branches are kept.
  * Returns null if no nodes match.
  */
 export function filterNavigationTree(
@@ -10,14 +13,27 @@ export function filterNavigationTree(
   query: string,
 ): NavigationNode | null {
   const lowerQuery = query.toLowerCase();
+  return filterNode(node, lowerQuery);
+}
 
+function filterNode(
+  node: NavigationNode,
+  lowerQuery: string,
+): NavigationNode | null {
+  // Leaf node: match against its label
   if (node.quizId !== undefined) {
     return node.label.toLowerCase().includes(lowerQuery) ? node : null;
   }
 
+  // Category node: if label matches, keep entire subtree
+  if (node.label.toLowerCase().includes(lowerQuery)) {
+    return node;
+  }
+
+  // Otherwise, recurse into children
   const filteredChildren: NavigationNode[] = [];
   for (const child of node.children) {
-    const filtered = filterNavigationTree(child, query);
+    const filtered = filterNode(child, lowerQuery);
     if (filtered) {
       filteredChildren.push(filtered);
     }
