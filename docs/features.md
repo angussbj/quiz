@@ -42,6 +42,11 @@ Features for parallel agent development. Each feature should be developed in its
 **Branch:** `feat/timer`
 **Files:** `src/quiz-modes/Timer.tsx`, CSS module, tests
 **Scope:** Optional countdown or elapsed timer. Displays formatted time (MM:SS). Start/pause/reset controls. Calls back when time expires (for countdown mode). Framer Motion for number transitions. Unit tests for time formatting and state transitions.
+**Integration notes:**
+- Timer starts on mount and owns its own interval state. QuizShell should not render the Timer until the quiz has actually started.
+- `QuizDefinition.defaultCountdownSeconds` controls countdown duration. If undefined, timer runs in elapsed (count-up) mode.
+- When countdown expires, Timer calls `onExpire` — QuizShell should use this to end the quiz.
+- Timer accepts a `paused` prop for pause/resume (e.g., when quiz is paused).
 
 ### 7. Score Calculator — DONE
 **Branch:** `feat/score-calculator`
@@ -97,6 +102,9 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/routes/QuizPage.tsx`, `src/quiz-modes/QuizShell.tsx`, CSS modules
 **Scope:** Wire everything together: QuizPage loads quiz definition and data, renders QuizShell with the correct visualization renderer and quiz mode based on URL params and toggle state. Mode selector (dropdown or tabs). Score display. Results screen at end with completion stats and Framer Motion celebration animation (subtle, not confetti — maybe a gentle glow or progress bar fill). "Try again" button.
 **Note:** QuizShell already implements a `configuring` → `active` state machine (from feature #5). The config screen (TogglePanel) is shown as a full page before the quiz starts — toggles are NOT visible during the quiz. A "Reconfigure" button returns to the config screen and resets quiz state via key remount. QuizShell's `children` prop is a render function receiving toggle values: `(toggleValues: Record<string, boolean>) => ReactNode`.
+**Integration notes:**
+- Wire up `Timer` component: pass `QuizDefinition.defaultCountdownSeconds` as `countdownSeconds` prop, handle `onExpire` to end the quiz. Don't render Timer until quiz has started.
+- Wire up countdown duration UI: quiz setup screen should allow overriding `defaultCountdownSeconds` before starting.
 
 ### 16. Theme Toggle & Global Layout
 **Branch:** `feat/global-layout`

@@ -1,0 +1,10 @@
+.timer {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  user-select: none;
+}
+
+.expired {
+  color: var(--color-incorrect);
+}
