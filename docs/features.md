@@ -182,10 +182,11 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 - Wire up countdown duration UI: quiz setup screen should allow overriding `defaultCountdownSeconds` before starting.
 **Note (toggle resolution):** QuizShell needs to pass `elementToggles` from the quiz mode through to the renderer. The quiz mode computes `elementToggles` from the toggle definitions' `hiddenBehavior` + quiz state, and QuizShell passes them as a prop alongside the global `toggles`. See "Toggle Resolution Design" section above. Also update `ToggleDefinition` to include `hiddenBehavior` — the type change should happen in whichever feature is implemented first (12, 13, 14, or 15).
 
-### 16. Theme Toggle & Global Layout
+### 16. Theme Toggle & Global Layout — DONE
 **Branch:** `feat/global-layout`
-**Files:** `src/App.tsx`, CSS modules, potentially a `Layout.tsx` component
-**Scope:** App-level layout: header with site title, theme toggle (sun/moon icon), navigation breadcrumbs on quiz pages. Responsive but desktop-first. Smooth theme transition animation. Clean typography. The overall "quiet, satisfying crossword app" aesthetic should come together here.
+**Files:** `src/layout/Layout.tsx`, `src/layout/ThemeToggle.tsx`, `src/layout/Breadcrumbs.tsx`, `src/navigation/findSubtree.ts`, CSS modules, tests
+**Scope:** App-level layout: header with site title ("Quizzical"), theme toggle (sun/moon/monitor icon cycling light/dark/system), navigation breadcrumbs on quiz pages with clickable path segments. Category URL routes (e.g. `/geography/capitals`) show filtered quiz lists. Responsive but desktop-first. Smooth theme transition animation. Clean typography.
+**Note from #16:** Breadcrumbs are rendered by the global Layout, not by individual pages. Quiz path segments in breadcrumbs link to category browsing routes. The `findSubtree` utility in `src/navigation/findSubtree.ts` does case-insensitive matching of URL segments to navigation tree labels. HomePage accepts category filtering via URL path — the `/*` catch-all route handles this.
 
 ### 17. European Capitals Quiz Definition
 **Branch:** `feat/capitals-quiz`
