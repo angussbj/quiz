@@ -68,6 +68,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Branch:** `feat/free-recall-unordered`
 **Files:** `src/quiz-modes/free-recall/FreeRecallMode.tsx`, CSS module, tests
 **Scope:** Text input field. User types answers in any order. Fuzzy matching (case-insensitive, ignore accents/diacritics, accept alternate answers from data). On match: mark element as correct in the visualization with a satisfying animation, increment score, clear input. Show progress (e.g., "7/50"). On give up: reveal remaining answers. Gentle feedback — no "wrong" state for typing, only when giving up.
+**Note (from #7):** When building the ordered recall variant, use `HintLevel` from `src/scoring/ScoreResult.ts` to track per-answer hint usage. Visualization should colour answers by hint level: `'none'` = green/white (counts as correct), `'partial'` = yellow (doesn't count), `'full'` = red (doesn't count). The scoring function `calculateOrderedRecallScore` already handles this.
 
 ### 13. Identify Mode
 **Branch:** `feat/identify-mode`

@@ -11,10 +11,13 @@ export interface LocateScoreDetails {
   readonly distances: ReadonlyArray<number>;
 }
 
+export type HintLevel = 'none' | 'partial' | 'full';
+
 export interface OrderedRecallScoreDetails {
   readonly kind: 'ordered-recall';
   readonly hintsUsed: number;
   readonly correctWithoutHints: number;
+  readonly answerHintLevels: ReadonlyArray<HintLevel>;
 }
 
 export type ScoreDetails = LocateScoreDetails | OrderedRecallScoreDetails;
