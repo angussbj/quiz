@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { QuizModeProps } from '../QuizModeProps';
-import { resolveElementToggles } from '../resolveElementToggles';
+import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
 import styles from './IdentifyMode.module.css';
 
@@ -51,7 +51,7 @@ export function IdentifyMode({
   };
 
   const elementToggles = useMemo(() => {
-    const elementQuizStates: Record<string, { isAnswered: boolean; wrongAttempts: number }> = {};
+    const elementQuizStates: Record<string, ElementQuizState> = {};
     for (const el of elements) {
       elementQuizStates[el.id] = {
         isAnswered: quiz.answeredElementIds.has(el.id),

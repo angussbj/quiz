@@ -1,6 +1,6 @@
 import type { HiddenBehavior, ToggleDefinition } from './ToggleDefinition';
 
-interface ElementQuizState {
+export interface ElementQuizState {
   readonly isAnswered: boolean;
   readonly wrongAttempts: number;
 }

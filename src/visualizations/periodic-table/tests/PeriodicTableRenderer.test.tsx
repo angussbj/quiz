@@ -51,7 +51,7 @@ function makeProps(overrides: Partial<VisualizationRendererProps> = {}): Visuali
       He: 'revealed',
       Li: 'hidden',
     },
-    toggles: {},
+    toggles: { showSymbols: false },
     ...overrides,
   };
 }
