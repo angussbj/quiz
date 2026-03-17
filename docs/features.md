@@ -138,11 +138,24 @@ An advanced option on the config screen lets users override the hidden behavior 
 **Scope:** Show a prompt ("Click on Paris"). User clicks elements in the visualization. Correct click: satisfying animation, advance to next prompt. Incorrect click: gentle incorrect animation, element briefly highlighted red. Cycle through all target elements. Support toggles (show/hide hints like flags or labels). Show progress.
 **Note (toggle resolution):** This mode must resolve per-element toggles. Track incorrect answer count per element. For `{ hintAfter: n }` → set true after n wrong clicks on that element's prompt. For `'on-reveal'` → set true after correct answer or skip. Pass resolved `elementToggles` to the renderer.
 
-### 14. Locate Mode
+### 14. Locate Mode — DONE
 **Branch:** `feat/locate-mode`
-**Files:** `src/quiz-modes/locate/LocateMode.tsx`, CSS module, tests
+**Files:** `src/quiz-modes/locate/LocateMode.tsx`, `src/quiz-modes/locate/useLocateQuiz.ts`, `src/quiz-modes/locate/LocateFeedback.tsx`, `src/quiz-modes/locate/LocateResults.tsx`, CSS module, tests
 **Scope:** Show a prompt ("Click where Paris is"). User clicks anywhere on the visualization. Show distance feedback with the score calculator's non-linear curve. Visual feedback: show the correct location and draw a line from the click to it. Satisfying animation for close guesses, gentle feedback for far ones. Advance to next prompt.
-**Note (toggle resolution):** This mode must resolve per-element toggles. Similar to Identify: track attempts per element. For `{ hintAfter: n }` → set true after n attempts. For `'on-reveal'` → set true after answering. Pass resolved `elementToggles` to the renderer.
+**Implementation notes:**
+- LocateMode is self-contained with its own state machine (`useLocateQuiz` hook). When QuizPage integration (#15) is built, it should either consume this hook or adapt the component.
+- `LocateModeProps` differs from `QuizModeProps` — it takes a `Renderer` component type and renders the visualization itself. This will need reconciliation in #15.
+- `svgOverlay` prop was added to `VisualizationRendererProps` to allow quiz modes to inject SVG feedback (like distance lines) into renderers. MapRenderer and PeriodicTableRenderer both support it.
+- Next prompt appears instantly after a click; feedback (line + distance label) lingers for ~2s then fades via Framer Motion AnimatePresence.
+- Toggle resolution was deferred — see feature #14b.
+**Note (toggle resolution):** Deferred to feature #14b.
+
+### 14b. Toggle Resolution Unification
+**Branch:** `feat/toggle-resolution`
+**Files:** `src/quiz-modes/resolveElementToggles.ts`, `src/quiz-modes/ToggleDefinition.ts`, tests
+**Scope:** Unify toggle resolution across all quiz modes (12, 13, 14). Add `hiddenBehavior` field to `ToggleDefinition`. Create a shared `resolveElementToggles` utility that computes per-element toggle booleans from toggle definitions, global toggle values, and per-element quiz state (answered, attempt count). Wire into each quiz mode. Ensure no unnecessary duplication across modes. Also add `elementToggles` support to renderers (reading `elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]`).
+**Depends on:** Features 12, 13, 14 (at least one mode must exist to wire into).
+**Note:** This was split out because features 12–14 may be developed in parallel, and unifying toggle resolution afterward avoids conflicting implementations.
 
 ## Group D: Integration (depends on Groups A–C)
 
