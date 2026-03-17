@@ -56,7 +56,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    npm run build
    ```
 2. Push the branch (use `git rev-parse --abbrev-ref HEAD` if you need the branch name).
-3. If the feature has visual output, take screenshots of it working in the browser. 
+3. If the feature has visual output, take screenshots of it working in the browser. These can't be added to the PR, but we will share them with the user for review. Check that they look correct as you take them, and return to Phase 3 if needed to fix any issues.
   3a. If it's all wired up, take screenshots using the dev server you started. Otherwise create a storybook, run it, and use it for screenshots.
   3b. If it involves animations or interactions that can't be captured in a screenshot, create a screen recording. 
   3c. Pure logic features (parsers, scoring, etc.) can skip screenshots. Save all screenshots and screen recordings to a `screenshots/` directory in the worktree root (create it if it doesn't exist).
@@ -80,5 +80,5 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 5. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't).
 6. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
 7. Check that the worktree directory under `.claude/worktrees/<name>` is fully removed. Tools like Playwright can leave behind directories (e.g. `.playwright-mcp`) that survive the git worktree cleanup. If the directory still exists, `rm -rf` it.
-8. Check if there's anything important in your context that shouldn't be forgotten, and find somewhere to write it for future agents, like in the `features.md`, `CLAUDE.md` or other `docs/`. The user will check and commit these changes later.
+8. Check if there's anything important in your context that shouldn't be forgotten, and find somewhere to write it for future agents, like in the `features.md`, `CLAUDE.md`, other `docs/`, or your memories. The user will check and commit these changes later.
 9. Confirm: "Feature merged and worktree cleaned up."
