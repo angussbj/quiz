@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import type { QuizDataRow } from './QuizDataRow';
 import { fetchQuizData } from './fetchQuizData';
 
 interface QuizDataIdle {
@@ -12,7 +11,7 @@ interface QuizDataLoading {
 
 interface QuizDataLoaded {
   readonly status: 'loaded';
-  readonly rows: ReadonlyArray<QuizDataRow>;
+  readonly rows: ReadonlyArray<Readonly<Record<string, string>>>;
 }
 
 interface QuizDataError {

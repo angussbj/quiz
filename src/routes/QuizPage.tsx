@@ -1,6 +1,6 @@
 import { useParams } from 'react-router';
 import { getQuizById } from '@/quiz-definitions/getQuizById';
-import { useQuizData } from '@/quiz-definitions/useQuizData';
+import { useQuizData, type QuizDataState } from '@/quiz-definitions/useQuizData';
 import styles from './QuizPage.module.css';
 
 export default function QuizPage() {
@@ -70,7 +70,7 @@ export default function QuizPage() {
   );
 }
 
-function QuizDataDisplay({ state }: { readonly state: ReturnType<typeof useQuizData> }) {
+function QuizDataDisplay({ state }: { readonly state: QuizDataState }) {
   switch (state.status) {
     case 'idle':
       return <p className={styles.message}>No data path configured.</p>;
