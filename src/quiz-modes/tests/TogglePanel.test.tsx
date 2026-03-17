@@ -4,9 +4,9 @@ import type { ToggleDefinition, TogglePreset } from '../ToggleDefinition';
 import { TogglePanel } from '../TogglePanel';
 
 const toggles: ReadonlyArray<ToggleDefinition> = [
-  { key: 'show-labels', label: 'Show labels', defaultValue: true, group: 'display' },
-  { key: 'show-borders', label: 'Show borders', defaultValue: true, group: 'display' },
-  { key: 'accept-typos', label: 'Accept typos', defaultValue: false, group: 'difficulty' },
+  { key: 'show-labels', label: 'Show labels', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+  { key: 'show-borders', label: 'Show borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+  { key: 'accept-typos', label: 'Accept typos', defaultValue: false, group: 'difficulty', hiddenBehavior: 'never' },
 ];
 
 const presets: ReadonlyArray<TogglePreset> = [

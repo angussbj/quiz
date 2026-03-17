@@ -4,12 +4,12 @@ import type { ToggleDefinition, TogglePreset } from './ToggleDefinition';
 import { TogglePanel } from './TogglePanel';
 
 const sampleToggles: ReadonlyArray<ToggleDefinition> = [
-  { key: 'show-labels', label: 'Show country labels', defaultValue: true, group: 'display' },
-  { key: 'show-borders', label: 'Show borders', defaultValue: true, group: 'display' },
-  { key: 'show-flags', label: 'Show flags', defaultValue: false, group: 'display' },
-  { key: 'show-city-dots', label: 'Show city markers', defaultValue: true, group: 'display' },
-  { key: 'accept-misspellings', label: 'Accept misspellings', defaultValue: true, group: 'difficulty' },
-  { key: 'show-first-letter', label: 'Show first letter hint', defaultValue: false, group: 'difficulty' },
+  { key: 'show-labels', label: 'Show country labels', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+  { key: 'show-borders', label: 'Show borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+  { key: 'show-flags', label: 'Show flags', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+  { key: 'show-city-dots', label: 'Show city markers', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+  { key: 'accept-misspellings', label: 'Accept misspellings', defaultValue: true, group: 'difficulty', hiddenBehavior: 'never' },
+  { key: 'show-first-letter', label: 'Show first letter hint', defaultValue: false, group: 'difficulty', hiddenBehavior: 'never' },
 ];
 
 const samplePresets: ReadonlyArray<TogglePreset> = [

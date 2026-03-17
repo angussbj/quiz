@@ -4,8 +4,8 @@ import type { ToggleDefinition, TogglePreset } from '../ToggleDefinition';
 import { QuizShell } from '../QuizShell';
 
 const toggles: ReadonlyArray<ToggleDefinition> = [
-  { key: 'show-labels', label: 'Show labels', defaultValue: true, group: 'display' },
-  { key: 'show-flags', label: 'Show flags', defaultValue: false, group: 'display' },
+  { key: 'show-labels', label: 'Show labels', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+  { key: 'show-flags', label: 'Show flags', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
 ];
 
 const presets: ReadonlyArray<TogglePreset> = [
