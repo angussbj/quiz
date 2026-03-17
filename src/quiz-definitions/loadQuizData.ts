@@ -1,16 +1,18 @@
-import type { QuizDataRow } from './QuizDataRow';
+import { type ZodType } from 'zod';
 import { parseCsv } from './parseCsv';
 
 /**
- * Parse CSV text into typed quiz data rows.
+ * Parse CSV text and validate each row against a zod schema.
  *
- * The CSV must have a header row. One of the columns must be named "id".
- * Each row becomes a QuizDataRow with the id field set from that column
- * and all columns (including id) available as string properties.
+ * Rows that fail validation are omitted from the result and a warning
+ * is logged to the console with the row index and error details.
  *
  * @throws Error if the CSV has no header row or no "id" column.
  */
-export function loadQuizData<K extends string>(csvText: string): ReadonlyArray<QuizDataRow<K>> {
+export function loadQuizData<T>(
+  csvText: string,
+  schema: ZodType<T>,
+): ReadonlyArray<T> {
   const records = parseCsv(csvText);
 
   if (records.length === 0) {
@@ -22,8 +24,19 @@ export function loadQuizData<K extends string>(csvText: string): ReadonlyArray<Q
     throw new Error('CSV must have an "id" column in the header row');
   }
 
-  return records.map((record) => {
-    const row = { ...record } as QuizDataRow<K>;
-    return row;
-  });
+  const rows: Array<T> = [];
+  for (let i = 0; i < records.length; i++) {
+    const result = schema.safeParse(records[i]);
+    if (result.success) {
+      rows.push(result.data);
+    } else {
+      const csvRow = i + 2; // +1 for header, +1 for 1-indexed
+      const issues = result.error.issues
+        .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+        .join('; ');
+      console.warn(`CSV row ${csvRow}: validation failed — ${issues}`);
+    }
+  }
+
+  return rows;
 }
