@@ -4,17 +4,17 @@ Features for parallel agent development. Each feature should be developed in its
 
 ## Group A: Foundation (no dependencies beyond current scaffolding)
 
-### 1. DONE - CSV Data Loader
+### 1. CSV Data Loader - DONE
 **Branch:** `feat/csv-loader`
 **Files:** `src/quiz-definitions/loadQuizData.ts`, tests
 **Scope:** Implement CSV parsing that reads a CSV string and returns `QuizDataRow<K>[]`. Handle headers, quoted fields, commas within quotes, and empty fields. No external CSV library — keep it simple. Write thorough unit tests with edge cases.
 
-### 2. DONE - ZoomPanContainer
+### 2. ZoomPanContainer - DONE
 **Branch:** `feat/zoom-pan-container`
 **Files:** `src/visualizations/ZoomPanContainer.tsx`, `src/visualizations/ClusterBadge.tsx`, tests
 **Scope:** Wrap `react-zoom-pan-pinch` with our interface. Accept children (SVG content), manage zoom/pan state, compute element clusters at each zoom level based on `ClusteringConfig`, render `ClusterBadge` components for clusters. The badge should show count of elements (e.g., "3/4 named") and zoom into the cluster on click. Smooth animations with Framer Motion. CSS module for styling.
 
-### 3. DONE - Navigation Page
+### 3. Navigation Page - DONE
 **Branch:** `feat/navigation`
 **Files:** `src/navigation/NavigationTree.tsx`, `src/navigation/Search.tsx`, `src/routes/HomePage.tsx`, CSS modules, tests
 **Scope:** Hierarchical tree view of quizzes from a `NavigationNode` tree. Expandable/collapsible categories. Search that filters the tree by quiz title. Links to quiz pages. Clean, quiet design using theme CSS properties. Framer Motion for expand/collapse animations.
