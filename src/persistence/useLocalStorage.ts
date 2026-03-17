@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+/**
+ * Parse JSON without an explicit `as` cast. The `any` return type of
+ * JSON.parse flows through the generic return type implicitly.
+ */
+function parseJson<T>(json: string): T {
+  return JSON.parse(json);
+}
+
 interface UseLocalStorageResult<T> {
   readonly value: T;
   readonly loading: boolean;
@@ -26,7 +34,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): UseLocalStorag
     try {
       const stored = localStorage.getItem(key);
       if (stored !== null) {
-        setValue(JSON.parse(stored) as T);
+        setValue(parseJson<T>(stored));
       } else {
         setValue(defaultRef.current);
       }
@@ -44,7 +52,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): UseLocalStorag
         return;
       }
       try {
-        setValue(JSON.parse(event.newValue) as T);
+        setValue(parseJson<T>(event.newValue));
       } catch {
         // Invalid JSON from another tab — ignore
       }
