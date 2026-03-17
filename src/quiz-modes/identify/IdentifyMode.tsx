@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { ElementVisualState } from '@/visualizations/VisualizationElement';
+import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
@@ -8,6 +9,7 @@ import styles from './IdentifyMode.module.css';
 
 export interface IdentifyModeProps extends QuizModeProps {
   readonly toggleValues?: Readonly<Record<string, boolean>>;
+  readonly onFinish?: (score: ScoreResult) => void;
   readonly renderVisualization: (props: {
     readonly elementStates: Readonly<Record<string, ElementVisualState>>;
     readonly onElementClick: (elementId: string) => void;
@@ -26,11 +28,23 @@ export function IdentifyMode({
   onElementSelect,
   onSkip,
   onGiveUp,
+  onFinish,
   toggleDefinitions,
   toggleValues = {},
   renderVisualization,
 }: IdentifyModeProps) {
   const quiz = useIdentifyQuiz(elements);
+
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
+  const hasCalledFinish = useRef(false);
+
+  useEffect(() => {
+    if (quiz.isFinished && !hasCalledFinish.current) {
+      hasCalledFinish.current = true;
+      onFinishRef.current?.(quiz.score);
+    }
+  }, [quiz.isFinished, quiz.score]);
 
   const handleElementClick = (elementId: string) => {
     const wasCorrect = elementId === quiz.currentElementId;
