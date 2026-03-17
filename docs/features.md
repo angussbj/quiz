@@ -133,12 +133,14 @@ An advanced option on the config screen lets users override the hidden behavior 
 
 Note: we're still waiting on the timeline renderer, so if any work relies on it, create a new task later to do that work, and continue with what work you can do with the other renderers.
 
-### 12. Free Recall Mode (Unordered)
+### 12. Free Recall Mode (Unordered) — DONE
 **Branch:** `feat/free-recall-unordered`
 **Files:** `src/quiz-modes/free-recall/FreeRecallMode.tsx`, CSS module, tests
 **Scope:** Text input field. User types answers in any order. Fuzzy matching (case-insensitive, ignore accents/diacritics, accept alternate answers from data). On match: mark element as correct in the visualization with a satisfying animation, increment score, clear input. Show progress (e.g., "7/50"). On give up: reveal remaining answers. Gentle feedback — no "wrong" state for typing, only when giving up.
 **Note (from #7):** When building the ordered recall variant, use `HintLevel` from `src/scoring/ScoreResult.ts` to track per-answer hint usage. Visualization should colour answers by hint level: `'none'` = green/white (counts as correct), `'partial'` = yellow (doesn't count), `'full'` = red (doesn't count). The scoring function `calculateOrderedRecallScore` already handles this.
 **Note (toggle resolution):** This mode must resolve per-element toggles. For each element, for each toggle where `hiddenBehavior` applies: if `'on-reveal'` → set true when element is answered (correct or give-up). If `{ hintAfter: n }` → not applicable (no wrong answers in free recall). If `'never'` → always false. Pass resolved `elementToggles` to the renderer.
+**Note (from #12):** `useFreeRecallSession` hook in `src/quiz-modes/free-recall/useFreeRecallSession.ts` manages session state — feature #15 should use it to wire up the quiz page. Answer matching (`src/quiz-modes/free-recall/matchAnswer.ts`) supports alternate spellings via `{column}_alternates` columns with pipe-separated values. `QuizModeProps` now includes `dataRows`, `columnMappings`, and `toggleDefinitions`. Matching strictness (accent-sensitivity, case-sensitivity) should be toggleable in the future — currently always fuzzy.
+**Note (from #12, matching design):** `normalizeText()` strips diacritics via NFD decomposition + combining character removal, lowercases, strips punctuation, collapses whitespace. This makes é≡e, ñ≡n, ü≡u etc. A future "strict matching" toggle should bypass this normalization.
 
 ### 13. Identify Mode — DONE
 **Branch:** `feat/identify-mode`
