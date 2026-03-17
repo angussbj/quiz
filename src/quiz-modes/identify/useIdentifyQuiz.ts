@@ -2,16 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import { calculateScore } from '@/scoring/calculateScore';
-
-/** Shuffles an array using Fisher-Yates. Returns a new array. */
-function shuffle<T>(array: ReadonlyArray<T>): ReadonlyArray<T> {
-  const result = [...array];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
+import { shuffle } from '@/utilities/shuffle';
 
 export interface IdentifyQuizState {
   readonly currentElementId: string | undefined;
