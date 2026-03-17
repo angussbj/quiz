@@ -60,12 +60,13 @@ Features for parallel agent development. Each feature should be developed in its
 
 ## Group B: Visualization Renderers (depend on #2 ZoomPanContainer)
 
-### 9. Map Renderer
+### 9. Map Renderer — DONE
 **Branch:** `feat/map-renderer`
 **Files:** `src/visualizations/map/MapRenderer.tsx`, CSS module, tests, sample country SVG data
 **Scope:** Render country shapes from `MapElement.svgPathData` positioned in viewBox space. City markers as dots/circles. Color-code by group. Support `elementStates` for visual feedback (correct = green, incorrect = red, highlighted = gold). Support `toggles` for show/hide labels, show/hide country borders. Click handlers for elements and positions. Use `ZoomPanContainer` for zoom/pan. Create sample supporting data CSV with a few European country shapes for testing.
 **Note:** This is the first feature that renders real content inside `ZoomPanContainer`. Use it to visually verify zoom, pan, and clustering behaviour — test that clusters form/split at different zoom levels, badges show correct counts, and cluster click zooms to fit.
 **Note from #4:** Quiz IDs follow the pattern `geo-{type}-{region}` (e.g., `geo-capitals-europe`). The registry organizes paths as type-before-region (Geography > Capitals > Europe). CSV data is fetched from `public/data/` paths. Sample data CSVs can be placed there for testing.
+**Note from #9:** `VisualizationRendererProps` now includes an optional `backgroundPaths: ReadonlyArray<BackgroundPath>` prop for non-interactive decorative SVG content (e.g., country borders). This was added to keep the `elements` array clean for quiz items only. Other renderers can use this for similar decorative content if needed. Flags are displayed outside the map (in the quiz mode UI), not rendered by MapRenderer.
 
 ### 10. Timeline Renderer
 **Branch:** `feat/timeline-renderer`
