@@ -88,7 +88,7 @@ export function FreeRecallMode({
       )}
 
       <AnimatePresence mode="wait">
-        {session.lastMatchedAnswer && !isFinished && (
+        {session.lastMatchedAnswer && (
           <motion.div
             key={session.lastMatchedElementId}
             className={styles.lastAnswer}
