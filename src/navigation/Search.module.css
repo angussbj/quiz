@@ -24,7 +24,7 @@
 
 .searchInput:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.15);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 15%, transparent);
 }
 
 .searchIcon {

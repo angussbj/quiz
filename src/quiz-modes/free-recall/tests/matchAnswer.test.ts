@@ -33,6 +33,10 @@ describe('normalizeText', () => {
   it('strips ñ diacritic', () => {
     expect(normalizeText('España')).toBe('espana');
   });
+
+  it('strips underscores', () => {
+    expect(normalizeText('some_place')).toBe('someplace');
+  });
 });
 
 const sampleRows: ReadonlyArray<QuizDataRow> = [
