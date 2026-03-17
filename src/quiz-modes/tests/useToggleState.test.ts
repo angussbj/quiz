@@ -1,0 +1,128 @@
+import { act, renderHook } from '@testing-library/react';
+import type { ToggleDefinition, TogglePreset } from '../ToggleDefinition';
+import { useToggleState } from '../useToggleState';
+
+const toggles: ReadonlyArray<ToggleDefinition> = [
+  { key: 'show-labels', label: 'Show labels', defaultValue: true, group: 'display' },
+  { key: 'show-borders', label: 'Show borders', defaultValue: true, group: 'display' },
+  { key: 'show-flags', label: 'Show flags', defaultValue: false, group: 'display' },
+  { key: 'accept-misspellings', label: 'Accept misspellings', defaultValue: true, group: 'difficulty' },
+];
+
+const presets: ReadonlyArray<TogglePreset> = [
+  {
+    name: 'easy',
+    label: 'Easy',
+    values: { 'show-labels': true, 'show-borders': true, 'show-flags': true, 'accept-misspellings': true },
+  },
+  {
+    name: 'hard',
+    label: 'Hard',
+    values: { 'show-labels': false, 'show-borders': false, 'show-flags': false, 'accept-misspellings': false },
+  },
+];
+
+describe('useToggleState', () => {
+  it('initializes values from toggle defaults', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    expect(result.current.values).toEqual({
+      'show-labels': true,
+      'show-borders': true,
+      'show-flags': false,
+      'accept-misspellings': true,
+    });
+  });
+
+  it('sets an individual toggle', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    act(() => result.current.set('show-flags', true));
+
+    expect(result.current.values['show-flags']).toBe(true);
+  });
+
+  it('preserves other values when setting one toggle', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    act(() => result.current.set('show-flags', true));
+
+    expect(result.current.values['show-labels']).toBe(true);
+    expect(result.current.values['show-borders']).toBe(true);
+  });
+
+  it('applies a preset', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    act(() => result.current.applyPreset(presets[1]));
+
+    expect(result.current.values).toEqual({
+      'show-labels': false,
+      'show-borders': false,
+      'show-flags': false,
+      'accept-misspellings': false,
+    });
+  });
+
+  it('detects the active preset when values match', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    act(() => result.current.applyPreset(presets[0]));
+
+    expect(result.current.activePreset).toBe('easy');
+  });
+
+  it('returns undefined activePreset when no preset matches', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    expect(result.current.activePreset).toBeUndefined();
+  });
+
+  it('clears activePreset after individual toggle change breaks match', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    act(() => result.current.applyPreset(presets[0]));
+    expect(result.current.activePreset).toBe('easy');
+
+    act(() => result.current.set('show-flags', false));
+    expect(result.current.activePreset).toBeUndefined();
+  });
+
+  it('resets to defaults', () => {
+    const { result } = renderHook(() => useToggleState(toggles, presets));
+
+    act(() => result.current.applyPreset(presets[1]));
+    act(() => result.current.reset());
+
+    expect(result.current.values).toEqual({
+      'show-labels': true,
+      'show-borders': true,
+      'show-flags': false,
+      'accept-misspellings': true,
+    });
+  });
+
+  it('works with empty presets', () => {
+    const { result } = renderHook(() => useToggleState(toggles, []));
+
+    expect(result.current.activePreset).toBeUndefined();
+    act(() => result.current.set('show-flags', true));
+    expect(result.current.values['show-flags']).toBe(true);
+  });
+
+  it('works with empty toggles', () => {
+    const { result } = renderHook(() => useToggleState([], []));
+
+    expect(result.current.values).toEqual({});
+  });
+
+  it('matches first preset when multiple match', () => {
+    const duplicatePresets: ReadonlyArray<TogglePreset> = [
+      { name: 'first', label: 'First', values: { 'show-labels': true } },
+      { name: 'second', label: 'Second', values: { 'show-labels': true } },
+    ];
+    const { result } = renderHook(() => useToggleState(toggles, duplicatePresets));
+
+    expect(result.current.activePreset).toBe('first');
+  });
+});

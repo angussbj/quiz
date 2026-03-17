@@ -2,7 +2,7 @@ export interface ToggleDefinition {
   readonly key: string;
   readonly label: string;
   readonly defaultValue: boolean;
-  readonly group: 'difficulty' | 'display';
+  readonly group: string;
 }
 
 export interface TogglePreset {
