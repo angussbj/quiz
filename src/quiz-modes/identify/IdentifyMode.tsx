@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { QuizModeProps } from '../QuizModeProps';
 import type { ToggleDefinition } from '../ToggleDefinition';
 import { resolveElementToggles } from '../resolveElementToggles';
@@ -10,7 +11,7 @@ export interface IdentifyModeProps extends QuizModeProps {
   readonly toggleDefinitions?: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues?: Readonly<Record<string, boolean>>;
   readonly renderVisualization: (props: {
-    readonly elementStates: Readonly<Record<string, import('@/visualizations/VisualizationElement').ElementVisualState>>;
+    readonly elementStates: Readonly<Record<string, ElementVisualState>>;
     readonly onElementClick: (elementId: string) => void;
     readonly targetElementId?: string;
     readonly toggles: Readonly<Record<string, boolean>>;
@@ -34,8 +35,11 @@ export function IdentifyMode({
   const quiz = useIdentifyQuiz(elements);
 
   const handleElementClick = (elementId: string) => {
+    const wasCorrect = elementId === quiz.currentElementId;
     quiz.handleElementClick(elementId);
-    onElementSelect(elementId);
+    if (wasCorrect) {
+      onElementSelect(elementId);
+    }
   };
 
   const handleSkip = () => {

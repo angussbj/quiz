@@ -31,27 +31,20 @@ export function resolveElementToggles(
 
   for (const [elementId, state] of Object.entries(elementStates)) {
     const elementOverrides: Record<string, boolean> = {};
-    let hasOverrides = false;
 
     for (const toggle of togglesWithBehavior) {
       const behavior = toggle.hiddenBehavior!;
-      let value: boolean;
 
       if (behavior === 'never') {
-        value = false;
+        elementOverrides[toggle.key] = false;
       } else if (behavior === 'on-reveal') {
-        value = state.isAnswered;
+        elementOverrides[toggle.key] = state.isAnswered;
       } else {
-        value = state.wrongAttempts >= behavior.hintAfter;
+        elementOverrides[toggle.key] = state.wrongAttempts >= behavior.hintAfter;
       }
-
-      elementOverrides[toggle.key] = value;
-      hasOverrides = true;
     }
 
-    if (hasOverrides) {
-      result[elementId] = elementOverrides;
-    }
+    result[elementId] = elementOverrides;
   }
 
   return result;
