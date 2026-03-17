@@ -19,6 +19,15 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/navigation/NavigationTree.tsx`, `src/navigation/Search.tsx`, `src/routes/HomePage.tsx`, CSS modules, tests
 **Scope:** Hierarchical tree view of quizzes from a `NavigationNode` tree. Expandable/collapsible categories. Search that filters the tree by quiz title. Links to quiz pages. Clean, quiet design using theme CSS properties. Framer Motion for expand/collapse animations.
 
+### 3b. Navigation Page Polish
+**Branch:** `feat/navigation-polish`
+**Files:** `src/navigation/NavigationTree.tsx`, `src/navigation/NavigationTree.module.css`, `src/navigation/filterNavigationTree.ts`, tests
+**Scope:** Small UX improvements to the navigation page:
+- **Category-aware search:** When the search query matches a category label (directory/path), keep all quizzes under that category visible — not just leaf-level matches.
+- **Multi-column quiz lists:** When a category contains many quizzes, lay them out in multiple columns (CSS grid/columns) so the list doesn't stretch excessively long.
+- **Smaller section headers:** Reduce category heading size — still larger than quiz items, but less dominant.
+- **Clickable-looking quiz links:** Style quiz items more like traditional links (accent color, underline on hover) so they feel obviously interactive.
+
 ### 4. Quiz Registry & Route Generation
 **Branch:** `feat/quiz-registry`
 **Files:** `src/quiz-definitions/quizRegistry.ts`, `src/routes/QuizPage.tsx`, `src/App.tsx`
@@ -39,7 +48,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/scoring/calculateScore.ts`, tests
 **Scope:** Implement scoring logic for all answer types: unordered recall (count correct, no penalty), ordered recall (track hints used), locate (distance-based with non-linear scoring curve — e.g., full marks within 50km, diminishing to zero at 500km), identify (binary), multiple choice (binary). Return `ScoreResult` with appropriate `ScoreDetails`. Thorough unit tests for each mode and edge cases.
 
-### 8. useLocalStorage Tests & Hardening
+### 8. useLocalStorage Tests & Hardening — DONE
 **Branch:** `feat/local-storage`
 **Files:** `src/persistence/useLocalStorage.ts`, `src/persistence/tests/useLocalStorage.test.ts`
 **Scope:** Write comprehensive tests for `useLocalStorage`: initial load from storage, default value when empty, setter updates both state and storage, handles invalid JSON gracefully, handles localStorage being unavailable (e.g., private browsing), handles quota exceeded. Add a `useQuizProgress` convenience hook if useful.
