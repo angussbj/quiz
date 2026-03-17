@@ -31,7 +31,13 @@
       "Edit(/Users/angusjohnson/projects/**)",
       "Bash(git push:*)",
       "Bash(gh pr:*)",
-      "Bash(git check-ignore:*)"
+      "Bash(git check-ignore:*)",
+      "Bash(npm:*)",
+      "Bash(npx storybook:*)",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "Bash(git rm:*)",
+      "Bash(open:*)",
+      "Bash(git fetch:*)"
     ]
   }
 }

@@ -24,6 +24,8 @@ interface UseLocalStorageResult<T> {
  *   const { value, loading, set } = useLocalStorage('progress:europe-capitals', defaultProgress);
  */
 export function useLocalStorage<T>(key: string, defaultValue: T): UseLocalStorageResult<T> {
+  // Ref avoids putting defaultValue in effect deps, which causes infinite
+  // re-renders when callers pass object/array literals as defaults.
   const defaultRef = useRef(defaultValue);
   defaultRef.current = defaultValue;
 
