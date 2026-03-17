@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { NavigationTree } from '@/navigation/NavigationTree';
 import { Search } from '@/navigation/Search';
 import { useNavigationState } from '@/navigation/useNavigationState';
@@ -16,18 +16,45 @@ export default function HomePage() {
     return path.split('/').filter(Boolean).map(decodeURIComponent);
   }, [location.pathname]);
 
-  const rootNode = useMemo(() => {
-    if (categorySegments.length === 0) return navigationTree;
+  const subtreeResult = useMemo(() => {
+    if (categorySegments.length === 0) return { node: navigationTree, found: true };
     const subtree = findSubtree(navigationTree, categorySegments);
-    if (!subtree) return navigationTree;
-    return subtree;
+    if (!subtree) return { node: navigationTree, found: false };
+    return { node: subtree, found: true };
   }, [categorySegments]);
 
+  const isFiltered = categorySegments.length > 0;
+
+  if (isFiltered && !subtreeResult.found) {
+    return (
+      <div className={styles.page}>
+        <h1 className={styles.title}>Category not found</h1>
+        <p className={styles.emptyState}>
+          No category matches this path. <Link to="/" className={styles.homeLink}>Browse all quizzes</Link>
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <HomePageContent
+      rootNode={subtreeResult.node}
+      isFiltered={isFiltered}
+    />
+  );
+}
+
+function HomePageContent({
+  rootNode,
+  isFiltered,
+}: {
+  readonly rootNode: ReturnType<typeof findSubtree> & object;
+  readonly isFiltered: boolean;
+}) {
   const { searchQuery, setSearchQuery, displayTree, expandedPaths, onTogglePath } =
     useNavigationState(rootNode);
 
   const hasResults = displayTree.children.length > 0;
-  const isFiltered = categorySegments.length > 0;
 
   return (
     <div className={styles.page}>

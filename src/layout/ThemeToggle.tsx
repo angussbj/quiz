@@ -1,9 +1,7 @@
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme, type ThemePreference } from '@/theme/ThemeProvider';
 import styles from './ThemeToggle.module.css';
-
-type ThemePreference = 'light' | 'dark' | 'system';
 
 const cycleOrder: ReadonlyArray<ThemePreference> = ['light', 'dark', 'system'];
 

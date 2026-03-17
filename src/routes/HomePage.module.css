@@ -15,3 +15,8 @@
   padding: var(--spacing-md);
   text-align: center;
 }
+
+.homeLink {
+  color: var(--color-link);
+  text-decoration: underline;
+}
