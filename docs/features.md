@@ -28,7 +28,7 @@ Features for parallel agent development. Each feature should be developed in its
 - **Smaller section headers:** Reduce category heading size — still larger than quiz items, but less dominant.
 - **Clickable-looking quiz links:** Style quiz items more like traditional links (accent color, underline on hover) so they feel obviously interactive.
 
-### 4. Quiz Registry & Route Generation
+### 4. Quiz Registry & Route Generation — DONE
 **Branch:** `feat/quiz-registry`
 **Files:** `src/quiz-definitions/quizRegistry.ts`, `src/routes/QuizPage.tsx`, `src/App.tsx`
 **Scope:** Build the quiz registry from a static list of `QuizDefinition` objects (we'll auto-generate later). Wire up `QuizPage` to read the quiz ID from the URL, look it up in the registry, and fetch + parse its CSV data. Generate the `NavigationNode` tree from the registry's path segments. Lazy-load quiz data on navigation.
