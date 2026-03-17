@@ -26,6 +26,7 @@ const tree: NavigationNode = {
 function renderTree(
   expandedPaths: ReadonlySet<string> = new Set(['Geography', 'Science']),
   onTogglePath: (path: string) => void = () => {},
+  searchQuery?: string,
 ) {
   return render(
     <MemoryRouter>
@@ -33,6 +34,7 @@ function renderTree(
         root={tree}
         expandedPaths={expandedPaths}
         onTogglePath={onTogglePath}
+        searchQuery={searchQuery}
       />
     </MemoryRouter>,
   );
@@ -87,5 +89,55 @@ describe('NavigationTree', () => {
       'aria-expanded',
       'false',
     );
+  });
+});
+
+describe('HighlightedLabel', () => {
+  it('wraps matching text in mark elements when searchQuery is provided', () => {
+    renderTree(new Set(['Geography']), () => {}, 'cap');
+    const marks = document.querySelectorAll('mark');
+    expect(marks.length).toBeGreaterThan(0);
+    expect(marks[0].textContent).toBe('Cap');
+  });
+
+  it('does not highlight when query is under 3 characters', () => {
+    renderTree(new Set(['Geography']), () => {}, 'ca');
+    const marks = document.querySelectorAll('mark');
+    expect(marks).toHaveLength(0);
+  });
+
+  it('highlights all occurrences in a label', () => {
+    const treeWithRepeats: NavigationNode = {
+      label: 'Quizzes',
+      children: [
+        {
+          label: 'Testing',
+          children: [
+            { label: 'Cap Canaveral Capitals', children: [], quizId: 'cap-test' },
+          ],
+        },
+      ],
+    };
+    render(
+      <MemoryRouter>
+        <NavigationTree
+          root={treeWithRepeats}
+          expandedPaths={new Set(['Testing'])}
+          onTogglePath={() => {}}
+          searchQuery="cap"
+        />
+      </MemoryRouter>,
+    );
+    const marks = document.querySelectorAll('mark');
+    expect(marks).toHaveLength(2);
+    expect(marks[0].textContent).toBe('Cap');
+    expect(marks[1].textContent).toBe('Cap');
+  });
+
+  it('is case-insensitive', () => {
+    renderTree(new Set(['Geography']), () => {}, 'FLAG');
+    const marks = document.querySelectorAll('mark');
+    expect(marks.length).toBeGreaterThan(0);
+    expect(marks[0].textContent).toBe('Flag');
   });
 });

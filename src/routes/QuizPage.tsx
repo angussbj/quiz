@@ -27,14 +27,14 @@ export default function QuizPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <nav className={styles.breadcrumbs}>
+        <div className={styles.breadcrumbs}>
           {definition.path.map((segment, index) => (
             <span key={index}>
               {index > 0 && <span className={styles.separator}>/</span>}
               {segment}
             </span>
           ))}
-        </nav>
+        </div>
         <h1 className={styles.title}>{definition.title}</h1>
         <p className={styles.description}>{definition.description}</p>
       </header>
