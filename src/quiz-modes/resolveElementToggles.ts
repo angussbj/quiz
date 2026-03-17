@@ -1,4 +1,4 @@
-import type { ToggleDefinition } from './ToggleDefinition';
+import type { HiddenBehavior, ToggleDefinition } from './ToggleDefinition';
 
 interface ElementQuizState {
   readonly isAnswered: boolean;
@@ -20,7 +20,8 @@ export function resolveElementToggles(
   elementStates: Readonly<Record<string, ElementQuizState>>,
 ): Readonly<Record<string, Readonly<Record<string, boolean>>>> {
   const togglesWithBehavior = toggleDefinitions.filter(
-    (t) => t.hiddenBehavior !== undefined && !globalToggles[t.key],
+    (t): t is ToggleDefinition & { readonly hiddenBehavior: HiddenBehavior } =>
+      t.hiddenBehavior !== undefined && !globalToggles[t.key],
   );
 
   if (togglesWithBehavior.length === 0) {
@@ -33,7 +34,7 @@ export function resolveElementToggles(
     const elementOverrides: Record<string, boolean> = {};
 
     for (const toggle of togglesWithBehavior) {
-      const behavior = toggle.hiddenBehavior!;
+      const behavior = toggle.hiddenBehavior;
 
       if (behavior === 'never') {
         elementOverrides[toggle.key] = false;
