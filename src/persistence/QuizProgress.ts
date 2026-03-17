@@ -15,11 +15,3 @@ export interface QuizProgress {
   readonly attempts: ReadonlyArray<QuizAttempt>;
   readonly bestScore: ScoreResult;
 }
-
-export interface StorageService {
-  getProgress(quizId: string): QuizProgress | null;
-  saveAttempt(attempt: QuizAttempt): void;
-  getAllProgress(): ReadonlyArray<QuizProgress>;
-  getThemePreference(): 'light' | 'dark' | 'system';
-  setThemePreference(preference: 'light' | 'dark' | 'system'): void;
-}
