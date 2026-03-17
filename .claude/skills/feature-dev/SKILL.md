@@ -19,12 +19,13 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 4. Start the dev server (`npm run dev`) and note the port. It will run in the background automatically. **DO NOT** add `&` to get it to run in the background.
 5. Verify the setup: run `npm run typecheck` and `npm test`.
 
-## Phase 2: Research
+## Phase 2: Research and planning
 
 1. Read the type contracts and existing code relevant to this feature. Read from the worktree, not the main branch - use relative paths not absolute paths.
 2. Read the project CLAUDE.md for conventions.
 3. Understand how this feature fits into the three-tier architecture.
 4. Ask the user clarifying questions about anything ambiguous in the feature spec. Don't assume — ask. Keep questions focused and specific.
+5. Write a detailed plan for what you will implement.
 
 ## Phase 3: Implement
 
@@ -70,15 +71,16 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 ## Phase 6: Feedback & Merge
 
 1. Delete any screenshots from `screenshots/` that show intermediate broken states that were later fixed — only keep screenshots of the final working state. Then open the directory in Finder with `open screenshots/` so the user can drag them into the PR.
-2. Wait for user feedback on the PR.
-3. If changes are requested: return to Phase 3 to re-implement them, and follow all the steps to check, re-review, commit, push, update the PR description, etc.
-4. When the user approves, merge from inside the worktree:
+2. Print out the ports for the main server and also for storybook if relevant for the user's convenience.
+3. Wait for user feedback on the PR.
+4. If changes are requested: return to Phase 3 to re-implement them, and follow all the steps to check, re-review, commit, push, update the PR description, etc.
+5. When the user approves, merge from inside the worktree:
    ```bash
    gh pr merge <PR-number> --squash --delete-branch
    ```
    This will error with `fatal: 'main' is already checked out at ...` — that's expected when running from a worktree. The merge still succeeds via the GitHub API. You can verify with `gh pr view <PR-number> --json state`.
-5. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't).
-6. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
-7. Check that the worktree directory under `.claude/worktrees/<name>` is fully removed. Tools like Playwright can leave behind directories (e.g. `.playwright-mcp`) that survive the git worktree cleanup. If the directory still exists, `rm -rf` it.
-8. Check if there's anything important in your context that shouldn't be forgotten, and find somewhere to write it for future agents, like in the `features.md`, `CLAUDE.md`, other `docs/`, or your memories. The user will check and commit these changes later.
-9. Confirm: "Feature merged and worktree cleaned up."
+6. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't).
+7. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing. Resolve conflicts by carefully reading both changes and keeping the important parts of both.
+8. Check that the worktree directory under `.claude/worktrees/<name>` is fully removed. Tools like Playwright can leave behind directories (e.g. `.playwright-mcp`) that survive the git worktree cleanup. If the directory still exists, `rm -rf` it.
+9. Check if there's anything important in your context that shouldn't be forgotten, and find somewhere to write it for future agents, like in the `features.md`, `CLAUDE.md`, other `docs/`, or your memories. The user will check and commit these changes later.
+10. Confirm: "Feature merged and worktree cleaned up."

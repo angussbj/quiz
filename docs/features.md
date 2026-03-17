@@ -76,7 +76,8 @@ Features for parallel agent development. Each feature should be developed in its
 - `TimelineTimestamp` is a variable-precision array `[year, month?, day?, hour?, minute?, second?]` — not just years. Start timestamps round to period start, end timestamps round to period end.
 - `buildTimelineElements()` converts inputs to `TimelineElement` with viewBox coordinates. X axis uses `UNITS_PER_YEAR` (20) scale factor. Track height is dynamically computed to maintain a landscape viewBox aspect ratio.
 - Categories map to theme `--color-group-N` colors (first 8), then generate random vibrant HSL colors for overflow.
-- Inside labels are shown when bars are wide enough; otherwise labels appear beside the bar. Tooltips show full label + date range on hover.
+- Inside labels are shown when bars are wide enough; otherwise labels appear beside the bar (truncated to fit gap before next bar). Tooltips show full label + date range on hover.
+- **Tooltip portal pattern:** Tooltips are rendered via `createPortal(tooltip, document.body)` instead of inside the SVG, because `react-zoom-pan-pinch`'s CSS `transform` creates a new containing block that breaks `position: fixed` positioning. Other renderers adding tooltips should use the same pattern.
 
 ### 11. Periodic Table Renderer — DONE
 **Branch:** `feat/periodic-table-renderer`
@@ -130,13 +131,14 @@ An advanced option on the config screen lets users override the hidden behavior 
 
 ## Group C: Quiz Modes (depend on Group B renderers existing, and #5 TogglePanel, #7 ScoreCalculator)
 
-### 12. Free Recall Mode (Unordered) — DONE
+Note: we're still waiting on the timeline renderer, so if any work relies on it, create a new task later to do that work, and continue with what work you can do with the other renderers.
+
+### 12. Free Recall Mode (Unordered)
 **Branch:** `feat/free-recall-unordered`
 **Files:** `src/quiz-modes/free-recall/FreeRecallMode.tsx`, CSS module, tests
 **Scope:** Text input field. User types answers in any order. Fuzzy matching (case-insensitive, ignore accents/diacritics, accept alternate answers from data). On match: mark element as correct in the visualization with a satisfying animation, increment score, clear input. Show progress (e.g., "7/50"). On give up: reveal remaining answers. Gentle feedback — no "wrong" state for typing, only when giving up.
 **Note (from #7):** When building the ordered recall variant, use `HintLevel` from `src/scoring/ScoreResult.ts` to track per-answer hint usage. Visualization should colour answers by hint level: `'none'` = green/white (counts as correct), `'partial'` = yellow (doesn't count), `'full'` = red (doesn't count). The scoring function `calculateOrderedRecallScore` already handles this.
 **Note (toggle resolution):** This mode must resolve per-element toggles. For each element, for each toggle where `hiddenBehavior` applies: if `'on-reveal'` → set true when element is answered (correct or give-up). If `{ hintAfter: n }` → not applicable (no wrong answers in free recall). If `'never'` → always false. Pass resolved `elementToggles` to the renderer.
-**Note (from #12):** `HiddenBehavior` type and `hiddenBehavior` field have been added to `ToggleDefinition`. All existing toggle definitions in `quizRegistry.ts` now have `hiddenBehavior` values. `QuizModeProps` now includes `dataRows`, `columnMappings`, and `toggleDefinitions`. `VisualizationRendererProps` now includes `elementToggles`. The shared `resolveElementToggles()` utility lives in `src/quiz-modes/resolveElementToggles.ts`. The `useFreeRecallSession` hook in `src/quiz-modes/free-recall/useFreeRecallSession.ts` manages session state and can be used by feature #15 to wire up the quiz page. Answer matching supports alternate spellings via `{column}_alternates` columns with pipe-separated values.
 
 ### 13. Identify Mode — DONE
 **Branch:** `feat/identify-mode`
@@ -174,7 +176,7 @@ An advanced option on the config screen lets users override the hidden behavior 
 **Integration notes:**
 - Wire up `Timer` component: pass `QuizDefinition.defaultCountdownSeconds` as `countdownSeconds` prop, handle `onExpire` to end the quiz. Don't render Timer until quiz has started.
 - Wire up countdown duration UI: quiz setup screen should allow overriding `defaultCountdownSeconds` before starting.
-**Note (toggle resolution):** QuizShell needs to pass `elementToggles` from the quiz mode through to the renderer. The quiz mode computes `elementToggles` from the toggle definitions' `hiddenBehavior` + quiz state, and QuizShell passes them as a prop alongside the global `toggles`. See "Toggle Resolution Design" section above. `ToggleDefinition` already includes `hiddenBehavior` (added in #12). Use `resolveElementToggles()` from `src/quiz-modes/resolveElementToggles.ts` and `useFreeRecallSession` from `src/quiz-modes/free-recall/useFreeRecallSession.ts` to wire up the free recall mode.
+**Note (toggle resolution):** QuizShell needs to pass `elementToggles` from the quiz mode through to the renderer. The quiz mode computes `elementToggles` from the toggle definitions' `hiddenBehavior` + quiz state, and QuizShell passes them as a prop alongside the global `toggles`. See "Toggle Resolution Design" section above. Also update `ToggleDefinition` to include `hiddenBehavior` — the type change should happen in whichever feature is implemented first (12, 13, 14, or 15).
 
 ### 16. Theme Toggle & Global Layout
 **Branch:** `feat/global-layout`
@@ -187,3 +189,5 @@ An advanced option on the config screen lets users override the hidden behavior 
 **Scope:** Create a complete, real quiz: European capital cities. Full CSV with all ~45 European capitals. Supporting data with simplified country border SVG paths (can be sourced/simplified from Natural Earth data). Wire up the quiz definition with all available modes, sensible toggles (show/hide country borders, show/hide city dots, show/hide country names, show/hide flags), and Easy/Medium/Hard presets.
 **Note from #4:** A placeholder definition for this quiz already exists in `quizRegistry.ts` (ID: `geo-capitals-europe`). Update it in place rather than adding a duplicate. The CSV data path is `/data/geography/capitals/europe.csv` (served from `public/`). The `sampleNavigationTree.ts` is now unused — the navigation tree is generated from the registry.
 **Note (toggle resolution):** Each toggle definition needs a `hiddenBehavior`. Sensible defaults for a capitals quiz: `showBorders` → `'never'` (borders are either always on or always off), `showCityDots` → `'on-reveal'` (dots appear as cities are answered), `showCountryNames` → `'on-reveal'`, `showFlags` → `{ hintAfter: 2 }` (flag shown as a hint after 2 wrong answers). Easy preset sets them all to true (always show); Hard sets them all to false (hidden behaviors apply).
+**Note from #3b:** Geography quiz paths were flattened from 3-deep to 2-deep (e.g., `['Geography', 'Capitals']` not `['Geography', 'Capitals', 'Europe']`). The region is already in the quiz title, so the extra nesting was redundant. New geography quizzes should follow this pattern.
+**Country borders data:** Use Natural Earth 1:110m scale country boundaries (public domain, no attribution required). Pre-convert GeoJSON coordinates to SVG path `d` strings at build time using a projection script — store the paths in integer viewBox coordinates, not raw lat/lng. This avoids shipping projection math at runtime and is ~2x more compact than GeoJSON. Source: https://github.com/martynafford/natural-earth-geojson or https://github.com/datasets/geo-countries

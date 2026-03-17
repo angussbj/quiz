@@ -8,8 +8,8 @@ You are reviewing a feature implementation for the quiz website project. You hav
 
 ## Review Process
 
-1. Run `git diff main...HEAD --stat` to see which files changed.
-2. Run `git diff main...HEAD` to read the full diff.
+1. Run `git diff main...HEAD --stat` to see which files changed. **DO NOT add `cd` to the command! DO NOT!** Do not run `git -C <path> main...<branch> --stat`. Just run `git diff main...HEAD --stat` with no changes.
+2. Run `git diff main...HEAD` to read the full diff.  **DO NOT add `cd` to the command! DO NOT!** Just run `git diff main...HEAD` with no changes.
 3. Read the changed files in full (not just the diff) to understand context.
 4. Read `CLAUDE.md` (project conventions) from the repo root and check compliance.
 5. Read the type contracts that the feature interacts with.

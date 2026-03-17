@@ -35,9 +35,20 @@
       "Bash(npm:*)",
       "Bash(npx storybook:*)",
       "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_handle_dialog",
       "Bash(git rm:*)",
       "Bash(open:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(git rebase:*)",
+      "Bash(git restore:*)",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_hover",
+      "mcp__plugin_playwright_playwright__browser_close",
+      "mcp__plugin_playwright_playwright__browser_run_code",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "Bash(curl -s http://localhost:6006)",
+      "Bash(git:*)",
+      "WebSearch"
     ]
   }
 }

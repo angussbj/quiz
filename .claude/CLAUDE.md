@@ -10,7 +10,7 @@ npm run dev          # Vite dev server (default: port 5173)
 npm test             # Jest tests
 npm run typecheck    # tsc --noEmit
 npm run build        # Production build
-npm run storybook    # Storybook dev server (port 6006)
+npm run storybook    # Storybook dev server
 ```
 
 ## Architecture
@@ -20,6 +20,7 @@ Three-tier architecture with TypeScript interfaces as contracts between tiers.
 1. **Visualization Renderers** (`src/visualizations/`) — SVG rendering, zoom/pan, element layout
 2. **Quiz Modes** (`src/quiz-modes/`) — Answer input, scoring, quiz flow
 3. **Quiz Definitions** (`src/quiz-definitions/`) — Data loading, quiz registry
+4. **Utilities** (`src/utilities/`) — Shared pure functions (e.g., `shuffle`)
 
 ### Key contracts
 - `src/visualizations/VisualizationRendererProps.ts` — what renderers receive from quiz modes

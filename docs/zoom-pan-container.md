@@ -51,3 +51,7 @@ The container creates a single `<svg>` with a viewBox computed from the union of
 Screen pixel distance = viewBox distance × scale × basePixelsPerViewBoxUnit
 
 where `basePixelsPerViewBoxUnit = min(containerWidth / viewBoxWidth, containerHeight / viewBoxHeight)`.
+
+## SVG click handling
+
+An SVG `<g>` element only receives click events on its visible children — clicks on empty space fall through to the `<svg>` element itself. Renderers that use `onPositionClick` (e.g., locate mode) must add a transparent `<rect>` covering the full area as the first child of their click-handling `<g>`, otherwise clicks on empty map/grid areas won't register. See `MapRenderer.tsx` for the pattern.
