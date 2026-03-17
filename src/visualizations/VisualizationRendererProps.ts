@@ -11,6 +11,8 @@ export interface ClusteringConfig {
   readonly minScreenPixelDistance: number;
   /** Zoom scale above which clustering is disabled (show all individually) */
   readonly disableAboveScale: number;
+  /** Element visual state to count in the cluster badge numerator (e.g. "correct" → "3/5") */
+  readonly countedState: ElementVisualState;
 }
 
 /**
