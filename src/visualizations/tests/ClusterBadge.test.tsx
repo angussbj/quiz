@@ -49,9 +49,12 @@ describe('ClusterBadge', () => {
 
   it('renders at the cluster center position', () => {
     const { container } = renderBadge();
+    // The outer <g> translates to the centroid; children are at local (0, 0)
+    const outerG = container.querySelector('svg > g');
+    expect(outerG).toHaveAttribute('transform', 'translate(50, 50)');
     const circle = container.querySelector('circle');
-    expect(circle).toHaveAttribute('cx', '50');
-    expect(circle).toHaveAttribute('cy', '50');
+    expect(circle).toHaveAttribute('cx', '0');
+    expect(circle).toHaveAttribute('cy', '0');
   });
 
   it('scales badge size inversely with zoom', () => {

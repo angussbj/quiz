@@ -6,6 +6,7 @@ import {
   useControls,
   useTransformEffect,
 } from 'react-zoom-pan-pinch';
+import { AnimatePresence } from 'framer-motion';
 import type { VisualizationElement, ElementVisualState } from './VisualizationElement';
 import type { ClusteringConfig, ElementCluster } from './VisualizationRendererProps';
 import { ZoomPanContext } from './ZoomPanContext';
@@ -227,16 +228,18 @@ function ZoomPanInner({
           preserveAspectRatio="xMidYMid meet"
         >
           {children}
-          {clusters.map((cluster) => (
-            <ClusterBadge
-              key={cluster.elementIds.join(',')}
-              cluster={cluster}
-              matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
-              scale={quantisedScale}
-              basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
-              onClick={handleClusterClick}
-            />
-          ))}
+          <AnimatePresence>
+            {clusters.map((cluster) => (
+              <ClusterBadge
+                key={cluster.elementIds.join(',')}
+                cluster={cluster}
+                matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
+                scale={quantisedScale}
+                basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
+                onClick={handleClusterClick}
+              />
+            ))}
+          </AnimatePresence>
         </svg>
       </TransformComponent>
     </ZoomPanContext.Provider>
