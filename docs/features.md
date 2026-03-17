@@ -72,7 +72,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/visualizations/timeline/TimelineRenderer.tsx`, CSS module, tests
 **Scope:** Render horizontal time axis with bars for date ranges. Auto-calculate tracks to minimise overlaps when `track` is undefined. Color-code bars by category. Support `elementStates` for visual feedback. Labels on or beside bars. Use `ZoomPanContainer` for horizontal scroll/zoom. Handle zoom levels gracefully — show decade markers when zoomed out, year markers when zoomed in.
 
-### 11. Periodic Table Renderer
+### 11. Periodic Table Renderer — DONE
 **Branch:** `feat/periodic-table-renderer`
 **Files:** `src/visualizations/periodic-table/PeriodicTableRenderer.tsx`, CSS module, tests
 **Scope:** Render grid of rectangular cells at (row, column) positions. Show symbol prominently in each cell. Color-code by group. Support `elementStates` for visual feedback. Use `ZoomPanContainer` for zoom/pan. When zoomed out, show compact cells with just symbols; when zoomed in, cells could expand to show more data (prepare the slot for a custom render component but don't implement it yet).
