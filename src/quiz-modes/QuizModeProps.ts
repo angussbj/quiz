@@ -1,5 +1,7 @@
 import type { ViewBoxPosition, VisualizationElement } from '@/visualizations/VisualizationElement';
+import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { QuizSessionState } from './QuizSessionState';
+import type { ToggleDefinition } from './ToggleDefinition';
 
 /**
  * Props every quiz mode component receives.
@@ -7,6 +9,9 @@ import type { QuizSessionState } from './QuizSessionState';
  */
 export interface QuizModeProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
+  readonly dataRows: ReadonlyArray<QuizDataRow>;
+  readonly columnMappings: Readonly<Record<string, string>>;
+  readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly session: QuizSessionState;
   readonly onTextAnswer: (text: string) => void;
   readonly onElementSelect: (elementId: string) => void;

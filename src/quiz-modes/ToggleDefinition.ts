@@ -1,4 +1,9 @@
-/** What "off" means for a toggle: never show, show on reveal, or show as hint after N wrong answers. */
+/**
+ * What happens when a toggle is OFF during the quiz.
+ * - 'never': feature stays hidden the entire quiz
+ * - 'on-reveal': feature appears when the element is answered (correct or give-up)
+ * - { hintAfter: n }: feature appears after n wrong answers for that element
+ */
 export type HiddenBehavior = 'never' | 'on-reveal' | { readonly hintAfter: number };
 
 export interface ToggleDefinition {

@@ -10,11 +10,22 @@ import { CELL_SIZE, CELL_STEP } from './cellLayout';
 
 const ZOOM_DETAIL_THRESHOLD = 1.8;
 
+/** Look up a per-element toggle, falling back to the global toggle value. */
+function elementToggle(
+  elementToggles: VisualizationRendererProps['elementToggles'],
+  toggles: Readonly<Record<string, boolean>>,
+  elementId: string,
+  toggleKey: string,
+): boolean {
+  return elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey] ?? false;
+}
+
 interface CellProps {
   readonly element: GridElement;
   readonly state: ElementVisualState;
   readonly groupColorIndex: number | undefined;
   readonly showGroups: boolean;
+  readonly showSymbol: boolean;
   readonly isClustered: boolean;
   readonly isTarget: boolean;
   readonly zoomedIn: boolean;
@@ -81,6 +92,7 @@ function GridCell({
   state,
   groupColorIndex,
   showGroups,
+  showSymbol,
   isClustered,
   isTarget,
   zoomedIn,
@@ -93,7 +105,7 @@ function GridCell({
   const fill = stateToFill(state, groupColorIndex, showGroups);
   const stroke = stateToStroke(state);
   const textFill = stateToTextFill(state, groupColorIndex, showGroups);
-  const revealed = isRevealed(state);
+  const revealed = isRevealed(state) || showSymbol;
   const interactive = element.interactive;
 
   const handleClick = useCallback(() => {
@@ -153,6 +165,7 @@ function PeriodicTableGrid({
   onElementClick,
   targetElementId,
   toggles,
+  elementToggles,
 }: VisualizationRendererProps) {
   const { scale, clusteredElementIds } = useZoomPan();
   const zoomedIn = scale >= ZOOM_DETAIL_THRESHOLD;
@@ -183,6 +196,7 @@ function PeriodicTableGrid({
             state={state}
             groupColorIndex={groupColorIndex}
             showGroups={showGroups}
+            showSymbol={elementToggle(elementToggles, toggles, element.id, 'showSymbols')}
             isClustered={clusteredElementIds.has(element.id)}
             isTarget={element.id === targetElementId}
             zoomedIn={zoomedIn}

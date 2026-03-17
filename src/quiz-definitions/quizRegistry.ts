@@ -17,10 +17,10 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'identify', 'locate'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
-      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display' },
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
-      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display' },
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
     ],
     presets: [
       {
@@ -57,9 +57,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'identify', 'locate'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
-      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display' },
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
     ],
     presets: [
       {
@@ -91,9 +91,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'identify', 'locate'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
-      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display' },
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
     ],
     presets: [
       {
@@ -125,8 +125,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'identify'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
-      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display' },
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
     ],
     presets: [],
     columnMappings: {
@@ -146,7 +146,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'identify'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display' },
+      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
     ],
     presets: [],
     columnMappings: {
@@ -166,7 +166,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['identify', 'free-recall-unordered'],
     defaultMode: 'identify',
     toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
     ],
     presets: [],
     columnMappings: {
@@ -186,8 +186,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'identify'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showSymbols', label: 'Element symbols', defaultValue: true, group: 'display' },
-      { key: 'showAtomicNumbers', label: 'Atomic numbers', defaultValue: false, group: 'display' },
+      { key: 'showSymbols', label: 'Element symbols', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showAtomicNumbers', label: 'Atomic numbers', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
     ],
     presets: [
       {
@@ -218,7 +218,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'identify'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display' },
+      { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
     ],
     presets: [],
     columnMappings: {
@@ -256,8 +256,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showDates', label: 'Reign dates', defaultValue: false, group: 'display' },
-      { key: 'showDynasty', label: 'Dynasty colours', defaultValue: true, group: 'display' },
+      { key: 'showDates', label: 'Reign dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showDynasty', label: 'Dynasty colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
     ],
     presets: [],
     columnMappings: {
@@ -277,7 +277,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'locate'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display' },
+      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
     ],
     presets: [],
     columnMappings: {
