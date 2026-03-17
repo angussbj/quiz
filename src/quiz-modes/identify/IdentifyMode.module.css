@@ -87,12 +87,6 @@
   text-align: center;
 }
 
-.finishedTitle {
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
 .finishedScore {
   font-size: var(--font-size-lg);
   color: var(--color-text-secondary);

@@ -1,14 +1,12 @@
 import { useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { QuizModeProps } from '../QuizModeProps';
-import type { ToggleDefinition } from '../ToggleDefinition';
 import { resolveElementToggles } from '../resolveElementToggles';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
 import styles from './IdentifyMode.module.css';
 
 export interface IdentifyModeProps extends QuizModeProps {
-  readonly toggleDefinitions?: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues?: Readonly<Record<string, boolean>>;
   readonly renderVisualization: (props: {
     readonly elementStates: Readonly<Record<string, ElementVisualState>>;
@@ -28,7 +26,7 @@ export function IdentifyMode({
   onElementSelect,
   onSkip,
   onGiveUp,
-  toggleDefinitions = [],
+  toggleDefinitions,
   toggleValues = {},
   renderVisualization,
 }: IdentifyModeProps) {
@@ -108,16 +106,14 @@ export function IdentifyMode({
       {quiz.isFinished && (
         <div className={styles.promptBar}>
           <div className={styles.finishedOverlay}>
-            <AnimatePresence>
-              <motion.span
-                className={styles.finishedPercentage}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-              >
-                {quiz.score.percentage}%
-              </motion.span>
-            </AnimatePresence>
+            <motion.span
+              className={styles.finishedPercentage}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+            >
+              {quiz.score.percentage}%
+            </motion.span>
             <span className={styles.finishedScore}>
               {quiz.correctCount} of {quiz.totalPrompts} correct
             </span>
