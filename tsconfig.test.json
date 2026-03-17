@@ -4,7 +4,7 @@
     "verbatimModuleSyntax": false,
     "module": "CommonJS",
     "moduleResolution": "node",
-    "types": ["jest", "@testing-library/jest-dom"]
+    "types": ["jest", "@testing-library/jest-dom", "node"]
   },
   "include": ["src"]
 }

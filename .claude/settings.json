@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(npm view:*)",
+      "Bash(git init:*)",
+      "Bash(npm create:*)",
+      "Bash(cp:*)",
+      "Bash(npm install:*)",
+      "Bash(npx jest:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(git add:*)",
+      "Bash(git mv:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh auth:*)",
+      "Bash(git worktree:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(find:*)",
+      "Bash(git commit:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_fill_form",
+      "Read",
+      "Edit(/Users/angusjohnson/projects/**)"
+    ]
+  }
+}

@@ -1,10 +1,129 @@
+import { useCallback } from 'react';
+import { Link } from 'react-router';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { NavigationNode } from './NavigationNode';
+import styles from './NavigationTree.module.css';
 
 interface NavigationTreeProps {
   readonly root: NavigationNode;
+  readonly expandedPaths: ReadonlySet<string>;
+  readonly onTogglePath: (path: string) => void;
+  readonly searchQuery?: string;
 }
 
-/** Hierarchical navigation component. Placeholder. */
-export function NavigationTree(_props: NavigationTreeProps) {
-  return <nav>Navigation</nav>;
+/**
+ * Renders a hierarchical navigation tree with expandable/collapsible categories.
+ * The root node's children are rendered as top-level items (the root itself is not shown).
+ */
+export function NavigationTree({ root, expandedPaths, onTogglePath, searchQuery }: NavigationTreeProps) {
+  return (
+    <nav aria-label="Quiz navigation">
+      <ul className={styles.tree}>
+        {root.children.map((child) => (
+          <TreeNode
+            key={child.label}
+            node={child}
+            path={child.label}
+            expandedPaths={expandedPaths}
+            onTogglePath={onTogglePath}
+            searchQuery={searchQuery}
+          />
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+interface TreeNodeProps {
+  readonly node: NavigationNode;
+  readonly path: string;
+  readonly expandedPaths: ReadonlySet<string>;
+  readonly onTogglePath: (path: string) => void;
+  readonly searchQuery?: string;
+}
+
+function TreeNode({ node, path, expandedPaths, onTogglePath, searchQuery }: TreeNodeProps) {
+  const isLeaf = node.quizId !== undefined;
+  const isExpanded = expandedPaths.has(path);
+
+  const handleToggle = useCallback(() => {
+    onTogglePath(path);
+  }, [onTogglePath, path]);
+
+  if (isLeaf) {
+    return (
+      <li className={styles.nodeItem}>
+        <Link to={`/quiz/${node.quizId}`} className={styles.quizLink}>
+          <HighlightedLabel label={node.label} query={searchQuery} />
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <li className={styles.nodeItem}>
+      <button
+        className={styles.categoryButton}
+        onClick={handleToggle}
+        aria-expanded={isExpanded}
+      >
+        <motion.span
+          className={styles.chevron}
+          animate={{ rotate: isExpanded ? 90 : 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          &#x25B8;
+        </motion.span>
+        {node.label}
+      </button>
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.ul
+            className={styles.subtree}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          >
+            {node.children.map((child) => (
+              <TreeNode
+                key={child.label}
+                node={child}
+                path={`${path}/${child.label}`}
+                expandedPaths={expandedPaths}
+                onTogglePath={onTogglePath}
+                searchQuery={searchQuery}
+              />
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </li>
+  );
+}
+
+function HighlightedLabel({ label, query }: { readonly label: string; readonly query?: string }) {
+  if (!query || query.length < 3) {
+    return <>{label}</>;
+  }
+
+  const lowerLabel = label.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  const index = lowerLabel.indexOf(lowerQuery);
+
+  if (index === -1) {
+    return <>{label}</>;
+  }
+
+  const before = label.slice(0, index);
+  const match = label.slice(index, index + query.length);
+  const after = label.slice(index + query.length);
+
+  return (
+    <>
+      {before}
+      <mark className={styles.highlight}>{match}</mark>
+      {after}
+    </>
+  );
 }
