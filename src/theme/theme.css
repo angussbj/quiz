@@ -12,6 +12,7 @@
   /* Interactive */
   --color-accent: #4a6fa5;
   --color-accent-hover: #3d5d8a;
+  --color-on-accent: #ffffff;
   --color-correct: #4a8c6f;
   --color-correct-bg: #e8f5e9;
   --color-incorrect: #c0392b;
@@ -72,6 +73,7 @@
 
   --color-accent: #6b9fd4;
   --color-accent-hover: #85b3e0;
+  --color-on-accent: #ffffff;
   --color-correct: #6bc09a;
   --color-correct-bg: #1a3a2a;
   --color-incorrect: #e57373;

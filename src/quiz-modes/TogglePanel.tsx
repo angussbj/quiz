@@ -78,13 +78,13 @@ export function TogglePanel({
             <h2 className={styles.sectionTitle}>{formatGroupLabel(group)}</h2>
             <div className={styles.toggleList}>
               {items.map((toggle) => (
-                <label key={toggle.key} className={styles.toggleRow}>
+                <div key={toggle.key} className={styles.toggleRow}>
                   <span className={styles.toggleLabel}>{toggle.label}</span>
                   <ToggleSwitch
                     checked={values[toggle.key] ?? toggle.defaultValue}
                     onToggle={(checked) => onChange(toggle.key, checked)}
                   />
-                </label>
+                </div>
               ))}
             </div>
           </section>
