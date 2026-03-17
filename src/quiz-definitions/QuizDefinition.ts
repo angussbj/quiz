@@ -29,4 +29,6 @@ export interface QuizDefinition<K extends string = string> {
   readonly columnMappings: Readonly<Record<string, K>>;
   readonly dataPath: string;
   readonly supportingDataPaths: ReadonlyArray<string>;
+  /** Default countdown duration in seconds. If undefined, timer runs in elapsed (count-up) mode. */
+  readonly defaultCountdownSeconds?: number;
 }
