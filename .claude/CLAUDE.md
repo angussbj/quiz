@@ -30,6 +30,22 @@ Three-tier architecture with TypeScript interfaces as contracts between tiers.
 2. **SVG viewBox coordinates** — stable "world" space, computed once by renderers, does NOT change with zoom/pan
 3. **Screen pixel coordinates** — computed on-the-fly from viewBox + zoom state, not stored on elements
 
+## Design / UX Direction
+
+The aesthetic is **quiet and satisfying**, like a well-made crossword app. Not gamified, not flashy.
+
+- **Completion-oriented incentives**: progress bars, "47/50 capitals", percentage badges. Users should feel good about progress no matter where they're up to.
+- **In-quiz feedback**: smooth animations when you get something right. Gentle handling of wrong answers — not punishing.
+- **No "warming up" phase** — users jump straight into the quiz.
+- **Light and dark mode** — all colours parameterised via CSS custom properties.
+- **Mobile**: not first-class, but basic touch gesture support for zoom/pan.
+
+## Data Model
+
+Quiz data is intentionally generic. `QuizDataRow<K>` is parameterised by column keys because different quiz modes use different columns as the "answer". For a capitals quiz, the answer might be the city name, the coordinates, the country name, or the flag — depending on the mode. `QuizDefinition<K>.columnMappings` maps role names (like "answer", "label", "coordinates") to CSV column keys, and the type parameter `K` ensures these references are checked at compile time.
+
+Toggles (show/hide flags, show/hide borders, etc.) are approximately independent boolean options, not discrete "modes". Presets like Easy/Hard set multiple toggles at once, but individual toggles remain immediately accessible in the UI.
+
 ## Conventions
 
 ### File Organization
