@@ -1,11 +1,10 @@
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { MapElement } from './MapElement';
 import { projectGeo } from './projectGeo';
 
 const DOT_RADIUS = 0.3;
 
 export function buildMapElements(
-  rows: ReadonlyArray<QuizDataRow>,
+  rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
 ): ReadonlyArray<MapElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
@@ -16,9 +15,10 @@ export function buildMapElements(
     const lng = parseFloat(row['longitude'] ?? '0');
     const center = projectGeo({ latitude: lat, longitude: lng });
 
+    const id = row['id'] ?? '';
     return {
-      id: row.id,
-      label: row[labelColumn] ?? row.id,
+      id,
+      label: row[labelColumn] ?? id,
       geoCoordinates: { latitude: lat, longitude: lng },
       viewBoxCenter: center,
       viewBoxBounds: {
@@ -30,7 +30,7 @@ export function buildMapElements(
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
       svgPathData: row['paths'] ?? '',
-      code: row['code'] ?? row.id,
+      code: row['code'] ?? id,
     };
   });
 }

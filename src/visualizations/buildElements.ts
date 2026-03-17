@@ -1,4 +1,3 @@
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { VisualizationType } from './VisualizationRendererProps';
 import type { VisualizationElement } from './VisualizationElement';
 import { buildMapElements } from './map/buildMapElements';
@@ -7,7 +6,7 @@ import { buildTimelineElementsFromRows } from './timeline/buildTimelineElementsF
 
 export function buildElements(
   visualizationType: VisualizationType,
-  rows: ReadonlyArray<QuizDataRow>,
+  rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
 ): ReadonlyArray<VisualizationElement> {
   switch (visualizationType) {

@@ -1,5 +1,4 @@
 import { type ComponentType, useEffect, useRef } from 'react';
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { VisualizationElement, ViewBoxPosition } from '@/visualizations/VisualizationElement';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
@@ -15,7 +14,7 @@ import styles from './ModeAdapter.module.css';
 export interface ModeAdapterProps {
   readonly mode: QuizModeType;
   readonly elements: ReadonlyArray<VisualizationElement>;
-  readonly dataRows: ReadonlyArray<QuizDataRow>;
+  readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;
@@ -99,7 +98,7 @@ export function ModeAdapter({
 
 interface FreeRecallAdapterProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
-  readonly dataRows: ReadonlyArray<QuizDataRow>;
+  readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;
@@ -174,7 +173,7 @@ function FreeRecallAdapter({
 
 interface IdentifyAdapterProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
-  readonly dataRows: ReadonlyArray<QuizDataRow>;
+  readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;

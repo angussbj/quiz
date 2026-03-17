@@ -1,9 +1,8 @@
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { TimelineElement } from './TimelineElement';
 import type { TimelineTimestamp } from './TimelineTimestamp';
 import { buildTimelineElements, type TimelineElementInput } from './buildTimelineElements';
 
-function parseTimestamp(row: QuizDataRow, prefix: string): TimelineTimestamp | undefined {
+function parseTimestamp(row: Readonly<Record<string, string>>, prefix: string): TimelineTimestamp | undefined {
   const year = row[`${prefix}_year`] ?? row[prefix];
   if (!year) return undefined;
   const yearNum = parseInt(year, 10);
@@ -16,7 +15,7 @@ function parseTimestamp(row: QuizDataRow, prefix: string): TimelineTimestamp | u
 }
 
 export function buildTimelineElementsFromRows(
-  rows: ReadonlyArray<QuizDataRow>,
+  rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
 ): ReadonlyArray<TimelineElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
@@ -24,11 +23,12 @@ export function buildTimelineElementsFromRows(
 
   const inputs: TimelineElementInput[] = [];
   for (const row of rows) {
+    const id = row['id'] ?? '';
     const start = parseTimestamp(row, 'start');
     if (!start) continue;
     inputs.push({
-      id: row.id,
-      label: row[labelColumn] ?? row.id,
+      id,
+      label: row[labelColumn] ?? id,
       start,
       end: parseTimestamp(row, 'end'),
       category: row['category'] ?? (groupColumn ? row[groupColumn] : '') ?? '',

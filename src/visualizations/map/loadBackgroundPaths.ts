@@ -1,4 +1,3 @@
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { BackgroundPath } from '../VisualizationRendererProps';
 
 /**
@@ -6,10 +5,11 @@ import type { BackgroundPath } from '../VisualizationRendererProps';
  * Multiple SVG paths within a single row are separated by | (pipe).
  */
 export function parseBackgroundPaths(
-  rows: ReadonlyArray<QuizDataRow>,
+  rows: ReadonlyArray<Readonly<Record<string, string>>>,
 ): ReadonlyArray<BackgroundPath> {
   const result: BackgroundPath[] = [];
   for (const row of rows) {
+    const id = row['id'] ?? '';
     const pathsRaw = row['paths'] ?? '';
     if (!pathsRaw.trim()) continue;
     const pathSegments = pathsRaw.split('|');
@@ -17,7 +17,7 @@ export function parseBackgroundPaths(
       const d = pathSegments[i].trim();
       if (!d) continue;
       result.push({
-        id: pathSegments.length > 1 ? `${row.id}-${i}` : row.id,
+        id: pathSegments.length > 1 ? `${id}-${i}` : id,
         svgPathData: d,
         group: row['group'] ?? row['name'],
       });

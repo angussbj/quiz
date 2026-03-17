@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import type { QuizDataRow } from '@/quiz-definitions/QuizDataRow';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { QuizSessionState } from '../QuizSessionState';
 import type { ToggleDefinition } from '../ToggleDefinition';
@@ -9,7 +8,7 @@ import { matchAnswer } from './matchAnswer';
 
 interface FreeRecallSessionConfig {
   readonly elements: ReadonlyArray<VisualizationElement>;
-  readonly dataRows: ReadonlyArray<QuizDataRow>;
+  readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly answerColumn: string;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;
@@ -44,7 +43,7 @@ export function useFreeRecallSession({
   const totalElements = elements.length;
 
   const remainingRows = useMemo(
-    () => dataRows.filter((row) => !correctIdSet.has(row.id)),
+    () => dataRows.filter((row) => !correctIdSet.has(row['id'] ?? '')),
     [dataRows, correctIdSet],
   );
 
