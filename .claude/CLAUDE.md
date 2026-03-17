@@ -72,11 +72,4 @@ Three-tier architecture with TypeScript interfaces as contracts between tiers.
 
 ## Worktree Development
 
-When working in a worktree, use a unique dev server port:
-```bash
-npm run dev -- --port <PORT>
-```
-
-Port assignments:
-- 5173: main branch (default)
-- 5174–5180: worktree dev servers
+When working in a worktree, just run `npm run dev`. Vite automatically picks a free port if the default (5173) is in use. Tell the user which port is being used.

@@ -21,29 +21,17 @@ Use this when starting work on a feature branch that needs isolation.
    npm install
    ```
 
-3. Pick a unique port (5174–5180) and start dev server:
+3. Start the dev server — Vite automatically picks a free port:
    ```bash
-   npm run dev -- --port <PORT>
+   npm run dev
    ```
+   Read the port from the Vite output.
 
 4. Verify the setup:
    ```bash
    npm run typecheck
    npm test
    ```
-
-## Port Assignments
-
-| Port | Branch / Feature |
-|------|-----------------|
-| 5173 | main (default) |
-| 5174 | visualization-map |
-| 5175 | visualization-timeline |
-| 5176 | visualization-grid |
-| 5177 | quiz-modes |
-| 5178 | navigation |
-| 5179 | persistence |
-| 5180 | spare |
 
 ## Cleanup
 
