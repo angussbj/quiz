@@ -19,7 +19,7 @@ Features for parallel agent development. Each feature should be developed in its
 **Files:** `src/navigation/NavigationTree.tsx`, `src/navigation/Search.tsx`, `src/routes/HomePage.tsx`, CSS modules, tests
 **Scope:** Hierarchical tree view of quizzes from a `NavigationNode` tree. Expandable/collapsible categories. Search that filters the tree by quiz title. Links to quiz pages. Clean, quiet design using theme CSS properties. Framer Motion for expand/collapse animations.
 
-### 3b. Navigation Page Polish
+### 3b. Navigation Page Polish — DONE
 **Branch:** `feat/navigation-polish`
 **Files:** `src/navigation/NavigationTree.tsx`, `src/navigation/NavigationTree.module.css`, `src/navigation/filterNavigationTree.ts`, tests
 **Scope:** Small UX improvements to the navigation page:
