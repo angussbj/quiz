@@ -18,7 +18,7 @@ export interface QuizDefinition<K extends string = string> {
   readonly id: string;
   readonly title: string;
   readonly description: string;
-  /** Breadcrumb segments (e.g., ["Geography", "Europe", "Capitals"]) */
+  /** Breadcrumb segments (e.g., ["Geography", "Capitals", "Europe"]) */
   readonly path: ReadonlyArray<string>;
   readonly visualizationType: VisualizationType;
   readonly availableModes: ReadonlyArray<QuizModeType>;

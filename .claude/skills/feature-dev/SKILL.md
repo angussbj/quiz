@@ -15,13 +15,13 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 
 1. Read `docs/features.md` and find the feature.
 2. Announce: "Starting feature: **<title>**" and summarise the scope in 1–2 sentences.
-3. Enter a worktree using the `EnterWorktree` tool with `branch: <branch-name>`. This creates the worktree, switches the shell's working directory to it, and creates the branch. Then run `npm install`.
-4. Start the dev server (`npm run dev`) in the background and note the port.
+3. Enter a worktree using the `EnterWorktree` tool with a short name for the feature (e.g., `csv-loader`). This creates the worktree and branch (`worktree-<name>`), and switches the shell's working directory to it. Then run `npm install`.
+4. Start the dev server (`npm run dev`) and note the port. It will run in the background automatically. **DO NOT** add `&` to get it to run in the background.
 5. Verify the setup: run `npm run typecheck` and `npm test`.
 
 ## Phase 2: Research
 
-1. Read the type contracts and existing code relevant to this feature.
+1. Read the type contracts and existing code relevant to this feature. Read from the worktree, not the main branch - use relative paths not absolute paths.
 2. Read the project CLAUDE.md for conventions.
 3. Understand how this feature fits into the three-tier architecture.
 4. Ask the user clarifying questions about anything ambiguous in the feature spec. Don't assume — ask. Keep questions focused and specific.
@@ -46,14 +46,11 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    npm test
    npm run build
    ```
-2. Push the branch:
-   ```bash
-   git push -u origin <branch-name>
-   ```
-3. Take screenshots of the feature working in the browser (use the dev server you started). If the feature involves animations or interactions that can't be captured in a screenshot, describe what a screen recording would show and ask the user if they'd like one.
+2. Push the branch (use `git rev-parse --abbrev-ref HEAD` if you need the branch name).
+3. If the feature has visual output, take screenshots of it working in the browser (use the dev server you started). If it involves animations or interactions that can't be captured in a screenshot, describe what a screen recording would show and ask the user if they'd like one. Pure logic features (parsers, scoring, etc.) can skip screenshots.
 4. Create a PR with `gh pr create`. Include:
    - Summary of what was built
-   - Screenshots
+   - Screenshots (if applicable)
    - How to test it manually
    - Any known limitations or follow-up work
 5. Share the PR URL with the user and ask for feedback.
@@ -66,5 +63,5 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    ```bash
    gh pr merge <PR-number> --squash --delete-branch
    ```
-4. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo.
+4. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing and resolving conflicts if necessary.
 5. Confirm: "Feature merged and worktree cleaned up."
