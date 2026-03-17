@@ -11,7 +11,7 @@ function parseJson<T>(json: string): T {
 interface UseLocalStorageResult<T> {
   readonly value: T;
   readonly loading: boolean;
-  readonly set: (value: T) => void;
+  readonly set: (valueOrUpdater: T | ((prev: T) => T)) => void;
 }
 
 /**
@@ -65,13 +65,19 @@ export function useLocalStorage<T>(key: string, defaultValue: T): UseLocalStorag
   }, [key]);
 
   const set = useCallback(
-    (newValue: T) => {
-      setValue(newValue);
-      try {
-        localStorage.setItem(key, JSON.stringify(newValue));
-      } catch {
-        // localStorage unavailable or quota exceeded
-      }
+    (newValueOrUpdater: T | ((prev: T) => T)) => {
+      setValue((current) => {
+        const newValue =
+          typeof newValueOrUpdater === 'function'
+            ? (newValueOrUpdater as (prev: T) => T)(current)
+            : newValueOrUpdater;
+        try {
+          localStorage.setItem(key, JSON.stringify(newValue));
+        } catch {
+          // localStorage unavailable or quota exceeded
+        }
+        return newValue;
+      });
     },
     [key],
   );

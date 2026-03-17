@@ -1,7 +1,9 @@
-import { type ComponentType, useState, useEffect, useCallback } from 'react';
+import { type ComponentType, useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
+import type { ToggleDefinition } from '../ToggleDefinition';
+import { resolveElementToggles } from '../resolveElementToggles';
 import { useLocateQuiz } from './useLocateQuiz';
 import { LocateFeedback } from './LocateFeedback';
 import { LocateResults } from './LocateResults';
@@ -12,6 +14,7 @@ const RESULTS_DELAY_MS = 1000;
 export interface LocateModeProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
   readonly toggles: Readonly<Record<string, boolean>>;
+  readonly toggleDefinitions?: ReadonlyArray<ToggleDefinition>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly clustering?: ClusteringConfig;
@@ -24,12 +27,24 @@ export interface LocateModeProps {
 export function LocateMode({
   elements,
   toggles,
+  toggleDefinitions = [],
   Renderer,
   backgroundPaths,
   clustering,
 }: LocateModeProps) {
   const quiz = useLocateQuiz(elements);
   const [showResults, setShowResults] = useState(false);
+
+  const elementToggles = useMemo(() => {
+    const elementQuizStates: Record<string, { isAnswered: boolean; wrongAttempts: number }> = {};
+    for (const el of elements) {
+      elementQuizStates[el.id] = {
+        isAnswered: quiz.elementStates[el.id] !== 'hidden',
+        wrongAttempts: 0,
+      };
+    }
+    return resolveElementToggles(toggleDefinitions, toggles, elementQuizStates);
+  }, [elements, quiz.elementStates, toggleDefinitions, toggles]);
 
   // Show results after a short delay when the quiz finishes
   useEffect(() => {
@@ -89,6 +104,7 @@ export function LocateMode({
           elementStates={quiz.elementStates}
           onPositionClick={quiz.isFinished ? undefined : quiz.handlePositionClick}
           toggles={toggles}
+          elementToggles={elementToggles}
           backgroundPaths={backgroundPaths}
           clustering={clustering}
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
