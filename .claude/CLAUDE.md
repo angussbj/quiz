@@ -20,7 +20,8 @@ Three-tier architecture with TypeScript interfaces as contracts between tiers.
 1. **Visualization Renderers** (`src/visualizations/`) — SVG rendering, zoom/pan, element layout
 2. **Quiz Modes** (`src/quiz-modes/`) — Answer input, scoring, quiz flow
 3. **Quiz Definitions** (`src/quiz-definitions/`) — Data loading, quiz registry
-4. **Utilities** (`src/utilities/`) — Shared pure functions (e.g., `shuffle`)
+4. **Layout** (`src/layout/`) — Global shell: header ("Quizzical"), theme toggle (light/dark/system), breadcrumbs. Breadcrumbs live here, not in individual pages. Category URLs (e.g. `/geography/capitals`) filter the home page via `findSubtree`.
+5. **Utilities** (`src/utilities/`) — Shared pure functions (e.g., `shuffle`)
 
 ### Key contracts
 - `src/visualizations/VisualizationRendererProps.ts` — what renderers receive from quiz modes
@@ -83,6 +84,7 @@ Toggles (show/hide flags, show/hide borders, etc.) are approximately independent
 - Fewer integration tests: full quiz flows
 - Use `@testing-library/react`. Query by role/label, not test IDs.
 - Jest uses `tsconfig.test.json` (needed for verbatimModuleSyntax compatibility)
+- Tests rendering `ThemeProvider` need `window.matchMedia` mocked (jsdom doesn't provide it). See `src/layout/tests/ThemeToggle.test.tsx` for the pattern.
 
 ### Storybook
 - Stories live next to their components: `Component.stories.tsx`

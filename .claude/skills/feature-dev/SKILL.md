@@ -11,6 +11,10 @@ Develop a feature from docs/features.md end-to-end.
 
 Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find the feature by number. If the number doesn't match, ask the user which feature they mean.
 
+## General instructions
+
+- Do not attempt to read or write using absolute paths. Use relative paths so that you see the versions of files in your worktree.
+
 ## Phase 1: Setup
 
 1. Read `docs/features.md` and find the feature.
@@ -40,7 +44,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 6. Update `docs/features.md` if anything you've done or learned affects other features. Examples: design decisions that change how a downstream feature should be implemented, new testing that should happen as part of another feature (e.g., "visually test X when feature Y is built"), API changes that alter assumptions in other feature specs, or notes/warnings for whoever picks up a dependent feature.
 7. Mark the feature as done in `docs/features.md` by adding **DONE** to the feature heading (e.g., `### 1. CSV Data Loader — DONE`).
 
-## Phase 4: Self-Review
+## Phase 4: Implementation Self-Review
 
 1. Launch the `local-code-review` agent (from `.claude/agents/local-code-review.md`). In the prompt, give it:
    - The feature spec from `docs/features.md`
@@ -79,7 +83,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
    gh pr merge <PR-number> --squash --delete-branch
    ```
    This will error with `fatal: 'main' is already checked out at ...` — that's expected when running from a worktree. The merge still succeeds via the GitHub API. You can verify with `gh pr view <PR-number> --json state`.
-6. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't).
+6. Before exiting the worktree, copy any new permissions from `.claude/settings.local.json` in the worktree into `.claude/settings.local.json` on the main branch (merge, don't overwrite — the main branch file may have entries the worktree doesn't). This is the one and only time you can use absolute paths to write to a file outside the worktree.
 7. Exit the worktree using the `ExitWorktree` tool (this cleans up the worktree automatically), then `git pull` from the main repo, stashing, rebasing. Resolve conflicts by carefully reading both changes and keeping the important parts of both.
 8. Check that the worktree directory under `.claude/worktrees/<name>` is fully removed. Tools like Playwright can leave behind directories (e.g. `.playwright-mcp`) that survive the git worktree cleanup. If the directory still exists, `rm -rf` it.
 9. Check if there's anything important in your context that shouldn't be forgotten, and find somewhere to write it for future agents, like in the `features.md`, `CLAUDE.md`, other `docs/`, or your memories. The user will check and commit these changes later.
