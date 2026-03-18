@@ -74,7 +74,7 @@ describe('useIdentifyQuiz', () => {
     act(() => result.current.handleElementClick(wrongId));
     expect(result.current.flashIncorrectId).toBe(wrongId);
 
-    act(() => jest.advanceTimersByTime(700));
+    act(() => jest.advanceTimersByTime(900));
     expect(result.current.flashIncorrectId).toBeNull();
 
     jest.useRealTimers();
@@ -157,6 +157,65 @@ describe('useIdentifyQuiz', () => {
         expect(result.current.elementStates[el.id]).toBe('default');
       }
     }
+  });
+
+  it('uses correct-second state after one wrong attempt', () => {
+    const elements = makeElements(3);
+    const { result } = renderHook(() => useIdentifyQuiz(elements));
+
+    const currentId = result.current.currentElementId!;
+    const wrongId = elements.find((e) => e.id !== currentId)!.id;
+
+    // One wrong attempt, then correct
+    act(() => result.current.handleElementClick(wrongId));
+    act(() => result.current.handleElementClick(currentId));
+
+    expect(result.current.elementStates[currentId]).toBe('correct-second');
+  });
+
+  it('uses correct-third state after two wrong attempts', () => {
+    const elements = makeElements(4);
+    const { result } = renderHook(() => useIdentifyQuiz(elements));
+
+    const currentId = result.current.currentElementId!;
+    const wrongIds = elements.filter((e) => e.id !== currentId).map((e) => e.id);
+
+    // Two wrong attempts, then correct
+    act(() => result.current.handleElementClick(wrongIds[0]));
+    act(() => result.current.handleElementClick(wrongIds[1]));
+    act(() => result.current.handleElementClick(currentId));
+
+    expect(result.current.elementStates[currentId]).toBe('correct-third');
+  });
+
+  it('auto-reveals after 3 wrong attempts', () => {
+    jest.useFakeTimers();
+    const elements = makeElements(5);
+    const { result } = renderHook(() => useIdentifyQuiz(elements));
+
+    const currentId = result.current.currentElementId!;
+    const wrongIds = elements.filter((e) => e.id !== currentId).map((e) => e.id);
+
+    // Three wrong attempts
+    act(() => result.current.handleElementClick(wrongIds[0]));
+    act(() => result.current.handleElementClick(wrongIds[1]));
+    act(() => result.current.handleElementClick(wrongIds[2]));
+
+    // Flash incorrect first
+    expect(result.current.flashIncorrectId).toBe(wrongIds[2]);
+
+    // After flash clears, auto-reveal shows
+    act(() => jest.advanceTimersByTime(900));
+    expect(result.current.flashIncorrectId).toBeNull();
+    expect(result.current.autoRevealId).toBe(currentId);
+    expect(result.current.elementStates[currentId]).toBe('missed');
+
+    // After auto-reveal duration, advance to next prompt
+    act(() => jest.advanceTimersByTime(1600));
+    expect(result.current.autoRevealId).toBeNull();
+    expect(result.current.promptIndex).toBe(1);
+
+    jest.useRealTimers();
   });
 
   it('calculates score correctly', () => {

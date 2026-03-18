@@ -9,8 +9,9 @@ export interface GridElement extends VisualizationElement {
   readonly row: number;
   readonly column: number;
   readonly symbol: string;
+  readonly atomicNumber: number;
 }
 
 export function isGridElement(element: VisualizationElement): element is GridElement {
-  return 'row' in element && 'column' in element && 'symbol' in element;
+  return 'row' in element && 'column' in element && 'symbol' in element && 'atomicNumber' in element;
 }

@@ -24,6 +24,8 @@ export type ElementVisualState =
   | 'highlighted'
   | 'revealed'
   | 'correct'
+  | 'correct-second'
+  | 'correct-third'
   | 'incorrect'
   | 'missed';
 

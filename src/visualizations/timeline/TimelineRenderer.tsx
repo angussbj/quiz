@@ -412,6 +412,8 @@ function TimelineBar({
 function getStateClass(state: string): string | undefined {
   switch (state) {
     case 'correct': return styles.barCorrect;
+    case 'correct-second': return styles.barCorrect;
+    case 'correct-third': return styles.barCorrect;
     case 'incorrect': return styles.barIncorrect;
     case 'missed': return styles.barMissed;
     case 'highlighted': return styles.barHighlighted;

@@ -4,6 +4,16 @@ import type { ScoreResult } from '@/scoring/ScoreResult';
 import { calculateScore } from '@/scoring/calculateScore';
 import { shuffle } from '@/utilities/shuffle';
 
+const MAX_WRONG_ATTEMPTS = 3;
+const FLASH_DURATION_MS = 800;
+const AUTO_REVEAL_DURATION_MS = 1500;
+
+function correctStateForAttempts(wrongAttempts: number): ElementVisualState {
+  if (wrongAttempts === 0) return 'correct';
+  if (wrongAttempts === 1) return 'correct-second';
+  return 'correct-third';
+}
+
 export interface IdentifyQuizState {
   readonly currentElementId: string | undefined;
   readonly currentElementLabel: string | undefined;
@@ -16,8 +26,10 @@ export interface IdentifyQuizState {
   readonly wrongAttemptsPerElement: Readonly<Record<string, number>>;
   readonly answeredElementIds: ReadonlySet<string>;
   readonly score: ScoreResult;
-  /** ID of element that was just incorrectly clicked, cleared after animation. */
+  /** ID of element that was just incorrectly clicked (flashing red with label). */
   readonly flashIncorrectId: string | null;
+  /** ID of element being auto-revealed after max wrong attempts (gold highlight). */
+  readonly autoRevealId: string | null;
 }
 
 export interface IdentifyQuizActions {
@@ -47,10 +59,13 @@ export function useIdentifyQuiz(
   const [answeredIds, setAnsweredIds] = useState<ReadonlySet<string>>(new Set());
   const [wrongAttempts, setWrongAttempts] = useState<Readonly<Record<string, number>>>({});
   const [flashIncorrectId, setFlashIncorrectId] = useState<string | null>(null);
+  const [autoRevealId, setAutoRevealId] = useState<string | null>(null);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoRevealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
     if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+    if (autoRevealTimeoutRef.current) clearTimeout(autoRevealTimeoutRef.current);
   }, []);
 
   const totalPrompts = shuffledOrder.length;
@@ -62,18 +77,19 @@ export function useIdentifyQuiz(
     const states: Record<string, ElementVisualState> = {};
     for (const el of elements) {
       if (correctIds.has(el.id)) {
-        states[el.id] = 'correct';
+        states[el.id] = correctStateForAttempts(wrongAttempts[el.id] ?? 0);
+      } else if (el.id === autoRevealId) {
+        states[el.id] = 'missed';
       } else if (skippedIds.has(el.id)) {
         states[el.id] = 'revealed';
       } else if (el.id === flashIncorrectId) {
         states[el.id] = 'incorrect';
       } else {
-        // Don't highlight the target — that would give it away
         states[el.id] = 'default';
       }
     }
     return states;
-  }, [elements, correctIds, skippedIds, flashIncorrectId, currentElementId]);
+  }, [elements, correctIds, skippedIds, wrongAttempts, flashIncorrectId, autoRevealId]);
 
   const score = useMemo(
     () => calculateScore(correctIds.size, totalPrompts),
@@ -87,13 +103,22 @@ export function useIdentifyQuiz(
   const clearFlash = useCallback(() => {
     if (flashTimeoutRef.current) {
       clearTimeout(flashTimeoutRef.current);
+      flashTimeoutRef.current = null;
     }
     setFlashIncorrectId(null);
   }, []);
 
+  const clearAutoReveal = useCallback(() => {
+    if (autoRevealTimeoutRef.current) {
+      clearTimeout(autoRevealTimeoutRef.current);
+      autoRevealTimeoutRef.current = null;
+    }
+    setAutoRevealId(null);
+  }, []);
+
   const handleElementClick = useCallback(
     (elementId: string) => {
-      if (isFinished || !currentElementId) return;
+      if (isFinished || !currentElementId || autoRevealId) return;
       // Ignore clicks on already-answered elements
       if (answeredIds.has(elementId)) return;
 
@@ -105,31 +130,52 @@ export function useIdentifyQuiz(
         setAnsweredIds((prev) => new Set([...prev, elementId]));
         advancePrompt();
       } else {
-        // Wrong — flash the clicked element red
+        // Wrong — flash the clicked element red with label
+        const newAttempts = (wrongAttempts[currentElementId] ?? 0) + 1;
         setWrongAttempts((prev) => ({
           ...prev,
-          [currentElementId]: (prev[currentElementId] ?? 0) + 1,
+          [currentElementId]: newAttempts,
         }));
-        setFlashIncorrectId(elementId);
-        flashTimeoutRef.current = setTimeout(() => {
-          setFlashIncorrectId(null);
-        }, 600);
+
+        if (newAttempts >= MAX_WRONG_ATTEMPTS) {
+          // Max attempts reached — flash incorrect briefly, then auto-reveal correct answer
+          setFlashIncorrectId(elementId);
+          flashTimeoutRef.current = setTimeout(() => {
+            setFlashIncorrectId(null);
+            // Show correct answer in gold
+            setAutoRevealId(currentElementId);
+            setSkippedIds((prev) => new Set([...prev, currentElementId]));
+            setAnsweredIds((prev) => new Set([...prev, currentElementId]));
+            autoRevealTimeoutRef.current = setTimeout(() => {
+              setAutoRevealId(null);
+              advancePrompt();
+            }, AUTO_REVEAL_DURATION_MS);
+          }, FLASH_DURATION_MS);
+        } else {
+          // Still have attempts left — just flash incorrect
+          setFlashIncorrectId(elementId);
+          flashTimeoutRef.current = setTimeout(() => {
+            setFlashIncorrectId(null);
+          }, FLASH_DURATION_MS);
+        }
       }
     },
-    [isFinished, currentElementId, answeredIds, clearFlash, advancePrompt],
+    [isFinished, currentElementId, answeredIds, wrongAttempts, autoRevealId, clearFlash, advancePrompt],
   );
 
   const handleSkip = useCallback(() => {
-    if (isFinished || !currentElementId) return;
+    if (isFinished || !currentElementId || autoRevealId) return;
     clearFlash();
+    clearAutoReveal();
     setSkippedIds((prev) => new Set([...prev, currentElementId]));
     setAnsweredIds((prev) => new Set([...prev, currentElementId]));
     advancePrompt();
-  }, [isFinished, currentElementId, clearFlash, advancePrompt]);
+  }, [isFinished, currentElementId, autoRevealId, clearFlash, clearAutoReveal, advancePrompt]);
 
   const handleGiveUp = useCallback(() => {
     if (isFinished) return;
     clearFlash();
+    clearAutoReveal();
 
     const newSkipped = new Set(skippedIds);
     const newAnswered = new Set(answeredIds);
@@ -143,7 +189,7 @@ export function useIdentifyQuiz(
     setSkippedIds(newSkipped);
     setAnsweredIds(newAnswered);
     setPromptIndex(totalPrompts);
-  }, [isFinished, promptIndex, totalPrompts, shuffledOrder, correctIds, skippedIds, answeredIds, clearFlash]);
+  }, [isFinished, promptIndex, totalPrompts, shuffledOrder, correctIds, skippedIds, answeredIds, clearFlash, clearAutoReveal]);
 
   return {
     currentElementId,
@@ -158,6 +204,7 @@ export function useIdentifyQuiz(
     answeredElementIds: answeredIds,
     score,
     flashIncorrectId,
+    autoRevealId,
     handleElementClick,
     handleSkip,
     handleGiveUp,
