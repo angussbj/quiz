@@ -59,6 +59,8 @@ export function useFreeRecallSession({
         states[element.id] = 'correct';
       } else if (givenUp) {
         states[element.id] = 'revealed';
+      } else {
+        states[element.id] = 'default';
       }
     }
     return states;
