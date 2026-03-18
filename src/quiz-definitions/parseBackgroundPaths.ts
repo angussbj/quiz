@@ -16,6 +16,7 @@ export function parseBackgroundPaths(
   for (const row of rows) {
     const rowId = row['id'];
     const group = row['group'] ?? row['name'];
+    const code = row['code'];
     const pathsRaw = row['paths'] ?? '';
 
     if (!rowId || !pathsRaw) continue;
@@ -27,6 +28,7 @@ export function parseBackgroundPaths(
         id: rowId,
         svgPathData: segments[0].trim(),
         group,
+        code,
       });
     } else {
       for (let i = 0; i < segments.length; i++) {
@@ -36,6 +38,7 @@ export function parseBackgroundPaths(
           id: `${rowId}-${i}`,
           svgPathData: segment,
           group,
+          code,
         });
       }
     }

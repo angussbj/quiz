@@ -20,6 +20,7 @@ export function parseBackgroundPaths(
         id: pathSegments.length > 1 ? `${id}-${i}` : id,
         svgPathData: d,
         group: row['group'] ?? row['name'],
+        code: row['code'],
       });
     }
   }

@@ -52,12 +52,7 @@
       "Bash(mkdir:*)",
       "mcp__plugin_playwright_playwright__browser_type",
       "mcp__plugin_playwright_playwright__browser_select_option",
-      "WebFetch(domain:en.wikipedia.org)",
-      "WebFetch(domain:www.britannica.com)",
-      "WebFetch(domain:www.countries-ofthe-world.com)",
-      "WebFetch(domain:www.cia.gov)",
-      "Bash(curl:*)",
-      "mcp__plugin_playwright_playwright__browser_press_key"
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

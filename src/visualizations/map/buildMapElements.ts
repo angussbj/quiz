@@ -9,6 +9,7 @@ export function buildMapElements(
 ): ReadonlyArray<MapElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
+  const codeColumn = columnMappings['code'] ?? 'code';
 
   return rows.map((row) => {
     const lat = parseFloat(row['latitude'] ?? '0');
@@ -30,7 +31,7 @@ export function buildMapElements(
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
       svgPathData: row['paths'] ?? '',
-      code: row['code'] ?? id,
+      code: row[codeColumn] ?? id,
     };
   });
 }
