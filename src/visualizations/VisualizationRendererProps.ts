@@ -55,4 +55,4 @@ export interface VisualizationRendererProps {
   readonly svgOverlay?: ReactNode;
 }
 
-export type VisualizationType = 'map' | 'timeline' | 'grid';
+export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid';
