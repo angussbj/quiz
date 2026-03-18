@@ -111,11 +111,14 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
         const flagPartHeight = hasFlag ? flagHeight : 0;
         const height = flagPartHeight + gapSize + textHeight;
 
-        // Use country-radius-based steps so the candidate grid is stable across zoom levels
-        const step = countryRadius * 0.25;
+        // Use country-radius-based steps so the candidate grid is stable across zoom levels.
+        // Minimum step ensures tiny countries still get multiple candidates.
+        const minStep = Math.max(height * 0.5, width * 0.3);
+        const step = Math.max(countryRadius * 0.25, minStep);
         const stepX = Math.max(step, width * 0.3);
         const stepY = Math.max(step, height * 0.3);
-        const maxDist = countryRadius * MAX_DISTANCE_FACTOR;
+        // Tiny countries need a minimum search radius to find non-overlapping positions
+        const maxDist = Math.max(countryRadius * MAX_DISTANCE_FACTOR, height * 2);
 
         const candidates = buildSpiralCandidates(
           label.center.x, label.center.y, stepX, stepY, maxDist,
@@ -151,6 +154,24 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
           }
         }
         if (didPlace) break;
+      }
+
+      // At high zoom, force-show at centroid if no non-overlapping position found
+      if (!didPlace && isHighZoom) {
+        const fontSize = baseFontSize * REDUCED_SIZE_FACTORS[REDUCED_SIZE_FACTORS.length - 1];
+        const flagHeight = fontSize * FLAG_HEIGHT_FACTOR;
+        const hasFlag = showFlags && !!label.code;
+        const textWidthEstimate = showNames ? label.name.length * fontSize * 0.6 : 0;
+        const width = showNames
+          ? Math.max(textWidthEstimate, fontSize * 4)
+          : hasFlag ? flagHeight * 4 / 3 : 0;
+        const textHeight = showNames ? fontSize * 1.5 : 0;
+        const gapSize = (hasFlag && showNames) ? fontSize * 0.3 : 0;
+        const flagPartHeight = hasFlag ? flagHeight : 0;
+        const height = flagPartHeight + gapSize + textHeight;
+        const lx = label.center.x - width / 2;
+        const ly = label.center.y - height / 2;
+        visible.push({ label, fontSize, flagHeight, gapSize, width, height, x: lx, y: ly });
       }
     }
 
