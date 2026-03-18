@@ -39,7 +39,7 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - **Flag next to prompt in identify mode:** In identify mode, when the flags toggle is enabled, show the flag next to the country/city name in the prompt bar — not on the map.
 - **Per-mode toggle constraints:** Some toggle combinations don't make sense for certain modes. The setup panel should enforce constraints. E.g. identify mode: city dots must be on; at least one of country names or flags must be on. Constrained toggles should be visually disabled with a tooltip. Quiz definitions should declare these constraints per mode.
 
-### 21. Quiz Results Review Mode
+### 21. Quiz Results Review Mode — DONE
 **Branch:** `feat/results-review`
 **Scope:** The results screen should have a way to dismiss the overlay and go back to viewing the visualization in a read-only state (no more answers accepted). Lets users review what they got right/wrong on the map/grid/timeline.
 
@@ -69,19 +69,19 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 
 ### 23. Capital & Border Data for All Continents
 **Branch:** `feat/all-capitals`
-**Scope:** Extend capital city data beyond Europe. Create CSVs and country border SVG paths for: Asia, Africa, North America, South America, and Oceania. Register quiz definitions for each continent. Follow the same patterns as #17. Use Natural Earth 1:110m data, pre-converted to SVG paths.
+**Scope:** Extend capital city data beyond Europe. Check that the data for Asia, Africa, North America, South America, and Oceania is already in the existing csvs and if there are any edge cases we should check (e.g. Taiwan, Palestine, French Guiana, etc.). Register quiz definitions for each continent and for the world. Follow the same patterns as #17. Use Natural Earth 1:110m data, pre-converted to SVG paths.
 
 ### 24. Countries Quiz Type
 **Branch:** `feat/countries-quiz`
-**Scope:** Add a "countries" quiz type — name the country from its shape/location on the map. Different from capitals (which focuses on cities). Create quiz definitions per continent registered in the quiz registry. Can reuse the same border data from #23.
+**Scope:** Add a "countries" quiz type — name the country from its shape/location on the map. Different from capitals (which focuses on cities). Create quiz definitions per continent and for the world, registered in the quiz registry. Can reuse the same border data from #23.
 
 ### 25. Flags Quiz Type
 **Branch:** `feat/flags-quiz`
-**Scope:** Add a "flags" quiz type — identify the country from its flag, or name the flag for a given country. Create quiz definitions per continent. Can reuse the same data CSVs as capitals/countries with different column mappings.
+**Scope:** Add a "flags" quiz type — identify the country from its flag, or pick the flag for a given country - this should be selectable on the quiz configuration screen. Create quiz definitions per continent and for the world. Can reuse the same data CSVs as capitals/countries with different column mappings.
 
 ### 26. Periodic Table Quiz
 **Branch:** `feat/periodic-table-quiz`
-**Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
+**Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element, ordered recall following the order by atomic number, prompted recall (new) where element squares are highlighted in a random order and you have to name them). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
 
 ### 27. WWII Timeline Quiz
 **Branch:** `feat/wwii-timeline`
