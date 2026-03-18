@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
@@ -133,6 +133,11 @@ function MapContent({
 }: MapContentProps) {
   const { clusteredElementIds } = useZoomPan();
 
+  const cityDotPositions = useMemo(
+    () => elements.map((el) => el.viewBoxCenter),
+    [elements],
+  );
+
   const handleBackgroundClick = useCallback(
     (event: React.MouseEvent<SVGGElement>) => {
       if (!onPositionClick) return;
@@ -199,28 +204,15 @@ function MapContent({
         );
       })}
 
-      {/* Country name labels (from background border data) */}
-      {toggles['showCountryNames'] && backgroundLabels && (
-        <MapCountryLabels labels={backgroundLabels} />
+      {/* Country name labels and flags (from background border data, unified overlap detection) */}
+      {(toggles['showCountryNames'] || toggles['showMapFlags']) && backgroundLabels && (
+        <MapCountryLabels
+          labels={backgroundLabels}
+          showNames={toggles['showCountryNames'] ?? false}
+          showFlags={toggles['showMapFlags'] ?? false}
+          avoidPoints={cityDotPositions}
+        />
       )}
-
-      {/* Flag images at country centroids (country quizzes, from background data) */}
-      {toggles['showMapFlags'] && backgroundLabels?.map((label) => {
-        if (!label.code) return null;
-        const flagHeight = 1.5;
-        const flagWidth = flagHeight * 4 / 3;
-        return (
-          <image
-            key={`bg-flag-${label.id}`}
-            href={`/flags/${label.code}.svg`}
-            x={label.center.x - flagWidth / 2}
-            y={label.center.y + 0.3}
-            width={flagWidth}
-            height={flagHeight}
-            className={styles.flagImage}
-          />
-        );
-      })}
 
       {/* Flag images near city dots (capitals quizzes) */}
       {elements.map((element) => {

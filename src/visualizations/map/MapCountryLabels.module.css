@@ -7,17 +7,26 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  gap: 0.15em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.labelText {
   font-family: var(--font-family);
   font-weight: 500;
   color: var(--color-text-secondary);
   opacity: 0.8;
   line-height: 1.2;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-  pointer-events: none;
-  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flagImage {
+  flex-shrink: 0;
+  box-shadow: 0 0 0.5px rgba(0, 0, 0, 0.2);
 }
