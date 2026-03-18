@@ -5,6 +5,7 @@ import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { isMapElement } from './MapElement';
+import { MapCountryLabels } from './MapCountryLabels';
 import styles from './MapRenderer.module.css';
 
 const CITY_DOT_RADIUS = 0.3;
@@ -199,18 +200,9 @@ function MapContent({
       })}
 
       {/* Country name labels (from background border data) */}
-      {toggles['showCountryNames'] && backgroundLabels?.map((label) => (
-        <text
-          key={`bg-label-${label.id}`}
-          x={label.center.x}
-          y={label.center.y}
-          className={styles.backgroundLabel}
-          textAnchor="middle"
-          dominantBaseline="central"
-        >
-          {label.name}
-        </text>
-      ))}
+      {toggles['showCountryNames'] && backgroundLabels && (
+        <MapCountryLabels labels={backgroundLabels} />
+      )}
 
       {/* Flag images at country centroids (country quizzes, from background data) */}
       {toggles['showMapFlags'] && backgroundLabels?.map((label) => {
