@@ -83,7 +83,7 @@ describe('Portugal label placement diagnostics', () => {
     // So direction is east and south — away from Lisbon toward interior Portugal
   });
 
-  it('computeBackgroundLabels produces correct label for Portugal', () => {
+  it('computeBackgroundLabels produces correct label with multiple centers for Portugal', () => {
     const paths: ReadonlyArray<BackgroundPath> = [
       { id: 'portugal', svgPathData: PORTUGAL_PATH, name: 'Portugal', group: 'Southern Europe', code: 'pt', sovereign: 'Portugal' },
     ];
@@ -91,6 +91,13 @@ describe('Portugal label placement diagnostics', () => {
     expect(labels).toHaveLength(1);
     expect(labels[0].name).toBe('Portugal');
     expect(labels[0].area).toBeGreaterThan(5);
-    console.log('Label:', labels[0]);
+    expect(labels[0].centers.length).toBe(3);
+    // All centers should be within Portugal's bounds
+    for (const center of labels[0].centers) {
+      expect(center.x).toBeGreaterThan(-10);
+      expect(center.x).toBeLessThan(-6);
+      expect(center.y).toBeGreaterThan(-42);
+      expect(center.y).toBeLessThan(-37);
+    }
   });
 });

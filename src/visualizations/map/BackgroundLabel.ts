@@ -4,7 +4,13 @@ import type { ViewBoxPosition } from '../VisualizationElement';
 export interface BackgroundLabel {
   readonly id: string;
   readonly name: string;
+  /** Primary center position (polygon centroid). Used as fallback. */
   readonly center: ViewBoxPosition;
+  /**
+   * Multiple candidate center positions, ordered: polylabel, bbox center, polygon centroid.
+   * The placement algorithm tries all of these before falling back to search patterns.
+   */
+  readonly centers: ReadonlyArray<ViewBoxPosition>;
   readonly code?: string;
   /** Sovereign country name. Matches name for sovereign states; blank for territories/disputed. */
   readonly sovereign?: string;
