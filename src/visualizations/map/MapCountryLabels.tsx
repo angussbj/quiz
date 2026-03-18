@@ -215,10 +215,11 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
         const stepSize = Math.max(countryRadius * 0.2, minStep);
         const maxDist = Math.max(countryRadius * MAX_DISTANCE_FACTOR, dims.height * 2);
 
-        // Step 1: Follow line away from closest dot
+        // Step 1: Follow line away from closest dot (fine steps to stay close)
         if (avoidPts.length > 0) {
+          const linearStep = Math.max(dotAvoidRadius * 0.5, dims.height * 0.15);
           const awayCandidates = buildAwayFromDotCandidates(
-            label.center.x, label.center.y, avoidPts, stepSize, maxDist,
+            label.center.x, label.center.y, avoidPts, linearStep, maxDist,
           );
           for (const [cx, cy] of awayCandidates) {
             if (tryPlace(cx, cy, dims, label, placed, visible)) {
