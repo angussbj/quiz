@@ -125,12 +125,26 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
           const lx = cx - width / 2;
           const ly = cy - height / 2;
 
-          const hasOverlap = placed.some((p) =>
-            lx < p.x + p.w && lx + width > p.x && ly < p.y + p.h && ly + height > p.y,
+          // Build separate rects for flag and text for tighter collision detection
+          const rects: Array<{ x: number; y: number; w: number; h: number }> = [];
+          let curY = ly;
+          if (hasFlag) {
+            const fw = flagHeight * 4 / 3;
+            rects.push({ x: cx - fw / 2, y: curY, w: fw, h: flagHeight });
+            curY += flagHeight + gapSize;
+          }
+          if (showNames) {
+            rects.push({ x: lx, y: curY, w: width, h: textHeight });
+          }
+
+          const hasOverlap = rects.some((r) =>
+            placed.some((p) =>
+              r.x < p.x + p.w && r.x + r.w > p.x && r.y < p.y + p.h && r.y + r.h > p.y,
+            ),
           );
 
           if (!hasOverlap) {
-            placed.push({ x: lx, y: ly, w: width, h: height });
+            for (const r of rects) placed.push(r);
             visible.push({ label, fontSize, flagHeight, gapSize, width, height, x: lx, y: ly });
             didPlace = true;
             break;
