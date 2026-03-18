@@ -8,6 +8,8 @@ const csvPath = resolve(__dirname, '../../../public/data/borders/world-borders.c
 const csvText = readFileSync(csvPath, 'utf8');
 const allRows = parseCsv(csvText);
 
+const sovereignRows = allRows.filter((r) => r.is_sovereign === 'true');
+
 describe('world-borders.csv data validation', () => {
   it('has over 200 country rows', () => {
     expect(allRows.length).toBeGreaterThan(200);
@@ -20,6 +22,10 @@ describe('world-borders.csv data validation', () => {
     expect(row).toHaveProperty('region');
     expect(row).toHaveProperty('group');
     expect(row).toHaveProperty('paths');
+    expect(row).toHaveProperty('latitude');
+    expect(row).toHaveProperty('longitude');
+    expect(row).toHaveProperty('name_alternates');
+    expect(row).toHaveProperty('is_sovereign');
   });
 
   it('has no empty paths', () => {
@@ -54,5 +60,74 @@ describe('world-borders.csv data validation', () => {
       expect(path.svgPathData).toMatch(/^M /);
       expect(path.group).toBeTruthy();
     }
+  });
+});
+
+describe('countries quiz data validation', () => {
+  it('has exactly 197 sovereign countries', () => {
+    expect(sovereignRows).toHaveLength(197);
+  });
+
+  it('all sovereign countries have valid latitude and longitude', () => {
+    for (const row of sovereignRows) {
+      const lat = parseFloat(row.latitude);
+      const lng = parseFloat(row.longitude);
+      expect(lat).not.toBeNaN();
+      expect(lng).not.toBeNaN();
+      expect(lat).toBeGreaterThanOrEqual(-90);
+      expect(lat).toBeLessThanOrEqual(90);
+      expect(lng).toBeGreaterThanOrEqual(-180);
+      expect(lng).toBeLessThanOrEqual(180);
+    }
+  });
+
+  it('all sovereign countries have non-empty paths', () => {
+    for (const row of sovereignRows) {
+      expect(row.paths).toBeTruthy();
+      expect(row.paths).toMatch(/^M /);
+    }
+  });
+
+  it('all sovereign countries have unique IDs', () => {
+    const ids = sovereignRows.map((r) => r.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('filters sovereign European countries correctly', () => {
+    const european = applyDataFilter(allRows, [
+      { column: 'is_sovereign', values: ['true'] },
+      { column: 'region', values: ['Europe'] },
+    ]);
+    expect(european.length).toBeGreaterThan(40);
+    const names = european.map((r) => r.name);
+    expect(names).toContain('France');
+    expect(names).toContain('Germany');
+    expect(names).toContain('Türkiye');
+    expect(names).toContain('Russia');
+    // Territories excluded
+    expect(names).not.toContain('Aland');
+    expect(names).not.toContain('Faroe Islands');
+  });
+
+  it('non-sovereign territories have computed coordinates', () => {
+    const territories = allRows.filter((r) => r.is_sovereign === 'false');
+    expect(territories.length).toBe(40);
+    for (const row of territories) {
+      const lat = parseFloat(row.latitude);
+      const lng = parseFloat(row.longitude);
+      expect(lat).not.toBeNaN();
+      expect(lng).not.toBeNaN();
+    }
+  });
+
+  it('contains expected countries across all continents', () => {
+    const names = new Set(sovereignRows.map((r) => r.name));
+    // Sample from each continent
+    expect(names.has('United States')).toBe(true);
+    expect(names.has('Brazil')).toBe(true);
+    expect(names.has('Japan')).toBe(true);
+    expect(names.has('Australia')).toBe(true);
+    expect(names.has('Nigeria')).toBe(true);
+    expect(names.has('United Kingdom')).toBe(true);
   });
 });
