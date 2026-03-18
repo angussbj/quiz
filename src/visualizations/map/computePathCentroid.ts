@@ -84,21 +84,21 @@ function boundingBoxCenterFromPoints(points: ReadonlyArray<ViewBoxPosition>): Vi
   return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
 }
 
-/** Compute the bounding box center of an SVG path. */
-export function computeBoundingBoxCenter(d: string): ViewBoxPosition {
+/** Compute the bounding box center of an SVG path. Returns null for empty paths. */
+export function computeBoundingBoxCenter(d: string): ViewBoxPosition | null {
   const points = parsePathPoints(d);
-  if (points.length === 0) return { x: 0, y: 0 };
+  if (points.length === 0) return null;
   return boundingBoxCenterFromPoints(points);
 }
 
 /**
  * Compute the pole of inaccessibility (center of the largest inscribed circle)
- * using the polylabel quadtree algorithm.
+ * using the polylabel quadtree algorithm. Returns null for degenerate paths.
  * Based on Mapbox's polylabel: https://github.com/mapbox/polylabel
  */
-export function computePolylabel(d: string, precision: number = 0.01): ViewBoxPosition {
+export function computePolylabel(d: string, precision: number = 0.01): ViewBoxPosition | null {
   const points = parsePathPoints(d);
-  if (points.length < 3) return { x: 0, y: 0 };
+  if (points.length < 3) return null;
 
   const polygon: ReadonlyArray<ReadonlyArray<readonly [number, number]>> = [
     points.map((p) => [p.x, p.y] as const),
@@ -190,9 +190,9 @@ function polylabel(
   const cellSize = Math.min(width, height);
   if (cellSize === 0) return [(minX + maxX) / 2, (minY + maxY) / 2];
 
-  let halfSize = cellSize / 2;
+  const initialHalfSize = cellSize / 2;
 
-  // Priority queue (simple sorted array — polygon count is small)
+  // Insertion-sort priority queue — acceptable for simplified polygons computed once at load time.
   const queue: Cell[] = [];
   const enqueue = (cell: Cell) => {
     // Insert sorted by maxDistance descending
@@ -204,7 +204,7 @@ function polylabel(
   // Cover polygon with initial cells
   for (let x = minX; x < maxX; x += cellSize) {
     for (let y = minY; y < maxY; y += cellSize) {
-      enqueue(createCell(x + halfSize, y + halfSize, halfSize, polygon));
+      enqueue(createCell(x + initialHalfSize, y + initialHalfSize, initialHalfSize, polygon));
     }
   }
 
@@ -227,11 +227,11 @@ function polylabel(
     if (cell.maxDistance - bestCell.distance <= precision) continue;
 
     // Subdivide
-    halfSize = cell.halfSize / 2;
-    enqueue(createCell(cell.x - halfSize, cell.y - halfSize, halfSize, polygon));
-    enqueue(createCell(cell.x + halfSize, cell.y - halfSize, halfSize, polygon));
-    enqueue(createCell(cell.x - halfSize, cell.y + halfSize, halfSize, polygon));
-    enqueue(createCell(cell.x + halfSize, cell.y + halfSize, halfSize, polygon));
+    const childHalfSize = cell.halfSize / 2;
+    enqueue(createCell(cell.x - childHalfSize, cell.y - childHalfSize, childHalfSize, polygon));
+    enqueue(createCell(cell.x + childHalfSize, cell.y - childHalfSize, childHalfSize, polygon));
+    enqueue(createCell(cell.x - childHalfSize, cell.y + childHalfSize, childHalfSize, polygon));
+    enqueue(createCell(cell.x + childHalfSize, cell.y + childHalfSize, childHalfSize, polygon));
   }
 
   return [bestCell.x, bestCell.y];

@@ -1,3 +1,4 @@
+import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundPath } from '../VisualizationRendererProps';
 import type { BackgroundLabel } from './BackgroundLabel';
 import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter } from './computePathCentroid';
@@ -43,7 +44,7 @@ export function computeBackgroundLabels(
     const polylabelCenter = computePolylabel(largest.svgPathData);
     // Order: polylabel first (best for most shapes), then bbox center, then centroid
     const centers = [polylabelCenter, bboxCenter, centroid]
-      .filter((c) => c.x !== 0 || c.y !== 0);
+      .filter((c): c is ViewBoxPosition => c !== null);
     labels.push({
       id: name,
       name,
