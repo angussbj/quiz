@@ -76,8 +76,15 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
 
       const x = label.center.x - width / 2;
 
-      // Try default position, then shift up/down to avoid overlaps with dots and other labels
-      const offsets = [0, -height, height, -height * 2, height * 2];
+      // Try positions near the centroid, spiraling outward in small steps.
+      // Prefer up (negative Y = north on map = more likely to be inside the country shape).
+      const step = height * 0.5;
+      const maxSteps = 6;
+      const offsets: number[] = [0];
+      for (let i = 1; i <= maxSteps; i++) {
+        offsets.push(-step * i, step * i);
+      }
+
       let bestY: number | null = null;
       for (const offset of offsets) {
         const candidateY = label.center.y - height / 2 + offset;
