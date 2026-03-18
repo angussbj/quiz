@@ -6,10 +6,16 @@ import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
 import styles from './QuizShell.module.css';
 
+export interface ElementRange {
+  readonly min: number;
+  readonly max: number;
+}
+
 export interface QuizConfig {
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly selectedMode: QuizModeType;
   readonly countdownSeconds: number | undefined;
+  readonly elementRange: ElementRange | undefined;
   readonly onReconfigure: () => void;
 }
 
@@ -22,6 +28,9 @@ interface QuizShellProps {
   readonly toggles: ReadonlyArray<ToggleDefinition>;
   readonly presets: ReadonlyArray<TogglePreset>;
   readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
+  readonly rangeColumn?: string;
+  readonly rangeLabel?: string;
+  readonly rangeMax?: number;
   readonly children: (config: QuizConfig) => ReactNode;
 }
 
@@ -41,6 +50,9 @@ export function QuizShell({
   toggles,
   presets,
   modeConstraints,
+  rangeColumn,
+  rangeLabel,
+  rangeMax,
   children,
 }: QuizShellProps) {
   const [phase, setPhase] = useState<ShellPhase>('configuring');
@@ -49,6 +61,8 @@ export function QuizShell({
   const [countdownMinutes, setCountdownMinutes] = useState<number | undefined>(
     defaultCountdownSeconds !== undefined ? Math.ceil(defaultCountdownSeconds / 60) : undefined,
   );
+  const [rangeMin, setRangeMin] = useState<number | undefined>(undefined);
+  const [rangeMaxValue, setRangeMaxValue] = useState<number | undefined>(undefined);
   const toggleState = useToggleState(toggles, presets);
 
   const applyModeConstraints = useCallback((mode: QuizModeType) => {
@@ -99,16 +113,27 @@ export function QuizShell({
         activePreset={toggleState.activePreset}
         onToggleChange={toggleState.set}
         onPreset={toggleState.applyPreset}
+        rangeLabel={rangeColumn ? rangeLabel : undefined}
+        rangeMax={rangeMax}
+        rangeMinValue={rangeMin}
+        rangeMaxValue={rangeMaxValue}
+        onRangeMinChange={setRangeMin}
+        onRangeMaxChange={setRangeMaxValue}
         onStart={handleStart}
         modeConstraints={modeConstraints}
       />
     );
   }
 
+  const elementRange = rangeMin !== undefined || rangeMaxValue !== undefined
+    ? { min: rangeMin ?? 1, max: rangeMaxValue ?? (rangeMax ?? 999) }
+    : undefined;
+
   const config: QuizConfig = {
     toggleValues: toggleState.values,
     selectedMode,
     countdownSeconds: countdownMinutes !== undefined ? countdownMinutes * 60 : undefined,
+    elementRange,
     onReconfigure: handleReconfigure,
   };
 

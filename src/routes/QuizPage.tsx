@@ -105,6 +105,9 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
         toggles={definition.toggles}
         presets={definition.presets}
         modeConstraints={definition.modeConstraints}
+        rangeColumn={definition.rangeColumn}
+        rangeLabel={definition.rangeLabel}
+        rangeMax={definition.rangeColumn ? rows.length : undefined}
       >
         {(config) => (
           <ActiveQuiz
@@ -116,6 +119,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             Renderer={Renderer}
             backgroundPaths={backgroundPaths}
             backgroundLabels={backgroundLabels}
+            rangeColumn={definition.rangeColumn}
           />
         )}
       </QuizShell>

@@ -227,6 +227,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/science/chemistry/periodic-table.csv',
     supportingDataPaths: [],
+    rangeColumn: 'atomic_number',
+    rangeLabel: 'Atomic number',
   },
   {
     id: 'sci-human-bones',

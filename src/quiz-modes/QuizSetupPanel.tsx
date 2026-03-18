@@ -30,6 +30,12 @@ export interface QuizSetupPanelProps {
   readonly activePreset: string | undefined;
   readonly onToggleChange: (key: string, value: boolean) => void;
   readonly onPreset: (preset: TogglePreset) => void;
+  readonly rangeLabel?: string;
+  readonly rangeMax?: number;
+  readonly rangeMinValue?: number;
+  readonly rangeMaxValue?: number;
+  readonly onRangeMinChange?: (value: number | undefined) => void;
+  readonly onRangeMaxChange?: (value: number | undefined) => void;
   readonly onStart: () => void;
   readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
 }
@@ -48,6 +54,12 @@ export function QuizSetupPanel({
   activePreset,
   onToggleChange,
   onPreset,
+  rangeLabel,
+  rangeMax,
+  rangeMinValue,
+  rangeMaxValue,
+  onRangeMinChange,
+  onRangeMaxChange,
   onStart,
   modeConstraints,
 }: QuizSetupPanelProps) {
@@ -157,6 +169,53 @@ export function QuizSetupPanel({
             <span className={styles.timerLabel}>minutes</span>
           </div>
         </section>
+
+        {rangeLabel && onRangeMinChange && onRangeMaxChange && (
+          <section className={styles.section}>
+            <span className={styles.sectionTitle}>
+              {rangeLabel} range
+            </span>
+            <div className={styles.rangeRow}>
+              <input
+                type="text"
+                inputMode="numeric"
+                className={styles.rangeInput}
+                placeholder="1"
+                value={rangeMinValue ?? ''}
+                onChange={(event) => {
+                  const raw = event.target.value;
+                  if (raw === '') {
+                    onRangeMinChange(undefined);
+                    return;
+                  }
+                  const parsed = parseInt(raw, 10);
+                  if (!Number.isNaN(parsed)) {
+                    onRangeMinChange(Math.max(1, parsed));
+                  }
+                }}
+              />
+              <span className={styles.rangeSeparator}>to</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                className={styles.rangeInput}
+                placeholder={rangeMax !== undefined ? String(rangeMax) : ''}
+                value={rangeMaxValue ?? ''}
+                onChange={(event) => {
+                  const raw = event.target.value;
+                  if (raw === '') {
+                    onRangeMaxChange(undefined);
+                    return;
+                  }
+                  const parsed = parseInt(raw, 10);
+                  if (!Number.isNaN(parsed)) {
+                    onRangeMaxChange(Math.min(parsed, rangeMax ?? parsed));
+                  }
+                }}
+              />
+            </div>
+          </section>
+        )}
 
         {toggles.length > 0 && (
           <TogglePanel

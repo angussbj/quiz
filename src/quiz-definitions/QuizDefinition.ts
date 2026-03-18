@@ -46,4 +46,8 @@ export interface QuizDefinition<K extends string = string> {
   readonly defaultCountdownSeconds?: number;
   /** Per-mode toggle constraints. Key is a QuizModeType string. */
   readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
+  /** Numeric column used for range filtering (e.g., 'atomic_number'). Shows range inputs in setup. */
+  readonly rangeColumn?: string;
+  /** Human-readable label for the range filter (e.g., 'Atomic number'). */
+  readonly rangeLabel?: string;
 }
