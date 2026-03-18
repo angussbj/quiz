@@ -1,4 +1,4 @@
-id,city,country,latitude,longitude,region,subregion,city_alternates,code
+id,city,country,latitude,longitude,region,subregion,city_alternates,country_alternates,code
 algiers,Algiers,Algeria,36.7323,3.0875,Africa,Northern Africa,,dz
 luanda,Luanda,Angola,-8.8368,13.2343,Africa,Middle Africa,,ao
 porto-novo,Porto-Novo,Benin,6.4965,2.6036,Africa,Western Africa,,bj
@@ -10,9 +10,9 @@ praia,Praia,Cape Verde,14.9315,-23.5125,Africa,Western Africa,,cv
 bangui,Bangui,Central African Republic,4.3612,18.555,Africa,Middle Africa,,cf
 n-djamena,N'Djamena,Chad,12.11,15.05,Africa,Middle Africa,,td
 moroni,Moroni,Comoros,-11.7022,43.2551,Africa,Eastern Africa,,km
-brazzaville,Brazzaville,Congo,-4.2661,15.2832,Africa,Middle Africa,,cg
+brazzaville,Brazzaville,Republic of the Congo,-4.2661,15.2832,Africa,Middle Africa,,Congo,cg
 djibouti,Djibouti,Djibouti,11.589,43.145,Africa,Eastern Africa,,dj
-kinshasa,Kinshasa,DR Congo,-4.3276,15.3136,Africa,Middle Africa,,cd
+kinshasa,Kinshasa,Democratic Republic of the Congo,-4.3276,15.3136,Africa,Middle Africa,,DR Congo|DRC,cd
 cairo,Cairo,Egypt,30.0626,31.2497,Africa,Northern Africa,"Al-Qahirah|Al Qahirah",eg
 malabo,Malabo,Equatorial Guinea,3.7558,8.7817,Africa,Middle Africa,,gq
 asmara,Asmara,Eritrea,15.3381,38.9318,Africa,Eastern Africa,,er
@@ -130,7 +130,7 @@ taipei,Taipei,Taiwan,25.033,121.5654,Asia,Eastern Asia,Taibei,tw
 dushanbe,Dushanbe,Tajikistan,38.5367,68.78,Asia,Central Asia,,tj
 bangkok,Bangkok,Thailand,13.754,100.5014,Asia,South-Eastern Asia,Krung Thep,th
 dili,Dili,Timor-Leste,-8.5586,125.5736,Asia,South-Eastern Asia,,tl
-ankara,Ankara,Türkiye,39.9034,32.4331,Asia,Western Asia,Angora,tr
+ankara,Ankara,Türkiye,39.9034,32.4331,Europe|Asia,Western Asia,Angora,tr
 ashgabat,Ashgabat,Turkmenistan,37.95,58.3833,Asia,Central Asia,,tm
 abu-dhabi,Abu Dhabi,United Arab Emirates,24.4136,54.433,Asia,Western Asia,,ae
 tashkent,Tashkent,Uzbekistan,41.2647,69.2163,Asia,Central Asia,,uz
@@ -171,7 +171,7 @@ oslo,Oslo,Norway,59.9127,10.7461,Europe,Northern Europe,,no
 warsaw,Warsaw,Poland,52.2298,21.0118,Europe,Central Europe,Warszawa,pl
 lisbon,Lisbon,Portugal,38.7263,-9.1484,Europe,Southern Europe,Lisboa,pt
 bucharest,Bucharest,Romania,44.4323,26.1063,Europe,Southeast Europe,"București|Bucuresti",ro
-moscow,Moscow,Russia,55.7522,37.6156,Europe,Eastern Europe,"Moskva|Moskwa",ru
+moscow,Moscow,Russia,55.7522,37.6156,Europe|Asia,Eastern Europe,"Moskva|Moskwa",ru
 san-marino,San Marino,San Marino,43.9424,12.4578,Europe,Southern Europe,City of San Marino,sm
 belgrade,Belgrade,Serbia,44.7866,20.4489,Europe,Southeast Europe,Beograd,rs
 bratislava,Bratislava,Slovakia,48.1482,17.1067,Europe,Central Europe,,sk
