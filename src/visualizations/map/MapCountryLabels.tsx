@@ -215,11 +215,13 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
         const stepSize = Math.max(countryRadius * 0.2, minStep);
         const maxDist = Math.max(countryRadius * MAX_DISTANCE_FACTOR, dims.height * 2);
 
-        // Step 1: Follow line away from closest dot (fine steps to stay close)
+        // Step 1: Follow line away from closest dot (short distance, fine steps)
+        // Only goes far enough to clear the dot — further exploration is left to the spiral.
         if (avoidPts.length > 0) {
           const linearStep = Math.max(dotAvoidRadius * 0.5, dims.height * 0.15);
+          const linearMaxDist = Math.max(dotAvoidRadius * 3, dims.height);
           const awayCandidates = buildAwayFromDotCandidates(
-            label.center.x, label.center.y, avoidPts, linearStep, maxDist,
+            label.center.x, label.center.y, avoidPts, linearStep, linearMaxDist,
           );
           for (const [cx, cy] of awayCandidates) {
             if (tryPlace(cx, cy, dims, label, placed, visible)) {
