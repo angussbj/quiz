@@ -1,5 +1,5 @@
 .bar {
-  position: fixed;
+  position: absolute;
   bottom: var(--spacing-md);
   left: 50%;
   transform: translateX(-50%);
