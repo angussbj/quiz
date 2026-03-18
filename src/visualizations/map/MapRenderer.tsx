@@ -138,9 +138,15 @@ function MapContent({
 
   const dotRadius = Math.min(MAX_DOT_RADIUS, Math.max(MIN_DOT_RADIUS, BASE_DOT_RADIUS / scale));
 
-  const cityDotPositions = useMemo(
-    () => elements.map((el) => el.viewBoxCenter),
-    [elements],
+  const visibleDotPositions = useMemo(
+    () => elements
+      .filter((el) => {
+        if (!elementToggle(elementToggles, toggles, el.id, 'showCityDots')) return false;
+        const state = elementStates[el.id];
+        return state !== 'hidden';
+      })
+      .map((el) => el.viewBoxCenter),
+    [elements, elementToggles, toggles, elementStates],
   );
 
   const handleBackgroundClick = useCallback(
@@ -215,7 +221,7 @@ function MapContent({
           labels={backgroundLabels}
           showNames={toggles['showCountryNames'] ?? false}
           showFlags={toggles['showMapFlags'] ?? false}
-          avoidPoints={cityDotPositions}
+          avoidPoints={visibleDotPositions}
         />
       )}
 
