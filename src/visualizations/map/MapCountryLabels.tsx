@@ -111,8 +111,10 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
         const flagPartHeight = hasFlag ? flagHeight : 0;
         const height = flagPartHeight + gapSize + textHeight;
 
-        const stepX = width * 0.4;
-        const stepY = height * 0.4;
+        // Use country-radius-based steps so the candidate grid is stable across zoom levels
+        const step = countryRadius * 0.25;
+        const stepX = Math.max(step, width * 0.3);
+        const stepY = Math.max(step, height * 0.3);
         const maxDist = countryRadius * MAX_DISTANCE_FACTOR;
 
         const candidates = buildSpiralCandidates(
