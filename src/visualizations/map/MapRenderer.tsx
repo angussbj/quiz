@@ -33,6 +33,10 @@ function stateColor(state: ElementVisualState | undefined): string | undefined {
   switch (state) {
     case 'correct':
       return 'var(--color-correct)';
+    case 'correct-second':
+      return 'var(--color-correct-second)';
+    case 'correct-third':
+      return 'var(--color-correct-third)';
     case 'incorrect':
       return 'var(--color-incorrect)';
     case 'missed':
@@ -51,6 +55,8 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
     case 'hidden':
       return 0;
     case 'correct':
+    case 'correct-second':
+    case 'correct-third':
     case 'incorrect':
     case 'missed':
     case 'highlighted':

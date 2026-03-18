@@ -32,6 +32,10 @@ function stateToFill(state: ElementVisualState, groupColorIndex: number | undefi
   switch (state) {
     case 'correct':
       return groupColor ?? 'var(--color-correct-bg)';
+    case 'correct-second':
+      return groupColor ?? 'var(--color-correct-second-bg)';
+    case 'correct-third':
+      return groupColor ?? 'var(--color-correct-third-bg)';
     case 'incorrect':
       return 'var(--color-incorrect-bg)';
     case 'missed':
@@ -50,6 +54,10 @@ function stateToStroke(state: ElementVisualState): string {
   switch (state) {
     case 'correct':
       return 'var(--color-correct)';
+    case 'correct-second':
+      return 'var(--color-correct-second)';
+    case 'correct-third':
+      return 'var(--color-correct-third)';
     case 'incorrect':
       return 'var(--color-incorrect)';
     case 'missed':
@@ -66,6 +74,10 @@ function stateToTextFill(state: ElementVisualState, groupColorIndex: number | un
   switch (state) {
     case 'correct':
       return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-correct)';
+    case 'correct-second':
+      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-correct-second)';
+    case 'correct-third':
+      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-correct-third)';
     case 'incorrect':
       return 'var(--color-incorrect)';
     case 'missed':
@@ -80,9 +92,15 @@ function stateToTextFill(state: ElementVisualState, groupColorIndex: number | un
   }
 }
 
+function isThickStroke(state: ElementVisualState): boolean {
+  return state === 'highlighted' || state === 'correct' || state === 'correct-second'
+    || state === 'correct-third' || state === 'missed';
+}
+
 /** Whether the element has been answered — text should always show regardless of toggles. */
 function isAnswered(state: ElementVisualState): boolean {
-  return state === 'revealed' || state === 'correct' || state === 'missed';
+  return state === 'revealed' || state === 'correct' || state === 'correct-second'
+    || state === 'correct-third' || state === 'missed';
 }
 
 function GridCell({
@@ -101,10 +119,13 @@ function GridCell({
 
   const x = element.column * CELL_STEP;
   const y = element.row * CELL_STEP;
-  const fill = stateToFill(state, groupColorIndex, showGroups);
-  const stroke = stateToStroke(state);
-  const textFill = stateToTextFill(state, groupColorIndex, showGroups);
-  const answered = isAnswered(state);
+  const isIncorrect = state === 'incorrect';
+  // For incorrect flash: render base cell as hidden, overlay fades out on top
+  const baseState = isIncorrect ? 'hidden' : state;
+  const fill = stateToFill(baseState, groupColorIndex, showGroups);
+  const stroke = stateToStroke(baseState);
+  const textFill = stateToTextFill(baseState, groupColorIndex, showGroups);
+  const answered = isAnswered(baseState);
   const symbolVisible = answered || showSymbol;
   const atomicNumberVisible = answered || showAtomicNumber;
   const nameVisible = (answered || showName) && zoomedIn;
@@ -122,6 +143,7 @@ function GridCell({
       onClick={interactive ? () => onClick?.(element.id) : undefined}
       style={{ cursor: interactive ? 'pointer' : 'default' }}
     >
+      {/* Base cell — always visible underneath */}
       <rect
         x={x}
         y={y}
@@ -131,7 +153,7 @@ function GridCell({
         ry={4}
         fill={fill}
         stroke={stroke}
-        strokeWidth={state === 'highlighted' || state === 'correct' ? 2.5 : 1}
+        strokeWidth={isThickStroke(baseState) ? 2.5 : 1}
       />
       {hasAtomicNumber && (
         <text
@@ -171,6 +193,47 @@ function GridCell({
         >
           {element.label}
         </text>
+      )}
+
+      {/* Incorrect flash overlay — fades out to reveal base cell */}
+      {isIncorrect && (
+        <g style={{ animation: 'flash-fade 800ms ease-out forwards' }}>
+          <rect
+            x={x}
+            y={y}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
+            rx={4}
+            ry={4}
+            fill="var(--color-incorrect-bg)"
+            stroke="var(--color-incorrect)"
+            strokeWidth={2.5}
+          />
+          <text
+            x={x + CELL_SIZE / 2}
+            y={y + CELL_SIZE / 2}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="var(--color-incorrect)"
+            fontSize={zoomedIn ? 18 : 14}
+            fontWeight="bold"
+          >
+            {element.symbol}
+          </text>
+          {zoomedIn && (
+            <text
+              x={x + CELL_SIZE / 2}
+              y={y + CELL_SIZE * 0.75}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fill="var(--color-incorrect)"
+              fontSize={8}
+              opacity={0.85}
+            >
+              {element.label}
+            </text>
+          )}
+        </g>
       )}
     </g>
   );

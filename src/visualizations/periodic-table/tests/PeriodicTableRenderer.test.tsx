@@ -144,10 +144,12 @@ describe('PeriodicTableRenderer', () => {
     );
 
     const correctRect = container.querySelector('g[data-element-id="H"] rect');
-    const incorrectRect = container.querySelector('g[data-element-id="He"] rect');
-
     expect(correctRect).toHaveAttribute('stroke', 'var(--color-correct)');
-    expect(incorrectRect).toHaveAttribute('stroke', 'var(--color-incorrect)');
+
+    // Incorrect renders as overlay (second rect) over a hidden base
+    const incorrectRects = container.querySelectorAll('g[data-element-id="He"] rect');
+    expect(incorrectRects.length).toBe(2);
+    expect(incorrectRects[1]).toHaveAttribute('stroke', 'var(--color-incorrect)');
   });
 
   it('highlights an element via highlighted state', () => {
