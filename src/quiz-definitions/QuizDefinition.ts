@@ -9,6 +9,15 @@ export type QuizModeType =
   | 'multiple-choice';
 
 /**
+ * Filter rows from a shared CSV by matching a column against a list of allowed values.
+ * Multiple values act as an OR filter (row included if the column value matches any).
+ */
+export interface DataFilter {
+  readonly column: string;
+  readonly values: ReadonlyArray<string>;
+}
+
+/**
  * A complete quiz definition. Parameterized by CSV column keys
  * so the type system can verify column references in mode config.
  *
@@ -28,7 +37,11 @@ export interface QuizDefinition<K extends string = string> {
   /** Which CSV column serves which role. Keys are role names, values are column keys from K. */
   readonly columnMappings: Readonly<Record<string, K>>;
   readonly dataPath: string;
+  /** Optional filter to select a subset of rows from a shared CSV (e.g., by region). */
+  readonly dataFilter?: DataFilter;
   readonly supportingDataPaths: ReadonlyArray<string>;
+  /** Optional filter for supporting data CSVs (same semantics as dataFilter). */
+  readonly supportingDataFilter?: DataFilter;
   /** Default countdown duration in seconds. If undefined, timer runs in elapsed (count-up) mode. */
   readonly defaultCountdownSeconds?: number;
 }

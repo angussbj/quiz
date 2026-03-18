@@ -42,11 +42,14 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     columnMappings: {
       answer: 'city',
       label: 'city',
-      coordinates: 'latitude',
+      latitude: 'latitude',
+      longitude: 'longitude',
       group: 'country',
     },
-    dataPath: '/data/geography/capitals/europe.csv',
-    supportingDataPaths: ['/data/geography/capitals/europe-borders.csv'],
+    dataPath: '/data/capitals/world-capitals.csv',
+    dataFilter: { column: 'region', values: ['Europe'] },
+    supportingDataPaths: ['/data/borders/world-borders.csv'],
+    supportingDataFilter: { column: 'region', values: ['Europe'] },
   },
   {
     id: 'geo-capitals-asia',
@@ -76,10 +79,12 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     columnMappings: {
       answer: 'city',
       label: 'city',
-      coordinates: 'latitude',
+      latitude: 'latitude',
+      longitude: 'longitude',
       group: 'country',
     },
-    dataPath: '/data/geography/capitals/asia.csv',
+    dataPath: '/data/capitals/world-capitals.csv',
+    dataFilter: { column: 'region', values: ['Asia'] },
     supportingDataPaths: [],
   },
   {
@@ -110,10 +115,12 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     columnMappings: {
       answer: 'city',
       label: 'city',
-      coordinates: 'latitude',
+      latitude: 'latitude',
+      longitude: 'longitude',
       group: 'country',
     },
-    dataPath: '/data/geography/capitals/africa.csv',
+    dataPath: '/data/capitals/world-capitals.csv',
+    dataFilter: { column: 'region', values: ['Africa'] },
     supportingDataPaths: [],
   },
   {

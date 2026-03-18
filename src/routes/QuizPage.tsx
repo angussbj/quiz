@@ -12,7 +12,7 @@ import styles from './QuizPage.module.css';
 export default function QuizPage() {
   const { '*': quizId } = useParams();
   const definition = quizId ? getQuizById(quizId) : undefined;
-  const dataState = useQuizData(definition?.dataPath);
+  const dataState = useQuizData(definition?.dataPath, definition?.dataFilter);
   const backgroundPaths = useBackgroundPaths(definition?.supportingDataPaths[0]);
 
   if (!quizId) {

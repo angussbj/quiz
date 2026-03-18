@@ -49,6 +49,24 @@ Quiz data is intentionally generic. `QuizDataRow<K>` is parameterised by column 
 
 Toggles (show/hide flags, show/hide borders, etc.) are approximately independent boolean options, not discrete "modes". Presets like Easy/Hard set multiple toggles at once, but individual toggles remain immediately accessible in the UI.
 
+### Shared Data CSVs and DataFilter
+
+Quiz data uses shared CSVs filtered by region rather than per-region files:
+- `public/data/capitals/world-capitals.csv` — 197 world capitals with `region` and `subregion` columns
+- `public/data/borders/world-borders.csv` — 233 countries with equirectangular SVG border paths
+
+`QuizDefinition.dataFilter` filters rows at load time: `{ column: 'region', values: ['Europe'] }`. Multiple values act as OR. `supportingDataFilter` does the same for border data. Adding a new region quiz requires only a new registry entry — no new data files.
+
+Border CSV format: `id,name,region,group,paths` where `paths` contains pipe-separated SVG path `d` strings. Use `parseBackgroundPaths()` to convert to `BackgroundPath[]`.
+
+### Data Generation Scripts
+
+Scripts in `scripts/` regenerate the data CSVs from source datasets:
+- `generateWorldCapitals.ts` — from mledoze/countries + dr5hn/cities
+- `generateBorderPaths.ts` — from Natural Earth GeoJSON (equirectangular projection, Douglas-Peucker simplification)
+
+Source files are gitignored (too large). Download URLs are in each script's header comments.
+
 ## Conventions
 
 ### File Organization
