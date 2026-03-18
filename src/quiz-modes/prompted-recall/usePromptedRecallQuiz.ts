@@ -23,6 +23,8 @@ export interface PromptedRecallState {
   readonly answeredElementIds: ReadonlySet<string>;
   readonly score: ScoreResult;
   readonly flashIncorrect: boolean;
+  readonly lastMatchedElementId: string | undefined;
+  readonly lastMatchedAnswer: string | undefined;
 }
 
 export interface PromptedRecallActions {
@@ -64,6 +66,8 @@ export function usePromptedRecallQuiz({
   const [answeredIds, setAnsweredIds] = useState<ReadonlySet<string>>(new Set());
   const [wrongAttempts, setWrongAttempts] = useState<Readonly<Record<string, number>>>({});
   const [flashIncorrect, setFlashIncorrect] = useState(false);
+  const [lastMatchedElementId, setLastMatchedElementId] = useState<string | undefined>(undefined);
+  const [lastMatchedAnswer, setLastMatchedAnswer] = useState<string | undefined>(undefined);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
@@ -120,6 +124,8 @@ export function usePromptedRecallQuiz({
       if (match) {
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
+        setLastMatchedElementId(match.elementId);
+        setLastMatchedAnswer(match.displayAnswer);
         advancePrompt();
         return true;
       }
@@ -138,10 +144,11 @@ export function usePromptedRecallQuiz({
 
       const match = matchAnswer(text, [currentRow], answerColumn);
       if (match) {
-        // Already handled by handleTextInput, but handle here too for safety
         clearFlash();
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
+        setLastMatchedElementId(match.elementId);
+        setLastMatchedAnswer(match.displayAnswer);
         advancePrompt();
         return;
       }
@@ -198,6 +205,8 @@ export function usePromptedRecallQuiz({
     answeredElementIds: answeredIds,
     score,
     flashIncorrect,
+    lastMatchedElementId,
+    lastMatchedAnswer,
     handleTextInput,
     handleSubmit,
     handleSkip,

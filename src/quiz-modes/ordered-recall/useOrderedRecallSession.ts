@@ -22,6 +22,8 @@ export interface OrderedRecallState {
   readonly answeredElementIds: ReadonlySet<string>;
   readonly score: ScoreResult;
   readonly flashIncorrect: boolean;
+  readonly lastMatchedElementId: string | undefined;
+  readonly lastMatchedAnswer: string | undefined;
 }
 
 export interface OrderedRecallActions {
@@ -64,6 +66,8 @@ export function useOrderedRecallSession({
   const [answeredIds, setAnsweredIds] = useState<ReadonlySet<string>>(new Set());
   const [wrongAttempts, setWrongAttempts] = useState<Readonly<Record<string, number>>>({});
   const [flashIncorrect, setFlashIncorrect] = useState(false);
+  const [lastMatchedElementId, setLastMatchedElementId] = useState<string | undefined>(undefined);
+  const [lastMatchedAnswer, setLastMatchedAnswer] = useState<string | undefined>(undefined);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
@@ -120,6 +124,8 @@ export function useOrderedRecallSession({
       if (match) {
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
+        setLastMatchedElementId(match.elementId);
+        setLastMatchedAnswer(match.displayAnswer);
         advancePrompt();
         return true;
       }
@@ -141,6 +147,8 @@ export function useOrderedRecallSession({
         clearFlash();
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
+        setLastMatchedElementId(match.elementId);
+        setLastMatchedAnswer(match.displayAnswer);
         advancePrompt();
         return;
       }
@@ -197,6 +205,8 @@ export function useOrderedRecallSession({
     answeredElementIds: answeredIds,
     score,
     flashIncorrect,
+    lastMatchedElementId,
+    lastMatchedAnswer,
     handleTextInput,
     handleSubmit,
     handleSkip,

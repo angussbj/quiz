@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { QuizModeProps } from '../QuizModeProps';
@@ -133,74 +133,6 @@ export function PromptedRecallMode({
 
   return (
     <div className={styles.container}>
-      {!reviewing && (
-        <div className={styles.progressBar}>
-          <motion.div
-            className={styles.progressFill}
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercent}%` }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-          />
-        </div>
-      )}
-
-      {!quiz.isFinished && !reviewing && (
-        <div className={styles.promptBar}>
-          <div className={styles.inputRow}>
-            <input
-              ref={inputRef}
-              className={inputClassName}
-              type="text"
-              value={inputText}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Type the name..."
-              autoFocus
-              autoComplete="off"
-              autoCorrect="off"
-              spellCheck={false}
-            />
-          </div>
-          <span className={styles.progress}>
-            {quiz.correctCount + quiz.skippedCount}/{quiz.totalPrompts}
-          </span>
-          <div className={styles.controls}>
-            <button
-              className={styles.skipButton}
-              onClick={handleSkip}
-              type="button"
-            >
-              Skip
-            </button>
-            <button
-              className={styles.giveUpButton}
-              onClick={handleGiveUp}
-              type="button"
-            >
-              Give up
-            </button>
-          </div>
-        </div>
-      )}
-
-      {quiz.isFinished && !reviewing && (
-        <div className={styles.promptBar}>
-          <div className={styles.finishedOverlay}>
-            <motion.span
-              className={styles.finishedPercentage}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-            >
-              {quiz.score.percentage}%
-            </motion.span>
-            <span className={styles.finishedScore}>
-              {quiz.correctCount} of {quiz.totalPrompts} correct
-            </span>
-          </div>
-        </div>
-      )}
-
       <div className={styles.visualizationArea}>
         {renderVisualization({
           elementStates: reviewElementStates,
@@ -208,6 +140,77 @@ export function PromptedRecallMode({
           elementToggles: reviewElementToggles,
         })}
       </div>
+
+      {!reviewing && (
+        <div className={styles.progressRow}>
+          <span className={styles.progressText}>
+            {quiz.correctCount}/{quiz.totalPrompts}
+          </span>
+          <div className={styles.progressBarTrack}>
+            <div
+              className={styles.progressBarFill}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <span className={styles.progressText}>
+            {Math.round(progressPercent)}%
+          </span>
+        </div>
+      )}
+
+      {!quiz.isFinished && !reviewing && (
+        <div className={styles.inputRow}>
+          <input
+            ref={inputRef}
+            className={inputClassName}
+            type="text"
+            value={inputText}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Type the name..."
+            autoFocus
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+          />
+          <button
+            className={styles.skipButton}
+            onClick={handleSkip}
+            type="button"
+          >
+            Skip
+          </button>
+          <button
+            className={styles.giveUpButton}
+            onClick={handleGiveUp}
+            type="button"
+          >
+            Give up
+          </button>
+        </div>
+      )}
+
+      <AnimatePresence mode="wait">
+        {quiz.lastMatchedAnswer && (
+          <motion.div
+            key={quiz.lastMatchedElementId}
+            className={styles.lastAnswer}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            ✓ {quiz.lastMatchedAnswer}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {quiz.isFinished && !reviewing && (
+        <div className={styles.finishedMessage}>
+          <span className={styles.scoreHighlight}>{quiz.correctCount}/{quiz.totalPrompts}</span>
+          {quiz.correctCount === quiz.totalPrompts ? ' — Perfect!' : ' answered'}
+        </div>
+      )}
     </div>
   );
 }
