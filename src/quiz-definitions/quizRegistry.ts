@@ -203,10 +203,10 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'prompted-recall', 'free-recall-ordered', 'identify'],
     defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showSymbols', label: 'Element symbols', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showAtomicNumbers', label: 'Atomic numbers', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showSymbols', label: 'Element symbols', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showAtomicNumbers', label: 'Atomic numbers', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showGroups', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showGroups', label: 'Category colours', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
     ],
     presets: [
       {

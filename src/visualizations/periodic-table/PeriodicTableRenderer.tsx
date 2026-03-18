@@ -25,9 +25,13 @@ interface CellProps {
 }
 
 function stateToFill(state: ElementVisualState, groupColorIndex: number | undefined, showGroups: boolean): string {
+  const groupColor = showGroups && groupColorIndex !== undefined
+    ? `var(--color-group-${groupColorIndex + 1})`
+    : undefined;
+
   switch (state) {
     case 'correct':
-      return 'var(--color-correct-bg)';
+      return groupColor ?? 'var(--color-correct-bg)';
     case 'incorrect':
       return 'var(--color-incorrect-bg)';
     case 'missed':
@@ -35,13 +39,10 @@ function stateToFill(state: ElementVisualState, groupColorIndex: number | undefi
     case 'highlighted':
       return 'var(--color-highlight-bg)';
     case 'revealed':
-      if (showGroups && groupColorIndex !== undefined) {
-        return `var(--color-group-${groupColorIndex + 1})`;
-      }
-      return 'var(--color-surface-raised)';
+      return groupColor ?? 'var(--color-surface-raised)';
     case 'hidden':
     default:
-      return 'var(--color-bg-tertiary)';
+      return groupColor ?? 'var(--color-bg-tertiary)';
   }
 }
 
@@ -61,28 +62,27 @@ function stateToStroke(state: ElementVisualState): string {
 }
 
 function stateToTextFill(state: ElementVisualState, groupColorIndex: number | undefined, showGroups: boolean): string {
-  if (state === 'revealed' && showGroups && groupColorIndex !== undefined) {
-    return 'var(--color-on-accent)';
-  }
+  const hasGroupColor = showGroups && groupColorIndex !== undefined;
   switch (state) {
     case 'correct':
-      return 'var(--color-correct)';
+      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-correct)';
     case 'incorrect':
       return 'var(--color-incorrect)';
     case 'missed':
       return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-text-primary)';
-    case 'hidden':
-      return 'var(--color-text-muted)';
     case 'revealed':
+      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-text-primary)';
+    case 'hidden':
     default:
-      return 'var(--color-text-primary)';
+      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-text-muted)';
   }
 }
 
-function isRevealed(state: ElementVisualState): boolean {
-  return state === 'revealed' || state === 'correct' || state === 'highlighted' || state === 'missed';
+/** Whether the element has been answered — text should always show regardless of toggles. */
+function isAnswered(state: ElementVisualState): boolean {
+  return state === 'revealed' || state === 'correct' || state === 'missed';
 }
 
 function GridCell({
@@ -104,15 +104,16 @@ function GridCell({
   const fill = stateToFill(state, groupColorIndex, showGroups);
   const stroke = stateToStroke(state);
   const textFill = stateToTextFill(state, groupColorIndex, showGroups);
-  const revealed = isRevealed(state);
-  const symbolVisible = revealed || showSymbol;
-  const atomicNumberVisible = (revealed || showAtomicNumber) && zoomedIn;
-  const nameVisible = (revealed || showName) && zoomedIn;
+  const answered = isAnswered(state);
+  const symbolVisible = answered || showSymbol;
+  const atomicNumberVisible = answered || showAtomicNumber;
+  const nameVisible = (answered || showName) && zoomedIn;
   const interactive = element.interactive;
 
   const hasAtomicNumber = atomicNumberVisible && element.atomicNumber > 0;
-  const symbolY = zoomedIn
-    ? (hasAtomicNumber ? y + CELL_SIZE * 0.45 : y + CELL_SIZE * 0.4)
+  const hasName = nameVisible;
+  const symbolY = hasAtomicNumber || hasName
+    ? y + CELL_SIZE * 0.45
     : y + CELL_SIZE / 2;
 
   return (
@@ -130,7 +131,7 @@ function GridCell({
         ry={4}
         fill={fill}
         stroke={stroke}
-        strokeWidth={state === 'highlighted' ? 2.5 : 1}
+        strokeWidth={state === 'highlighted' || state === 'correct' ? 2.5 : 1}
       />
       {hasAtomicNumber && (
         <text
