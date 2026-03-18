@@ -7,7 +7,7 @@ const QuizPage = lazy(() => import('./routes/QuizPage.tsx'));
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <Layout>
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>

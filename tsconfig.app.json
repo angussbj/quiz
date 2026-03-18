@@ -31,5 +31,5 @@
     }
   },
   "include": ["src"],
-  "exclude": ["src/test-support", "src/**/*.test.ts", "src/**/*.test.tsx", "src/**/tests"]
+  "exclude": ["src/test-support", "src/**/*.test.ts", "src/**/*.test.tsx", "src/**/tests", "src/**/*.stories.tsx"]
 }
