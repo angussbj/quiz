@@ -12,6 +12,7 @@ const MODE_LABELS: Readonly<Record<QuizModeType, string>> = {
   'free-recall-ordered': 'Ordered Recall',
   'identify': 'Identify',
   'locate': 'Locate',
+  'prompted-recall': 'Prompted Recall',
   'multiple-choice': 'Multiple Choice',
 };
 

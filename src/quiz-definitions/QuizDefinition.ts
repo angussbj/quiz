@@ -7,6 +7,7 @@ export type QuizModeType =
   | 'free-recall-ordered'
   | 'identify'
   | 'locate'
+  | 'prompted-recall'
   | 'multiple-choice';
 
 /**
