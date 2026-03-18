@@ -8,7 +8,10 @@ import { isMapElement } from './MapElement';
 import { MapCountryLabels } from './MapCountryLabels';
 import styles from './MapRenderer.module.css';
 
-const CITY_DOT_RADIUS = 0.3;
+/** Base dot radius in viewBox units at scale=1. Scales inversely with zoom. */
+const BASE_DOT_RADIUS = 0.3;
+const MIN_DOT_RADIUS = 0.05;
+const MAX_DOT_RADIUS = 0.5;
 const GROUP_COLORS = [
   'var(--color-group-1)',
   'var(--color-group-2)',
@@ -131,7 +134,9 @@ function MapContent({
   backgroundPaths,
   backgroundLabels,
 }: MapContentProps) {
-  const { clusteredElementIds } = useZoomPan();
+  const { clusteredElementIds, scale } = useZoomPan();
+
+  const dotRadius = Math.min(MAX_DOT_RADIUS, Math.max(MIN_DOT_RADIUS, BASE_DOT_RADIUS / scale));
 
   const cityDotPositions = useMemo(
     () => elements.map((el) => el.viewBoxCenter),
@@ -221,13 +226,13 @@ function MapContent({
         if (!isMapElement(element) || !element.code) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
-        const flagHeight = 1.2;
+        const flagHeight = dotRadius * 4;
         const flagWidth = flagHeight * 4 / 3;
         return (
           <image
             key={`flag-${element.id}`}
             href={`/flags/${element.code}.svg`}
-            x={element.viewBoxCenter.x + CITY_DOT_RADIUS + 0.15}
+            x={element.viewBoxCenter.x + dotRadius + 0.15}
             y={element.viewBoxCenter.y - flagHeight / 2}
             width={flagWidth}
             height={flagHeight}
@@ -254,10 +259,10 @@ function MapContent({
             key={`dot-${element.id}`}
             cx={element.viewBoxCenter.x}
             cy={element.viewBoxCenter.y}
-            r={CITY_DOT_RADIUS}
+            r={dotRadius}
             fill={color}
             stroke={isTarget ? 'var(--color-highlight)' : 'var(--color-bg-primary)'}
-            strokeWidth={isTarget ? 0.15 : 0.08}
+            strokeWidth={isTarget ? dotRadius * 0.5 : dotRadius * 0.27}
             className={dotClassName}
             onClick={
               onElementClick

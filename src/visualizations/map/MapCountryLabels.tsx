@@ -52,11 +52,11 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
     const sorted = [...labels].sort((a, b) => b.area - a.area);
 
     // Pre-populate with city dot positions so labels avoid them
-    const dotRadius = 0.35; // slightly larger than actual dot radius (0.3)
+    const dotAvoidRadius = Math.max(0.1, 0.35 / scale); // scales with zoom like actual dots
     const placed: Array<{ readonly x: number; readonly y: number; readonly w: number; readonly h: number }> = [];
     if (avoidPoints) {
       for (const point of avoidPoints) {
-        placed.push({ x: point.x - dotRadius, y: point.y - dotRadius, w: dotRadius * 2, h: dotRadius * 2 });
+        placed.push({ x: point.x - dotAvoidRadius, y: point.y - dotAvoidRadius, w: dotAvoidRadius * 2, h: dotAvoidRadius * 2 });
       }
     }
     const visible: VisibleItem[] = [];
