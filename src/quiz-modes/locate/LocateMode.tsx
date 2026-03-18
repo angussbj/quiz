@@ -5,6 +5,7 @@ import type { VisualizationElement } from '@/visualizations/VisualizationElement
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from '../ToggleDefinition';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
+import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { useLocateQuiz } from './useLocateQuiz';
 import { LocateFeedback } from './LocateFeedback';
 import { LocateResults } from './LocateResults';
@@ -75,6 +76,21 @@ export function LocateMode({
     return resolveElementToggles(toggleDefinitions, toggles, elementQuizStates);
   }, [elements, quiz.elementStates, toggleDefinitions, toggles]);
 
+  const toggleKeys = useMemo(
+    () => toggleDefinitions.map((t) => t.key),
+    [toggleDefinitions],
+  );
+
+  const reviewElementStates = useMemo(
+    () => reviewing ? buildReviewElementStates(quiz.elementStates) : quiz.elementStates,
+    [reviewing, quiz.elementStates],
+  );
+
+  const reviewElementToggles = useMemo(
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+  );
+
   // Show results after a short delay when the quiz finishes
   useEffect(() => {
     if (!quiz.isFinished) return;
@@ -132,10 +148,10 @@ export function LocateMode({
       <div className={styles.visualization}>
         <Renderer
           elements={elements}
-          elementStates={quiz.elementStates}
+          elementStates={reviewElementStates}
           onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
           toggles={toggles}
-          elementToggles={elementToggles}
+          elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           clustering={clustering}
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}

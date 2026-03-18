@@ -9,6 +9,7 @@ import { useFreeRecallSession } from './free-recall/useFreeRecallSession';
 import { FreeRecallMode } from './free-recall/FreeRecallMode';
 import { IdentifyMode } from './identify/IdentifyMode';
 import { LocateMode } from './locate/LocateMode';
+import { buildReviewElementStates, buildReviewElementToggles } from './buildReviewStates';
 import styles from './ModeAdapter.module.css';
 
 export interface ModeAdapterProps {
@@ -161,33 +162,20 @@ function FreeRecallAdapter({
     }
   }, [session.status, session.score]);
 
-  // In review mode, change 'revealed' → 'missed' so renderers style them distinctly
-  const reviewElementStates = useMemo(() => {
-    if (!reviewing) return session.elementStates;
-    const states: Record<string, import('@/visualizations/VisualizationElement').ElementVisualState> = {};
-    for (const [id, state] of Object.entries(session.elementStates)) {
-      states[id] = state === 'revealed' ? 'missed' : state;
-    }
-    return states;
-  }, [reviewing, session.elementStates]);
+  const toggleKeys = useMemo(
+    () => toggleDefinitions.map((t) => t.key),
+    [toggleDefinitions],
+  );
 
-  // In review mode, force labels on for missed elements
-  const reviewElementToggles = useMemo(() => {
-    if (!reviewing) return elementToggles;
-    const overrides: Record<string, Record<string, boolean>> = {};
-    for (const [id, toggles] of Object.entries(elementToggles)) {
-      overrides[id] = { ...toggles };
-    }
-    // Ensure missed elements have labels shown
-    for (const [id, state] of Object.entries(reviewElementStates)) {
-      if (state === 'missed') {
-        if (!overrides[id]) overrides[id] = {};
-        overrides[id]['showCountryNames'] = true;
-        overrides[id]['showCityDots'] = true;
-      }
-    }
-    return overrides;
-  }, [reviewing, elementToggles, reviewElementStates]);
+  const reviewElementStates = useMemo(
+    () => reviewing ? buildReviewElementStates(session.elementStates) : session.elementStates,
+    [reviewing, session.elementStates],
+  );
+
+  const reviewElementToggles = useMemo(
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+  );
 
   return (
     <div className={styles.container}>

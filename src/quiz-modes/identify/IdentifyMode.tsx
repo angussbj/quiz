@@ -4,6 +4,7 @@ import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
+import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
 import styles from './IdentifyMode.module.css';
 
@@ -86,31 +87,20 @@ export function IdentifyMode({
     return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
   }, [elements, quiz.answeredElementIds, quiz.wrongAttemptsPerElement, toggleDefinitions, toggleValues]);
 
-  // In review mode, change 'revealed' → 'missed' and force labels on missed elements
-  const reviewElementStates = useMemo(() => {
-    if (!reviewing) return quiz.elementStates;
-    const states: Record<string, ElementVisualState> = {};
-    for (const [id, state] of Object.entries(quiz.elementStates)) {
-      states[id] = state === 'revealed' ? 'missed' : state;
-    }
-    return states;
-  }, [reviewing, quiz.elementStates]);
+  const toggleKeys = useMemo(
+    () => toggleDefinitions.map((t) => t.key),
+    [toggleDefinitions],
+  );
 
-  const reviewElementToggles = useMemo(() => {
-    if (!reviewing) return elementToggles;
-    const overrides: Record<string, Record<string, boolean>> = {};
-    for (const [id, toggles] of Object.entries(elementToggles)) {
-      overrides[id] = { ...toggles };
-    }
-    for (const [id, state] of Object.entries(reviewElementStates)) {
-      if (state === 'missed') {
-        if (!overrides[id]) overrides[id] = {};
-        overrides[id]['showCountryNames'] = true;
-        overrides[id]['showCityDots'] = true;
-      }
-    }
-    return overrides;
-  }, [reviewing, elementToggles, reviewElementStates]);
+  const reviewElementStates = useMemo(
+    () => reviewing ? buildReviewElementStates(quiz.elementStates) : quiz.elementStates,
+    [reviewing, quiz.elementStates],
+  );
+
+  const reviewElementToggles = useMemo(
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+  );
 
   const progressPercent = quiz.totalPrompts > 0
     ? (quiz.correctCount + quiz.skippedCount) / quiz.totalPrompts * 100
