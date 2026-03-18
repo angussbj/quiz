@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { ToggleDefinition, TogglePreset } from './ToggleDefinition';
+import { Tooltip } from '@/layout/Tooltip';
 import styles from './TogglePanel.module.css';
 
 interface TogglePanelProps {
@@ -13,6 +14,8 @@ interface TogglePanelProps {
   readonly disabledKeys?: ReadonlySet<string>;
   /** Tooltip text for disabled/constrained toggles. */
   readonly tooltips?: Readonly<Record<string, string>>;
+  /** Current quiz mode — used to filter toggles by their `modes` field. */
+  readonly selectedMode?: string;
 }
 
 function groupTogglesByCategory(
@@ -46,8 +49,12 @@ export function TogglePanel({
   onPreset,
   disabledKeys,
   tooltips,
+  selectedMode,
 }: TogglePanelProps) {
-  const groups = groupTogglesByCategory(toggles);
+  const filteredToggles = selectedMode
+    ? toggles.filter((t) => !t.modes || t.modes.includes(selectedMode))
+    : toggles;
+  const groups = groupTogglesByCategory(filteredToggles);
 
   return (
     <div className={styles.panel}>
@@ -76,7 +83,7 @@ export function TogglePanel({
             {items.map((toggle) => {
               const isDisabled = disabledKeys?.has(toggle.key) ?? false;
               const tooltip = tooltips?.[toggle.key];
-              return (
+              const row = (
                 <div
                   key={toggle.key}
                   className={`${styles.toggleRow} ${isDisabled ? styles.toggleRowDisabled : ''}`}
@@ -85,7 +92,6 @@ export function TogglePanel({
                       onChange(toggle.key, !(values[toggle.key] ?? toggle.defaultValue));
                     }
                   }}
-                  title={tooltip}
                 >
                   <span className={`${styles.toggleLabel} ${isDisabled ? styles.toggleLabelDisabled : ''}`}>
                     {toggle.label}
@@ -99,6 +105,10 @@ export function TogglePanel({
                   />
                 </div>
               );
+              if (tooltip) {
+                return <Tooltip key={toggle.key} text={tooltip}>{row}</Tooltip>;
+              }
+              return row;
             })}
           </div>
         </section>

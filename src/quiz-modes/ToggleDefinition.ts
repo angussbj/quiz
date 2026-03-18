@@ -23,6 +23,8 @@ export interface ToggleDefinition {
   readonly hiddenBehavior?: HiddenBehavior;
   /** If set, this toggle adds a field to the identify mode prompt bar when enabled. */
   readonly promptField?: PromptFieldConfig;
+  /** If set, this toggle only appears in the setup panel for these modes. Omit to show for all modes. */
+  readonly modes?: ReadonlyArray<string>;
 }
 
 export interface TogglePreset {

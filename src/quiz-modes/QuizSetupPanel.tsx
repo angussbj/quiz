@@ -167,6 +167,7 @@ export function QuizSetupPanel({
             onPreset={onPreset}
             disabledKeys={disabledKeys}
             tooltips={constraintResult.reasons}
+            selectedMode={selectedMode}
           />
         )}
 

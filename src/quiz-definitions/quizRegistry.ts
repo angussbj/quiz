@@ -19,25 +19,26 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
       { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', promptField: { type: 'text', column: 'country' } },
+      { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
-      { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'flag', column: 'code' } },
+      { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify'] },
+      { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'flag', column: 'code' }, modes: ['identify'] },
     ],
     presets: [
       {
         name: 'easy',
         label: 'Easy',
-        values: { showBorders: true, showCityDots: true, showCountryNames: true, showMapFlags: true, showPromptFlags: true },
+        values: { showBorders: true, showCityDots: true, showCountryNames: true, showMapFlags: true, showPromptCountryNames: true, showPromptFlags: true },
       },
       {
         name: 'medium',
         label: 'Medium',
-        values: { showBorders: true, showCityDots: true, showCountryNames: false, showMapFlags: false, showPromptFlags: false },
+        values: { showBorders: true, showCityDots: true, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false, showPromptFlags: false },
       },
       {
         name: 'hard',
         label: 'Hard',
-        values: { showBorders: false, showCityDots: false, showCountryNames: false, showMapFlags: false, showPromptFlags: false },
+        values: { showBorders: false, showCityDots: false, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false, showPromptFlags: false },
       },
     ],
     columnMappings: {
@@ -54,7 +55,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     modeConstraints: {
       identify: [
         { type: 'forced', key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
-        { type: 'atLeastOne', keys: ['showCountryNames', 'showPromptFlags'], reason: 'At least one hint must be enabled in identify mode' },
+        { type: 'atLeastOne', keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one hint must be enabled in identify mode' },
       ],
     },
   },
