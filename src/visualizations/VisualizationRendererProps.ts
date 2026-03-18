@@ -53,6 +53,13 @@ export interface VisualizationRendererProps {
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   /** Additional SVG content rendered on top of all elements (e.g., feedback overlays) */
   readonly svgOverlay?: ReactNode;
+  /** Override the initial viewBox instead of computing from element bounds. */
+  readonly initialViewBox?: {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  };
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid';

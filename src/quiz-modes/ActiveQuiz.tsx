@@ -21,6 +21,7 @@ export interface ActiveQuizProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly rangeColumn?: string;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
 }
 
 /**
@@ -37,6 +38,7 @@ export function ActiveQuiz({
   backgroundPaths,
   backgroundLabels,
   rangeColumn,
+  initialViewBox,
 }: ActiveQuizProps) {
   // Split elements into active (quizzed) and background (context) based on range
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
@@ -167,6 +169,7 @@ export function ActiveQuiz({
           onStatusChange={handleStatusChange}
           forceGiveUp={forceGiveUp}
           reviewing={isReviewing}
+          initialViewBox={initialViewBox}
         />
       </div>
 

@@ -51,4 +51,11 @@ export interface QuizDefinition<K extends string = string> {
   readonly rangeColumn?: string;
   /** Human-readable label for the range filter (e.g., 'Atomic number'). */
   readonly rangeLabel?: string;
+  /** Override the initial viewBox for map visualizations (viewBox coordinates: x=lng, y=-lat). */
+  readonly initialViewBox?: {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  };
 }

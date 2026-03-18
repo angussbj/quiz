@@ -128,7 +128,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the countries of Europe from their shape on the map.',
     path: ['Geography', 'Countries'],
     visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    initialViewBox: { x: -25, y: -72, width: 70, height: 37 },
+    availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
@@ -160,7 +161,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the countries of Asia from their shape on the map.',
     path: ['Geography', 'Countries'],
     visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    initialViewBox: { x: 25, y: -55, width: 125, height: 65 },
+    availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
@@ -192,7 +194,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the countries of Africa from their shape on the map.',
     path: ['Geography', 'Countries'],
     visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    initialViewBox: { x: -20, y: -38, width: 75, height: 73 },
+    availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
@@ -224,7 +227,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the countries of North America from their shape on the map.',
     path: ['Geography', 'Countries'],
     visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    initialViewBox: { x: -170, y: -75, width: 120, height: 65 },
+    availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
@@ -256,7 +260,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the countries of South America from their shape on the map.',
     path: ['Geography', 'Countries'],
     visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    initialViewBox: { x: -85, y: -15, width: 55, height: 72 },
+    availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
@@ -288,7 +293,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the countries of Oceania from their shape on the map.',
     path: ['Geography', 'Countries'],
     visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify', 'locate'],
+    initialViewBox: { x: 110, y: 0, width: 70, height: 48 },
+    availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },

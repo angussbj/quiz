@@ -83,6 +83,7 @@ export function MapRenderer({
   backgroundPaths,
   backgroundLabels,
   svgOverlay,
+  initialViewBox,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -95,6 +96,7 @@ export function MapRenderer({
       elementStates={elementStates}
       clustering={clustering}
       onClusterClick={onClusterClick}
+      initialViewBox={initialViewBox}
     >
       <MapContent
         elements={elements}
