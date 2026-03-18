@@ -12,6 +12,8 @@ import { IdentifyMode } from './identify/IdentifyMode';
 import { PromptedRecallMode } from './prompted-recall/PromptedRecallMode';
 import { OrderedRecallMode } from './ordered-recall/OrderedRecallMode';
 import { LocateMode } from './locate/LocateMode';
+import { MultipleChoiceMode } from './multiple-choice/MultipleChoiceMode';
+import { isFlagGridElement } from '@/visualizations/flag-grid/FlagGridElement';
 import { buildReviewElementStates, buildReviewElementToggles } from './buildReviewStates';
 import styles from './ModeAdapter.module.css';
 
@@ -136,6 +138,14 @@ export function ModeAdapter({
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
           reviewing={reviewing}
+        />
+      );
+    case 'multiple-choice':
+      return (
+        <MultipleChoiceAdapter
+          elements={elements}
+          onStatusChange={onStatusChange}
+          forceGiveUp={forceGiveUp}
         />
       );
     default:
@@ -487,6 +497,38 @@ function OrderedRecallAdapter({
           clustering={clustering}
         />
       )}
+    />
+  );
+}
+
+interface MultipleChoiceAdapterProps {
+  readonly elements: ReadonlyArray<VisualizationElement>;
+  readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
+  readonly forceGiveUp: boolean;
+}
+
+function renderFlagChoice(element: VisualizationElement): React.ReactNode {
+  if (isFlagGridElement(element)) {
+    return <img src={element.flagUrl} alt="" />;
+  }
+  return <span>{element.label}</span>;
+}
+
+function MultipleChoiceAdapter({
+  elements,
+  onStatusChange,
+  forceGiveUp,
+}: MultipleChoiceAdapterProps) {
+  const handleFinish = (score: ScoreResult) => {
+    onStatusChange('finished', score);
+  };
+
+  return (
+    <MultipleChoiceMode
+      elements={elements}
+      renderChoice={renderFlagChoice}
+      onFinish={handleFinish}
+      forceGiveUp={forceGiveUp}
     />
   );
 }
