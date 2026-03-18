@@ -246,6 +246,46 @@ function MapContent({
           {label.name}
         </text>
       ))}
+
+      {/* Flag images near city dots (capitals quizzes) */}
+      {elements.map((element) => {
+        if (clusteredElementIds.has(element.id)) return null;
+        if (!elementToggle(elementToggles, toggles, element.id, 'showMapFlags')) return null;
+        if (!isMapElement(element) || !element.code) return null;
+        const state = elementStates[element.id];
+        if (state === 'hidden') return null;
+        const flagHeight = 1.2;
+        const flagWidth = flagHeight * 4 / 3;
+        return (
+          <image
+            key={`flag-${element.id}`}
+            href={`/flags/${element.code}.svg`}
+            x={element.viewBoxCenter.x + CITY_DOT_RADIUS + 0.15}
+            y={element.viewBoxCenter.y - flagHeight / 2}
+            width={flagWidth}
+            height={flagHeight}
+            className={styles.flagImage}
+          />
+        );
+      })}
+
+      {/* Flag images at country centroids (country quizzes, from background data) */}
+      {toggles['showMapFlags'] && backgroundLabels?.map((label) => {
+        if (!label.code) return null;
+        const flagHeight = 1.5;
+        const flagWidth = flagHeight * 4 / 3;
+        return (
+          <image
+            key={`bg-flag-${label.id}`}
+            href={`/flags/${label.code}.svg`}
+            x={label.center.x - flagWidth / 2}
+            y={label.center.y + 0.3}
+            width={flagWidth}
+            height={flagHeight}
+            className={styles.flagImage}
+          />
+        );
+      })}
     </g>
   );
 }

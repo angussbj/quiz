@@ -57,6 +57,11 @@
   user-select: none;
 }
 
+.flagImage {
+  pointer-events: none;
+  user-select: none;
+}
+
 .backgroundLabel {
   fill: var(--color-text-secondary);
   font-family: var(--font-family);

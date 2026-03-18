@@ -20,23 +20,24 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
       { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+      { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+      { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
     ],
     presets: [
       {
         name: 'easy',
         label: 'Easy',
-        values: { showBorders: true, showCityDots: true, showCountryNames: true, showFlags: true },
+        values: { showBorders: true, showCityDots: true, showCountryNames: true, showMapFlags: true, showPromptFlags: true },
       },
       {
         name: 'medium',
         label: 'Medium',
-        values: { showBorders: true, showCityDots: true, showCountryNames: false, showFlags: false },
+        values: { showBorders: true, showCityDots: true, showCountryNames: false, showMapFlags: false, showPromptFlags: false },
       },
       {
         name: 'hard',
         label: 'Hard',
-        values: { showBorders: false, showCityDots: false, showCountryNames: false, showFlags: false },
+        values: { showBorders: false, showCityDots: false, showCountryNames: false, showMapFlags: false, showPromptFlags: false },
       },
     ],
     columnMappings: {
@@ -135,7 +136,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
-      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+      { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
     ],
     presets: [],
     columnMappings: {
