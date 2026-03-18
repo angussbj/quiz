@@ -51,8 +51,8 @@ function stateToFill(state: ElementVisualState): string {
   }
 }
 
-function isRevealed(state: ElementVisualState): boolean {
-  return state === 'revealed' || state === 'correct' || state === 'highlighted' || state === 'missed';
+function isAnswered(state: ElementVisualState): boolean {
+  return state === 'revealed' || state === 'correct' || state === 'missed';
 }
 
 function FlagCell({
@@ -66,7 +66,7 @@ function FlagCell({
   const y = element.row * FLAG_CELL_STEP_Y;
   const fill = stateToFill(state);
   const stroke = stateToStroke(state);
-  const revealed = isRevealed(state) || showCountryName;
+  const nameVisible = isAnswered(state) || showCountryName;
 
   return (
     <g
@@ -93,7 +93,7 @@ function FlagCell({
         height={FLAG_IMAGE_HEIGHT}
         preserveAspectRatio="xMidYMid meet"
       />
-      {revealed && (
+      {nameVisible && (
         <text
           x={x + FLAG_CELL_WIDTH / 2}
           y={y + FLAG_CELL_HEIGHT - 5}
