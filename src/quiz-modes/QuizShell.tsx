@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
@@ -51,16 +51,28 @@ export function QuizShell({
   );
   const toggleState = useToggleState(toggles, presets);
 
-  const handleModeChange = useCallback((newMode: QuizModeType) => {
-    setSelectedMode(newMode);
-    // Apply forced toggle values for the new mode
-    const constraints = modeConstraints?.[newMode] ?? [];
+  const applyModeConstraints = useCallback((mode: QuizModeType) => {
+    const constraints = modeConstraints?.[mode] ?? [];
     for (const constraint of constraints) {
       if (constraint.type === 'forced') {
         toggleState.set(constraint.key, constraint.forcedValue);
       }
     }
   }, [modeConstraints, toggleState]);
+
+  // Apply constraints for the initial default mode on first render
+  const hasAppliedInitial = useRef(false);
+  useEffect(() => {
+    if (!hasAppliedInitial.current) {
+      hasAppliedInitial.current = true;
+      applyModeConstraints(defaultMode);
+    }
+  }, [defaultMode, applyModeConstraints]);
+
+  const handleModeChange = useCallback((newMode: QuizModeType) => {
+    setSelectedMode(newMode);
+    applyModeConstraints(newMode);
+  }, [applyModeConstraints]);
 
   const handleStart = useCallback(() => {
     setPhase('active');

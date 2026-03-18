@@ -58,6 +58,12 @@ export function QuizSetupPanel({
     [activeConstraints, toggleValues],
   );
 
+  // Merge forced values into the displayed toggle values
+  const effectiveToggleValues = useMemo(() => ({
+    ...toggleValues,
+    ...constraintResult.forcedValues,
+  }), [toggleValues, constraintResult.forcedValues]);
+
   const disabledKeys = useMemo(() => {
     const keys = new Set<string>();
     for (const key of Object.keys(constraintResult.forcedValues)) {
@@ -155,7 +161,7 @@ export function QuizSetupPanel({
           <TogglePanel
             toggles={toggles}
             presets={presets}
-            values={toggleValues}
+            values={effectiveToggleValues}
             activePreset={activePreset}
             onChange={onToggleChange}
             onPreset={onPreset}

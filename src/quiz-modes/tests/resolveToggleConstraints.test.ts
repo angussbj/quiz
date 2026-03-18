@@ -34,6 +34,15 @@ describe('resolveToggleConstraints', () => {
     expect(result.preventDisable).toEqual(new Set());
   });
 
+  it('forces the first key on when all toggles in an atLeastOne group are off', () => {
+    const constraints: ReadonlyArray<ToggleConstraint> = [
+      { type: 'atLeastOne', keys: ['showCountryNames', 'showPromptFlags'], reason: 'Need at least one hint' },
+    ];
+    const result = resolveToggleConstraints(constraints, { showCountryNames: false, showPromptFlags: false });
+    expect(result.forcedValues).toEqual({ showCountryNames: true });
+    expect(result.reasons).toEqual({ showCountryNames: 'Need at least one hint' });
+  });
+
   it('handles multiple constraints', () => {
     const constraints: ReadonlyArray<ToggleConstraint> = [
       { type: 'forced', key: 'showCityDots', forcedValue: true, reason: 'Required' },

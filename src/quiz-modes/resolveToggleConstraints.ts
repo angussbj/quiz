@@ -23,7 +23,11 @@ export function resolveToggleConstraints(
       reasons[constraint.key] = constraint.reason;
     } else if (constraint.type === 'atLeastOne') {
       const enabledKeys = constraint.keys.filter((k) => currentValues[k]);
-      if (enabledKeys.length === 1) {
+      if (enabledKeys.length === 0) {
+        // None enabled — force the first key on
+        forcedValues[constraint.keys[0]] = true;
+        reasons[constraint.keys[0]] = constraint.reason;
+      } else if (enabledKeys.length === 1) {
         preventDisable.add(enabledKeys[0]);
         reasons[enabledKeys[0]] = constraint.reason;
       }
