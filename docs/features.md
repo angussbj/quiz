@@ -16,13 +16,19 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - Decrementing at 1 (or from blank) clears to `undefined` (no time limit).
 - Stepper buttons styled with theme CSS custom properties, work correctly in dark mode.
 
-### 19. Map Renderer Fixes
+### 19. Map Renderer Fixes — DONE
 **Branch:** `feat/map-fixes`
 **Scope:**
 - **Missing countries:** France and Norway don't appear on the map. Investigate whether the SVG paths are missing, malformed, or being filtered out.
 - **Global background outlines:** Background country outlines should include the entire world, not just the quiz region. Zooming to the edges of Europe currently shows abrupt cut-offs. Initial viewport should still be focused on the quiz region, but panning out should reveal neighbouring countries as context.
 - **City dot colours:** City dots currently use different colours from group colour-coding. They should all be a single uniform colour — grouping colours make sense for country shapes or timeline bars, not city markers.
 - **City dots non-interactable in free recall:** When the quiz mode uses text input (free recall), hovering/clicking city dots shouldn't trigger hover effects, animations, or state changes. Interactive styling should only apply in click-based modes (identify, locate).
+**What was done:**
+- Added 5 missing countries to `world-borders.csv` (France, Norway, Kosovo, Vatican City, São Tomé and Príncipe) using Natural Earth 1:110m data via `scripts/add-missing-borders.mjs`.
+- Normalized country names between borders and capitals CSVs. Added `country_alternates` column to capitals CSV.
+- Removed `supportingDataFilter` from `QuizDefinition` — all map quizzes load full world borders as background. Added `supportingDataPaths` to Asia, Africa, and countries quizzes.
+- City dots now use uniform `--color-city-dot` CSS variable instead of group colours.
+- Map interactive styling (hover/click) gated on `onElementClick` prop, not `element.interactive` — city dots are non-interactive in free recall mode.
 
 ### 20. Toggle Features & Identify Mode Fixes
 **Branch:** `feat/toggle-fixes`
