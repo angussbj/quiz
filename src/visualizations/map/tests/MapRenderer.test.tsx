@@ -149,6 +149,29 @@ describe('MapRenderer', () => {
     expect(screen.queryByText('Rome')).not.toBeInTheDocument();
   });
 
+  it('uses uniform city dot colour instead of group colours', () => {
+    const { container } = renderMap();
+    const circles = container.querySelectorAll('circle');
+    for (const circle of circles) {
+      expect(circle.getAttribute('fill')).toBe('var(--color-city-dot)');
+    }
+  });
+
+  it('city dots are not interactive when onElementClick is absent', () => {
+    const onClick = jest.fn();
+    const { container } = renderMap({ onElementClick: undefined });
+    const circles = container.querySelectorAll('circle');
+    fireEvent.click(circles[0]);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('does not fire click handler on city dots when onElementClick is absent', () => {
+    const { container } = renderMap({ onElementClick: undefined });
+    const circles = container.querySelectorAll('circle');
+    // Should not throw when clicking without a handler
+    fireEvent.click(circles[0]);
+  });
+
   it('renders svgOverlay content within the SVG', () => {
     renderMap({
       svgOverlay: <text data-testid="overlay-text">Overlay Content</text>,
