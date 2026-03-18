@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import { calculateScore } from '@/scoring/calculateScore';
@@ -56,6 +56,11 @@ export function useMultipleChoiceQuiz(
   const [flashIncorrectIndex, setFlashIncorrectIndex] = useState<number | null>(null);
   const [flashCorrectIndex, setFlashCorrectIndex] = useState<number | null>(null);
   const [advancing, setAdvancing] = useState(false);
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+  }, []);
 
   const totalPrompts = questions.length;
   const isFinished = promptIndex >= totalPrompts;
@@ -68,11 +73,13 @@ export function useMultipleChoiceQuiz(
 
   const advanceAfterDelay = useCallback((delayMs: number) => {
     setAdvancing(true);
-    setTimeout(() => {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+    advanceTimerRef.current = setTimeout(() => {
       setPromptIndex((prev) => prev + 1);
       setFlashIncorrectIndex(null);
       setFlashCorrectIndex(null);
       setAdvancing(false);
+      advanceTimerRef.current = null;
     }, delayMs);
   }, []);
 
