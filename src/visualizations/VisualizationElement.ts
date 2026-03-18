@@ -19,6 +19,7 @@ export interface GeoCoordinates {
 }
 
 export type ElementVisualState =
+  | 'default'
   | 'hidden'
   | 'highlighted'
   | 'revealed'

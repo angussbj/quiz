@@ -69,7 +69,7 @@ export function useIdentifyQuiz(
         states[el.id] = 'incorrect';
       } else {
         // Don't highlight the target — that would give it away
-        states[el.id] = 'hidden';
+        states[el.id] = 'default';
       }
     }
     return states;
