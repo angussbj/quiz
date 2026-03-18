@@ -75,7 +75,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 ## Phase 6: Feedback & Merge
 
 1. Delete any screenshots from `screenshots/` that show intermediate broken states that were later fixed — only keep screenshots of the final working state. Then open the directory in Finder with `open screenshots/` so the user can drag them into the PR.
-2. Print out the ports for the main server and also for storybook if relevant for the user's convenience.
+2. Print out the branch name, and ports for the main server and also for storybook if relevant for the user's convenience.
 3. Wait for user feedback on the PR.
 4. If changes are requested: return to Phase 3 to re-implement them, and follow all the steps to check, re-review, commit, push, update the PR description, etc.
 5. When the user approves, merge from inside the worktree:
