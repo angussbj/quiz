@@ -92,6 +92,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
         defaultCountdownSeconds={definition.defaultCountdownSeconds}
         toggles={definition.toggles}
         presets={definition.presets}
+        modeConstraints={definition.modeConstraints}
       >
         {(config) => (
           <ActiveQuiz

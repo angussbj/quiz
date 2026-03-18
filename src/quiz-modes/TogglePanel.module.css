@@ -85,6 +85,20 @@
   transition: background var(--transition-fast);
 }
 
+.toggleRowDisabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.toggleLabelDisabled {
+  color: var(--color-text-muted);
+}
+
+.switch[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .switch[data-checked] {
   background: var(--color-accent);
   justify-content: flex-end;

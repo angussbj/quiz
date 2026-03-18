@@ -51,6 +51,12 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/capitals/world-capitals.csv',
     dataFilter: { column: 'region', values: ['Europe'] },
     supportingDataPaths: ['/data/borders/world-borders.csv'],
+    modeConstraints: {
+      identify: [
+        { type: 'forced', key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
+        { type: 'atLeastOne', keys: ['showCountryNames', 'showPromptFlags'], reason: 'At least one hint must be enabled in identify mode' },
+      ],
+    },
   },
   {
     id: 'geo-capitals-asia',

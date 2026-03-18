@@ -1,5 +1,6 @@
 import type { VisualizationType } from '@/visualizations/VisualizationRendererProps';
 import type { ToggleDefinition, TogglePreset } from '@/quiz-modes/ToggleDefinition';
+import type { ToggleConstraint } from '@/quiz-modes/ToggleConstraint';
 
 export type QuizModeType =
   | 'free-recall-unordered'
@@ -42,4 +43,6 @@ export interface QuizDefinition<K extends string = string> {
   readonly supportingDataPaths: ReadonlyArray<string>;
   /** Default countdown duration in seconds. If undefined, timer runs in elapsed (count-up) mode. */
   readonly defaultCountdownSeconds?: number;
+  /** Per-mode toggle constraints. Key is a QuizModeType string. */
+  readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
 }

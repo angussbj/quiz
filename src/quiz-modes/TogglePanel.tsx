@@ -9,6 +9,10 @@ interface TogglePanelProps {
   readonly activePreset: string | undefined;
   readonly onChange: (key: string, value: boolean) => void;
   readonly onPreset: (preset: TogglePreset) => void;
+  /** Toggle keys that are forced and cannot be changed by the user. */
+  readonly disabledKeys?: ReadonlySet<string>;
+  /** Tooltip text for disabled/constrained toggles. */
+  readonly tooltips?: Readonly<Record<string, string>>;
 }
 
 function groupTogglesByCategory(
@@ -40,6 +44,8 @@ export function TogglePanel({
   activePreset,
   onChange,
   onPreset,
+  disabledKeys,
+  tooltips,
 }: TogglePanelProps) {
   const groups = groupTogglesByCategory(toggles);
 
@@ -67,21 +73,33 @@ export function TogglePanel({
         <section key={group} className={styles.section}>
           <h2 className={styles.sectionTitle}>{formatGroupLabel(group)}</h2>
           <div className={styles.toggleList}>
-            {items.map((toggle) => (
-              <div
-                key={toggle.key}
-                className={styles.toggleRow}
-                onClick={() =>
-                  onChange(toggle.key, !(values[toggle.key] ?? toggle.defaultValue))
-                }
-              >
-                <span className={styles.toggleLabel}>{toggle.label}</span>
-                <ToggleSwitch
-                  checked={values[toggle.key] ?? toggle.defaultValue}
-                  onToggle={(checked) => onChange(toggle.key, checked)}
-                />
-              </div>
-            ))}
+            {items.map((toggle) => {
+              const isDisabled = disabledKeys?.has(toggle.key) ?? false;
+              const tooltip = tooltips?.[toggle.key];
+              return (
+                <div
+                  key={toggle.key}
+                  className={`${styles.toggleRow} ${isDisabled ? styles.toggleRowDisabled : ''}`}
+                  onClick={() => {
+                    if (!isDisabled) {
+                      onChange(toggle.key, !(values[toggle.key] ?? toggle.defaultValue));
+                    }
+                  }}
+                  title={tooltip}
+                >
+                  <span className={`${styles.toggleLabel} ${isDisabled ? styles.toggleLabelDisabled : ''}`}>
+                    {toggle.label}
+                  </span>
+                  <ToggleSwitch
+                    checked={values[toggle.key] ?? toggle.defaultValue}
+                    onToggle={(checked) => {
+                      if (!isDisabled) onChange(toggle.key, checked);
+                    }}
+                    disabled={isDisabled}
+                  />
+                </div>
+              );
+            })}
           </div>
         </section>
       ))}
@@ -92,9 +110,11 @@ export function TogglePanel({
 function ToggleSwitch({
   checked,
   onToggle,
+  disabled = false,
 }: {
   readonly checked: boolean;
   readonly onToggle: (checked: boolean) => void;
+  readonly disabled?: boolean;
 }) {
   return (
     <button
@@ -102,9 +122,11 @@ function ToggleSwitch({
       aria-checked={checked}
       className={styles.switch}
       data-checked={checked || undefined}
+      data-disabled={disabled || undefined}
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
-        onToggle(!checked);
+        if (!disabled) onToggle(!checked);
       }}
     >
       <motion.span
