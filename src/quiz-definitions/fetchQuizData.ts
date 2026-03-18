@@ -1,3 +1,4 @@
+import { assetPath } from '../utilities/assetPath';
 import { parseCsv } from './parseCsv';
 
 /**
@@ -9,7 +10,7 @@ import { parseCsv } from './parseCsv';
 export async function fetchQuizData(
   dataPath: string,
 ): Promise<ReadonlyArray<Readonly<Record<string, string>>>> {
-  const response = await fetch(dataPath);
+  const response = await fetch(assetPath(dataPath));
   if (!response.ok) {
     throw new Error(`Failed to fetch quiz data from ${dataPath}: ${response.status} ${response.statusText}`);
   }

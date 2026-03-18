@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { assetPath } from '../../utilities/assetPath';
 import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundLabel } from './BackgroundLabel';
 import { useZoomPan } from '../ZoomPanContext';
@@ -281,7 +282,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
           >
             {showFlags && label.code && (
               <img
-                src={`/flags/${label.code}.svg`}
+                src={assetPath(`/flags/${label.code}.svg`)}
                 alt=""
                 className={styles.flagImage}
                 style={{ height: `${flagHeight}px` }}

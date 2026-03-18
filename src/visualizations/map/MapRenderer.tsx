@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
@@ -243,7 +244,7 @@ function MapContent({
         return (
           <image
             key={`flag-${element.id}`}
-            href={`/flags/${element.code}.svg`}
+            href={assetPath(`/flags/${element.code}.svg`)}
             x={element.viewBoxCenter.x + dotRadius + 0.15}
             y={element.viewBoxCenter.y - flagHeight / 2}
             width={flagWidth}

@@ -1,3 +1,4 @@
+import { assetPath } from '../../utilities/assetPath';
 import styles from './IdentifyPromptFields.module.css';
 
 export interface PromptField {
@@ -19,7 +20,7 @@ export function IdentifyPromptFields({ fields }: IdentifyPromptFieldsProps) {
           return (
             <img
               key={index}
-              src={`/flags/${field.value}.svg`}
+              src={assetPath(`/flags/${field.value}.svg`)}
               alt=""
               role="img"
               className={styles.flagImage}
