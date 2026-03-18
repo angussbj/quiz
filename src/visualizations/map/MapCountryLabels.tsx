@@ -3,10 +3,14 @@ import type { BackgroundLabel } from './BackgroundLabel';
 import { useZoomPan } from '../ZoomPanContext';
 import styles from './MapCountryLabels.module.css';
 
-/** Target label height in screen pixels. Labels scale inversely with zoom. */
-const TARGET_SCREEN_PX = 11;
-const MIN_VIEWBOX_FONT_SIZE = 0.25;
-const MAX_VIEWBOX_FONT_SIZE = 3;
+/**
+ * Target font size in viewBox units at scale=1. The initial map view shows
+ * roughly 60° of longitude, so 1 viewBox unit ≈ 10-15 screen pixels.
+ * A font size of 0.8 viewBox units ≈ 8-12px on screen at initial zoom.
+ */
+const BASE_FONT_SIZE = 0.8;
+const MIN_VIEWBOX_FONT_SIZE = 0.3;
+const MAX_VIEWBOX_FONT_SIZE = 2;
 
 /** Max width of a label box relative to sqrt(area) of the country. */
 const LABEL_WIDTH_FACTOR = 1.5;
@@ -31,8 +35,8 @@ export function MapCountryLabels({ labels }: MapCountryLabelsProps) {
   const { scale } = useZoomPan();
 
   const visibleLabels = useMemo(() => {
-    // Font size in viewBox units — scales inversely with zoom so screen size stays constant
-    const fontSize = Math.min(MAX_VIEWBOX_FONT_SIZE, Math.max(MIN_VIEWBOX_FONT_SIZE, TARGET_SCREEN_PX / scale));
+    // Font size in viewBox units — scales inversely with zoom so screen size stays roughly constant
+    const fontSize = Math.min(MAX_VIEWBOX_FONT_SIZE, Math.max(MIN_VIEWBOX_FONT_SIZE, BASE_FONT_SIZE / scale));
 
     // Sort labels by area descending (largest countries first = most important)
     const sorted = [...labels].sort((a, b) => b.area - a.area);

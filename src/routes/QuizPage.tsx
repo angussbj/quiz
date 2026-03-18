@@ -84,7 +84,8 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
       // Only sovereign countries (sovereign matches name)
       if (!label.sovereign || label.sovereign !== label.name) return false;
       // Filter to quiz region if defined
-      if (regionValues && label.region) {
+      if (regionValues) {
+        if (!label.region) return false;
         const labelRegions = label.region.split('|');
         return regionValues.some((r) => labelRegions.includes(r));
       }
