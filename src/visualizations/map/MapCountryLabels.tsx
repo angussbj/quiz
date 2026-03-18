@@ -25,6 +25,7 @@ interface VisibleItem {
   readonly label: BackgroundLabel;
   readonly fontSize: number;
   readonly flagHeight: number;
+  readonly gapSize: number;
   readonly width: number;
   readonly height: number;
   readonly x: number;
@@ -105,9 +106,10 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
           : hasFlag ? flagWidth : 0;
         if (width === 0) continue;
 
-        const textHeight = showNames ? fontSize * 1.8 : 0;
-        const flagPartHeight = hasFlag ? flagHeight + fontSize * 0.4 : 0;
-        const height = textHeight + flagPartHeight;
+        const textHeight = showNames ? fontSize * 1.5 : 0;
+        const gapSize = (hasFlag && showNames) ? fontSize * 0.3 : 0;
+        const flagPartHeight = hasFlag ? flagHeight : 0;
+        const height = flagPartHeight + gapSize + textHeight;
 
         const stepX = width * 0.4;
         const stepY = height * 0.4;
@@ -127,7 +129,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
 
           if (!hasOverlap) {
             placed.push({ x: lx, y: ly, w: width, h: height });
-            visible.push({ label, fontSize, flagHeight, width, height, x: lx, y: ly });
+            visible.push({ label, fontSize, flagHeight, gapSize, width, height, x: lx, y: ly });
             didPlace = true;
             break;
           }
@@ -141,7 +143,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
 
   return (
     <>
-      {visibleItems.map(({ label, fontSize, flagHeight, width, height, x, y }) => (
+      {visibleItems.map(({ label, fontSize, flagHeight, gapSize, width, height, x, y }) => (
         <foreignObject
           key={`country-label-${label.id}`}
           x={x}
@@ -152,7 +154,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
         >
           <div
             className={styles.labelContainer}
-            style={{ fontSize: `${fontSize}px` }}
+            style={{ fontSize: `${fontSize}px`, gap: `${gapSize}px` }}
           >
             {showFlags && label.code && (
               <img
