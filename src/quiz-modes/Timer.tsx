@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import styles from './Timer.module.css';
 
 export interface TimerProps {
@@ -62,19 +61,7 @@ export function Timer({ countdownSeconds, onExpire, paused = false }: TimerProps
       className={`${styles.timer} ${expired ? styles.expired : ''}`}
       data-expired={expired || undefined}
     >
-      <time>
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span
-            key={timeString}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-          >
-            {timeString}
-          </motion.span>
-        </AnimatePresence>
-      </time>
+      <time>{timeString}</time>
     </div>
   );
 }

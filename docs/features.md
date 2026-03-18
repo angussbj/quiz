@@ -4,11 +4,17 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 
 ## Group E: Bug Fixes & Polish (no dependencies between items)
 
-### 18. Timer & Setup Panel Polish
+### 18. Timer & Setup Panel Polish — DONE
 **Branch:** `feat/timer-polish`
 **Scope:**
 - **Time limit input styling:** The native number input spinner (up/down arrows) looks bad, especially in dark mode. Replace with custom styled increment/decrement buttons that match the app's design language. Pressing down at 1 minute should clear the field back to blank (no time limit), rather than going to 0.
 - **Timer jumps sideways:** The in-quiz timer shifts horizontally on every other tick. Likely variable-width digits or Framer Motion layout reflow. Fix with `font-variant-numeric: tabular-nums` or a fixed-width container.
+**What was done:**
+- Removed `AnimatePresence`/`motion.span` from `Timer.tsx` — the timer doesn't need tick animations, and they caused layout reflow.
+- Added `font-variant-numeric: tabular-nums` to the timer CSS for fixed-width digits.
+- Replaced `<input type="number">` with `<input type="text" inputMode="numeric">` flanked by custom `[ − ]` / `[ + ]` stepper buttons.
+- Decrementing at 1 (or from blank) clears to `undefined` (no time limit).
+- Stepper buttons styled with theme CSS custom properties, work correctly in dark mode.
 
 ### 19. Map Renderer Fixes
 **Branch:** `feat/map-fixes`
