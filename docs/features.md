@@ -1,198 +1,41 @@
-# Feature List
+# Feature List (Round 2)
 
-Features for parallel agent development. Each feature should be developed in its own worktree branch. Features are grouped by dependency — items within a group can be worked on in parallel, but later groups depend on earlier ones.
+Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for their architecture live in `docs/quiz-integration.md`, `docs/toggle-resolution.md`, `docs/zoom-pan-container.md`, and `CLAUDE.md`). Feature 17 and items 18+ are listed below. Features within the same group can be worked on in parallel.
 
-## Group A: Foundation (no dependencies beyond current scaffolding)
+## Group E: Bug Fixes & Polish (no dependencies between items)
 
-### 1. CSV Data Loader - DONE
-**Branch:** `feat/csv-loader`
-**Files:** `src/quiz-definitions/loadQuizData.ts`, tests
-**Scope:** Implement CSV parsing that reads a CSV string and returns `QuizDataRow<K>[]`. Handle headers, quoted fields, commas within quotes, and empty fields. No external CSV library — keep it simple. Write thorough unit tests with edge cases.
+### 18. Timer & Setup Panel Polish
+**Branch:** `feat/timer-polish`
+**Scope:**
+- **Time limit input styling:** The native number input spinner (up/down arrows) looks bad, especially in dark mode. Replace with custom styled increment/decrement buttons that match the app's design language. Pressing down at 1 minute should clear the field back to blank (no time limit), rather than going to 0.
+- **Timer jumps sideways:** The in-quiz timer shifts horizontally on every other tick. Likely variable-width digits or Framer Motion layout reflow. Fix with `font-variant-numeric: tabular-nums` or a fixed-width container.
 
-### 2. ZoomPanContainer - DONE
-**Branch:** `feat/zoom-pan-container`
-**Files:** `src/visualizations/ZoomPanContainer.tsx`, `src/visualizations/ClusterBadge.tsx`, tests
-**Scope:** Wrap `react-zoom-pan-pinch` with our interface. Accept children (SVG content), manage zoom/pan state, compute element clusters at each zoom level based on `ClusteringConfig`, render `ClusterBadge` components for clusters. The badge should show count of elements (e.g., "3/4 named") and zoom into the cluster on click. Smooth animations with Framer Motion. CSS module for styling.
+### 19. Map Renderer Fixes
+**Branch:** `feat/map-fixes`
+**Scope:**
+- **Missing countries:** France and Norway don't appear on the map. Investigate whether the SVG paths are missing, malformed, or being filtered out.
+- **Global background outlines:** Background country outlines should include the entire world, not just the quiz region. Zooming to the edges of Europe currently shows abrupt cut-offs. Initial viewport should still be focused on the quiz region, but panning out should reveal neighbouring countries as context.
+- **City dot colours:** City dots currently use different colours from group colour-coding. They should all be a single uniform colour — grouping colours make sense for country shapes or timeline bars, not city markers.
+- **City dots non-interactable in free recall:** When the quiz mode uses text input (free recall), hovering/clicking city dots shouldn't trigger hover effects, animations, or state changes. Interactive styling should only apply in click-based modes (identify, locate).
 
-### 3. Navigation Page - DONE
-**Branch:** `feat/navigation`
-**Files:** `src/navigation/NavigationTree.tsx`, `src/navigation/Search.tsx`, `src/routes/HomePage.tsx`, CSS modules, tests
-**Scope:** Hierarchical tree view of quizzes from a `NavigationNode` tree. Expandable/collapsible categories. Search that filters the tree by quiz title. Links to quiz pages. Clean, quiet design using theme CSS properties. Framer Motion for expand/collapse animations.
+### 20. Toggle Features & Identify Mode Fixes
+**Branch:** `feat/toggle-fixes`
+**Scope:**
+- **City dots not appearing in identify mode (bug):** Even when the city dots toggle is on, dots don't render in identify mode — making it impossible to click anything. This completely breaks identify mode. Investigate whether the toggle value isn't being passed to the renderer, or if element building is filtering them out.
+- **Country names on map:** When the "show country names" toggle is active (or resolved via on-reveal), render country names on the map next to/over the relevant country shape. Applies to free recall mode where the map is the primary visual.
+- **Flags on map in free recall:** When the "show flags" toggle is active (or resolved via on-reveal/hintAfter), render flags on the map near the relevant city/country.
+- **Flag next to prompt in identify mode:** In identify mode, when the flags toggle is enabled, show the flag next to the country/city name in the prompt bar — not on the map.
+- **Per-mode toggle constraints:** Some toggle combinations don't make sense for certain modes. The setup panel should enforce constraints. E.g. identify mode: city dots must be on; at least one of country names or flags must be on. Constrained toggles should be visually disabled with a tooltip. Quiz definitions should declare these constraints per mode.
 
-### 3b. Navigation Page Polish — DONE
-**Branch:** `feat/navigation-polish`
-**Files:** `src/navigation/NavigationTree.tsx`, `src/navigation/NavigationTree.module.css`, `src/navigation/filterNavigationTree.ts`, tests
-**Scope:** Small UX improvements to the navigation page:
-- **Category-aware search:** When the search query matches a category label (directory/path), keep all quizzes under that category visible — not just leaf-level matches.
-- **Multi-column quiz lists:** When a category contains many quizzes, lay them out in multiple columns (CSS grid/columns) so the list doesn't stretch excessively long.
-- **Smaller section headers:** Reduce category heading size — still larger than quiz items, but less dominant.
-- **Clickable-looking quiz links:** Style quiz items more like traditional links (accent color, underline on hover) so they feel obviously interactive.
+### 21. Quiz Results Review Mode
+**Branch:** `feat/results-review`
+**Scope:** The results screen should have a way to dismiss the overlay and go back to viewing the visualization in a read-only state (no more answers accepted). Lets users review what they got right/wrong on the map/grid/timeline.
 
-### 4. Quiz Registry & Route Generation — DONE
-**Branch:** `feat/quiz-registry`
-**Files:** `src/quiz-definitions/quizRegistry.ts`, `src/routes/QuizPage.tsx`, `src/App.tsx`
-**Scope:** Build the quiz registry from a static list of `QuizDefinition` objects (we'll auto-generate later). Wire up `QuizPage` to read the quiz ID from the URL, look it up in the registry, and fetch + parse its CSV data. Generate the `NavigationNode` tree from the registry's path segments. Lazy-load quiz data on navigation.
+### 22. Multi-Region Support
+**Branch:** `feat/multi-region`
+**Scope:** Some countries/cities belong to multiple regions (e.g. Türkiye and Russia are in both Europe and Asia). Data CSVs should support multiple regions per row (e.g. pipe-separated: `Europe|Asia`). Filtering by region should return any row that has at least one matching region. Affects quiz definitions, data loading, and any region-based filtering logic.
 
-### 5. Toggle Panel & Presets — DONE
-**Branch:** `feat/toggle-panel`
-**Files:** `src/quiz-modes/TogglePanel.tsx`, `src/quiz-modes/QuizShell.tsx` (toggle state management part), CSS modules, tests
-**Scope:** Render toggle switches from `ToggleDefinition[]` grouped by category. Preset buttons that set multiple toggles at once. Individual toggles remain immediately accessible alongside presets. Manage toggle state and expose it to child components. Quiet, compact design. Test that presets apply correctly and individual toggle changes work.
-
-### 6. Timer Component — DONE
-**Branch:** `feat/timer`
-**Files:** `src/quiz-modes/Timer.tsx`, CSS module, tests
-**Scope:** Optional countdown or elapsed timer. Displays formatted time (MM:SS). Start/pause/reset controls. Calls back when time expires (for countdown mode). Framer Motion for number transitions. Unit tests for time formatting and state transitions.
-**Integration notes:**
-- Timer starts on mount and owns its own interval state. QuizShell should not render the Timer until the quiz has actually started.
-- `QuizDefinition.defaultCountdownSeconds` controls countdown duration. If undefined, timer runs in elapsed (count-up) mode.
-- When countdown expires, Timer calls `onExpire` — QuizShell should use this to end the quiz.
-- Timer accepts a `paused` prop for pause/resume (e.g., when quiz is paused).
-
-### 7. Score Calculator — DONE
-**Branch:** `feat/score-calculator`
-**Files:** `src/scoring/calculateScore.ts`, tests
-**Scope:** Implement scoring logic for all answer types: unordered recall (count correct, no penalty), ordered recall (track hints used), locate (distance-based with linear decay — full marks within 100km, diminishing linearly to zero at 500km), identify (binary), multiple choice (binary). Return `ScoreResult` with appropriate `ScoreDetails`. Thorough unit tests for each mode and edge cases.
-
-### 8. useLocalStorage Tests & Hardening — DONE
-**Branch:** `feat/local-storage`
-**Files:** `src/persistence/useLocalStorage.ts`, `src/persistence/tests/useLocalStorage.test.ts`
-**Scope:** Write comprehensive tests for `useLocalStorage`: initial load from storage, default value when empty, setter updates both state and storage, handles invalid JSON gracefully, handles localStorage being unavailable (e.g., private browsing), handles quota exceeded. Add a `useQuizProgress` convenience hook if useful.
-
-## Group B: Visualization Renderers (depend on #2 ZoomPanContainer)
-
-### 9. Map Renderer — DONE
-**Branch:** `feat/map-renderer`
-**Files:** `src/visualizations/map/MapRenderer.tsx`, CSS module, tests, sample country SVG data
-**Scope:** Render country shapes from `MapElement.svgPathData` positioned in viewBox space. City markers as dots/circles. Color-code by group. Support `elementStates` for visual feedback (correct = green, incorrect = red, highlighted = gold). Support `toggles` for show/hide labels, show/hide country borders. Click handlers for elements and positions. Use `ZoomPanContainer` for zoom/pan. Create sample supporting data CSV with a few European country shapes for testing.
-**Note:** This is the first feature that renders real content inside `ZoomPanContainer`. Use it to visually verify zoom, pan, and clustering behaviour — test that clusters form/split at different zoom levels, badges show correct counts, and cluster click zooms to fit.
-**Note from #4:** Quiz IDs follow the pattern `geo-{type}-{region}` (e.g., `geo-capitals-europe`). The registry organizes paths as type-before-region (Geography > Capitals > Europe). CSV data is fetched from `public/data/` paths. Sample data CSVs can be placed there for testing.
-**Note from #9:** `VisualizationRendererProps` now includes an optional `backgroundPaths: ReadonlyArray<BackgroundPath>` prop for non-interactive decorative SVG content (e.g., country borders). This was added to keep the `elements` array clean for quiz items only. Other renderers can use this for similar decorative content if needed. Flags are displayed outside the map (in the quiz mode UI), not rendered by MapRenderer.
-
-### 10. Timeline Renderer — DONE
-**Branch:** `feat/timeline-renderer`
-**Files:** `src/visualizations/timeline/TimelineRenderer.tsx`, CSS module, tests
-**Scope:** Render horizontal time axis with bars for date ranges. Auto-calculate tracks to minimise overlaps when `track` is undefined. Color-code bars by category. Support `elementStates` for visual feedback. Labels on or beside bars. Use `ZoomPanContainer` for horizontal scroll/zoom. Handle zoom levels gracefully — show decade markers when zoomed out, year markers when zoomed in.
-**Implementation notes:**
-- `TimelineTimestamp` is a variable-precision array `[year, month?, day?, hour?, minute?, second?]` — not just years. Start timestamps round to period start, end timestamps round to period end.
-- `buildTimelineElements()` converts inputs to `TimelineElement` with viewBox coordinates. X axis uses `UNITS_PER_YEAR` (20) scale factor. Track height is dynamically computed to maintain a landscape viewBox aspect ratio.
-- Categories map to theme `--color-group-N` colors (first 8), then generate random vibrant HSL colors for overflow.
-- Inside labels are shown when bars are wide enough; otherwise labels appear beside the bar (truncated to fit gap before next bar). Tooltips show full label + date range on hover.
-- **Tooltip portal pattern:** Tooltips are rendered via `createPortal(tooltip, document.body)` instead of inside the SVG, because `react-zoom-pan-pinch`'s CSS `transform` creates a new containing block that breaks `position: fixed` positioning. Other renderers adding tooltips should use the same pattern.
-
-### 11. Periodic Table Renderer — DONE
-**Branch:** `feat/periodic-table-renderer`
-**Files:** `src/visualizations/periodic-table/PeriodicTableRenderer.tsx`, CSS module, tests
-**Scope:** Render grid of rectangular cells at (row, column) positions. Show symbol prominently in each cell. Color-code by group. Support `elementStates` for visual feedback. Use `ZoomPanContainer` for zoom/pan. When zoomed out, show compact cells with just symbols; when zoomed in, cells could expand to show more data (prepare the slot for a custom render component but don't implement it yet).
-
-## Toggle Resolution Design
-
-Toggles control visual features like labels, borders, city dots, and flags. The user sees a simple on/off switch per toggle on the config screen. But "off" doesn't always mean "never show" — it can mean different things depending on the quiz definition:
-
-- **`'never'`** — never shown during the quiz
-- **`'on-reveal'`** — shown when the element is answered (correct or give-up)
-- **`{ hintAfter: n }`** — shown after the nth incorrect answer for that element (e.g., show the flag as a hint after 2 wrong guesses)
-
-### Data model
-
-`ToggleDefinition` gains a `hiddenBehavior` field describing what happens when the toggle is off:
-
-```ts
-type HiddenBehavior = 'never' | 'on-reveal' | { readonly hintAfter: number };
-
-interface ToggleDefinition {
-  readonly key: string;
-  readonly label: string;
-  readonly defaultValue: boolean;
-  readonly group: string;
-  readonly hiddenBehavior: HiddenBehavior; // what "off" means for this toggle
-}
-```
-
-Presets remain `Record<string, boolean>` — they set toggles on/off. The hidden behavior is fixed per toggle definition, not per preset.
-
-### Resolution flow
-
-1. **Config screen:** User sees boolean switches. "On" = always show. "Off" = hidden behavior applies.
-2. **Quiz mode layer** (features 12–14): Each quiz mode resolves toggles into **per-element booleans** based on quiz state (which elements are correct, how many wrong answers per element, etc.). The resolution logic is: if toggle is ON → true for all elements. If toggle is OFF → apply `hiddenBehavior` per element.
-3. **Renderer:** Receives `elementToggles: Record<elementId, Record<toggleKey, boolean>>` — fully resolved, no knowledge of hidden behaviors. Renderers stay simple.
-
-### Props change
-
-`VisualizationRendererProps` will gain:
-```ts
-readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
-```
-
-Renderer logic per element: check `elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]`. The global `toggles` remains the fallback (e.g., for toggles not in `elementToggles`, or before quiz modes are wired up).
-
-### Advanced config (future)
-
-An advanced option on the config screen lets users override the hidden behavior per toggle (e.g., change "on-reveal" to "hint after 3"). This is a nice-to-have, not needed for initial implementation.
-
-## Group C: Quiz Modes (depend on Group B renderers existing, and #5 TogglePanel, #7 ScoreCalculator)
-
-Note: we're still waiting on the timeline renderer, so if any work relies on it, create a new task later to do that work, and continue with what work you can do with the other renderers.
-
-### 12. Free Recall Mode (Unordered) — DONE
-**Branch:** `feat/free-recall-unordered`
-**Files:** `src/quiz-modes/free-recall/FreeRecallMode.tsx`, CSS module, tests
-**Scope:** Text input field. User types answers in any order. Fuzzy matching (case-insensitive, ignore accents/diacritics, accept alternate answers from data). On match: mark element as correct in the visualization with a satisfying animation, increment score, clear input. Show progress (e.g., "7/50"). On give up: reveal remaining answers. Gentle feedback — no "wrong" state for typing, only when giving up.
-**Note (from #7):** When building the ordered recall variant, use `HintLevel` from `src/scoring/ScoreResult.ts` to track per-answer hint usage. Visualization should colour answers by hint level: `'none'` = green/white (counts as correct), `'partial'` = yellow (doesn't count), `'full'` = red (doesn't count). The scoring function `calculateOrderedRecallScore` already handles this.
-**Note (toggle resolution):** This mode must resolve per-element toggles. For each element, for each toggle where `hiddenBehavior` applies: if `'on-reveal'` → set true when element is answered (correct or give-up). If `{ hintAfter: n }` → not applicable (no wrong answers in free recall). If `'never'` → always false. Pass resolved `elementToggles` to the renderer.
-**Note (from #12):** `useFreeRecallSession` hook in `src/quiz-modes/free-recall/useFreeRecallSession.ts` manages session state — feature #15 should use it to wire up the quiz page. Answer matching (`src/quiz-modes/free-recall/matchAnswer.ts`) supports alternate spellings via `{column}_alternates` columns with pipe-separated values. `QuizModeProps` now includes `dataRows`, `columnMappings`, and `toggleDefinitions`. Matching strictness (accent-sensitivity, case-sensitivity) should be toggleable in the future — currently always fuzzy.
-**Note (from #12, matching design):** `normalizeText()` strips diacritics via NFD decomposition + combining character removal, lowercases, strips punctuation, collapses whitespace. This makes é≡e, ñ≡n, ü≡u etc. A future "strict matching" toggle should bypass this normalization.
-
-### 13. Identify Mode — DONE
-**Branch:** `feat/identify-mode`
-**Files:** `src/quiz-modes/identify/IdentifyMode.tsx`, CSS module, tests
-**Scope:** Show a prompt ("Click on Paris"). User clicks elements in the visualization. Correct click: satisfying animation, advance to next prompt. Incorrect click: gentle incorrect animation, element briefly highlighted red. Cycle through all target elements. Support toggles (show/hide hints like flags or labels). Show progress.
-**Note (toggle resolution):** This mode must resolve per-element toggles. Track incorrect answer count per element. For `{ hintAfter: n }` → set true after n wrong clicks on that element's prompt. For `'on-reveal'` → set true after correct answer or skip. Pass resolved `elementToggles` to the renderer.
-**Note from #13:** `HiddenBehavior` type and optional `hiddenBehavior` field were added to `ToggleDefinition` in this feature. `elementToggles` was added to `VisualizationRendererProps`. The shared `resolveElementToggles()` utility in `src/quiz-modes/resolveElementToggles.ts` can be reused by Locate mode and Free Recall mode — it takes element quiz states (isAnswered + wrongAttempts) and returns per-element toggle overrides. IdentifyMode manages its own state via `useIdentifyQuiz` hook since QuizShell integration (feature 15) isn't wired up yet. It accepts a `renderVisualization` render prop that receives elementStates, onElementClick, targetElementId, toggles, and elementToggles. Feature 15 will need to provide this render prop when wiring modes to renderers.
-
-### 14. Locate Mode — DONE
-**Branch:** `feat/locate-mode`
-**Files:** `src/quiz-modes/locate/LocateMode.tsx`, `src/quiz-modes/locate/useLocateQuiz.ts`, `src/quiz-modes/locate/LocateFeedback.tsx`, `src/quiz-modes/locate/LocateResults.tsx`, CSS module, tests
-**Scope:** Show a prompt ("Click where Paris is"). User clicks anywhere on the visualization. Show distance feedback with the score calculator's non-linear curve. Visual feedback: show the correct location and draw a line from the click to it. Satisfying animation for close guesses, gentle feedback for far ones. Advance to next prompt.
-**Implementation notes:**
-- LocateMode is self-contained with its own state machine (`useLocateQuiz` hook). When QuizPage integration (#15) is built, it should either consume this hook or adapt the component.
-- `LocateModeProps` differs from `QuizModeProps` — it takes a `Renderer` component type and renders the visualization itself. This will need reconciliation in #15.
-- `svgOverlay` prop was added to `VisualizationRendererProps` to allow quiz modes to inject SVG feedback (like distance lines) into renderers. MapRenderer and PeriodicTableRenderer both support it.
-- Next prompt appears instantly after a click; feedback (line + distance label) lingers for ~2s then fades via Framer Motion AnimatePresence.
-- Toggle resolution was deferred — see feature #14b.
-**Note (toggle resolution):** Deferred to feature #14b.
-
-### 14b. Toggle Resolution Unification — DONE
-**Branch:** `feat/toggle-resolution`
-**Files:** `src/quiz-modes/resolveElementToggles.ts`, `src/quiz-modes/ToggleDefinition.ts`, tests
-**Scope:** Unify toggle resolution across all quiz modes (12, 13, 14). Add `hiddenBehavior` field to `ToggleDefinition`. Create a shared `resolveElementToggles` utility that computes per-element toggle booleans from toggle definitions, global toggle values, and per-element quiz state (answered, attempt count). Wire into each quiz mode. Ensure no unnecessary duplication across modes. Also add `elementToggles` support to renderers (reading `elementToggles?.[elementId]?.[toggleKey] ?? toggles[toggleKey]`).
-**Depends on:** Features 12, 13, 14 (at least one mode must exist to wire into).
-**Note:** This was split out because features 12–14 may be developed in parallel, and unifying toggle resolution afterward avoids conflicting implementations.
-**Note (from #14b):** `ElementQuizState` is exported from `resolveElementToggles.ts` — all modes import it rather than redeclaring the shape. `elementToggle()` defaults to `true` when a toggle key isn't in global toggles (features visible unless explicitly off). TimelineRenderer supports `showLabels` (hide/show bar labels) and `showBars` (full opacity vs dimmed) toggle keys. Quiz definitions for timeline quizzes should include these in their `ToggleDefinition[]`.
-
-
-## Group D: Integration (depends on Groups A–C)
-
-### 15. Quiz Page Integration — DONE
-**Branch:** `feat/quiz-page`
-**Files:** `src/routes/QuizPage.tsx`, `src/quiz-modes/QuizShell.tsx`, `src/quiz-modes/QuizSetupPanel.tsx`, `src/quiz-modes/ActiveQuiz.tsx`, `src/quiz-modes/ModeAdapter.tsx`, `src/quiz-modes/QuizResults.tsx`, `src/visualizations/buildElements.ts`, `src/visualizations/resolveRenderer.ts`, CSS modules
-**Scope:** Wire everything together: QuizPage loads quiz definition and data, renders QuizShell with the correct visualization renderer and quiz mode based on URL params and toggle state. Mode selector (dropdown). Score display. Results screen at end with completion stats, progress bar animation, and confetti at 100%. "Try again" button.
-**Note:** QuizShell implements a `configuring` → `active` state machine. The config screen (QuizSetupPanel, which composes TogglePanel) is shown as a full page before the quiz starts — toggles are NOT visible during the quiz. A "Reconfigure" button returns to the config screen and resets quiz state via key remount. QuizShell's `children` prop is a render function receiving `QuizConfig` with `toggleValues`, `selectedMode`, `countdownSeconds`, and `onReconfigure`.
-**Architecture notes (from #15):**
-- `QuizSetupPanel` replaced `TogglePanel` as the config screen, adding mode selector and timer input. `TogglePanel` was slimmed to toggle-only (presets + switches).
-- `ModeAdapter` routes mode types to the correct composition pattern: FreeRecallAdapter (external hook), IdentifyAdapter (render prop), LocateAdapter (component prop). Unimplemented modes show "not yet available".
-- `ActiveQuiz` manages the active phase: timer, mode adapter, elapsed time tracking, finish detection, results overlay.
-- `QuizResults` shows score percentage, progress bar, elapsed time, "Try again" button, and confetti at 100%.
-- Element converters (`buildMapElements`, `buildGridElements`, `buildTimelineElementsFromRows`) convert CSV rows to `VisualizationElement[]`. The `buildElements` dispatcher picks the right one by `VisualizationType`. `resolveRenderer` maps types to renderer components.
-- Background path loading uses CSV format with `|`-separated SVG paths. `parseBackgroundPaths` + `useBackgroundPaths` hook.
-- `QuizModeProps.dataRows` uses `Record<string, string>[]` (not `QuizDataRow`) to match `useQuizData` return type without casting.
-- `IdentifyMode` and `LocateMode` gained optional `onFinish` callbacks for finish detection from outside.
-- `QuizConfig` exported from `QuizShell` includes `onReconfigure` so results screen can trigger return to setup.
-
-### 16. Theme Toggle & Global Layout — DONE
-**Branch:** `feat/global-layout`
-**Files:** `src/layout/Layout.tsx`, `src/layout/ThemeToggle.tsx`, `src/layout/Breadcrumbs.tsx`, `src/navigation/findSubtree.ts`, CSS modules, tests
-**Scope:** App-level layout: header with site title ("Quizzical"), theme toggle (sun/moon/monitor icon cycling light/dark/system), navigation breadcrumbs on quiz pages with clickable path segments. Category URL routes (e.g. `/geography/capitals`) show filtered quiz lists. Responsive but desktop-first. Smooth theme transition animation. Clean typography.
-**Note from #16:** Breadcrumbs are rendered by the global Layout, not by individual pages. Quiz path segments in breadcrumbs link to category browsing routes. The `findSubtree` utility in `src/navigation/findSubtree.ts` does case-insensitive matching of URL segments to navigation tree labels. HomePage accepts category filtering via URL path — the `/*` catch-all route handles this.
+## Group F: Quiz Data & Definitions (depend on #19 for map fixes, #22 for multi-region)
 
 ### 17. European Capitals Quiz Definition — DONE
 **Branch:** `worktree-capitals-quiz`
@@ -211,3 +54,23 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 **Note from #3b:** Geography quiz paths flattened to 2-deep (`['Geography', 'Capitals']`).
 **Note (data architecture):** All capitals quizzes share one CSV filtered by region. New region quizzes just add a registry entry with `dataFilter: { column: 'region', values: ['NewRegion'] }`. Same pattern for borders via `supportingDataFilter`. Adding a new region quiz requires zero new data files.
 **Note (projection):** Equirectangular projection (x=lng, y=-lat) matches `projectGeo` in `src/visualizations/map/projectGeo.ts`. Raw lat/lng are stored in source data so a different projection can be applied by modifying the generation scripts.
+
+### 23. Capital & Border Data for All Continents
+**Branch:** `feat/all-capitals`
+**Scope:** Extend capital city data beyond Europe. Create CSVs and country border SVG paths for: Asia, Africa, North America, South America, and Oceania. Register quiz definitions for each continent. Follow the same patterns as #17. Use Natural Earth 1:110m data, pre-converted to SVG paths.
+
+### 24. Countries Quiz Type
+**Branch:** `feat/countries-quiz`
+**Scope:** Add a "countries" quiz type — name the country from its shape/location on the map. Different from capitals (which focuses on cities). Create quiz definitions per continent registered in the quiz registry. Can reuse the same border data from #23.
+
+### 25. Flags Quiz Type
+**Branch:** `feat/flags-quiz`
+**Scope:** Add a "flags" quiz type — identify the country from its flag, or name the flag for a given country. Create quiz definitions per continent. Can reuse the same data CSVs as capitals/countries with different column mappings.
+
+### 26. Periodic Table Quiz
+**Branch:** `feat/periodic-table-quiz`
+**Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
+
+### 27. WWII Timeline Quiz
+**Branch:** `feat/wwii-timeline`
+**Scope:** Create a WWII timeline quiz with major events and their date ranges. CSV data with event name, start date, end date, category (e.g. European theatre, Pacific theatre, diplomacy). Register quiz definition with appropriate modes. Needed to exercise the timeline renderer end-to-end.

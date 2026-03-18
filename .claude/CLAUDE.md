@@ -89,6 +89,7 @@ Source files are gitignored (too large). Download URLs are in each script's head
 - All colors, spacing, typography via CSS custom properties from `src/theme/theme.css`
 - Never hardcode color values. Always use `var(--color-*)`.
 - Light/dark mode via `data-theme` attribute on `<html>`.
+- `--color-overlay` for modal/dialog backdrops (light: `rgba(0,0,0,0.4)`, dark: `rgba(0,0,0,0.6)`) — don't hardcode rgba values.
 
 ### Components
 - Visualization renderers receive `VisualizationRendererProps`
@@ -116,6 +117,8 @@ Source files are gitignored (too large). Download URLs are in each script's head
 
 ### Detailed docs
 - `docs/zoom-pan-container.md` — ZoomPanContainer architecture, clustering algorithm, coordinate space handling
+- `docs/toggle-resolution.md` — Toggle hidden behaviors, per-element resolution flow, per-mode behavior
+- `docs/quiz-integration.md` — Quiz page flow, mode composition patterns, element building, background paths, answer matching
 
 ## Worktree Development
 
