@@ -263,3 +263,72 @@ The "away from dot" linear search moves in the direction from the closest dot to
 - Modify: `src/visualizations/map/MapCountryLabels.tsx` — try multiple centers
 - Test: `src/visualizations/map/tests/computePathCentroid.test.ts` — polylabel tests
 - Test: `src/visualizations/map/tests/MapCountryLabels.test.ts` — placement quality tests
+
+## Group E: Bug Fixes & Polish (no dependencies between items)
+
+### 18. Timer & Setup Panel Polish — DONE
+**Branch:** `feat/timer-polish`
+**Scope:**
+- **Time limit input styling:** The native number input spinner (up/down arrows) looks bad, especially in dark mode. Replace with custom styled increment/decrement buttons that match the app's design language. Pressing down at 1 minute should clear the field back to blank (no time limit), rather than going to 0.
+- **Timer jumps sideways:** The in-quiz timer shifts horizontally on every other tick. Likely variable-width digits or Framer Motion layout reflow. Fix with `font-variant-numeric: tabular-nums` or a fixed-width container.
+**What was done:**
+- Removed `AnimatePresence`/`motion.span` from `Timer.tsx` — the timer doesn't need tick animations, and they caused layout reflow.
+- Added `font-variant-numeric: tabular-nums` to the timer CSS for fixed-width digits.
+- Replaced `<input type="number">` with `<input type="text" inputMode="numeric">` flanked by custom `[ − ]` / `[ + ]` stepper buttons.
+- Decrementing at 1 (or from blank) clears to `undefined` (no time limit).
+- Stepper buttons styled with theme CSS custom properties, work correctly in dark mode.
+
+### 19. Map Renderer Fixes — DONE
+**Branch:** `feat/map-fixes`
+**Scope:**
+- **Missing countries:** France and Norway don't appear on the map. Investigate whether the SVG paths are missing, malformed, or being filtered out.
+- **Global background outlines:** Background country outlines should include the entire world, not just the quiz region. Zooming to the edges of Europe currently shows abrupt cut-offs. Initial viewport should still be focused on the quiz region, but panning out should reveal neighbouring countries as context.
+- **City dot colours:** City dots currently use different colours from group colour-coding. They should all be a single uniform colour — grouping colours make sense for country shapes or timeline bars, not city markers.
+- **City dots non-interactable in free recall:** When the quiz mode uses text input (free recall), hovering/clicking city dots shouldn't trigger hover effects, animations, or state changes. Interactive styling should only apply in click-based modes (identify, locate).
+**What was done:**
+- Added 5 missing countries to `world-borders.csv` (France, Norway, Kosovo, Vatican City, São Tomé and Príncipe) using Natural Earth 1:110m data via `scripts/add-missing-borders.mjs`.
+- Normalized country names between borders and capitals CSVs. Added `country_alternates` column to capitals CSV.
+- Removed `supportingDataFilter` from `QuizDefinition` — all map quizzes load full world borders as background. Added `supportingDataPaths` to Asia, Africa, and countries quizzes.
+- City dots now use uniform `--color-city-dot` CSS variable instead of group colours.
+- Map interactive styling (hover/click) gated on `onElementClick` prop, not `element.interactive` — city dots are non-interactive in free recall mode.
+
+### 21. Quiz Results Review Mode — DONE
+**Branch:** `feat/results-review`
+**Scope:** The results screen should have a way to dismiss the overlay and go back to viewing the visualization in a read-only state (no more answers accepted). Lets users review what they got right/wrong on the map/grid/timeline.
+
+### 22. Multi-Region Support
+**Branch:** `feat/multi-region`
+**Scope:** Some countries/cities belong to multiple regions (e.g. Türkiye and Russia are in both Europe and Asia). Data CSVs should support multiple regions per row (e.g. pipe-separated: `Europe|Asia`). Filtering by region should return any row that has at least one matching region. Affects quiz definitions, data loading, and any region-based filtering logic.
+
+## Group F: Quiz Data & Definitions (depend on #19 for map fixes, #22 for multi-region)
+
+### 23. Capital & Border Data for All Continents
+**Branch:** `feat/all-capitals`
+**Scope:** Extend capital city data beyond Europe. Check that the data for Asia, Africa, North America, South America, and Oceania is already in the existing csvs and if there are any edge cases we should check (e.g. Taiwan, Palestine, French Guiana, etc.). Register quiz definitions for each continent and for the world. Follow the same patterns as #17. Use Natural Earth 1:110m data, pre-converted to SVG paths.
+
+### 24. Countries Quiz Type
+**Branch:** `feat/countries-quiz`
+**Scope:** Add a "countries" quiz type — name the country from its shape/location on the map. Different from capitals (which focuses on cities). Create quiz definitions per continent and for the world, registered in the quiz registry. Can reuse the same border data from #23.
+
+### 25. Flags Quiz Type
+**Branch:** `feat/flags-quiz`
+**Scope:** Add a "flags" quiz type — identify the country from its flag, or pick the flag for a given country - this should be selectable on the quiz configuration screen. Create quiz definitions per continent and for the world. Can reuse the same data CSVs as capitals/countries with different column mappings.
+
+### 26. Periodic Table Quiz
+**Branch:** `feat/periodic-table-quiz`
+**Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element, ordered recall following the order by atomic number, prompted recall — see below). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
+**Prompted recall mode:** A new quiz mode, the inverse of identify. In identify mode, the prompt shows a name and the user clicks the element. In prompted recall, the element is visually highlighted on the visualization and the user types its name. Element names are hidden during the quiz so the user must recall them from memory. Elements are prompted in a random order. This mode should work generically (not periodic-table-specific) — any quiz definition could opt into it.
+
+### 27. WWII Timeline Quiz
+**Branch:** `feat/wwii-timeline`
+**Scope:** Create a WWII timeline quiz with major events and their date ranges. CSV data with event name, start date, end date, category (e.g. European theatre, Pacific theatre, diplomacy). Register quiz definition with appropriate modes. Needed to exercise the timeline renderer end-to-end.
+
+
+### 29. Remove `targetElementId` from Renderer Props
+**Branch:** `feat/remove-target-from-renderer`
+**Scope:** Renderers (`MapRenderer`, `PeriodicTableRenderer`) currently receive `targetElementId` via `VisualizationRendererProps` and apply highlight styling directly (highlight stroke, thicker border). This is wrong — it means the correct answer gets a visual indicator in identify mode, defeating the purpose of the quiz. Highlighting decisions belong to quiz modes, not renderers. Renderers should only know about `elementStates`.
+- Remove `targetElementId` from `VisualizationRendererProps`.
+- Remove all `isTarget`-based styling from `MapRenderer` (city dot stroke/strokeWidth on lines ~215-216) and `PeriodicTableRenderer` (rect stroke/strokeWidth on line ~122-123).
+- Quiz modes that need to highlight an element (e.g. the future prompted recall mode, or locate mode's feedback) should express it via `elementStates` using a `'highlighted'` state — renderers already handle that state.
+- Update tests and stories that pass `targetElementId`.
+- Verify identify mode no longer leaks any visual indicator for the correct answer.
