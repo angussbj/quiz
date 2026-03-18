@@ -56,4 +56,36 @@ describe('applyDataFilter', () => {
     const result = applyDataFilter(europeOnly, { column: 'region', values: ['Europe'] });
     expect(result).toHaveLength(2);
   });
+
+  it('applies multiple filters with AND logic', () => {
+    const result = applyDataFilter(rows, [
+      { column: 'region', values: ['Europe'] },
+      { column: 'subregion', values: ['Western Europe'] },
+    ]);
+    expect(result).toHaveLength(2);
+    expect(result.map((r) => r.city)).toEqual(['Paris', 'Berlin']);
+  });
+
+  it('narrows results with each additional filter', () => {
+    const result = applyDataFilter(rows, [
+      { column: 'region', values: ['Asia'] },
+      { column: 'subregion', values: ['Eastern Asia'] },
+    ]);
+    expect(result).toHaveLength(1);
+    expect(result[0].city).toBe('Tokyo');
+  });
+
+  it('returns empty when any filter in the array eliminates all rows', () => {
+    const result = applyDataFilter(rows, [
+      { column: 'region', values: ['Europe'] },
+      { column: 'subregion', values: ['Eastern Asia'] },
+    ]);
+    expect(result).toHaveLength(0);
+  });
+
+  it('treats a single-element array the same as a single filter', () => {
+    const asArray = applyDataFilter(rows, [{ column: 'region', values: ['Europe'] }]);
+    const asSingle = applyDataFilter(rows, { column: 'region', values: ['Europe'] });
+    expect(asArray).toEqual(asSingle);
+  });
 });

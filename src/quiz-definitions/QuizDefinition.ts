@@ -39,8 +39,9 @@ export interface QuizDefinition<K extends string = string> {
   /** Which CSV column serves which role. Keys are role names, values are column keys from K. */
   readonly columnMappings: Readonly<Record<string, K>>;
   readonly dataPath: string;
-  /** Optional filter to select a subset of rows from a shared CSV (e.g., by region). */
-  readonly dataFilter?: DataFilter;
+  /** Optional filter(s) to select a subset of rows from a shared CSV (e.g., by region).
+   *  Multiple filters are applied with AND logic. */
+  readonly dataFilter?: DataFilter | ReadonlyArray<DataFilter>;
   readonly supportingDataPaths: ReadonlyArray<string>;
   /** Default countdown duration in seconds. If undefined, timer runs in elapsed (count-up) mode. */
   readonly defaultCountdownSeconds?: number;
