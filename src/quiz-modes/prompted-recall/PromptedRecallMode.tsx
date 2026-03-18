@@ -85,8 +85,9 @@ export function PromptedRecallMode({
       quiz.handleSubmit(inputText);
     } else if (event.key === 'Escape') {
       setInputText('');
+      quiz.handleTextInput('');
     }
-  }, [quiz.handleSubmit, inputText]);
+  }, [quiz.handleSubmit, quiz.handleTextInput, inputText]);
 
   const handleSkip = () => {
     quiz.handleSkip();

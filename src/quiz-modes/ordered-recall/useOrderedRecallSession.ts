@@ -110,6 +110,7 @@ export function useOrderedRecallSession({
 
   const handleTextInput = useCallback(
     (text: string): boolean => {
+      clearFlash();
       if (isFinished || !currentElementId) return false;
 
       const currentRow = dataRowsById[currentElementId];
@@ -117,7 +118,6 @@ export function useOrderedRecallSession({
 
       const match = matchAnswer(text, [currentRow], answerColumn);
       if (match) {
-        clearFlash();
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
         advancePrompt();
