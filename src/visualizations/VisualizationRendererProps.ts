@@ -22,6 +22,8 @@ export interface BackgroundPath {
   readonly id: string;
   readonly svgPathData: string;
   readonly group?: string;
+  /** Display name for this path's entity (e.g., country name). */
+  readonly name?: string;
   /** ISO alpha-2 country code (e.g., 'fr') for loading associated assets like flags. */
   readonly code?: string;
 }

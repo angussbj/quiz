@@ -7,7 +7,7 @@ describe('parseBackgroundPaths', () => {
     ];
     const result = parseBackgroundPaths(rows);
     expect(result).toEqual([
-      { id: 'france', svgPathData: 'M 0,0 L 10,10 Z', group: 'Western Europe' },
+      { id: 'france', svgPathData: 'M 0,0 L 10,10 Z', group: 'Western Europe', name: 'France', code: undefined },
     ]);
   });
 
@@ -17,8 +17,8 @@ describe('parseBackgroundPaths', () => {
     ];
     const result = parseBackgroundPaths(rows);
     expect(result).toEqual([
-      { id: 'france-0', svgPathData: 'M 0,0 L 10,10 Z', group: 'Western Europe' },
-      { id: 'france-1', svgPathData: 'M 20,20 L 30,30 Z', group: 'Western Europe' },
+      { id: 'france-0', svgPathData: 'M 0,0 L 10,10 Z', group: 'Western Europe', name: 'France', code: undefined },
+      { id: 'france-1', svgPathData: 'M 20,20 L 30,30 Z', group: 'Western Europe', name: 'France', code: undefined },
     ]);
   });
 
