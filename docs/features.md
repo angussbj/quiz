@@ -221,4 +221,45 @@ Note: we're still waiting on the timeline renderer, so if any work relies on it,
 - **Flags on map:** `showFlags` split into `showMapFlags` (flags on the map near city dots / at country centroids) and `showPromptFlags` (flags in identify mode prompt bar).
 - **Identify mode prompt fields:** `ToggleDefinition` gained an optional `promptField` config (`{ type: 'text' | 'flag', column: string }`). When a toggle with a prompt field is enabled, its data renders in the identify mode prompt bar via the `IdentifyPromptFields` component.
 - **Per-mode toggle constraints:** `QuizDefinition.modeConstraints` declares per-mode constraints. Two constraint types: `ForcedValueConstraint` (force a toggle on/off) and `AtLeastOneConstraint` (prevent disabling the last enabled toggle in a group). Setup panel disables constrained toggles with tooltips.
-**Note (data):** `BackgroundPath` now carries `name` (country name) and `code` (alpha-2) fields alongside `group` (subregion). `backgroundLabels` prop threaded through QuizPage → ActiveQuiz → ModeAdapter → Renderer.
+**Note (data):** `BackgroundPath` now carries `name` (country name), `code` (alpha-2), `sovereign`, and `region` fields alongside `group` (subregion). `backgroundLabels` prop threaded through QuizPage → ActiveQuiz → ModeAdapter → Renderer. Labels/flags filtered to sovereign countries in quiz region.
+**Note (label placement):** `MapCountryLabels` component handles zoom-responsive labels with `foreignObject` for HTML text, dynamic overlap detection, city dot avoidance, and three-step placement (away-from-dot line → spiral → centroid fallback at max zoom). See feature 28 for planned optimizations.
+
+### 28. Label Placement Optimization
+**Branch:** `feat/label-placement`
+**Scope:** Improve country name/flag label placement on the map. The current placement algorithm (`MapCountryLabels.tsx`) works but has known limitations that affect visual quality.
+
+**Problem 1 — Centroid bias from vertex density:**
+The polygon centroid (shoelace formula) is biased toward coastlines with many vertices. For example, Portugal's jagged Atlantic coast has far more points than its straight Spanish border, pulling the centroid west toward the ocean. This means labels don't appear at the visual center of the country. The bounding box center avoids this bias but doesn't account for the polygon shape (e.g., for an L-shaped country it would be outside the country).
+
+**Solution:** Compute three candidate "center" positions per country and try all three:
+1. **Polygon centroid** (shoelace formula) — good for convex shapes, biased by vertex density
+2. **Bounding box center** — unbiased by vertices but ignores shape
+3. **Pole of inaccessibility** — the center of the largest inscribed circle. This is the ideal label position: it's the point furthest from any edge, guaranteed to be inside the polygon, and naturally finds the "widest" part of the country. Mapbox's `polylabel` algorithm finds this efficiently via quadtree subdivision (~50 lines of code, no dependencies).
+
+For each country, try placing the label at all three positions (starting with whichever is furthest from its closest city dot), then fall back to the three-step search (away-from-dot line → spiral → centroid fallback).
+
+**Problem 2 — Labels disappearing on zoom:**
+When the zoom level changes, label dimensions change (font size scales inversely with zoom), which changes bounding boxes, which changes overlap results. A label visible at one zoom level may disappear at the next. Labels should be stable — once visible, they shouldn't disappear when zooming in (only when zooming out and they'd overlap with a larger country's label).
+
+**Solution:** Consider caching placed positions and only re-placing if the cached position now overlaps. Or: at each zoom level, start by trying the previously-used position before searching for a new one.
+
+**Problem 3 — Linear search direction:**
+The "away from dot" linear search moves in the direction from the closest dot toward the centroid. For countries where the capital is between the centroid and a neighboring country (e.g., Lisbon is west of Portugal's centroid, so the search goes east toward Spain), this can push the label out of the country. The linear search distance is currently capped at `dotAvoidRadius * 3` to mitigate this, but the direction is still suboptimal.
+
+**Solution:** The pole of inaccessibility naturally solves this — it's already far from edges, so it's less likely to be near the capital dot in the first place. For the linear search, also try the perpendicular directions (90° rotations of the away-from-dot vector).
+
+**Implementation notes:**
+- `computePathCentroid.ts` — add `computePolylabel(d: string): ViewBoxPosition` using the quadtree algorithm
+- `computeBackgroundLabels.ts` — compute all three center candidates per country, store in `BackgroundLabel`
+- `MapCountryLabels.tsx` — try all three centers before falling back to spiral search
+- The polylabel algorithm needs the polygon as an array of `[x, y]` rings. `parsePathPoints` already extracts this.
+- Precompute all three centers in `computeBackgroundLabels` (runs once at data load, not per frame)
+- Unit test with Portugal data (test already exists in `MapCountryLabels.test.ts`) — verify polylabel gives a more central position than the polygon centroid
+
+**Files:**
+- Modify: `src/visualizations/map/computePathCentroid.ts` — add `computePolylabel`
+- Modify: `src/visualizations/map/BackgroundLabel.ts` — add `centers` array
+- Modify: `src/visualizations/map/computeBackgroundLabels.ts` — compute three centers
+- Modify: `src/visualizations/map/MapCountryLabels.tsx` — try multiple centers
+- Test: `src/visualizations/map/tests/computePathCentroid.test.ts` — polylabel tests
+- Test: `src/visualizations/map/tests/MapCountryLabels.test.ts` — placement quality tests

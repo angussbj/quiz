@@ -23,9 +23,9 @@ describe('Portugal label placement diagnostics', () => {
     console.log('sqrtArea:', Math.sqrt(area));
     console.log('countryRadius:', Math.sqrt(area) * 0.6);
 
-    // Centroid should be roughly in central Portugal
-    expect(centroid.x).toBeCloseTo(-7.98, 0);
-    expect(centroid.y).toBeCloseTo(-39.68, 0);
+    // Polygon centroid — biased toward jagged west coast (see label placement optimization task)
+    expect(centroid.x).toBeCloseTo(-7.97, 0);
+    expect(centroid.y).toBeCloseTo(-39.71, 0);
     expect(area).toBeGreaterThan(5);
   });
 

@@ -4,6 +4,10 @@ import type { ViewBoxPosition } from '../VisualizationElement';
  * Compute the centroid (center of mass) of an SVG path.
  * Parses M/L/Z commands, computes the polygon centroid using the
  * shoelace formula. Falls back to bounding box center for degenerate paths.
+ *
+ * Note: The polygon centroid is biased toward jagged coastlines with many
+ * points. See feature task "Label Placement Optimization" for planned
+ * improvements using pole of inaccessibility.
  */
 export function computePathCentroid(d: string): ViewBoxPosition {
   const points = parsePathPoints(d);
