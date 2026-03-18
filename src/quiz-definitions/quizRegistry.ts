@@ -180,7 +180,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Match European countries to their flags.',
     path: ['Geography', 'Flags'],
     visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice'],
+    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
@@ -202,7 +202,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Match Asian countries to their flags.',
     path: ['Geography', 'Flags'],
     visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice'],
+    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
@@ -224,7 +224,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Match African countries to their flags.',
     path: ['Geography', 'Flags'],
     visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice'],
+    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
@@ -246,7 +246,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Match countries of the Americas to their flags.',
     path: ['Geography', 'Flags'],
     visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice'],
+    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
@@ -268,7 +268,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Match Oceanian countries to their flags.',
     path: ['Geography', 'Flags'],
     visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice'],
+    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
@@ -290,7 +290,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Match all countries of the world to their flags.',
     path: ['Geography', 'Flags'],
     visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice'],
+    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
