@@ -6,6 +6,7 @@ import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
+import { IdentifyPromptFields, type PromptField } from './IdentifyPromptFields';
 import styles from './IdentifyMode.module.css';
 
 export interface IdentifyModeProps extends QuizModeProps {
@@ -28,6 +29,7 @@ export interface IdentifyModeProps extends QuizModeProps {
  */
 export function IdentifyMode({
   elements,
+  dataRows,
   onElementSelect,
   onSkip,
   onGiveUp,
@@ -102,6 +104,34 @@ export function IdentifyMode({
     [reviewing, elementToggles, reviewElementStates, toggleKeys],
   );
 
+  // Build a lookup from element ID to data row for prompt fields
+  const rowById = useMemo(() => {
+    const map = new Map<string, Readonly<Record<string, string>>>();
+    const idColumn = 'id';
+    for (const row of dataRows) {
+      const id = row[idColumn];
+      if (id) map.set(id, row);
+    }
+    return map;
+  }, [dataRows]);
+
+  const promptFields = useMemo((): ReadonlyArray<PromptField> => {
+    if (!quiz.currentElementId) return [];
+    const row = rowById.get(quiz.currentElementId);
+    if (!row) return [];
+
+    const fields: PromptField[] = [];
+    for (const toggleDef of toggleDefinitions) {
+      if (!toggleDef.promptField) continue;
+      if (!toggleValues[toggleDef.key]) continue;
+      const value = row[toggleDef.promptField.column];
+      if (value) {
+        fields.push({ type: toggleDef.promptField.type, value });
+      }
+    }
+    return fields;
+  }, [quiz.currentElementId, rowById, toggleDefinitions, toggleValues]);
+
   const progressPercent = quiz.totalPrompts > 0
     ? (quiz.correctCount + quiz.skippedCount) / quiz.totalPrompts * 100
     : 0;
@@ -121,6 +151,7 @@ export function IdentifyMode({
 
       {!quiz.isFinished && !reviewing && (
         <div className={styles.promptBar}>
+          {promptFields.length > 0 && <IdentifyPromptFields fields={promptFields} />}
           <span className={styles.promptText}>
             Click on <span className={styles.promptLabel}>{quiz.currentElementLabel}</span>
           </span>

@@ -6,6 +6,14 @@
  */
 export type HiddenBehavior = 'never' | 'on-reveal' | { readonly hintAfter: number };
 
+/** How to display this toggle's data in the identify mode prompt bar. */
+export interface PromptFieldConfig {
+  /** Type of rendering: 'text' for plain text, 'flag' for SVG flag image. */
+  readonly type: 'text' | 'flag';
+  /** CSV column key to pull the value from. For 'flag', this is the country code column. */
+  readonly column: string;
+}
+
 export interface ToggleDefinition {
   readonly key: string;
   readonly label: string;
@@ -13,6 +21,8 @@ export interface ToggleDefinition {
   readonly group: string;
   /** What happens when this toggle is off. Defaults to 'never' if omitted. */
   readonly hiddenBehavior?: HiddenBehavior;
+  /** If set, this toggle adds a field to the identify mode prompt bar when enabled. */
+  readonly promptField?: PromptFieldConfig;
 }
 
 export interface TogglePreset {

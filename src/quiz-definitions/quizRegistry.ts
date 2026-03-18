@@ -19,9 +19,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
       { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', promptField: { type: 'text', column: 'country' } },
       { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
-      { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'flag', column: 'code' } },
     ],
     presets: [
       {
