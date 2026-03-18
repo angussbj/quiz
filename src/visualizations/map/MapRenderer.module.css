@@ -56,3 +56,13 @@
   pointer-events: none;
   user-select: none;
 }
+
+.backgroundLabel {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-family);
+  font-size: 0.45px;
+  font-weight: 500;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.8;
+}

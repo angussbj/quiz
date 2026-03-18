@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MapRenderer } from '../MapRenderer';
 import type { VisualizationRendererProps } from '../../VisualizationRendererProps';
-import { sampleCityElements, sampleBackgroundPaths } from './sampleMapData';
+import { sampleCityElements, sampleBackgroundPaths, sampleBackgroundLabels } from './sampleMapData';
 
 jest.mock('react-zoom-pan-pinch', () => ({
   TransformWrapper: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -23,6 +23,7 @@ function renderMap(overrides: Partial<VisualizationRendererProps> = {}) {
     elementStates: {},
     toggles: { showBorders: true, showCityDots: true, showCountryNames: false },
     backgroundPaths: sampleBackgroundPaths,
+    backgroundLabels: sampleBackgroundLabels,
     ...overrides,
   };
   return render(<MapRenderer {...defaults} />);
@@ -57,21 +58,21 @@ describe('MapRenderer', () => {
     expect(circles).toHaveLength(0);
   });
 
-  it('shows labels when showCountryNames toggle is true', () => {
+  it('shows background labels when showCountryNames toggle is true', () => {
     renderMap({
       toggles: { showBorders: true, showCityDots: true, showCountryNames: true },
     });
-    expect(screen.getByText('Paris')).toBeInTheDocument();
-    expect(screen.getByText('Berlin')).toBeInTheDocument();
-    expect(screen.getByText('Madrid')).toBeInTheDocument();
-    expect(screen.getByText('Rome')).toBeInTheDocument();
+    expect(screen.getByText('France')).toBeInTheDocument();
+    expect(screen.getByText('Germany')).toBeInTheDocument();
+    expect(screen.getByText('Spain')).toBeInTheDocument();
+    expect(screen.getByText('Italy')).toBeInTheDocument();
   });
 
-  it('hides labels when showCountryNames toggle is false', () => {
+  it('hides background labels when showCountryNames toggle is false', () => {
     renderMap({
       toggles: { showBorders: true, showCityDots: true, showCountryNames: false },
     });
-    expect(screen.queryByText('Paris')).not.toBeInTheDocument();
+    expect(screen.queryByText('France')).not.toBeInTheDocument();
   });
 
   it('calls onElementClick when a city dot is clicked', () => {
@@ -134,19 +135,16 @@ describe('MapRenderer', () => {
     expect(circles).toHaveLength(sampleCityElements.length);
   });
 
-  it('applies per-element toggle overrides from elementToggles', () => {
-    renderMap({
-      toggles: { showBorders: true, showCityDots: true, showCountryNames: false },
+  it('applies per-element toggle overrides for city dots', () => {
+    const { container } = renderMap({
+      toggles: { showBorders: true, showCityDots: false, showCountryNames: false },
       elementToggles: {
-        paris: { showCountryNames: true },
+        paris: { showCityDots: true },
       },
     });
-    // Paris should show a label due to per-element override
-    expect(screen.getByText('Paris')).toBeInTheDocument();
-    // Others should not since the global toggle is false
-    expect(screen.queryByText('Berlin')).not.toBeInTheDocument();
-    expect(screen.queryByText('Madrid')).not.toBeInTheDocument();
-    expect(screen.queryByText('Rome')).not.toBeInTheDocument();
+    // Only Paris should show a dot due to per-element override
+    const circles = container.querySelectorAll('circle');
+    expect(circles).toHaveLength(1);
   });
 
   it('uses uniform city dot colour instead of group colours', () => {

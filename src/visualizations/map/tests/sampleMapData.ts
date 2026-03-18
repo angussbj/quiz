@@ -1,6 +1,8 @@
 import type { MapElement } from '../MapElement';
 import type { BackgroundPath } from '../../VisualizationRendererProps';
+import type { BackgroundLabel } from '../BackgroundLabel';
 import { projectGeo } from '../projectGeo';
+import { computeBackgroundLabels } from '../computeBackgroundLabels';
 
 /**
  * Sample map elements for testing: 4 European capital cities.
@@ -83,3 +85,7 @@ export const sampleBackgroundPaths: ReadonlyArray<BackgroundPath> = [
     group: 'Italy',
   },
 ];
+
+/** Background labels computed from the sample border paths. */
+export const sampleBackgroundLabels: ReadonlyArray<BackgroundLabel> =
+  computeBackgroundLabels(sampleBackgroundPaths);

@@ -8,7 +8,6 @@ import { isMapElement } from './MapElement';
 import styles from './MapRenderer.module.css';
 
 const CITY_DOT_RADIUS = 0.3;
-const LABEL_OFFSET_Y = -0.6;
 const GROUP_COLORS = [
   'var(--color-group-1)',
   'var(--color-group-2)',
@@ -71,6 +70,7 @@ export function MapRenderer({
   toggles,
   elementToggles,
   backgroundPaths,
+  backgroundLabels,
   svgOverlay,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
@@ -96,6 +96,7 @@ export function MapRenderer({
         toggles={toggles}
         elementToggles={elementToggles}
         backgroundPaths={backgroundPaths}
+        backgroundLabels={backgroundLabels}
       />
       {svgOverlay}
     </ZoomPanContainer>
@@ -113,6 +114,7 @@ interface MapContentProps {
   readonly toggles: Readonly<Record<string, boolean>>;
   readonly elementToggles: VisualizationRendererProps['elementToggles'];
   readonly backgroundPaths: VisualizationRendererProps['backgroundPaths'];
+  readonly backgroundLabels: VisualizationRendererProps['backgroundLabels'];
 }
 
 function MapContent({
@@ -126,6 +128,7 @@ function MapContent({
   toggles,
   elementToggles,
   backgroundPaths,
+  backgroundLabels,
 }: MapContentProps) {
   const { clusteredElementIds } = useZoomPan();
 
@@ -230,24 +233,19 @@ function MapContent({
         );
       })}
 
-      {/* Labels */}
-      {elements.map((element) => {
-        if (clusteredElementIds.has(element.id)) return null;
-        if (!elementToggle(elementToggles, toggles, element.id, 'showCountryNames')) return null;
-        const state = elementStates[element.id];
-        if (state === 'hidden') return null;
-        return (
-          <text
-            key={`label-${element.id}`}
-            x={element.viewBoxCenter.x}
-            y={element.viewBoxCenter.y + LABEL_OFFSET_Y}
-            className={styles.label}
-            textAnchor="middle"
-          >
-            {element.label}
-          </text>
-        );
-      })}
+      {/* Country name labels (from background border data) */}
+      {toggles['showCountryNames'] && backgroundLabels?.map((label) => (
+        <text
+          key={`bg-label-${label.id}`}
+          x={label.center.x}
+          y={label.center.y}
+          className={styles.backgroundLabel}
+          textAnchor="middle"
+          dominantBaseline="central"
+        >
+          {label.name}
+        </text>
+      ))}
     </g>
   );
 }

@@ -5,6 +5,7 @@ import { useQuizData } from '@/quiz-definitions/useQuizData';
 import { buildElements } from '@/visualizations/buildElements';
 import { resolveRenderer } from '@/visualizations/resolveRenderer';
 import { useBackgroundPaths } from '@/visualizations/map/useBackgroundPaths';
+import { computeBackgroundLabels } from '@/visualizations/map/computeBackgroundLabels';
 import { QuizShell } from '@/quiz-modes/QuizShell';
 import { ActiveQuiz } from '@/quiz-modes/ActiveQuiz';
 import styles from './QuizPage.module.css';
@@ -75,6 +76,10 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
     () => buildElements(definition.visualizationType, rows, definition.columnMappings),
     [definition.visualizationType, rows, definition.columnMappings],
   );
+  const backgroundLabels = useMemo(
+    () => backgroundPaths ? computeBackgroundLabels(backgroundPaths) : undefined,
+    [backgroundPaths],
+  );
   const Renderer = resolveRenderer(definition.visualizationType);
 
   return (
@@ -97,6 +102,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             toggleDefinitions={definition.toggles}
             Renderer={Renderer}
             backgroundPaths={backgroundPaths}
+            backgroundLabels={backgroundLabels}
           />
         )}
       </QuizShell>
