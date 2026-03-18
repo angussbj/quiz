@@ -99,6 +99,47 @@ describe('QuizSetupPanel', () => {
     expect(props.onCountdownChange).toHaveBeenCalledWith(undefined);
   });
 
+  it('renders stepper buttons for time limit', () => {
+    renderPanel();
+    expect(screen.getByRole('button', { name: 'Decrease time limit' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Increase time limit' })).toBeInTheDocument();
+  });
+
+  it('increments time limit from undefined to 1', async () => {
+    const user = userEvent.setup();
+    const props = renderPanel();
+    await user.click(screen.getByRole('button', { name: 'Increase time limit' }));
+    expect(props.onCountdownChange).toHaveBeenCalledWith(1);
+  });
+
+  it('increments time limit from existing value', async () => {
+    const user = userEvent.setup();
+    const props = renderPanel({ countdownMinutes: 5 });
+    await user.click(screen.getByRole('button', { name: 'Increase time limit' }));
+    expect(props.onCountdownChange).toHaveBeenCalledWith(6);
+  });
+
+  it('decrements time limit', async () => {
+    const user = userEvent.setup();
+    const props = renderPanel({ countdownMinutes: 5 });
+    await user.click(screen.getByRole('button', { name: 'Decrease time limit' }));
+    expect(props.onCountdownChange).toHaveBeenCalledWith(4);
+  });
+
+  it('clears time limit when decrementing from 1', async () => {
+    const user = userEvent.setup();
+    const props = renderPanel({ countdownMinutes: 1 });
+    await user.click(screen.getByRole('button', { name: 'Decrease time limit' }));
+    expect(props.onCountdownChange).toHaveBeenCalledWith(undefined);
+  });
+
+  it('clears time limit when decrementing from undefined', async () => {
+    const user = userEvent.setup();
+    const props = renderPanel();
+    await user.click(screen.getByRole('button', { name: 'Decrease time limit' }));
+    expect(props.onCountdownChange).toHaveBeenCalledWith(undefined);
+  });
+
   it('renders toggle panel with toggles', () => {
     renderPanel();
     expect(screen.getByText('Show labels')).toBeInTheDocument();

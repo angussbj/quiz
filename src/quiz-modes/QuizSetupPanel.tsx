@@ -77,22 +77,54 @@ export function QuizSetupPanel({
         )}
 
         <section className={styles.section}>
-          <label className={styles.sectionTitle} htmlFor="countdown-input">
+          <span className={styles.sectionTitle} id="countdown-label">
             Time limit
-          </label>
+          </span>
           <div className={styles.timerRow}>
+            <button
+              type="button"
+              className={styles.stepperButton}
+              aria-label="Decrease time limit"
+              onClick={() => {
+                if (countdownMinutes === undefined || countdownMinutes <= 1) {
+                  onCountdownChange(undefined);
+                } else {
+                  onCountdownChange(countdownMinutes - 1);
+                }
+              }}
+            >
+              −
+            </button>
             <input
               id="countdown-input"
-              type="number"
+              type="text"
+              inputMode="numeric"
               className={styles.timerInput}
-              min={1}
+              aria-labelledby="countdown-label"
               placeholder="—"
               value={countdownMinutes ?? ''}
               onChange={(event) => {
-                const value = event.target.value;
-                onCountdownChange(value === '' ? undefined : Math.max(1, parseInt(value, 10)));
+                const raw = event.target.value;
+                if (raw === '') {
+                  onCountdownChange(undefined);
+                  return;
+                }
+                const parsed = parseInt(raw, 10);
+                if (!Number.isNaN(parsed)) {
+                  onCountdownChange(Math.max(1, parsed));
+                }
               }}
             />
+            <button
+              type="button"
+              className={styles.stepperButton}
+              aria-label="Increase time limit"
+              onClick={() => {
+                onCountdownChange((countdownMinutes ?? 0) + 1);
+              }}
+            >
+              +
+            </button>
             <span className={styles.timerLabel}>minutes</span>
           </div>
         </section>
