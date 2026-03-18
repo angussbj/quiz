@@ -114,6 +114,96 @@ export function MapRenderer({
   );
 }
 
+/** Render shape elements filtered to a specific state (or undefined for default/no-state). */
+function renderShapeElements(
+  elements: VisualizationRendererProps['elements'],
+  elementStates: VisualizationRendererProps['elementStates'],
+  clusteredElementIds: ReadonlySet<string>,
+  onElementClick: ((elementId: string) => void) | undefined,
+  targetState: ElementVisualState | undefined,
+) {
+  return elements.map((element) => {
+    if (clusteredElementIds.has(element.id)) return null;
+    if (!isMapElement(element) || !element.svgPathData) return null;
+    const state = elementStates[element.id];
+    if (state === 'hidden') return null;
+    if (targetState === undefined) {
+      // Default layer: only elements with no state color
+      if (stateColor(state) !== undefined) return null;
+    } else {
+      if (state !== targetState) return null;
+    }
+    const fillColor = shapeFillColor(state);
+    const hasStateColor = stateColor(state) !== undefined;
+    return (
+      <path
+        key={`shape-${element.id}`}
+        d={element.svgPathData}
+        style={{
+          fill: fillColor,
+          fillOpacity: shapeFillOpacity(state),
+          stroke: fillColor,
+          strokeWidth: hasStateColor ? 0.3 : 0.15,
+        }}
+        className={onElementClick ? styles.interactivePath : styles.borderPath}
+        onClick={
+          onElementClick
+            ? (e) => {
+                e.stopPropagation();
+                onElementClick(element.id);
+              }
+            : undefined
+        }
+      />
+    );
+  });
+}
+
+/** Render shape elements filtered to a specific state (or undefined for default/no-state). */
+function renderShapeElements(
+  elements: VisualizationRendererProps['elements'],
+  elementStates: VisualizationRendererProps['elementStates'],
+  uniqueGroups: ReadonlyArray<string>,
+  clusteredElementIds: ReadonlySet<string>,
+  onElementClick: ((elementId: string) => void) | undefined,
+  targetState: ElementVisualState | undefined,
+) {
+  return elements.map((element) => {
+    if (clusteredElementIds.has(element.id)) return null;
+    if (!isMapElement(element) || !element.svgPathData) return null;
+    const state = elementStates[element.id];
+    if (state === 'hidden') return null;
+    if (targetState === undefined) {
+      // Default layer: only elements with no state color
+      if (stateColor(state) !== undefined) return null;
+    } else {
+      if (state !== targetState) return null;
+    }
+    const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
+    return (
+      <path
+        key={`shape-${element.id}`}
+        d={element.svgPathData}
+        style={{
+          fill: color,
+          fillOpacity: stateFillOpacity(state),
+          stroke: color,
+          strokeWidth: stateColor(state) !== undefined ? 0.3 : 0.15,
+        }}
+        className={onElementClick ? styles.interactivePath : styles.borderPath}
+        onClick={
+          onElementClick
+            ? (e) => {
+                e.stopPropagation();
+                onElementClick(element.id);
+              }
+            : undefined
+        }
+      />
+    );
+  });
+}
+
 interface MapContentProps {
   readonly elements: VisualizationRendererProps['elements'];
   readonly elementStates: VisualizationRendererProps['elementStates'];
@@ -194,33 +284,13 @@ function MapContent({
       ))}
 
       {/* Map element shapes (for country quizzes where elements have svgPathData).
-          Always rendered — these are interactive quiz items, not decorative borders. */}
-      {elements.map((element) => {
-        if (clusteredElementIds.has(element.id)) return null;
-        if (!isMapElement(element) || !element.svgPathData) return null;
-        const state = elementStates[element.id];
-        if (state === 'hidden') return null;
-        const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
-        return (
-          <path
-            key={`shape-${element.id}`}
-            d={element.svgPathData}
-            fill={color}
-            fillOpacity={stateFillOpacity(state)}
-            stroke={color}
-            strokeWidth={0.15}
-            className={onElementClick ? styles.interactivePath : styles.borderPath}
-            onClick={
-              onElementClick
-                ? (e) => {
-                    e.stopPropagation();
-                    onElementClick(element.id);
-                  }
-                : undefined
-            }
-          />
-        );
-      })}
+          Rendered in layers: default first, then incorrect, correct, highlighted on top
+          so state-colored shapes aren't obscured by neighbouring borders. */}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect')}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'revealed')}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct')}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted')}
 
       {/* Country name labels and flags (from background border data, unified overlap detection) */}
       {(toggles['showCountryNames'] || toggles['showMapFlags']) && backgroundLabels && (
