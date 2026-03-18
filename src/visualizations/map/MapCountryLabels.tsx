@@ -126,10 +126,18 @@ function buildAwayFromDotCandidates(
   const ux = dx / len;
   const uy = dy / len;
 
+  // Three directions: away from dot, 90° CW, 90° CCW
+  const directions: ReadonlyArray<readonly [number, number]> = [
+    [ux, uy],       // away from dot
+    [uy, -ux],      // 90° clockwise
+    [-uy, ux],      // 90° counter-clockwise
+  ];
+
   const candidates: Array<readonly [number, number]> = [];
-  // Start from centroid and step further away from the dot
-  for (let d = 0; d <= maxDist; d += stepSize) {
-    candidates.push([centroidX + ux * d, centroidY + uy * d]);
+  for (const [dirX, dirY] of directions) {
+    for (let d = 0; d <= maxDist; d += stepSize) {
+      candidates.push([centroidX + dirX * d, centroidY + dirY * d]);
+    }
   }
   return candidates;
 }
