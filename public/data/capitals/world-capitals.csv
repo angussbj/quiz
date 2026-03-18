@@ -130,7 +130,7 @@ taipei,Taipei,Taiwan,25.033,121.5654,Asia,Eastern Asia,Taibei
 dushanbe,Dushanbe,Tajikistan,38.5367,68.78,Asia,Central Asia,
 bangkok,Bangkok,Thailand,13.754,100.5014,Asia,South-Eastern Asia,Krung Thep
 dili,Dili,Timor-Leste,-8.5586,125.5736,Asia,South-Eastern Asia,
-ankara,Ankara,Türkiye,39.9034,32.4331,Asia,Western Asia,Angora
+ankara,Ankara,Türkiye,39.9034,32.4331,Europe|Asia,Western Asia,Angora
 ashgabat,Ashgabat,Turkmenistan,37.95,58.3833,Asia,Central Asia,
 abu-dhabi,Abu Dhabi,United Arab Emirates,24.4136,54.433,Asia,Western Asia,
 tashkent,Tashkent,Uzbekistan,41.2647,69.2163,Asia,Central Asia,
@@ -171,7 +171,7 @@ oslo,Oslo,Norway,59.9127,10.7461,Europe,Northern Europe,
 warsaw,Warsaw,Poland,52.2298,21.0118,Europe,Central Europe,Warszawa
 lisbon,Lisbon,Portugal,38.7263,-9.1484,Europe,Southern Europe,Lisboa
 bucharest,Bucharest,Romania,44.4323,26.1063,Europe,Southeast Europe,"București|Bucuresti"
-moscow,Moscow,Russia,55.7522,37.6156,Europe,Eastern Europe,"Moskva|Moskwa"
+moscow,Moscow,Russia,55.7522,37.6156,Europe|Asia,Eastern Europe,"Moskva|Moskwa"
 san-marino,San Marino,San Marino,43.9424,12.4578,Europe,Southern Europe,City of San Marino
 belgrade,Belgrade,Serbia,44.7866,20.4489,Europe,Southeast Europe,Beograd
 bratislava,Bratislava,Slovakia,48.1482,17.1067,Europe,Central Europe,

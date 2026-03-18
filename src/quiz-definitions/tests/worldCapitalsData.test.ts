@@ -51,9 +51,12 @@ describe('world-capitals.csv data validation', () => {
     }
   });
 
-  it('filters to 46 European countries', () => {
+  it('filters to 47 European countries (includes multi-region Turkey and Russia)', () => {
     const european = applyDataFilter(allRows, { column: 'region', values: ['Europe'] });
-    expect(european.length).toBe(46);
+    expect(european.length).toBe(47);
+    const countries = european.map((r) => r.country);
+    expect(countries).toContain('Türkiye');
+    expect(countries).toContain('Russia');
   });
 
   it('includes Israel, Palestine, and Taiwan', () => {
@@ -68,8 +71,8 @@ describe('world-capitals.csv data validation', () => {
     expect(countries).toContain('Kosovo');
   });
 
-  it('has 5 regions', () => {
-    const regions = new Set(allRows.map((r) => r.region));
+  it('has 5 logical regions (some rows are multi-region)', () => {
+    const regions = new Set(allRows.flatMap((r) => r.region.split('|')));
     expect(regions.size).toBe(5);
     expect(regions).toContain('Africa');
     expect(regions).toContain('Americas');

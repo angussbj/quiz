@@ -37,9 +37,12 @@ describe('world-borders.csv data validation', () => {
     }
   });
 
-  it('filters European borders', () => {
+  it('filters European borders (includes multi-region Turkey and Russia)', () => {
     const european = applyDataFilter(allRows, { column: 'region', values: ['Europe'] });
     expect(european.length).toBeGreaterThan(40);
+    const names = european.map((r) => r.name);
+    expect(names).toContain('Türkiye');
+    expect(names).toContain('Russia');
   });
 
   it('parseBackgroundPaths produces valid output from European borders', () => {

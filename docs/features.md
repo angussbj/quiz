@@ -43,9 +43,10 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Branch:** `feat/results-review`
 **Scope:** The results screen should have a way to dismiss the overlay and go back to viewing the visualization in a read-only state (no more answers accepted). Lets users review what they got right/wrong on the map/grid/timeline.
 
-### 22. Multi-Region Support
+### 22. Multi-Region Support — DONE
 **Branch:** `feat/multi-region`
 **Scope:** Some countries/cities belong to multiple regions (e.g. Türkiye and Russia are in both Europe and Asia). Data CSVs should support multiple regions per row (e.g. pipe-separated: `Europe|Asia`). Filtering by region should return any row that has at least one matching region. Affects quiz definitions, data loading, and any region-based filtering logic.
+**Notes:** `applyDataFilter` splits cell values on `|` before matching. Turkey and Russia are now `Europe|Asia` in both world-capitals.csv and world-borders.csv. To add more multi-region countries, just update the `region` column — no code changes needed.
 
 ## Group F: Quiz Data & Definitions (depend on #19 for map fixes, #22 for multi-region)
 
