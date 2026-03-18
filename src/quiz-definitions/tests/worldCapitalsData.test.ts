@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { parseCsv } from '../parseCsv';
 import { applyDataFilter } from '../applyDataFilter';
@@ -79,5 +79,33 @@ describe('world-capitals.csv data validation', () => {
     expect(regions).toContain('Asia');
     expect(regions).toContain('Europe');
     expect(regions).toContain('Oceania');
+  });
+
+  it('has country_code column', () => {
+    const row = allRows[0];
+    expect(row).toHaveProperty('country_code');
+  });
+
+  it('has non-empty country_code for every row', () => {
+    const empty = allRows.filter((r) => !r.country_code);
+    expect(empty).toHaveLength(0);
+  });
+
+  it('has no duplicate country codes', () => {
+    const codes = allRows.map((r) => r.country_code);
+    const uniqueCodes = new Set(codes);
+    expect(uniqueCodes.size).toBe(codes.length);
+  });
+
+  it('has a matching flag SVG for every country_code', () => {
+    const flagsDir = resolve(__dirname, '../../../public/flags');
+    const missing: string[] = [];
+    for (const row of allRows) {
+      const flagPath = resolve(flagsDir, `${row.country_code}.svg`);
+      if (!existsSync(flagPath)) {
+        missing.push(`${row.country} (${row.country_code})`);
+      }
+    }
+    expect(missing).toEqual([]);
   });
 });

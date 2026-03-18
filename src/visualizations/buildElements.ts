@@ -3,6 +3,7 @@ import type { VisualizationElement } from './VisualizationElement';
 import { buildMapElements } from './map/buildMapElements';
 import { buildGridElements } from './periodic-table/buildGridElements';
 import { buildTimelineElementsFromRows } from './timeline/buildTimelineElementsFromRows';
+import { buildFlagGridElements } from './flag-grid/buildFlagGridElements';
 
 export function buildElements(
   visualizationType: VisualizationType,
@@ -16,5 +17,7 @@ export function buildElements(
       return buildGridElements(rows, columnMappings);
     case 'timeline':
       return buildTimelineElementsFromRows(rows, columnMappings);
+    case 'flag-grid':
+      return buildFlagGridElements(rows, columnMappings);
   }
 }

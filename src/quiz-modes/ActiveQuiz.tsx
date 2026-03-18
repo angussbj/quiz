@@ -177,7 +177,7 @@ export function ActiveQuiz({
           percentage={finishState.percentage}
           elapsedSeconds={elapsedSeconds}
           onRetry={config.onReconfigure}
-          onReview={handleReview}
+          onReview={config.selectedMode !== 'multiple-choice' ? handleReview : undefined}
         />
       )}
 

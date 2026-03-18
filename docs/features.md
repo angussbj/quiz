@@ -76,9 +76,19 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Branch:** `feat/countries-quiz`
 **Scope:** Add a "countries" quiz type — name the country from its shape/location on the map. Different from capitals (which focuses on cities). Create quiz definitions per continent and for the world, registered in the quiz registry. Can reuse the same border data from #23.
 
-### 25. Flags Quiz Type
-**Branch:** `feat/flags-quiz`
+### 25. Flags Quiz Type — DONE
+**Branch:** `worktree-flags-quiz`
 **Scope:** Add a "flags" quiz type — identify the country from its flag, or pick the flag for a given country - this should be selectable on the quiz configuration screen. Create quiz definitions per continent and for the world. Can reuse the same data CSVs as capitals/countries with different column mappings.
+**What was done:**
+- Added `country_code` column (ISO 3166-1 alpha-2) to `world-capitals.csv` via `scripts/addCountryCodes.ts`. Fixed pre-existing field alignment bug where codes were shifted into `country_alternates`.
+- 271 flag SVGs bundled in `public/flags/{code}.svg`.
+- New `flag-grid` visualization type: `FlagGridElement`, `buildFlagGridElements` (shuffled 8-column layout), `FlagGridRenderer` (SVG `<image>` elements, state-based borders, country name on reveal).
+- New `multiple-choice` quiz mode (previously a stub): `useMultipleChoiceQuiz` hook (shuffled prompts, 6 random distractors, correct/incorrect flash feedback, auto-advance), `MultipleChoiceMode` component with `renderChoice` render prop for quiz-specific visuals.
+- Quiz definitions for Europe, Asia, Africa, Americas, Oceania, and World flags. All reuse `world-capitals.csv` with region filters and `flag: 'country_code'` column mapping.
+- Available modes: free-recall-unordered, multiple-choice. Prompted recall to be added after rebase on that feature's branch.
+**Notes for other features:**
+- Feature 26 (Periodic Table) should consider using multiple-choice mode — it's now generic via the `renderChoice` prop.
+- The `MultipleChoiceMode` prompt is hardcoded as "Which flag is X?" — needs a `promptTemplate` prop if reused for non-flag quizzes.
 
 ### 26. Periodic Table Quiz — DONE
 **Branch:** `worktree-periodic-table`
