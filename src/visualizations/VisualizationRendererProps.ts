@@ -28,6 +28,8 @@ export interface BackgroundPath {
   readonly code?: string;
   /** Sovereign country name. Matches name for sovereign states; parent country for territories; blank for disputed. */
   readonly sovereign?: string;
+  /** Region (e.g., 'Europe', 'Asia') for filtering. May be pipe-separated for multi-region. */
+  readonly region?: string;
 }
 
 /**

@@ -32,6 +32,7 @@ export function parseBackgroundPaths(
         name,
         code,
         sovereign: row['sovereign'],
+        region: row['region'],
       });
     } else {
       for (let i = 0; i < segments.length; i++) {

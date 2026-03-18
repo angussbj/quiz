@@ -45,6 +45,7 @@ export function computeBackgroundLabels(
       code: largest.code,
       sovereign: largest.sovereign,
       area: totalArea,
+      region: largest.region,
     });
   }
 

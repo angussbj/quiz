@@ -76,10 +76,21 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
     () => buildElements(definition.visualizationType, rows, definition.columnMappings),
     [definition.visualizationType, rows, definition.columnMappings],
   );
-  const backgroundLabels = useMemo(
-    () => backgroundPaths ? computeBackgroundLabels(backgroundPaths) : undefined,
-    [backgroundPaths],
-  );
+  const backgroundLabels = useMemo(() => {
+    if (!backgroundPaths) return undefined;
+    const allLabels = computeBackgroundLabels(backgroundPaths);
+    const regionValues = definition.dataFilter?.values;
+    return allLabels.filter((label) => {
+      // Only sovereign countries (sovereign matches name)
+      if (!label.sovereign || label.sovereign !== label.name) return false;
+      // Filter to quiz region if defined
+      if (regionValues && label.region) {
+        const labelRegions = label.region.split('|');
+        return regionValues.some((r) => labelRegions.includes(r));
+      }
+      return true;
+    });
+  }, [backgroundPaths, definition.dataFilter?.values]);
   const Renderer = resolveRenderer(definition.visualizationType);
 
   return (

@@ -23,6 +23,7 @@ export function parseBackgroundPaths(
         name: row['name'],
         code: row['code'],
         sovereign: row['sovereign'],
+        region: row['region'],
       });
     }
   }

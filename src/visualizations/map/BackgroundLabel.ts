@@ -10,4 +10,6 @@ export interface BackgroundLabel {
   readonly sovereign?: string;
   /** Approximate area of the largest path segment (used for importance ranking). */
   readonly area: number;
+  /** Region (e.g., 'Europe', 'Asia') for filtering. May be pipe-separated for multi-region. */
+  readonly region?: string;
 }
