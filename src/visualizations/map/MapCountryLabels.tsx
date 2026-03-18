@@ -10,7 +10,7 @@ import styles from './MapCountryLabels.module.css';
  */
 const BASE_FONT_SIZE = 0.8;
 const MIN_VIEWBOX_FONT_SIZE = 0.3;
-const MAX_VIEWBOX_FONT_SIZE = 2;
+const MAX_VIEWBOX_FONT_SIZE = 1.2;
 
 /** Label box width relative to sqrt(area) of the country. */
 const LABEL_WIDTH_FACTOR = 1.5;
@@ -83,12 +83,14 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
         const flagWidth = flagHeight * 4 / 3;
         const hasFlag = showFlags && !!label.code;
 
+        // Estimate text width: ~0.6em per character for typical font
+        const textWidthEstimate = showNames ? label.name.length * fontSize * 0.6 : 0;
         const width = showNames
-          ? Math.max(sqrtArea * LABEL_WIDTH_FACTOR * sizeFactor, fontSize * 4)
+          ? Math.max(sqrtArea * LABEL_WIDTH_FACTOR * sizeFactor, textWidthEstimate, fontSize * 4)
           : hasFlag ? flagWidth : 0;
         if (width === 0) continue;
 
-        const textHeight = showNames ? fontSize * 1.4 : 0;
+        const textHeight = showNames ? fontSize * 1.8 : 0;
         const flagPartHeight = hasFlag ? flagHeight + fontSize * 0.2 : 0;
         const height = textHeight + flagPartHeight;
 
