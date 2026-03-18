@@ -4,6 +4,7 @@ import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
+import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
 import styles from './IdentifyMode.module.css';
 
@@ -11,6 +12,7 @@ export interface IdentifyModeProps extends QuizModeProps {
   readonly toggleValues?: Readonly<Record<string, boolean>>;
   readonly onFinish?: (score: ScoreResult) => void;
   readonly forceGiveUp?: boolean;
+  readonly reviewing?: boolean;
   readonly renderVisualization: (props: {
     readonly elementStates: Readonly<Record<string, ElementVisualState>>;
     readonly onElementClick: (elementId: string) => void;
@@ -31,6 +33,7 @@ export function IdentifyMode({
   onGiveUp,
   onFinish,
   forceGiveUp = false,
+  reviewing = false,
   toggleDefinitions,
   toggleValues = {},
   renderVisualization,
@@ -84,22 +87,39 @@ export function IdentifyMode({
     return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
   }, [elements, quiz.answeredElementIds, quiz.wrongAttemptsPerElement, toggleDefinitions, toggleValues]);
 
+  const toggleKeys = useMemo(
+    () => toggleDefinitions.map((t) => t.key),
+    [toggleDefinitions],
+  );
+
+  const reviewElementStates = useMemo(
+    () => reviewing ? buildReviewElementStates(quiz.elementStates) : quiz.elementStates,
+    [reviewing, quiz.elementStates],
+  );
+
+  const reviewElementToggles = useMemo(
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+  );
+
   const progressPercent = quiz.totalPrompts > 0
     ? (quiz.correctCount + quiz.skippedCount) / quiz.totalPrompts * 100
     : 0;
 
   return (
     <div className={styles.container}>
-      <div className={styles.progressBar}>
-        <motion.div
-          className={styles.progressFill}
-          initial={{ width: 0 }}
-          animate={{ width: `${progressPercent}%` }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-        />
-      </div>
+      {!reviewing && (
+        <div className={styles.progressBar}>
+          <motion.div
+            className={styles.progressFill}
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          />
+        </div>
+      )}
 
-      {!quiz.isFinished && (
+      {!quiz.isFinished && !reviewing && (
         <div className={styles.promptBar}>
           <span className={styles.promptText}>
             Click on <span className={styles.promptLabel}>{quiz.currentElementLabel}</span>
@@ -126,7 +146,7 @@ export function IdentifyMode({
         </div>
       )}
 
-      {quiz.isFinished && (
+      {quiz.isFinished && !reviewing && (
         <div className={styles.promptBar}>
           <div className={styles.finishedOverlay}>
             <motion.span
@@ -146,11 +166,11 @@ export function IdentifyMode({
 
       <div className={styles.visualizationArea}>
         {renderVisualization({
-          elementStates: quiz.elementStates,
+          elementStates: reviewElementStates,
           onElementClick: handleElementClick,
-          targetElementId: quiz.currentElementId,
+          targetElementId: reviewing ? undefined : quiz.currentElementId,
           toggles: toggleValues,
-          elementToggles,
+          elementToggles: reviewElementToggles,
         })}
       </div>
     </div>

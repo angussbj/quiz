@@ -32,6 +32,8 @@ function stateColor(state: ElementVisualState | undefined): string | undefined {
       return 'var(--color-correct)';
     case 'incorrect':
       return 'var(--color-incorrect)';
+    case 'missed':
+      return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-highlight)';
     default:
@@ -45,6 +47,7 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
       return 0;
     case 'correct':
     case 'incorrect':
+    case 'missed':
     case 'highlighted':
       return 0.3;
     case 'revealed':

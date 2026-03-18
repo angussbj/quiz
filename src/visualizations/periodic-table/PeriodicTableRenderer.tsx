@@ -29,6 +29,8 @@ function stateToFill(state: ElementVisualState, groupColorIndex: number | undefi
       return 'var(--color-correct-bg)';
     case 'incorrect':
       return 'var(--color-incorrect-bg)';
+    case 'missed':
+      return 'var(--color-missed-bg)';
     case 'highlighted':
       return 'var(--color-highlight-bg)';
     case 'revealed':
@@ -48,6 +50,8 @@ function stateToStroke(state: ElementVisualState): string {
       return 'var(--color-correct)';
     case 'incorrect':
       return 'var(--color-incorrect)';
+    case 'missed':
+      return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-highlight)';
     default:
@@ -64,6 +68,8 @@ function stateToTextFill(state: ElementVisualState, groupColorIndex: number | un
       return 'var(--color-correct)';
     case 'incorrect':
       return 'var(--color-incorrect)';
+    case 'missed':
+      return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-text-primary)';
     case 'hidden':
@@ -75,7 +81,7 @@ function stateToTextFill(state: ElementVisualState, groupColorIndex: number | un
 }
 
 function isRevealed(state: ElementVisualState): boolean {
-  return state === 'revealed' || state === 'correct' || state === 'highlighted';
+  return state === 'revealed' || state === 'correct' || state === 'highlighted' || state === 'missed';
 }
 
 function GridCell({

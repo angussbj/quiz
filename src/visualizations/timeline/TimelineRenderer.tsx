@@ -413,6 +413,7 @@ function getStateClass(state: string): string | undefined {
   switch (state) {
     case 'correct': return styles.barCorrect;
     case 'incorrect': return styles.barIncorrect;
+    case 'missed': return styles.barMissed;
     case 'highlighted': return styles.barHighlighted;
     case 'hidden': return styles.barHidden;
     case 'revealed': return styles.barRevealed;
