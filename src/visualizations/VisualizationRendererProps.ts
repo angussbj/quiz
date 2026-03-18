@@ -26,6 +26,8 @@ export interface BackgroundPath {
   readonly name?: string;
   /** ISO alpha-2 country code (e.g., 'fr') for loading associated assets like flags. */
   readonly code?: string;
+  /** Sovereign country name. Matches name for sovereign states; parent country for territories; blank for disputed. */
+  readonly sovereign?: string;
 }
 
 /**

@@ -49,6 +49,23 @@ function polygonCentroid(points: ReadonlyArray<ViewBoxPosition>): ViewBoxPositio
   return { x: cx, y: cy };
 }
 
+/** Compute the approximate area of an SVG path polygon (absolute value). */
+export function computePathArea(d: string): number {
+  const points = parsePathPoints(d);
+  if (points.length < 3) return 0;
+  return Math.abs(shoelaceArea(points));
+}
+
+function shoelaceArea(points: ReadonlyArray<ViewBoxPosition>): number {
+  let area = 0;
+  const n = points.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    area += points[i].x * points[j].y - points[j].x * points[i].y;
+  }
+  return area / 2;
+}
+
 function boundingBoxCenter(points: ReadonlyArray<ViewBoxPosition>): ViewBoxPosition {
   let minX = Infinity;
   let minY = Infinity;

@@ -37,11 +37,29 @@ describe('computeBackgroundLabels', () => {
     expect(labels).toHaveLength(0);
   });
 
-  it('passes through code from the largest path', () => {
+  it('passes through code and sovereign from the largest path', () => {
     const paths: ReadonlyArray<BackgroundPath> = [
-      { id: 'fr', svgPathData: squarePath, name: 'France', code: 'fr' },
+      { id: 'fr', svgPathData: squarePath, name: 'France', code: 'fr', sovereign: 'France' },
     ];
     const labels = computeBackgroundLabels(paths);
     expect(labels[0].code).toBe('fr');
+    expect(labels[0].sovereign).toBe('France');
+  });
+
+  it('computes area for importance ranking', () => {
+    const paths: ReadonlyArray<BackgroundPath> = [
+      { id: 'fr', svgPathData: squarePath, name: 'France' },
+    ];
+    const labels = computeBackgroundLabels(paths);
+    expect(labels[0].area).toBeCloseTo(100, 0);
+  });
+
+  it('sums area across multi-path segments', () => {
+    const paths: ReadonlyArray<BackgroundPath> = [
+      { id: 'fr-0', svgPathData: squarePath, name: 'France' },
+      { id: 'fr-1', svgPathData: 'M 20 0 L 30 0 L 30 10 L 20 10 Z', name: 'France' },
+    ];
+    const labels = computeBackgroundLabels(paths);
+    expect(labels[0].area).toBeCloseTo(200, 0);
   });
 });

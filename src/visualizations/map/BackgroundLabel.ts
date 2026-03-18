@@ -6,4 +6,8 @@ export interface BackgroundLabel {
   readonly name: string;
   readonly center: ViewBoxPosition;
   readonly code?: string;
+  /** Sovereign country name. Matches name for sovereign states; blank for territories/disputed. */
+  readonly sovereign?: string;
+  /** Approximate area of the largest path segment (used for importance ranking). */
+  readonly area: number;
 }
