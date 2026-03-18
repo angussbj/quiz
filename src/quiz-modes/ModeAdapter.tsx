@@ -9,6 +9,8 @@ import type { QuizSessionState } from './QuizSessionState';
 import { useFreeRecallSession } from './free-recall/useFreeRecallSession';
 import { FreeRecallMode } from './free-recall/FreeRecallMode';
 import { IdentifyMode } from './identify/IdentifyMode';
+import { PromptedRecallMode } from './prompted-recall/PromptedRecallMode';
+import { OrderedRecallMode } from './ordered-recall/OrderedRecallMode';
 import { LocateMode } from './locate/LocateMode';
 import { buildReviewElementStates, buildReviewElementToggles } from './buildReviewStates';
 import styles from './ModeAdapter.module.css';
@@ -83,6 +85,38 @@ export function ModeAdapter({
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
+          clustering={clustering}
+          onStatusChange={onStatusChange}
+          forceGiveUp={forceGiveUp}
+          reviewing={reviewing}
+        />
+      );
+    case 'prompted-recall':
+      return (
+        <PromptedRecallAdapter
+          elements={elements}
+          dataRows={dataRows}
+          columnMappings={columnMappings}
+          toggleDefinitions={toggleDefinitions}
+          toggleValues={toggleValues}
+          Renderer={Renderer}
+          backgroundPaths={backgroundPaths}
+          clustering={clustering}
+          onStatusChange={onStatusChange}
+          forceGiveUp={forceGiveUp}
+          reviewing={reviewing}
+        />
+      );
+    case 'free-recall-ordered':
+      return (
+        <OrderedRecallAdapter
+          elements={elements}
+          dataRows={dataRows}
+          columnMappings={columnMappings}
+          toggleDefinitions={toggleDefinitions}
+          toggleValues={toggleValues}
+          Renderer={Renderer}
+          backgroundPaths={backgroundPaths}
           clustering={clustering}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
@@ -341,6 +375,118 @@ function LocateAdapter({
       onFinish={handleFinish}
       forceGiveUp={forceGiveUp}
       reviewing={reviewing}
+    />
+  );
+}
+
+interface RenderVisualizationAdapterProps {
+  readonly elements: ReadonlyArray<VisualizationElement>;
+  readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
+  readonly columnMappings: Readonly<Record<string, string>>;
+  readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
+  readonly toggleValues: Readonly<Record<string, boolean>>;
+  readonly Renderer: ComponentType<VisualizationRendererProps>;
+  readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly clustering?: ClusteringConfig;
+  readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
+  readonly forceGiveUp: boolean;
+  readonly reviewing: boolean;
+}
+
+function PromptedRecallAdapter({
+  elements,
+  dataRows,
+  columnMappings,
+  toggleDefinitions,
+  toggleValues,
+  Renderer,
+  backgroundPaths,
+  clustering,
+  onStatusChange,
+  forceGiveUp,
+  reviewing,
+}: RenderVisualizationAdapterProps) {
+  const handleFinish = (score: ScoreResult) => {
+    onStatusChange('finished', score);
+  };
+
+  return (
+    <PromptedRecallMode
+      elements={elements}
+      dataRows={dataRows}
+      columnMappings={columnMappings}
+      toggleDefinitions={toggleDefinitions}
+      toggleValues={toggleValues}
+      session={STUB_SESSION}
+      onFinish={handleFinish}
+      forceGiveUp={forceGiveUp}
+      reviewing={reviewing}
+      onTextAnswer={noop}
+      onElementSelect={noop}
+      onPositionSelect={noopPosition}
+      onChoiceSelect={noopChoice}
+      onHintRequest={noop}
+      onSkip={noop}
+      onGiveUp={noop}
+      renderVisualization={(renderProps) => (
+        <Renderer
+          elements={elements}
+          elementStates={renderProps.elementStates}
+          toggles={renderProps.toggles}
+          elementToggles={renderProps.elementToggles}
+          backgroundPaths={backgroundPaths}
+          clustering={clustering}
+        />
+      )}
+    />
+  );
+}
+
+function OrderedRecallAdapter({
+  elements,
+  dataRows,
+  columnMappings,
+  toggleDefinitions,
+  toggleValues,
+  Renderer,
+  backgroundPaths,
+  clustering,
+  onStatusChange,
+  forceGiveUp,
+  reviewing,
+}: RenderVisualizationAdapterProps) {
+  const handleFinish = (score: ScoreResult) => {
+    onStatusChange('finished', score);
+  };
+
+  return (
+    <OrderedRecallMode
+      elements={elements}
+      dataRows={dataRows}
+      columnMappings={columnMappings}
+      toggleDefinitions={toggleDefinitions}
+      toggleValues={toggleValues}
+      session={STUB_SESSION}
+      onFinish={handleFinish}
+      forceGiveUp={forceGiveUp}
+      reviewing={reviewing}
+      onTextAnswer={noop}
+      onElementSelect={noop}
+      onPositionSelect={noopPosition}
+      onChoiceSelect={noopChoice}
+      onHintRequest={noop}
+      onSkip={noop}
+      onGiveUp={noop}
+      renderVisualization={(renderProps) => (
+        <Renderer
+          elements={elements}
+          elementStates={renderProps.elementStates}
+          toggles={renderProps.toggles}
+          elementToggles={renderProps.elementToggles}
+          backgroundPaths={backgroundPaths}
+          clustering={clustering}
+        />
+      )}
     />
   );
 }
