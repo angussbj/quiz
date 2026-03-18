@@ -2,6 +2,7 @@ import { type ComponentType, useEffect, useMemo, useRef } from 'react';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { VisualizationElement, ViewBoxPosition } from '@/visualizations/VisualizationElement';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
+import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from './ToggleDefinition';
 import type { QuizSessionState } from './QuizSessionState';
@@ -21,6 +22,7 @@ export interface ModeAdapterProps {
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   /** When true, the mode should immediately give up and report its final score. */
@@ -46,6 +48,7 @@ export function ModeAdapter({
   toggleValues,
   Renderer,
   backgroundPaths,
+  backgroundLabels,
   clustering,
   onStatusChange,
   forceGiveUp = false,
@@ -62,6 +65,7 @@ export function ModeAdapter({
           toggleValues={toggleValues}
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
           clustering={clustering}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
@@ -78,6 +82,7 @@ export function ModeAdapter({
           toggleValues={toggleValues}
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
           clustering={clustering}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
@@ -92,6 +97,7 @@ export function ModeAdapter({
           toggleValues={toggleValues}
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
           clustering={clustering}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
@@ -117,6 +123,7 @@ interface FreeRecallAdapterProps {
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
@@ -131,6 +138,7 @@ function FreeRecallAdapter({
   toggleValues,
   Renderer,
   backgroundPaths,
+  backgroundLabels,
   clustering,
   onStatusChange,
   forceGiveUp,
@@ -187,6 +195,7 @@ function FreeRecallAdapter({
           elementToggles={reviewElementToggles}
           targetElementId={reviewing ? undefined : session.lastMatchedElementId}
           backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
           clustering={clustering}
         />
       </div>
@@ -220,6 +229,7 @@ interface IdentifyAdapterProps {
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
@@ -245,6 +255,7 @@ function IdentifyAdapter({
   toggleValues,
   Renderer,
   backgroundPaths,
+  backgroundLabels,
   clustering,
   onStatusChange,
   forceGiveUp,
@@ -281,6 +292,7 @@ function IdentifyAdapter({
           toggles={renderProps.toggles}
           elementToggles={renderProps.elementToggles}
           backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
           clustering={clustering}
         />
       )}
@@ -294,6 +306,7 @@ interface LocateAdapterProps {
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
@@ -306,6 +319,7 @@ function LocateAdapter({
   toggleValues,
   Renderer,
   backgroundPaths,
+  backgroundLabels,
   clustering,
   onStatusChange,
   forceGiveUp,
@@ -322,6 +336,7 @@ function LocateAdapter({
       toggleDefinitions={toggleDefinitions}
       Renderer={Renderer}
       backgroundPaths={backgroundPaths}
+      backgroundLabels={backgroundLabels}
       clustering={clustering}
       onFinish={handleFinish}
       forceGiveUp={forceGiveUp}

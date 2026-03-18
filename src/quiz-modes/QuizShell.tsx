@@ -1,6 +1,7 @@
-import { type ReactNode, useCallback, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset } from './ToggleDefinition';
+import type { ToggleConstraint } from './ToggleConstraint';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
 import styles from './QuizShell.module.css';
@@ -20,6 +21,7 @@ interface QuizShellProps {
   readonly defaultCountdownSeconds?: number;
   readonly toggles: ReadonlyArray<ToggleDefinition>;
   readonly presets: ReadonlyArray<TogglePreset>;
+  readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
   readonly children: (config: QuizConfig) => ReactNode;
 }
 
@@ -38,6 +40,7 @@ export function QuizShell({
   defaultCountdownSeconds,
   toggles,
   presets,
+  modeConstraints,
   children,
 }: QuizShellProps) {
   const [phase, setPhase] = useState<ShellPhase>('configuring');
@@ -47,6 +50,29 @@ export function QuizShell({
     defaultCountdownSeconds !== undefined ? Math.ceil(defaultCountdownSeconds / 60) : undefined,
   );
   const toggleState = useToggleState(toggles, presets);
+
+  const applyModeConstraints = useCallback((mode: QuizModeType) => {
+    const constraints = modeConstraints?.[mode] ?? [];
+    for (const constraint of constraints) {
+      if (constraint.type === 'forced') {
+        toggleState.set(constraint.key, constraint.forcedValue);
+      }
+    }
+  }, [modeConstraints, toggleState]);
+
+  // Apply constraints for the initial default mode on first render
+  const hasAppliedInitial = useRef(false);
+  useEffect(() => {
+    if (!hasAppliedInitial.current) {
+      hasAppliedInitial.current = true;
+      applyModeConstraints(defaultMode);
+    }
+  }, [defaultMode, applyModeConstraints]);
+
+  const handleModeChange = useCallback((newMode: QuizModeType) => {
+    setSelectedMode(newMode);
+    applyModeConstraints(newMode);
+  }, [applyModeConstraints]);
 
   const handleStart = useCallback(() => {
     setPhase('active');
@@ -64,7 +90,7 @@ export function QuizShell({
         description={description}
         availableModes={availableModes}
         selectedMode={selectedMode}
-        onModeChange={setSelectedMode}
+        onModeChange={handleModeChange}
         countdownMinutes={countdownMinutes}
         onCountdownChange={setCountdownMinutes}
         toggles={toggles}
@@ -74,6 +100,7 @@ export function QuizShell({
         onToggleChange={toggleState.set}
         onPreset={toggleState.applyPreset}
         onStart={handleStart}
+        modeConstraints={modeConstraints}
       />
     );
   }

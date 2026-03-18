@@ -1,6 +1,7 @@
 import { type ComponentType, useCallback, useEffect, useState } from 'react';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { VisualizationRendererProps, BackgroundPath } from '@/visualizations/VisualizationRendererProps';
+import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from './ToggleDefinition';
 import type { QuizConfig } from './QuizShell';
@@ -18,6 +19,7 @@ export interface ActiveQuizProps {
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
 }
 
 /**
@@ -32,6 +34,7 @@ export function ActiveQuiz({
   toggleDefinitions,
   Renderer,
   backgroundPaths,
+  backgroundLabels,
 }: ActiveQuizProps) {
   const [finishState, setFinishState] = useState<ScoreResult | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -89,6 +92,7 @@ export function ActiveQuiz({
           toggleValues={config.toggleValues}
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
           onStatusChange={handleStatusChange}
           forceGiveUp={forceGiveUp}
           reviewing={isReviewing}

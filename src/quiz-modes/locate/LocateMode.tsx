@@ -1,6 +1,7 @@
 import { type ComponentType, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
+import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from '../ToggleDefinition';
@@ -19,6 +20,7 @@ export interface LocateModeProps {
   readonly toggleDefinitions?: ReadonlyArray<ToggleDefinition>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly clustering?: ClusteringConfig;
   readonly onFinish?: (score: ScoreResult) => void;
   readonly forceGiveUp?: boolean;
@@ -35,6 +37,7 @@ export function LocateMode({
   toggleDefinitions = [],
   Renderer,
   backgroundPaths,
+  backgroundLabels,
   clustering,
   onFinish,
   forceGiveUp = false,
@@ -153,6 +156,7 @@ export function LocateMode({
           toggles={toggles}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
           clustering={clustering}
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
         />

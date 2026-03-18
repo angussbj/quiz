@@ -19,24 +19,26 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
       { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+      { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+      { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify'] },
+      { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'flag', column: 'code' }, modes: ['identify'] },
     ],
     presets: [
       {
         name: 'easy',
         label: 'Easy',
-        values: { showBorders: true, showCityDots: true, showCountryNames: true, showFlags: true },
+        values: { showBorders: true, showCityDots: true, showCountryNames: true, showMapFlags: true, showPromptCountryNames: true, showPromptFlags: true },
       },
       {
         name: 'medium',
         label: 'Medium',
-        values: { showBorders: true, showCityDots: true, showCountryNames: false, showFlags: false },
+        values: { showBorders: true, showCityDots: true, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false, showPromptFlags: false },
       },
       {
         name: 'hard',
         label: 'Hard',
-        values: { showBorders: false, showCityDots: false, showCountryNames: false, showFlags: false },
+        values: { showBorders: false, showCityDots: false, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false, showPromptFlags: false },
       },
     ],
     columnMappings: {
@@ -45,10 +47,17 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       latitude: 'latitude',
       longitude: 'longitude',
       group: 'country',
+      code: 'code',
     },
     dataPath: '/data/capitals/world-capitals.csv',
     dataFilter: { column: 'region', values: ['Europe'] },
     supportingDataPaths: ['/data/borders/world-borders.csv'],
+    modeConstraints: {
+      identify: [
+        { type: 'forced', key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
+        { type: 'atLeastOne', keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one hint must be enabled in identify mode' },
+      ],
+    },
   },
   {
     id: 'geo-capitals-asia',
@@ -81,6 +90,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       latitude: 'latitude',
       longitude: 'longitude',
       group: 'country',
+      code: 'code',
     },
     dataPath: '/data/capitals/world-capitals.csv',
     dataFilter: { column: 'region', values: ['Asia'] },
@@ -117,6 +127,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       latitude: 'latitude',
       longitude: 'longitude',
       group: 'country',
+      code: 'code',
     },
     dataPath: '/data/capitals/world-capitals.csv',
     dataFilter: { column: 'region', values: ['Africa'] },
@@ -132,7 +143,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
-      { key: 'showFlags', label: 'Flags', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+      { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
     ],
     presets: [],
     columnMappings: {

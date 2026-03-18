@@ -15,8 +15,8 @@ describe('parseBackgroundPaths', () => {
     const result = parseBackgroundPaths(rows);
 
     expect(result).toEqual([
-      { id: 'france', svgPathData: 'M10 20L30 40', group: 'western' },
-      { id: 'germany', svgPathData: 'M50 60L70 80', group: 'central' },
+      { id: 'france', svgPathData: 'M10 20L30 40', group: 'western', name: 'France', code: undefined },
+      { id: 'germany', svgPathData: 'M50 60L70 80', group: 'central', name: 'Germany', code: undefined },
     ]);
   });
 
@@ -28,9 +28,9 @@ describe('parseBackgroundPaths', () => {
     const result = parseBackgroundPaths(rows);
 
     expect(result).toEqual([
-      { id: 'italy-0', svgPathData: 'M1 2', group: 'southern' },
-      { id: 'italy-1', svgPathData: 'M3 4', group: 'southern' },
-      { id: 'italy-2', svgPathData: 'M5 6', group: 'southern' },
+      { id: 'italy-0', svgPathData: 'M1 2', group: 'southern', name: 'Italy', code: undefined },
+      { id: 'italy-1', svgPathData: 'M3 4', group: 'southern', name: 'Italy', code: undefined },
+      { id: 'italy-2', svgPathData: 'M5 6', group: 'southern', name: 'Italy', code: undefined },
     ]);
   });
 

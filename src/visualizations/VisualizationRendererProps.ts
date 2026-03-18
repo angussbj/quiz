@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { VisualizationElement, ViewBoxPosition, ElementVisualState } from './VisualizationElement';
+import type { BackgroundLabel } from './map/BackgroundLabel';
 
 export interface ElementCluster {
   readonly center: ViewBoxPosition;
@@ -21,6 +22,14 @@ export interface BackgroundPath {
   readonly id: string;
   readonly svgPathData: string;
   readonly group?: string;
+  /** Display name for this path's entity (e.g., country name). */
+  readonly name?: string;
+  /** ISO alpha-2 country code (e.g., 'fr') for loading associated assets like flags. */
+  readonly code?: string;
+  /** Sovereign country name. Matches name for sovereign states; parent country for territories; blank for disputed. */
+  readonly sovereign?: string;
+  /** Region (e.g., 'Europe', 'Asia') for filtering. May be pipe-separated for multi-region. */
+  readonly region?: string;
 }
 
 /**
@@ -40,6 +49,8 @@ export interface VisualizationRendererProps {
   readonly clustering?: ClusteringConfig;
   /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  /** Labels positioned at background shape centroids (e.g., country names) */
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   /** Additional SVG content rendered on top of all elements (e.g., feedback overlays) */
   readonly svgOverlay?: ReactNode;
 }

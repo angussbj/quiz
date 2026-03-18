@@ -5,6 +5,7 @@ import { useQuizData } from '@/quiz-definitions/useQuizData';
 import { buildElements } from '@/visualizations/buildElements';
 import { resolveRenderer } from '@/visualizations/resolveRenderer';
 import { useBackgroundPaths } from '@/visualizations/map/useBackgroundPaths';
+import { computeBackgroundLabels } from '@/visualizations/map/computeBackgroundLabels';
 import { QuizShell } from '@/quiz-modes/QuizShell';
 import { ActiveQuiz } from '@/quiz-modes/ActiveQuiz';
 import styles from './QuizPage.module.css';
@@ -75,6 +76,22 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
     () => buildElements(definition.visualizationType, rows, definition.columnMappings),
     [definition.visualizationType, rows, definition.columnMappings],
   );
+  const backgroundLabels = useMemo(() => {
+    if (!backgroundPaths) return undefined;
+    const allLabels = computeBackgroundLabels(backgroundPaths);
+    const regionValues = definition.dataFilter?.values;
+    return allLabels.filter((label) => {
+      // Only sovereign countries (sovereign matches name)
+      if (!label.sovereign || label.sovereign !== label.name) return false;
+      // Filter to quiz region if defined
+      if (regionValues) {
+        if (!label.region) return false;
+        const labelRegions = label.region.split('|');
+        return regionValues.some((r) => labelRegions.includes(r));
+      }
+      return true;
+    });
+  }, [backgroundPaths, definition.dataFilter?.values]);
   const Renderer = resolveRenderer(definition.visualizationType);
 
   return (
@@ -87,6 +104,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
         defaultCountdownSeconds={definition.defaultCountdownSeconds}
         toggles={definition.toggles}
         presets={definition.presets}
+        modeConstraints={definition.modeConstraints}
       >
         {(config) => (
           <ActiveQuiz
@@ -97,6 +115,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             toggleDefinitions={definition.toggles}
             Renderer={Renderer}
             backgroundPaths={backgroundPaths}
+            backgroundLabels={backgroundLabels}
           />
         )}
       </QuizShell>

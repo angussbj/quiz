@@ -147,6 +147,18 @@ describe('useIdentifyQuiz', () => {
     expect(result.current.correctCount).toBe(1);
   });
 
+  it('sets unanswered elements to default state', () => {
+    const elements = makeElements(3);
+    const { result } = renderHook(() => useIdentifyQuiz(elements));
+
+    const currentId = result.current.currentElementId!;
+    for (const el of elements) {
+      if (el.id !== currentId) {
+        expect(result.current.elementStates[el.id]).toBe('default');
+      }
+    }
+  });
+
   it('calculates score correctly', () => {
     const elements = makeElements(4);
     const { result } = renderHook(() => useIdentifyQuiz(elements));
