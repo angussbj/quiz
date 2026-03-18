@@ -64,7 +64,7 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
       return 0.3;
     case 'default':
     case 'revealed':
-      return 0.15;
+      return 0.4;
     default:
       return 0.15;
   }
