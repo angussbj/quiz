@@ -1,4 +1,4 @@
-id,city,country,latitude,longitude,region,subregion,city_alternates
+id,city,country,latitude,longitude,region,subregion,city_alternates,country_alternates
 algiers,Algiers,Algeria,36.7323,3.0875,Africa,Northern Africa,
 luanda,Luanda,Angola,-8.8368,13.2343,Africa,Middle Africa,
 porto-novo,Porto-Novo,Benin,6.4965,2.6036,Africa,Western Africa,
@@ -10,9 +10,9 @@ praia,Praia,Cape Verde,14.9315,-23.5125,Africa,Western Africa,
 bangui,Bangui,Central African Republic,4.3612,18.555,Africa,Middle Africa,
 n-djamena,N'Djamena,Chad,12.11,15.05,Africa,Middle Africa,
 moroni,Moroni,Comoros,-11.7022,43.2551,Africa,Eastern Africa,
-brazzaville,Brazzaville,Congo,-4.2661,15.2832,Africa,Middle Africa,
+brazzaville,Brazzaville,Republic of the Congo,-4.2661,15.2832,Africa,Middle Africa,,Congo
 djibouti,Djibouti,Djibouti,11.589,43.145,Africa,Eastern Africa,
-kinshasa,Kinshasa,DR Congo,-4.3276,15.3136,Africa,Middle Africa,
+kinshasa,Kinshasa,Democratic Republic of the Congo,-4.3276,15.3136,Africa,Middle Africa,,DR Congo|DRC
 cairo,Cairo,Egypt,30.0626,31.2497,Africa,Northern Africa,"Al-Qahirah|Al Qahirah"
 malabo,Malabo,Equatorial Guinea,3.7558,8.7817,Africa,Middle Africa,
 asmara,Asmara,Eritrea,15.3381,38.9318,Africa,Eastern Africa,

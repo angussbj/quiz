@@ -179,9 +179,9 @@ function MapContent({
             fillOpacity={stateFillOpacity(state)}
             stroke={color}
             strokeWidth={0.15}
-            className={element.interactive ? styles.interactivePath : styles.borderPath}
+            className={onElementClick ? styles.interactivePath : styles.borderPath}
             onClick={
-              element.interactive && onElementClick
+              onElementClick
                 ? (e) => {
                     e.stopPropagation();
                     onElementClick(element.id);
@@ -200,9 +200,9 @@ function MapContent({
         if (state === 'hidden') return null;
         const isTarget = element.id === targetElementId;
         const isCorrectPulse = isTarget && state === 'correct';
-        const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
+        const color = stateColor(state) ?? 'var(--color-city-dot)';
         const dotClassName = [
-          element.interactive ? styles.interactiveDot : '',
+          onElementClick ? styles.interactiveDot : '',
           isCorrectPulse ? styles.correctPulse : '',
         ].filter(Boolean).join(' ') || undefined;
         return (
@@ -216,7 +216,7 @@ function MapContent({
             strokeWidth={isTarget ? 0.15 : 0.08}
             className={dotClassName}
             onClick={
-              element.interactive && onElementClick
+              onElementClick
                 ? (e) => {
                     e.stopPropagation();
                     onElementClick(element.id);
