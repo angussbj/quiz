@@ -17,8 +17,9 @@ interface CellProps {
   readonly groupColorIndex: number | undefined;
   readonly showGroups: boolean;
   readonly showSymbol: boolean;
+  readonly showAtomicNumber: boolean;
+  readonly showName: boolean;
   readonly isClustered: boolean;
-  readonly isTarget: boolean;
   readonly zoomedIn: boolean;
   readonly onClick?: (elementId: string) => void;
 }
@@ -90,8 +91,9 @@ function GridCell({
   groupColorIndex,
   showGroups,
   showSymbol,
+  showAtomicNumber,
+  showName,
   isClustered,
-  isTarget,
   zoomedIn,
   onClick,
 }: CellProps) {
@@ -102,8 +104,16 @@ function GridCell({
   const fill = stateToFill(state, groupColorIndex, showGroups);
   const stroke = stateToStroke(state);
   const textFill = stateToTextFill(state, groupColorIndex, showGroups);
-  const revealed = isRevealed(state) || showSymbol;
+  const revealed = isRevealed(state);
+  const symbolVisible = revealed || showSymbol;
+  const atomicNumberVisible = (revealed || showAtomicNumber) && zoomedIn;
+  const nameVisible = (revealed || showName) && zoomedIn;
   const interactive = element.interactive;
+
+  const hasAtomicNumber = atomicNumberVisible && element.atomicNumber > 0;
+  const symbolY = zoomedIn
+    ? (hasAtomicNumber ? y + CELL_SIZE * 0.45 : y + CELL_SIZE * 0.4)
+    : y + CELL_SIZE / 2;
 
   return (
     <g
@@ -119,13 +129,26 @@ function GridCell({
         rx={4}
         ry={4}
         fill={fill}
-        stroke={isTarget ? 'var(--color-highlight)' : stroke}
-        strokeWidth={isTarget ? 2.5 : 1}
+        stroke={stroke}
+        strokeWidth={state === 'highlighted' ? 2.5 : 1}
       />
-      {revealed && (
+      {hasAtomicNumber && (
+        <text
+          x={x + 5}
+          y={y + 11}
+          textAnchor="start"
+          dominantBaseline="central"
+          fill={textFill}
+          fontSize={9}
+          opacity={0.7}
+        >
+          {element.atomicNumber}
+        </text>
+      )}
+      {symbolVisible && (
         <text
           x={x + CELL_SIZE / 2}
-          y={zoomedIn ? y + CELL_SIZE * 0.4 : y + CELL_SIZE / 2}
+          y={symbolY}
           textAnchor="middle"
           dominantBaseline="central"
           fill={textFill}
@@ -135,10 +158,10 @@ function GridCell({
           {element.symbol}
         </text>
       )}
-      {revealed && zoomedIn && (
+      {nameVisible && (
         <text
           x={x + CELL_SIZE / 2}
-          y={y + CELL_SIZE * 0.72}
+          y={y + CELL_SIZE * 0.75}
           textAnchor="middle"
           dominantBaseline="central"
           fill={textFill}
@@ -156,13 +179,12 @@ function PeriodicTableGrid({
   elements,
   elementStates,
   onElementClick,
-  targetElementId,
   toggles,
   elementToggles,
 }: VisualizationRendererProps) {
   const { scale, clusteredElementIds } = useZoomPan();
   const zoomedIn = scale >= ZOOM_DETAIL_THRESHOLD;
-  const showGroups = toggles['showGroups'] ?? true;
+  const showGroups = elementToggle(elementToggles, toggles, '', 'showGroups');
 
   const groupColorMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -190,8 +212,9 @@ function PeriodicTableGrid({
             groupColorIndex={groupColorIndex}
             showGroups={showGroups}
             showSymbol={elementToggle(elementToggles, toggles, element.id, 'showSymbols')}
+            showAtomicNumber={elementToggle(elementToggles, toggles, element.id, 'showAtomicNumbers')}
+            showName={elementToggle(elementToggles, toggles, element.id, 'showNames')}
             isClustered={clusteredElementIds.has(element.id)}
-            isTarget={element.id === targetElementId}
             zoomedIn={zoomedIn}
             onClick={onElementClick}
           />

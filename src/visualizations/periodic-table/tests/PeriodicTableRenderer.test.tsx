@@ -35,6 +35,7 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     row: 0,
     column: 0,
     symbol: 'H',
+    atomicNumber: 1,
     ...overrides,
   };
 }
@@ -149,10 +150,12 @@ describe('PeriodicTableRenderer', () => {
     expect(incorrectRect).toHaveAttribute('stroke', 'var(--color-incorrect)');
   });
 
-  it('highlights the target element', () => {
+  it('highlights an element via highlighted state', () => {
     const { container } = render(
       <PeriodicTableRenderer
-        {...makeProps({ targetElementId: 'H' })}
+        {...makeProps({
+          elementStates: { H: 'highlighted', He: 'hidden', Li: 'hidden' },
+        })}
       />,
     );
 
