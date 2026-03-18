@@ -5,7 +5,6 @@ const BASE_FONT_SIZE = 0.8;
 const MIN_VIEWBOX_FONT_SIZE = 0.3;
 const MAX_VIEWBOX_FONT_SIZE = 1.2;
 
-const LABEL_WIDTH_FACTOR = 1.5;
 const FLAG_HEIGHT_FACTOR = 1.4;
 const MAX_DISTANCE_FACTOR = 1.2;
 const REDUCED_SIZE_FACTORS = [1, 2 / 3, 1 / 2];
@@ -169,15 +168,14 @@ function buildSpiralCandidates(
 }
 
 function computeDimensions(
-  label: BackgroundLabel, fontSize: number, showNames: boolean, showFlags: boolean, sqrtArea: number, sizeFactor: number,
+  label: BackgroundLabel, fontSize: number, showNames: boolean, showFlags: boolean,
 ): LabelDimensions {
   const flagHeight = fontSize * FLAG_HEIGHT_FACTOR;
   const flagWidth = flagHeight * 4 / 3;
   const hasFlag = showFlags && !!label.code;
   const textWidthEstimate = showNames ? label.name.length * fontSize * 0.6 : 0;
-  const width = showNames
-    ? Math.max(sqrtArea * LABEL_WIDTH_FACTOR * sizeFactor, textWidthEstimate, fontSize * 4)
-    : hasFlag ? flagWidth : 0;
+  const contentWidth = Math.max(textWidthEstimate, hasFlag ? flagWidth : 0);
+  const width = showNames || hasFlag ? Math.max(contentWidth, fontSize * 3) : 0;
   const textHeight = showNames ? fontSize * 1.5 : 0;
   const gapSize = (hasFlag && showNames) ? fontSize * 0.3 : 0;
   const flagPartHeight = hasFlag ? flagHeight : 0;
@@ -212,6 +210,8 @@ export interface ComputeLabelPlacementsOptions {
   readonly showNames: boolean;
   readonly showFlags: boolean;
   readonly avoidPoints: ReadonlyArray<ViewBoxPosition>;
+  /** If set, log detailed placement diagnostics for this label name. */
+  readonly debugLabel?: string;
   readonly positionCache?: ReadonlyMap<string, ViewBoxPosition>;
 }
 
@@ -260,7 +260,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     const cachedPos = cache.get(label.id);
     if (cachedPos) {
       const fontSize = baseFontSize * sizesToTry[0];
-      const dims = computeDimensions(label, fontSize, showNames, showFlags, sqrtArea, sizesToTry[0]);
+      const dims = computeDimensions(label, fontSize, showNames, showFlags);
       if (dims.width > 0 && tryPlace(cachedPos.x, cachedPos.y, dims, label, placed, visible, maxDriftFromCountry)) {
         newCache.set(label.id, cachedPos);
         didPlace = true;
@@ -270,7 +270,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     if (!didPlace) {
       for (const sizeFactor of sizesToTry) {
         const fontSize = baseFontSize * sizeFactor;
-        const dims = computeDimensions(label, fontSize, showNames, showFlags, sqrtArea, sizeFactor);
+        const dims = computeDimensions(label, fontSize, showNames, showFlags);
         if (dims.width === 0) continue;
 
         const minStep = Math.max(dims.height * 0.4, dims.width * 0.2);
@@ -322,7 +322,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
 
     if (!didPlace && isHighZoom) {
       const fontSize = baseFontSize * REDUCED_SIZE_FACTORS[REDUCED_SIZE_FACTORS.length - 1];
-      const dims = computeDimensions(label, fontSize, showNames, showFlags, sqrtArea, REDUCED_SIZE_FACTORS[REDUCED_SIZE_FACTORS.length - 1]);
+      const dims = computeDimensions(label, fontSize, showNames, showFlags);
       const bestCenter = centersToTry[0] ?? label.center;
       if (dims.width > 0) {
         newCache.set(label.id, { x: bestCenter.x, y: bestCenter.y });
