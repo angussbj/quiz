@@ -8,6 +8,7 @@ const defaultProps = {
   percentage: 80,
   elapsedSeconds: 125,
   onRetry: jest.fn(),
+  onReview: jest.fn(),
 };
 
 beforeEach(() => {
@@ -52,5 +53,27 @@ describe('QuizResults', () => {
   it('does not show confetti when percentage < 100', () => {
     render(<QuizResults {...defaultProps} percentage={80} />);
     expect(screen.queryAllByTestId('confetti')).toHaveLength(0);
+  });
+
+  it('renders "Review answers" button', () => {
+    render(<QuizResults {...defaultProps} />);
+    expect(screen.getByRole('button', { name: 'Review answers' })).toBeInTheDocument();
+  });
+
+  it('clicking "Review answers" calls onReview', async () => {
+    const onReview = jest.fn();
+    render(<QuizResults {...defaultProps} onReview={onReview} />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Review answers' }));
+    expect(onReview).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders close button that calls onReview', async () => {
+    const onReview = jest.fn();
+    render(<QuizResults {...defaultProps} onReview={onReview} />);
+
+    const closeButton = screen.getByRole('button', { name: /close results/i });
+    await userEvent.click(closeButton);
+    expect(onReview).toHaveBeenCalledTimes(1);
   });
 });

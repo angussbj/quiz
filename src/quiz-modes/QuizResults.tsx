@@ -8,6 +8,7 @@ export interface QuizResultsProps {
   readonly percentage: number;
   readonly elapsedSeconds: number;
   readonly onRetry: () => void;
+  readonly onReview: () => void;
 }
 
 const CONFETTI_COUNT = 25;
@@ -46,6 +47,7 @@ export function QuizResults({
   percentage,
   elapsedSeconds,
   onRetry,
+  onReview,
 }: QuizResultsProps) {
   const isPerfect = percentage === 100;
 
@@ -64,6 +66,14 @@ export function QuizResults({
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
+          <button
+            className={styles.closeButton}
+            onClick={onReview}
+            aria-label="Close results and review answers"
+          >
+            ×
+          </button>
+
           {isPerfect &&
             confettiPieces.map((piece, index) => (
               <motion.div
@@ -118,14 +128,24 @@ export function QuizResults({
             {formatTime(elapsedSeconds)}
           </div>
 
-          <motion.button
-            className={styles.retryButton}
-            onClick={onRetry}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Try again
-          </motion.button>
+          <div className={styles.buttonRow}>
+            <motion.button
+              className={styles.retryButton}
+              onClick={onRetry}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Try again
+            </motion.button>
+            <motion.button
+              className={styles.reviewButton}
+              onClick={onReview}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Review answers
+            </motion.button>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

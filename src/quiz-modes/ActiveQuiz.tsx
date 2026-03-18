@@ -7,6 +7,7 @@ import type { QuizConfig } from './QuizShell';
 import { Timer } from './Timer';
 import { ModeAdapter } from './ModeAdapter';
 import { QuizResults } from './QuizResults';
+import { ReviewBar } from './ReviewBar';
 import styles from './ActiveQuiz.module.css';
 
 export interface ActiveQuizProps {
@@ -35,6 +36,7 @@ export function ActiveQuiz({
   const [finishState, setFinishState] = useState<ScoreResult | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [forceGiveUp, setForceGiveUp] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
   const isFinished = finishState !== null;
 
   // Elapsed time counter
@@ -61,6 +63,10 @@ export function ActiveQuiz({
     }
   }, [isFinished]);
 
+  const handleReview = useCallback(() => {
+    setIsReviewing(true);
+  }, []);
+
   return (
     <div className={styles.container}>
       {config.countdownSeconds !== undefined && (
@@ -85,11 +91,23 @@ export function ActiveQuiz({
           backgroundPaths={backgroundPaths}
           onStatusChange={handleStatusChange}
           forceGiveUp={forceGiveUp}
+          reviewing={isReviewing}
         />
       </div>
 
-      {isFinished && (
+      {isFinished && !isReviewing && (
         <QuizResults
+          correct={finishState.correct}
+          total={finishState.total}
+          percentage={finishState.percentage}
+          elapsedSeconds={elapsedSeconds}
+          onRetry={config.onReconfigure}
+          onReview={handleReview}
+        />
+      )}
+
+      {isReviewing && finishState && (
+        <ReviewBar
           correct={finishState.correct}
           total={finishState.total}
           percentage={finishState.percentage}

@@ -1,4 +1,4 @@
-import { type ComponentType, useEffect, useRef } from 'react';
+import { type ComponentType, useEffect, useMemo, useRef } from 'react';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { VisualizationElement, ViewBoxPosition } from '@/visualizations/VisualizationElement';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
@@ -24,6 +24,8 @@ export interface ModeAdapterProps {
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   /** When true, the mode should immediately give up and report its final score. */
   readonly forceGiveUp?: boolean;
+  /** When true, the quiz is in review mode — no answers accepted, missed items labeled. */
+  readonly reviewing?: boolean;
 }
 
 const noop = () => {};
@@ -46,6 +48,7 @@ export function ModeAdapter({
   clustering,
   onStatusChange,
   forceGiveUp = false,
+  reviewing = false,
 }: ModeAdapterProps) {
   switch (mode) {
     case 'free-recall-unordered':
@@ -61,6 +64,7 @@ export function ModeAdapter({
           clustering={clustering}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
+          reviewing={reviewing}
         />
       );
     case 'identify':
@@ -76,6 +80,7 @@ export function ModeAdapter({
           clustering={clustering}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
+          reviewing={reviewing}
         />
       );
     case 'locate':
@@ -89,6 +94,7 @@ export function ModeAdapter({
           clustering={clustering}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
+          reviewing={reviewing}
         />
       );
     default:
@@ -113,6 +119,7 @@ interface FreeRecallAdapterProps {
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
+  readonly reviewing: boolean;
 }
 
 function FreeRecallAdapter({
@@ -126,6 +133,7 @@ function FreeRecallAdapter({
   clustering,
   onStatusChange,
   forceGiveUp,
+  reviewing,
 }: FreeRecallAdapterProps) {
   const { session, elementToggles, handleTextAnswer, handleGiveUp } = useFreeRecallSession({
     elements,
@@ -153,35 +161,65 @@ function FreeRecallAdapter({
     }
   }, [session.status, session.score]);
 
+  // In review mode, change 'revealed' → 'missed' so renderers style them distinctly
+  const reviewElementStates = useMemo(() => {
+    if (!reviewing) return session.elementStates;
+    const states: Record<string, import('@/visualizations/VisualizationElement').ElementVisualState> = {};
+    for (const [id, state] of Object.entries(session.elementStates)) {
+      states[id] = state === 'revealed' ? 'missed' : state;
+    }
+    return states;
+  }, [reviewing, session.elementStates]);
+
+  // In review mode, force labels on for missed elements
+  const reviewElementToggles = useMemo(() => {
+    if (!reviewing) return elementToggles;
+    const overrides: Record<string, Record<string, boolean>> = {};
+    for (const [id, toggles] of Object.entries(elementToggles)) {
+      overrides[id] = { ...toggles };
+    }
+    // Ensure missed elements have labels shown
+    for (const [id, state] of Object.entries(reviewElementStates)) {
+      if (state === 'missed') {
+        if (!overrides[id]) overrides[id] = {};
+        overrides[id]['showCountryNames'] = true;
+        overrides[id]['showCityDots'] = true;
+      }
+    }
+    return overrides;
+  }, [reviewing, elementToggles, reviewElementStates]);
+
   return (
     <div className={styles.container}>
       <div className={styles.visualization}>
         <Renderer
           elements={elements}
-          elementStates={session.elementStates}
+          elementStates={reviewElementStates}
           toggles={toggleValues}
-          elementToggles={elementToggles}
-          targetElementId={session.lastMatchedElementId}
+          elementToggles={reviewElementToggles}
+          targetElementId={reviewing ? undefined : session.lastMatchedElementId}
           backgroundPaths={backgroundPaths}
           clustering={clustering}
         />
       </div>
-      <div className={styles.controls}>
-        <FreeRecallMode
-          elements={elements}
-          dataRows={dataRows}
-          columnMappings={columnMappings}
-          toggleDefinitions={toggleDefinitions}
-          session={session}
-          onTextAnswer={handleTextAnswer}
-          onElementSelect={noop}
-          onPositionSelect={noopPosition}
-          onChoiceSelect={noopChoice}
-          onHintRequest={noop}
-          onSkip={noop}
-          onGiveUp={handleGiveUp}
-        />
-      </div>
+      {!reviewing && (
+        <div className={styles.controls}>
+          <FreeRecallMode
+            elements={elements}
+            dataRows={dataRows}
+            columnMappings={columnMappings}
+            toggleDefinitions={toggleDefinitions}
+            session={session}
+            onTextAnswer={handleTextAnswer}
+            onElementSelect={noop}
+            onPositionSelect={noopPosition}
+            onChoiceSelect={noopChoice}
+            onHintRequest={noop}
+            onSkip={noop}
+            onGiveUp={handleGiveUp}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -197,6 +235,7 @@ interface IdentifyAdapterProps {
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
+  readonly reviewing: boolean;
 }
 
 const STUB_SESSION: QuizSessionState = {
@@ -221,6 +260,7 @@ function IdentifyAdapter({
   clustering,
   onStatusChange,
   forceGiveUp,
+  reviewing,
 }: IdentifyAdapterProps) {
   const handleFinish = (score: ScoreResult) => {
     onStatusChange('finished', score);
@@ -236,6 +276,7 @@ function IdentifyAdapter({
       session={STUB_SESSION}
       onFinish={handleFinish}
       forceGiveUp={forceGiveUp}
+      reviewing={reviewing}
       onTextAnswer={noop}
       onElementSelect={noop}
       onPositionSelect={noopPosition}
@@ -247,8 +288,8 @@ function IdentifyAdapter({
         <Renderer
           elements={elements}
           elementStates={renderProps.elementStates}
-          onElementClick={renderProps.onElementClick}
-          targetElementId={renderProps.targetElementId}
+          onElementClick={reviewing ? undefined : renderProps.onElementClick}
+          targetElementId={reviewing ? undefined : renderProps.targetElementId}
           toggles={renderProps.toggles}
           elementToggles={renderProps.elementToggles}
           backgroundPaths={backgroundPaths}
@@ -268,6 +309,7 @@ interface LocateAdapterProps {
   readonly clustering?: ClusteringConfig;
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
+  readonly reviewing: boolean;
 }
 
 function LocateAdapter({
@@ -279,6 +321,7 @@ function LocateAdapter({
   clustering,
   onStatusChange,
   forceGiveUp,
+  reviewing,
 }: LocateAdapterProps) {
   const handleFinish = (score: ScoreResult) => {
     onStatusChange('finished', score);
@@ -294,6 +337,7 @@ function LocateAdapter({
       clustering={clustering}
       onFinish={handleFinish}
       forceGiveUp={forceGiveUp}
+      reviewing={reviewing}
     />
   );
 }

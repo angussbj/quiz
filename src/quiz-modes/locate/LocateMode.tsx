@@ -21,6 +21,7 @@ export interface LocateModeProps {
   readonly clustering?: ClusteringConfig;
   readonly onFinish?: (score: ScoreResult) => void;
   readonly forceGiveUp?: boolean;
+  readonly reviewing?: boolean;
 }
 
 /**
@@ -36,6 +37,7 @@ export function LocateMode({
   clustering,
   onFinish,
   forceGiveUp = false,
+  reviewing = false,
 }: LocateModeProps) {
   const quiz = useLocateQuiz(elements);
   const [showResults, setShowResults] = useState(false);
@@ -85,51 +87,53 @@ export function LocateMode({
 
   return (
     <div className={styles.container}>
-      <div className={styles.promptBar}>
-        {quiz.isFinished ? (
-          <FinishedPrompt
-            correctCount={quiz.correctCount}
-            totalTargets={quiz.totalTargets}
-          />
-        ) : (
-          <PromptDisplay
-            targetLabel={quiz.currentTarget?.label ?? ''}
-            currentIndex={quiz.currentTargetIndex}
-            total={quiz.totalTargets}
-          />
-        )}
-        <div className={styles.controls}>
+      {!reviewing && (
+        <div className={styles.promptBar}>
           {quiz.isFinished ? (
-            <button
-              className={styles.skipButton}
-              onClick={handleOpenResults}
-            >
-              Show results
-            </button>
+            <FinishedPrompt
+              correctCount={quiz.correctCount}
+              totalTargets={quiz.totalTargets}
+            />
           ) : (
-            <>
+            <PromptDisplay
+              targetLabel={quiz.currentTarget?.label ?? ''}
+              currentIndex={quiz.currentTargetIndex}
+              total={quiz.totalTargets}
+            />
+          )}
+          <div className={styles.controls}>
+            {quiz.isFinished ? (
               <button
                 className={styles.skipButton}
-                onClick={quiz.handleSkip}
+                onClick={handleOpenResults}
               >
-                Skip
+                Show results
               </button>
-              <button
-                className={styles.giveUpButton}
-                onClick={quiz.handleGiveUp}
-              >
-                Give up
-              </button>
-            </>
-          )}
+            ) : (
+              <>
+                <button
+                  className={styles.skipButton}
+                  onClick={quiz.handleSkip}
+                >
+                  Skip
+                </button>
+                <button
+                  className={styles.giveUpButton}
+                  onClick={quiz.handleGiveUp}
+                >
+                  Give up
+                </button>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className={styles.visualization}>
         <Renderer
           elements={elements}
           elementStates={quiz.elementStates}
-          onPositionClick={quiz.isFinished ? undefined : quiz.handlePositionClick}
+          onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
           toggles={toggles}
           elementToggles={elementToggles}
           backgroundPaths={backgroundPaths}
@@ -138,7 +142,7 @@ export function LocateMode({
         />
 
         <AnimatePresence>
-          {showResults && (
+          {showResults && !reviewing && (
             <LocateResults
               correctCount={quiz.correctCount}
               totalTargets={quiz.totalTargets}
@@ -150,15 +154,17 @@ export function LocateMode({
         </AnimatePresence>
       </div>
 
-      <div className={styles.scoreBar}>
-        <span className={styles.scoreLabel}>
-          {quiz.correctCount}/{quiz.currentTargetIndex} correct
-        </span>
-        <ProgressBar
-          current={quiz.currentTargetIndex}
-          total={quiz.totalTargets}
-        />
-      </div>
+      {!reviewing && (
+        <div className={styles.scoreBar}>
+          <span className={styles.scoreLabel}>
+            {quiz.correctCount}/{quiz.currentTargetIndex} correct
+          </span>
+          <ProgressBar
+            current={quiz.currentTargetIndex}
+            total={quiz.totalTargets}
+          />
+        </div>
+      )}
     </div>
   );
 }

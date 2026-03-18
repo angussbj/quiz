@@ -23,7 +23,8 @@ export type ElementVisualState =
   | 'highlighted'
   | 'revealed'
   | 'correct'
-  | 'incorrect';
+  | 'incorrect'
+  | 'missed';
 
 /**
  * Base element in a visualization.

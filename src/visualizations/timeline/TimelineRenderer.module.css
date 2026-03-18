@@ -19,6 +19,10 @@
   fill: var(--color-incorrect);
 }
 
+.barMissed {
+  fill: var(--color-missed);
+}
+
 .barHighlighted {
   fill: var(--color-highlight);
 }
