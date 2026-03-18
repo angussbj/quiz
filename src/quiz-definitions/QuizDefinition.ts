@@ -40,8 +40,6 @@ export interface QuizDefinition<K extends string = string> {
   /** Optional filter to select a subset of rows from a shared CSV (e.g., by region). */
   readonly dataFilter?: DataFilter;
   readonly supportingDataPaths: ReadonlyArray<string>;
-  /** Optional filter for supporting data CSVs (same semantics as dataFilter). */
-  readonly supportingDataFilter?: DataFilter;
   /** Default countdown duration in seconds. If undefined, timer runs in elapsed (count-up) mode. */
   readonly defaultCountdownSeconds?: number;
 }

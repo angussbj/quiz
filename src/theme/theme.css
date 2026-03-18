@@ -24,6 +24,9 @@
   --color-highlight: #f0c040;
   --color-highlight-bg: #fef9e7;
 
+  /* City dot marker (uniform, not group-coded) */
+  --color-city-dot: #4a6fa5;
+
   /* Visualization groups (8 distinguishable colors) */
   --color-group-1: #4a6fa5;
   --color-group-2: #e07b53;
@@ -89,6 +92,7 @@
   --color-missed-bg: #4a1a1a;
   --color-highlight: #f0c040;
   --color-highlight-bg: #3a3520;
+  --color-city-dot: #6b9fd4;
 
   --color-border: #3a3a3a;
   --color-surface-raised: #2a2a2a;

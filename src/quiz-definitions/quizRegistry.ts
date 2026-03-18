@@ -49,7 +49,6 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/capitals/world-capitals.csv',
     dataFilter: { column: 'region', values: ['Europe'] },
     supportingDataPaths: ['/data/borders/world-borders.csv'],
-    supportingDataFilter: { column: 'region', values: ['Europe'] },
   },
   {
     id: 'geo-capitals-asia',
@@ -85,7 +84,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/capitals/world-capitals.csv',
     dataFilter: { column: 'region', values: ['Asia'] },
-    supportingDataPaths: [],
+    supportingDataPaths: ['/data/borders/world-borders.csv'],
   },
   {
     id: 'geo-capitals-africa',
@@ -121,7 +120,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/capitals/world-capitals.csv',
     dataFilter: { column: 'region', values: ['Africa'] },
-    supportingDataPaths: [],
+    supportingDataPaths: ['/data/borders/world-borders.csv'],
   },
   {
     id: 'geo-countries-europe',
@@ -142,7 +141,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       group: 'region',
     },
     dataPath: '/data/geography/countries/europe.csv',
-    supportingDataPaths: [],
+    supportingDataPaths: ['/data/borders/world-borders.csv'],
   },
   {
     id: 'geo-countries-asia',
@@ -162,7 +161,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       group: 'region',
     },
     dataPath: '/data/geography/countries/asia.csv',
-    supportingDataPaths: [],
+    supportingDataPaths: ['/data/borders/world-borders.csv'],
   },
   {
     id: 'geo-flags-europe',
