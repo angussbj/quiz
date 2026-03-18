@@ -181,6 +181,28 @@ function computeDimensions(
   return { fontSize, flagHeight, flagWidth, hasFlag, textHeight, gapSize, width, height };
 }
 
+/** Sort centers by distance from the closest avoid point (furthest first). */
+function sortCentersByDistanceFromDots(
+  centers: ReadonlyArray<ViewBoxPosition>,
+  avoidPoints: ReadonlyArray<ViewBoxPosition>,
+): ReadonlyArray<ViewBoxPosition> {
+  if (avoidPoints.length === 0) return centers;
+  return [...centers].sort((a, b) => {
+    const distA = minDistanceToPoints(a, avoidPoints);
+    const distB = minDistanceToPoints(b, avoidPoints);
+    return distB - distA; // furthest from dots first
+  });
+}
+
+function minDistanceToPoints(point: ViewBoxPosition, points: ReadonlyArray<ViewBoxPosition>): number {
+  let minDist = Infinity;
+  for (const p of points) {
+    const dist = Math.sqrt((point.x - p.x) ** 2 + (point.y - p.y) ** 2);
+    if (dist < minDist) minDist = dist;
+  }
+  return minDist;
+}
+
 export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: MapCountryLabelsProps) {
   const { scale } = useZoomPan();
 
@@ -206,6 +228,9 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
       const sqrtArea = Math.sqrt(label.area);
       const countryRadius = sqrtArea * 0.6;
 
+      // Sort center candidates by distance from closest dot (furthest first = best for labels)
+      const centersToTry = sortCentersByDistanceFromDots(label.centers, avoidPts);
+
       let didPlace = false;
       for (const sizeFactor of sizesToTry) {
         const fontSize = baseFontSize * sizeFactor;
@@ -216,15 +241,37 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
         const stepSize = Math.max(countryRadius * 0.2, minStep);
         const maxDist = Math.max(countryRadius * MAX_DISTANCE_FACTOR, dims.height * 2);
 
-        // Step 1: Follow line away from closest dot (short distance, fine steps)
-        // Only goes far enough to clear the dot — further exploration is left to the spiral.
-        if (avoidPts.length > 0) {
-          const linearStep = Math.max(dotAvoidRadius * 0.5, dims.height * 0.15);
-          const linearMaxDist = Math.max(dotAvoidRadius * 3, dims.height);
-          const awayCandidates = buildAwayFromDotCandidates(
-            label.center.x, label.center.y, avoidPts, linearStep, linearMaxDist,
+        // Try each center candidate with full placement sequence
+        for (const center of centersToTry) {
+          // Try direct placement at this center
+          if (tryPlace(center.x, center.y, dims, label, placed, visible)) {
+            didPlace = true;
+            break;
+          }
+
+          // Step 1: Follow line away from closest dot (short distance, fine steps)
+          if (avoidPts.length > 0) {
+            const linearStep = Math.max(dotAvoidRadius * 0.5, dims.height * 0.15);
+            const linearMaxDist = Math.max(dotAvoidRadius * 3, dims.height);
+            const awayCandidates = buildAwayFromDotCandidates(
+              center.x, center.y, avoidPts, linearStep, linearMaxDist,
+            );
+            for (const [cx, cy] of awayCandidates) {
+              if (tryPlace(cx, cy, dims, label, placed, visible)) {
+                didPlace = true;
+                break;
+              }
+            }
+            if (didPlace) break;
+          }
+
+          // Step 2: Spiral search around this center
+          const spiralCandidates = buildSpiralCandidates(
+            center.x, center.y,
+            Math.max(stepSize, dims.width * 0.3), Math.max(stepSize, dims.height * 0.3),
+            maxDist,
           );
-          for (const [cx, cy] of awayCandidates) {
+          for (const [cx, cy] of spiralCandidates) {
             if (tryPlace(cx, cy, dims, label, placed, visible)) {
               didPlace = true;
               break;
@@ -232,31 +279,19 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
           }
           if (didPlace) break;
         }
-
-        // Step 2: Spiral search
-        const spiralCandidates = buildSpiralCandidates(
-          label.center.x, label.center.y,
-          Math.max(stepSize, dims.width * 0.3), Math.max(stepSize, dims.height * 0.3),
-          maxDist,
-        );
-        for (const [cx, cy] of spiralCandidates) {
-          if (tryPlace(cx, cy, dims, label, placed, visible)) {
-            didPlace = true;
-            break;
-          }
-        }
         if (didPlace) break;
       }
 
-      // Step 3: At high zoom, force-show at centroid
+      // Step 3: At high zoom, force-show at best center
       if (!didPlace && isHighZoom) {
         const fontSize = baseFontSize * REDUCED_SIZE_FACTORS[REDUCED_SIZE_FACTORS.length - 1];
         const dims = computeDimensions(label, fontSize, showNames, showFlags, sqrtArea, REDUCED_SIZE_FACTORS[REDUCED_SIZE_FACTORS.length - 1]);
+        const bestCenter = centersToTry[0] ?? label.center;
         if (dims.width > 0) {
           visible.push({
             label, fontSize: dims.fontSize, flagHeight: dims.flagHeight,
             gapSize: dims.gapSize, width: dims.width, height: dims.height,
-            x: label.center.x - dims.width / 2, y: label.center.y - dims.height / 2,
+            x: bestCenter.x - dims.width / 2, y: bestCenter.y - dims.height / 2,
           });
         }
       }
