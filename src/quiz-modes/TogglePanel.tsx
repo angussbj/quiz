@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import type { ToggleDefinition, TogglePreset } from './ToggleDefinition';
+import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import { Tooltip } from '@/layout/Tooltip';
 import styles from './TogglePanel.module.css';
 
@@ -16,6 +16,12 @@ interface TogglePanelProps {
   readonly tooltips?: Readonly<Record<string, string>>;
   /** Current quiz mode — used to filter toggles by their `modes` field. */
   readonly selectedMode?: string;
+  /** Multi-value select toggles (e.g., date precision). */
+  readonly selectToggles?: ReadonlyArray<SelectToggleDefinition>;
+  /** Current values for select toggles. */
+  readonly selectValues?: Readonly<Record<string, string>>;
+  /** Callback for select toggle changes. */
+  readonly onSelectChange?: (key: string, value: string) => void;
 }
 
 function groupTogglesByCategory(
@@ -50,10 +56,16 @@ export function TogglePanel({
   disabledKeys,
   tooltips,
   selectedMode,
+  selectToggles = [],
+  selectValues = {},
+  onSelectChange,
 }: TogglePanelProps) {
   const filteredToggles = selectedMode
     ? toggles.filter((t) => !t.modes || t.modes.includes(selectedMode))
     : toggles;
+  const filteredSelectToggles = selectedMode
+    ? selectToggles.filter((t) => !t.modes || t.modes.includes(selectedMode))
+    : selectToggles;
   const groups = groupTogglesByCategory(filteredToggles);
 
   return (
@@ -110,8 +122,63 @@ export function TogglePanel({
               }
               return row;
             })}
+            {filteredSelectToggles
+              .filter((st) => st.group === group)
+              .map((selectToggle) => (
+                <div key={selectToggle.key} className={styles.selectRow}>
+                  <span className={styles.selectLabel}>{selectToggle.label}</span>
+                  <SegmentedControl
+                    options={selectToggle.options}
+                    value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
+                    onChange={(value) => onSelectChange?.(selectToggle.key, value)}
+                  />
+                </div>
+              ))}
           </div>
         </section>
+      ))}
+
+      {filteredSelectToggles
+        .filter((st) => !groups.some((g) => g.group === st.group))
+        .map((selectToggle) => (
+          <section key={selectToggle.key} className={styles.section}>
+            <h2 className={styles.sectionTitle}>{formatGroupLabel(selectToggle.group)}</h2>
+            <div className={styles.toggleList}>
+              <div className={styles.selectRow}>
+                <span className={styles.selectLabel}>{selectToggle.label}</span>
+                <SegmentedControl
+                  options={selectToggle.options}
+                  value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
+                  onChange={(value) => onSelectChange?.(selectToggle.key, value)}
+                />
+              </div>
+            </div>
+          </section>
+        ))}
+    </div>
+  );
+}
+
+function SegmentedControl({
+  options,
+  value,
+  onChange,
+}: {
+  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+}) {
+  return (
+    <div className={styles.segmentedControl}>
+      {options.map((option) => (
+        <button
+          key={option.value}
+          className={styles.segmentButton}
+          data-active={option.value === value || undefined}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+        </button>
       ))}
     </div>
   );

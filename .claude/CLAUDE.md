@@ -127,6 +127,7 @@ Source files are gitignored (too large). Download URLs are in each script's head
 - `docs/zoom-pan-container.md` — ZoomPanContainer architecture, clustering algorithm, coordinate space handling
 - `docs/toggle-resolution.md` — Toggle hidden behaviors, per-element resolution flow, per-mode behavior
 - `docs/quiz-integration.md` — Quiz page flow, mode composition patterns, element building, background paths, answer matching
+- `docs/history-quiz-guidelines.md` — Principles for selecting/grouping historical events, CSV format for timelines, date precision
 
 ## Worktree Development
 

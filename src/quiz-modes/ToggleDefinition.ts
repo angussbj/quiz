@@ -32,3 +32,17 @@ export interface TogglePreset {
   readonly label: string;
   readonly values: Readonly<Record<string, boolean>>;
 }
+
+/**
+ * A multi-value toggle (e.g., date precision: year / month / day).
+ * Rendered as a segmented control instead of a switch.
+ */
+export interface SelectToggleDefinition {
+  readonly key: string;
+  readonly label: string;
+  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
+  readonly defaultValue: string;
+  readonly group: string;
+  /** If set, this toggle only appears in the setup panel for these modes. */
+  readonly modes?: ReadonlyArray<string>;
+}

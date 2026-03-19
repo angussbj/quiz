@@ -104,6 +104,28 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Branch:** `feat/periodic-table-quiz`
 **Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element, ordered recall following the order by atomic number, prompted recall (new) where element squares are highlighted in a random order and you have to name them). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
 
-### 27. WWII Timeline Quiz
-**Branch:** `feat/wwii-timeline`
+### 27. WWII Timeline Quiz — DONE
+**Branch:** `worktree-wwii-timeline`
 **Scope:** Create a WWII timeline quiz with major events and their date ranges. CSV data with event name, start date, end date, category (e.g. European theatre, Pacific theatre, diplomacy). Register quiz definition with appropriate modes. Needed to exercise the timeline renderer end-to-end.
+**What was done:**
+- `public/data/history/modern/ww2-timeline.csv`: 37 events across 5 categories (European Theatre, Eastern Front, Pacific Theatre, Diplomacy & Politics, Strategic & Technology). Dates cross-checked against Britannica.
+- Alternate name matching via `event_alternates` column.
+- Quiz registry with `showDates`, `showTheatreColours` toggles, Easy/Hard presets, free-recall/identify/locate modes.
+- **Select toggle infrastructure**: `SelectToggleDefinition` for multi-value toggles (segmented control UI). `selectToggles` on `QuizDefinition`, `selectValues` in `QuizConfig`.
+- **Timeline locate mode**: `TimelineLocateMode` + `useTimelineLocateQuiz`. Click timeline or type dates. Range entry for multi-period events. Date parser accepts ISO, M/D/Y, "6 Jun 1944", etc. Precision-level scoring.
+- **Bug fix**: Free-recall excludes non-interactive spacer elements from total count.
+- See `docs/history-quiz-guidelines.md` for event selection principles.
+**Notes for future features:**
+- `SelectToggleDefinition` is generic — any quiz can add multi-value settings.
+- Timeline locate dispatched via `visualizationType` in `ModeAdapter`.
+- `datePrecision` only shown for locate mode via `modes: ['locate']`.
+
+
+### 29. Remove `targetElementId` from Renderer Props
+**Branch:** `feat/remove-target-from-renderer`
+**Scope:** Renderers (`MapRenderer`, `PeriodicTableRenderer`) currently receive `targetElementId` via `VisualizationRendererProps` and apply highlight styling directly (highlight stroke, thicker border). This is wrong — it means the correct answer gets a visual indicator in identify mode, defeating the purpose of the quiz. Highlighting decisions belong to quiz modes, not renderers. Renderers should only know about `elementStates`.
+- Remove `targetElementId` from `VisualizationRendererProps`.
+- Remove all `isTarget`-based styling from `MapRenderer` (city dot stroke/strokeWidth on lines ~215-216) and `PeriodicTableRenderer` (rect stroke/strokeWidth on line ~122-123).
+- Quiz modes that need to highlight an element (e.g. the future prompted recall mode, or locate mode's feedback) should express it via `elementStates` using a `'highlighted'` state — renderers already handle that state.
+- Update tests and stories that pass `targetElementId`.
+- Verify identify mode no longer leaks any visual indicator for the correct answer.

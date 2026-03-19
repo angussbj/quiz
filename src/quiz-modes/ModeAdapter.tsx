@@ -1,7 +1,7 @@
 import { type ComponentType, useEffect, useMemo, useRef } from 'react';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { VisualizationElement, ViewBoxPosition } from '@/visualizations/VisualizationElement';
-import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
+import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig, VisualizationType } from '@/visualizations/VisualizationRendererProps';
 import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from './ToggleDefinition';
@@ -14,14 +14,18 @@ import { OrderedRecallMode } from './ordered-recall/OrderedRecallMode';
 import { LocateMode } from './locate/LocateMode';
 import { MultipleChoiceMode } from './multiple-choice/MultipleChoiceMode';
 import { isFlagGridElement } from '@/visualizations/flag-grid/FlagGridElement';
+import { TimelineLocateMode } from './locate/TimelineLocateMode';
+import type { DatePrecision } from '@/scoring/calculateTimelineLocateScore';
 import { buildReviewElementStates, buildReviewElementToggles } from './buildReviewStates';
 import styles from './ModeAdapter.module.css';
 
 export interface ModeAdapterProps {
   readonly mode: QuizModeType;
+  readonly visualizationType?: VisualizationType;
   readonly elements: ReadonlyArray<VisualizationElement>;
   readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
+  readonly selectValues?: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
@@ -46,11 +50,13 @@ const noopChoice = (_index: number) => {};
  */
 export function ModeAdapter({
   mode,
+  visualizationType,
   elements,
   dataRows,
   columnMappings,
   toggleDefinitions,
   toggleValues,
+  selectValues,
   Renderer,
   backgroundPaths,
   backgroundLabels,
@@ -132,6 +138,22 @@ export function ModeAdapter({
         />
       );
     case 'locate':
+      if (visualizationType === 'timeline') {
+        return (
+          <TimelineLocateAdapter
+            elements={elements}
+            toggleDefinitions={toggleDefinitions}
+            toggleValues={toggleValues}
+            selectValues={selectValues}
+            Renderer={Renderer}
+            backgroundPaths={backgroundPaths}
+            clustering={clustering}
+            onStatusChange={onStatusChange}
+            forceGiveUp={forceGiveUp}
+            reviewing={reviewing}
+          />
+        );
+      }
       return (
         <LocateAdapter
           elements={elements}
@@ -547,6 +569,57 @@ function MultipleChoiceAdapter({
       renderChoice={renderFlagChoice}
       onFinish={handleFinish}
       forceGiveUp={forceGiveUp}
+    />
+  );
+}
+
+interface TimelineLocateAdapterProps {
+  readonly elements: ReadonlyArray<VisualizationElement>;
+  readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
+  readonly toggleValues: Readonly<Record<string, boolean>>;
+  readonly selectValues?: Readonly<Record<string, string>>;
+  readonly Renderer: ComponentType<VisualizationRendererProps>;
+  readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly clustering?: ClusteringConfig;
+  readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
+  readonly forceGiveUp: boolean;
+  readonly reviewing: boolean;
+}
+
+function TimelineLocateAdapter({
+  elements,
+  toggleDefinitions,
+  toggleValues,
+  selectValues,
+  Renderer,
+  backgroundPaths,
+  clustering,
+  onStatusChange,
+  forceGiveUp,
+  reviewing,
+}: TimelineLocateAdapterProps) {
+  const handleFinish = (score: ScoreResult) => {
+    onStatusChange('finished', score);
+  };
+
+  const rawPrecision = selectValues?.['datePrecision'];
+  const datePrecision: DatePrecision =
+    rawPrecision === 'year' || rawPrecision === 'month' || rawPrecision === 'day'
+      ? rawPrecision
+      : 'month';
+
+  return (
+    <TimelineLocateMode
+      elements={elements}
+      toggles={toggleValues}
+      toggleDefinitions={toggleDefinitions}
+      Renderer={Renderer}
+      backgroundPaths={backgroundPaths}
+      clustering={clustering}
+      onFinish={handleFinish}
+      forceGiveUp={forceGiveUp}
+      reviewing={reviewing}
+      datePrecision={datePrecision}
     />
   );
 }

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
-import type { ToggleDefinition, TogglePreset } from './ToggleDefinition';
+import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { TogglePanel } from './TogglePanel';
@@ -38,6 +38,9 @@ export interface QuizSetupPanelProps {
   readonly onRangeMaxChange?: (value: number | undefined) => void;
   readonly onStart: () => void;
   readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
+  readonly selectToggles?: ReadonlyArray<SelectToggleDefinition>;
+  readonly selectValues?: Readonly<Record<string, string>>;
+  readonly onSelectChange?: (key: string, value: string) => void;
 }
 
 export function QuizSetupPanel({
@@ -62,6 +65,9 @@ export function QuizSetupPanel({
   onRangeMaxChange,
   onStart,
   modeConstraints,
+  selectToggles,
+  selectValues,
+  onSelectChange,
 }: QuizSetupPanelProps) {
   const showModeSelector = availableModes.length > 1;
 
@@ -228,6 +234,9 @@ export function QuizSetupPanel({
             disabledKeys={disabledKeys}
             tooltips={constraintResult.reasons}
             selectedMode={selectedMode}
+            selectToggles={selectToggles}
+            selectValues={selectValues}
+            onSelectChange={onSelectChange}
           />
         )}
 

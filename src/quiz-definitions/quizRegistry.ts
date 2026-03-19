@@ -365,12 +365,38 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place key events of World War II on a timeline.',
     path: ['History', 'Modern', 'World War II Timeline'],
     visualizationType: 'timeline',
-    availableModes: ['free-recall-unordered', 'locate'],
+    availableModes: ['free-recall-unordered', 'identify', 'locate'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showTheatreColours', label: 'Theatre colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
     ],
-    presets: [],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [
+          { value: 'year', label: 'Year' },
+          { value: 'month', label: 'Month' },
+          { value: 'day', label: 'Day' },
+        ],
+        defaultValue: 'month',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      {
+        name: 'easy',
+        label: 'Easy',
+        values: { showDates: true, showTheatreColours: true },
+      },
+      {
+        name: 'hard',
+        label: 'Hard',
+        values: { showDates: false, showTheatreColours: false },
+      },
+    ],
     columnMappings: {
       answer: 'event',
       label: 'event',

@@ -40,7 +40,11 @@ export function useFreeRecallSession({
   const [lastMatchedAnswer, setLastMatchedAnswer] = useState<string | undefined>(undefined);
 
   const correctIdSet = useMemo(() => new Set(correctIds), [correctIds]);
-  const totalElements = elements.length;
+  const interactiveElements = useMemo(
+    () => elements.filter((el) => el.interactive !== false),
+    [elements],
+  );
+  const totalElements = interactiveElements.length;
 
   const remainingRows = useMemo(
     () => dataRows.filter((row) => !correctIdSet.has(row['id'] ?? '')),
@@ -48,8 +52,8 @@ export function useFreeRecallSession({
   );
 
   const remainingElementIds = useMemo(
-    () => elements.filter((el) => !correctIdSet.has(el.id)).map((el) => el.id),
-    [elements, correctIdSet],
+    () => interactiveElements.filter((el) => !correctIdSet.has(el.id)).map((el) => el.id),
+    [interactiveElements, correctIdSet],
   );
 
   const elementStates = useMemo(() => {

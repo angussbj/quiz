@@ -1,5 +1,5 @@
 import type { VisualizationType } from '@/visualizations/VisualizationRendererProps';
-import type { ToggleDefinition, TogglePreset } from '@/quiz-modes/ToggleDefinition';
+import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from '@/quiz-modes/ToggleDefinition';
 import type { ToggleConstraint } from '@/quiz-modes/ToggleConstraint';
 
 export type QuizModeType =
@@ -35,6 +35,7 @@ export interface QuizDefinition<K extends string = string> {
   readonly availableModes: ReadonlyArray<QuizModeType>;
   readonly defaultMode: QuizModeType;
   readonly toggles: ReadonlyArray<ToggleDefinition>;
+  readonly selectToggles?: ReadonlyArray<SelectToggleDefinition>;
   readonly presets: ReadonlyArray<TogglePreset>;
   /** Which CSV column serves which role. Keys are role names, values are column keys from K. */
   readonly columnMappings: Readonly<Record<string, K>>;
