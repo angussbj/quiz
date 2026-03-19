@@ -84,6 +84,10 @@ Source files are gitignored (too large). Download URLs are in each script's head
 - Use `ReadonlyArray` for array types in interfaces.
 - Use `Readonly<Record<K, V>>` for map types (not `ReadonlyMap` — records serialize to JSON).
 
+### Public Assets
+- The app is deployed at a subpath (`/quiz/`). All runtime references to files in `public/` (fetch URLs, `<img src>`, `<image href>`) must use `assetPath()` from `src/utilities/assetPath.ts`.
+- Never hardcode absolute paths like `/data/...` or `/flags/...` — they will break in production.
+
 ### CSS
 - Use CSS modules for component styles: `Component.module.css`
 - All colors, spacing, typography via CSS custom properties from `src/theme/theme.css`

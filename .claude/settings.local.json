@@ -58,7 +58,8 @@
       "WebFetch(domain:www.countries-ofthe-world.com)",
       "WebFetch(domain:www.cia.gov)",
       "Bash(curl:*)",
-      "mcp__plugin_playwright_playwright__browser_press_key"
+      "mcp__plugin_playwright_playwright__browser_press_key",
+      "mcp__plugin_playwright_playwright__browser_evaluate"
     ]
   }
 }
