@@ -55,7 +55,6 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:en.wikipedia.org)",
       "WebFetch(domain:www.britannica.com)",
-      "WebFetch(domain:www.countries-ofthe-world.com)",
       "WebFetch(domain:www.cia.gov)",
       "Bash(curl:*)",
       "mcp__plugin_playwright_playwright__browser_press_key",
@@ -66,8 +65,8 @@
       "Bash(mmdc:*)",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests",
       "WebFetch(domain:commons.wikimedia.org)",
-      "WebFetch(domain:www.thingiverse.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(python3:*)"
     ]
   }
 }
