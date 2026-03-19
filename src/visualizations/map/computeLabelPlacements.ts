@@ -183,16 +183,23 @@ function computeDimensions(
   return { fontSize, flagHeight, flagWidth, hasFlag, textHeight, gapSize, width, height };
 }
 
-function sortCentersByDistanceFromDots(
+/**
+ * Order centers for placement: polylabel first (index 0, the best general-purpose
+ * position), then remaining centers sorted by distance from nearest dot (furthest first).
+ */
+function orderCentersForPlacement(
   centers: ReadonlyArray<ViewBoxPosition>,
   avoidPoints: ReadonlyArray<ViewBoxPosition>,
 ): ReadonlyArray<ViewBoxPosition> {
-  if (avoidPoints.length === 0) return centers;
-  return [...centers].sort((a, b) => {
+  if (centers.length <= 1) return centers;
+  const [polylabel, ...rest] = centers;
+  if (avoidPoints.length === 0 || rest.length === 0) return centers;
+  const sortedRest = [...rest].sort((a, b) => {
     const distA = minDistanceToPoints(a, avoidPoints);
     const distB = minDistanceToPoints(b, avoidPoints);
     return distB - distA;
   });
+  return [polylabel, ...sortedRest];
 }
 
 function minDistanceToPoints(point: ViewBoxPosition, points: ReadonlyArray<ViewBoxPosition>): number {
@@ -242,7 +249,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     const sqrtArea = Math.sqrt(label.area);
     const countryRadius = sqrtArea * 0.6;
 
-    const centersToTry = sortCentersByDistanceFromDots(label.centers, avoidPoints);
+    const centersToTry = orderCentersForPlacement(label.centers, avoidPoints);
 
     let didPlace = false;
 
