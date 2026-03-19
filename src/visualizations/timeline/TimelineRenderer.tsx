@@ -238,11 +238,13 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   const tooltipTextRef = useRef('');
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
+      // Don't show tooltip when labels are hidden for this element
+      if (!elementToggle(elementToggles, toggles, element.id, 'showLabels')) return;
       const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
       tooltipTextRef.current = text;
       setTooltip({ x: event.clientX, y: event.clientY, text });
     },
-    [],
+    [elementToggles, toggles],
   );
   const handleBarMouseMove = useCallback((event: React.MouseEvent) => {
     setTooltip({ x: event.clientX, y: event.clientY, text: tooltipTextRef.current });
@@ -371,13 +373,13 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 function getStateClass(state: string | undefined): string | undefined {
   switch (state) {
     case 'correct': return styles.barCorrect;
-    case 'correct-second': return styles.barCorrect;
-    case 'correct-third': return styles.barCorrect;
+    case 'correct-second': return styles.barCorrectSecond;
+    case 'correct-third': return styles.barCorrectThird;
     case 'incorrect': return styles.barIncorrect;
     case 'missed': return styles.barMissed;
     case 'highlighted': return styles.barHighlighted;
     case 'hidden': return styles.barHidden;
-    case 'revealed': return styles.barRevealed;
+    case 'context': return styles.barContext;
     default: return undefined;
   }
 }

@@ -40,7 +40,7 @@ export const WithElementStates: Story = {
       paris: 'correct',
       berlin: 'incorrect',
       madrid: 'highlighted',
-      rome: 'revealed',
+      rome: 'context',
     },
   },
 };

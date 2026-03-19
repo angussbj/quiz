@@ -22,7 +22,7 @@ export type ElementVisualState =
   | 'default'
   | 'hidden'
   | 'highlighted'
-  | 'revealed'
+  | 'context'
   | 'correct'
   | 'correct-second'
   | 'correct-third'

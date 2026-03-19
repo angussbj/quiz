@@ -72,7 +72,7 @@ export function ActiveQuiz({
       const mergedStates = useMemo(() => {
         const states: Record<string, ElementVisualState> = { ...props.elementStates };
         for (const id of backgroundElementIds) {
-          states[id] = 'revealed';
+          states[id] = 'context';
         }
         return states;
       }, [props.elementStates]);

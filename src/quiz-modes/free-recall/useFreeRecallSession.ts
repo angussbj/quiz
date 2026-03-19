@@ -62,7 +62,7 @@ export function useFreeRecallSession({
       if (correctIdSet.has(element.id)) {
         states[element.id] = 'correct';
       } else if (givenUp) {
-        states[element.id] = 'revealed';
+        states[element.id] = 'missed';
       } else {
         states[element.id] = 'default';
       }

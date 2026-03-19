@@ -74,7 +74,7 @@ export function useTimelineLocateQuiz(
   const [elementStates, setElementStates] = useState<Readonly<Record<string, ElementVisualState>>>(() => {
     const states: Record<string, ElementVisualState> = {};
     for (const element of elements) {
-      states[element.id] = element.interactive !== false ? 'hidden' : 'revealed';
+      states[element.id] = element.interactive !== false ? 'hidden' : 'context';
     }
     return states;
   });
@@ -188,7 +188,7 @@ export function useTimelineLocateQuiz(
     setElementStates((prev) => {
       const next = { ...prev };
       for (let i = currentTargetIndex; i < targetOrder.length; i++) {
-        next[targetOrder[i]] = 'incorrect';
+        next[targetOrder[i]] = 'missed';
       }
       return next;
     });

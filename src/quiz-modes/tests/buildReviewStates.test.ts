@@ -2,29 +2,19 @@ import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 
 describe('buildReviewElementStates', () => {
-  it('remaps revealed to missed', () => {
+  it('passes through all states unchanged', () => {
     const states: Record<string, ElementVisualState> = {
       a: 'correct',
-      b: 'revealed',
-      c: 'hidden',
+      b: 'missed',
+      c: 'incorrect',
+      d: 'hidden',
     };
     const result = buildReviewElementStates(states);
     expect(result).toEqual({
       a: 'correct',
       b: 'missed',
-      c: 'hidden',
-    });
-  });
-
-  it('remaps incorrect to missed', () => {
-    const states: Record<string, ElementVisualState> = {
-      a: 'correct',
-      b: 'incorrect',
-    };
-    const result = buildReviewElementStates(states);
-    expect(result).toEqual({
-      a: 'correct',
-      b: 'missed',
+      c: 'incorrect',
+      d: 'hidden',
     });
   });
 

@@ -90,7 +90,7 @@ describe('useIdentifyQuiz', () => {
     expect(result.current.promptIndex).toBe(1);
     expect(result.current.correctCount).toBe(0);
     expect(result.current.skippedCount).toBe(1);
-    expect(result.current.elementStates[firstId]).toBe('revealed');
+    expect(result.current.elementStates[firstId]).toBe('incorrect');
   });
 
   it('give up reveals all remaining', () => {
@@ -208,7 +208,7 @@ describe('useIdentifyQuiz', () => {
     act(() => jest.advanceTimersByTime(900));
     expect(result.current.flashIncorrectId).toBeNull();
     expect(result.current.autoRevealId).toBe(currentId);
-    expect(result.current.elementStates[currentId]).toBe('missed');
+    expect(result.current.elementStates[currentId]).toBe('incorrect');
 
     // After auto-reveal duration, advance to next prompt
     act(() => jest.advanceTimersByTime(1600));

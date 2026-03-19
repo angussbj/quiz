@@ -64,8 +64,31 @@ export function IdentifyMode({
         wrongAttempts: quiz.wrongAttemptsPerElement[el.id] ?? 0,
       };
     }
-    return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
-  }, [elements, quiz.answeredElementIds, quiz.wrongAttemptsPerElement, toggleDefinitions, toggleValues]);
+    const baseToggles = resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
+
+    // Force on-reveal toggles to true for elements in 'incorrect' state,
+    // so labels show during wrong-click flash and for skipped/exhausted elements.
+    const onRevealKeys = toggleDefinitions
+      .filter((t) => t.hiddenBehavior === 'on-reveal' && !toggleValues[t.key])
+      .map((t) => t.key);
+
+    if (onRevealKeys.length === 0) return baseToggles;
+
+    const overrides: Record<string, Record<string, boolean>> = {};
+    for (const [id, toggles] of Object.entries(baseToggles)) {
+      overrides[id] = { ...toggles };
+    }
+    for (const el of elements) {
+      const state = quiz.elementStates[el.id];
+      if (state === 'incorrect') {
+        if (!overrides[el.id]) overrides[el.id] = {};
+        for (const key of onRevealKeys) {
+          overrides[el.id][key] = true;
+        }
+      }
+    }
+    return overrides;
+  }, [elements, quiz.answeredElementIds, quiz.wrongAttemptsPerElement, quiz.elementStates, toggleDefinitions, toggleValues]);
 
   const toggleKeys = useMemo(
     () => toggleDefinitions.map((t) => t.key),

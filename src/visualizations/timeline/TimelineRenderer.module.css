@@ -154,6 +154,14 @@
   background-color: var(--color-correct) !important;
 }
 
+.barCorrectSecond {
+  background-color: var(--color-correct-second) !important;
+}
+
+.barCorrectThird {
+  background-color: var(--color-correct-third) !important;
+}
+
 .barIncorrect {
   background-color: var(--color-incorrect) !important;
 }
@@ -170,7 +178,7 @@
   opacity: 0.15;
 }
 
-.barRevealed {
+.barContext {
   opacity: 0.5;
 }
 

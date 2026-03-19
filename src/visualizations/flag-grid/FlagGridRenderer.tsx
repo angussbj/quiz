@@ -33,12 +33,18 @@ function stateToStroke(state: ElementVisualState): string {
   switch (state) {
     case 'correct':
       return 'var(--color-correct)';
+    case 'correct-second':
+      return 'var(--color-correct-second)';
+    case 'correct-third':
+      return 'var(--color-correct-third)';
     case 'incorrect':
       return 'var(--color-incorrect)';
     case 'missed':
       return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-highlight)';
+    case 'context':
+      return 'var(--color-context)';
     default:
       return 'var(--color-border)';
   }
@@ -48,19 +54,28 @@ function stateToFill(state: ElementVisualState): string {
   switch (state) {
     case 'correct':
       return 'var(--color-correct-bg)';
+    case 'correct-second':
+      return 'var(--color-correct-second-bg)';
+    case 'correct-third':
+      return 'var(--color-correct-third-bg)';
     case 'incorrect':
       return 'var(--color-incorrect-bg)';
     case 'missed':
       return 'var(--color-missed-bg)';
     case 'highlighted':
       return 'var(--color-highlight-bg)';
+    case 'context':
+      return 'var(--color-context-bg)';
+    case 'hidden':
+      return 'transparent';
     default:
-      return 'var(--color-bg-secondary)';
+      return 'var(--color-bg-tertiary)';
   }
 }
 
 function isAnswered(state: ElementVisualState): boolean {
-  return state === 'revealed' || state === 'correct' || state === 'missed';
+  return state === 'context' || state === 'correct' || state === 'correct-second'
+    || state === 'correct-third' || state === 'incorrect' || state === 'missed';
 }
 
 function FlagCell({

@@ -84,7 +84,7 @@ export function useOrderedRecallSession({
       if (correctIds.has(el.id)) {
         states[el.id] = 'correct';
       } else if (skippedIds.has(el.id)) {
-        states[el.id] = 'revealed';
+        states[el.id] = 'missed';
       } else if (el.id === currentElementId) {
         states[el.id] = 'highlighted';
       } else {

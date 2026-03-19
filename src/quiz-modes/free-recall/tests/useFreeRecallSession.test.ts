@@ -95,8 +95,8 @@ describe('useFreeRecallSession', () => {
 
     expect(result.current.session.status).toBe('finished');
     expect(result.current.session.elementStates['paris']).toBe('correct');
-    expect(result.current.session.elementStates['berlin']).toBe('revealed');
-    expect(result.current.session.elementStates['madrid']).toBe('revealed');
+    expect(result.current.session.elementStates['berlin']).toBe('missed');
+    expect(result.current.session.elementStates['madrid']).toBe('missed');
   });
 
   it('ignores answers after give up', () => {

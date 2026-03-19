@@ -1,22 +1,14 @@
 import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 
 /**
- * Remaps element states for review mode:
- * - 'revealed' → 'missed' (free recall / identify: items never answered)
- * - 'incorrect' → 'missed' (locate: items the user got wrong or skipped)
+ * Returns element states as-is for review mode.
+ * Quiz modes now set 'missed' and 'incorrect' directly during gameplay,
+ * so no remapping is needed.
  */
 export function buildReviewElementStates(
   elementStates: Readonly<Record<string, ElementVisualState>>,
 ): Readonly<Record<string, ElementVisualState>> {
-  const states: Record<string, ElementVisualState> = {};
-  for (const [id, state] of Object.entries(elementStates)) {
-    if (state === 'revealed' || state === 'incorrect') {
-      states[id] = 'missed';
-    } else {
-      states[id] = state;
-    }
-  }
-  return states;
+  return elementStates;
 }
 
 /**
