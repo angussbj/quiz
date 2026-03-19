@@ -53,7 +53,7 @@ function quantise(value: number, step: number): number {
 const SCALE_QUANTUM = 0.1;
 
 /** Max zoom when zooming into a cluster badge click. */
-const MAX_CLUSTER_SCALE = 80;
+const MAX_CLUSTER_SCALE = 500;
 
 /**
  * Compute the initial scale and position to frame an initialViewBox within
@@ -157,7 +157,6 @@ export function ZoomPanContainer({
         centerOnInit={!effectiveInitialViewBox}
         limitToBounds={false}
         smooth
-        pinch={{ step: 3 }}
         wheel={{ smoothStep: 0.03 }}
       >
         <ZoomPanInner
@@ -277,7 +276,8 @@ function ZoomPanInner({
   const screenPixelsPerViewBoxUnit = basePixelsPerViewBoxUnit * quantisedScale;
 
   const clusters = useMemo(() => {
-    if (!clustering || quantisedScale >= clustering.disableAboveScale) return [];
+    if (!clustering) return [];
+    if (clustering.disableAboveScale !== undefined && quantisedScale >= clustering.disableAboveScale) return [];
     return computeClusters(elements, clustering.minScreenPixelDistance, screenPixelsPerViewBoxUnit);
   }, [elements, clustering, quantisedScale, screenPixelsPerViewBoxUnit]);
 
@@ -316,15 +316,33 @@ function ZoomPanInner({
       const bboxWidth = maxX - minX;
       const bboxHeight = maxY - minY;
 
+      // Scale needed to separate the closest pair of elements by minScreenPixelDistance.
+      let minPairwiseViewBoxDist = Infinity;
+      for (let i = 0; i < clusterElements.length; i++) {
+        for (let j = i + 1; j < clusterElements.length; j++) {
+          const a = clusterElements[i].viewBoxCenter;
+          const b = clusterElements[j].viewBoxCenter;
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          minPairwiseViewBoxDist = Math.min(minPairwiseViewBoxDist, Math.sqrt(dx * dx + dy * dy));
+        }
+      }
+      const separationScale =
+        clustering && Number.isFinite(minPairwiseViewBoxDist)
+          ? (clustering.minScreenPixelDistance * 1.5) / (minPairwiseViewBoxDist * basePixelsPerViewBoxUnit)
+          : 0;
+
       const ZOOM_PADDING = 0.7;
-      const targetScale = Math.min(
-        MAX_CLUSTER_SCALE,
-        ZOOM_PADDING *
-          Math.min(
-            containerSize.width / (bboxWidth * basePixelsPerViewBoxUnit),
-            containerSize.height / (bboxHeight * basePixelsPerViewBoxUnit),
-          ),
-      );
+      const bboxFitScale =
+        bboxWidth > 0 || bboxHeight > 0
+          ? ZOOM_PADDING *
+            Math.min(
+              containerSize.width / (bboxWidth * basePixelsPerViewBoxUnit),
+              containerSize.height / (bboxHeight * basePixelsPerViewBoxUnit),
+            )
+          : 0;
+
+      const targetScale = Math.min(MAX_CLUSTER_SCALE, Math.max(bboxFitScale, separationScale));
 
       // Convert viewBox center to content-space pixel offset, accounting
       // for the centering that preserveAspectRatio="xMidYMid meet" applies.
@@ -341,7 +359,7 @@ function ZoomPanInner({
 
       setTransform(posX, posY, targetScale, 300, 'easeOut');
     },
-    [elements, containerSize, viewBox, basePixelsPerViewBoxUnit, onClusterClick, setTransform],
+    [elements, containerSize, viewBox, basePixelsPerViewBoxUnit, clustering, onClusterClick, setTransform],
   );
 
   const contextValue = useMemo(

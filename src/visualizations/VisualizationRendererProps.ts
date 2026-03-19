@@ -11,8 +11,8 @@ export interface ElementCluster {
 export interface ClusteringConfig {
   /** Min distance in screen pixels (computed on-the-fly from viewBox positions + zoom state) */
   readonly minScreenPixelDistance: number;
-  /** Zoom scale above which clustering is disabled (show all individually) */
-  readonly disableAboveScale: number;
+  /** Zoom scale above which clustering is disabled. If omitted, clustering is never disabled by scale. */
+  readonly disableAboveScale?: number;
   /** Element visual state to count in the cluster badge numerator (e.g. "correct" → "3/5") */
   readonly countedState: ElementVisualState;
 }
