@@ -92,7 +92,10 @@ export function MapRenderer({
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
   );
   const showBorders = toggles['showBorders'] !== false;
-  const effectiveClustering = clustering ?? DEFAULT_MAP_CLUSTERING;
+  // Disable default clustering for stroke-style elements (rivers) since clustering
+  // by centroid doesn't make sense for line features spread across the map.
+  const hasStrokeElements = elements.some((e) => isMapElement(e) && e.pathRenderStyle === 'stroke');
+  const effectiveClustering = clustering ?? (hasStrokeElements ? undefined : DEFAULT_MAP_CLUSTERING);
 
   return (
     <ZoomPanContainer
@@ -120,10 +123,10 @@ export function MapRenderer({
   );
 }
 
-/** Stroke width for river paths in viewBox units. */
+/** Stroke width for river paths in viewBox units (same approach as border stroke-width). */
 const RIVER_STROKE_WIDTH = 0.4;
 
-/** Wider hit area for clicking river paths (invisible, rendered beneath visible stroke). */
+/** Wider hit area for clicking river paths in viewBox units. */
 const RIVER_HIT_STROKE_WIDTH = 2.0;
 
 function strokeOpacity(state: ElementVisualState | undefined): number {
@@ -139,9 +142,9 @@ function strokeOpacity(state: ElementVisualState | undefined): number {
       return 1;
     case 'default':
     case 'context':
-      return 0.7;
+      return 0.8;
     default:
-      return 0.4;
+      return 0.6;
   }
 }
 
@@ -153,6 +156,8 @@ function renderShapeElements(
   clusteredElementIds: ReadonlySet<string>,
   onElementClick: ((elementId: string) => void) | undefined,
   targetState: ElementVisualState | undefined,
+  riverStrokeWidth: number,
+  riverHitStrokeWidth: number,
 ) {
   return elements.map((element) => {
     if (clusteredElementIds.has(element.id)) return null;
@@ -178,7 +183,7 @@ function renderShapeElements(
               style={{
                 fill: 'none',
                 stroke: 'transparent',
-                strokeWidth: RIVER_HIT_STROKE_WIDTH,
+                strokeWidth: riverHitStrokeWidth,
                 strokeLinecap: 'round',
                 strokeLinejoin: 'round',
               }}
@@ -195,7 +200,7 @@ function renderShapeElements(
             style={{
               fill: 'none',
               stroke: color,
-              strokeWidth: RIVER_STROKE_WIDTH,
+              strokeWidth: riverStrokeWidth,
               strokeOpacity: strokeOpacity(state),
               strokeLinecap: 'round',
               strokeLinejoin: 'round',
@@ -319,11 +324,13 @@ function MapContent({
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect')}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context')}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct')}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted')}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
 
       {/* Country name labels and flags (from background border data, unified overlap detection) */}
       {(toggles['showCountryNames'] || toggles['showMapFlags']) && backgroundLabels && (
@@ -335,11 +342,12 @@ function MapContent({
         />
       )}
 
-      {/* Flag images near city dots (capitals quizzes) */}
+      {/* Flag images near city dots (capitals quizzes — not for stroke-style paths like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showMapFlags')) return null;
         if (!isMapElement(element) || !element.code) return null;
+        if (element.pathRenderStyle === 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         const flagHeight = dotRadius * 4;
@@ -357,9 +365,10 @@ function MapContent({
         );
       })}
 
-      {/* City dot markers */}
+      {/* City dot markers (rendered last = on top of flags — not for stroke-style paths like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
+        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
