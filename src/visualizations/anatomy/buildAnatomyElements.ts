@@ -1,6 +1,5 @@
 import type { AnatomyElement } from './AnatomyElement';
 import type { ViewBoxBounds } from '../VisualizationElement';
-import { parsePathPoints } from '../map/computePathCentroid';
 
 /**
  * Build anatomy elements from CSV rows.
@@ -35,7 +34,11 @@ export function buildAnatomyElements(
   });
 }
 
-/** Compute the bounding box across all pipe-separated paths. */
+/**
+ * Compute the bounding box across all pipe-separated SVG paths.
+ * Scans all numeric coordinate pairs regardless of SVG command type
+ * (M, L, C, Q, S, T, A, etc.).
+ */
 function computeMultiPathBounds(pathsRaw: string): ViewBoxBounds {
   let minX = Infinity;
   let minY = Infinity;
@@ -44,12 +47,15 @@ function computeMultiPathBounds(pathsRaw: string): ViewBoxBounds {
 
   const paths = pathsRaw.split('|');
   for (const d of paths) {
-    const points = parsePathPoints(d);
-    for (const p of points) {
-      if (p.x < minX) minX = p.x;
-      if (p.y < minY) minY = p.y;
-      if (p.x > maxX) maxX = p.x;
-      if (p.y > maxY) maxY = p.y;
+    const numbers = d.match(/-?\d+(?:\.\d+)?/g);
+    if (!numbers || numbers.length < 2) continue;
+    for (let i = 0; i < numbers.length - 1; i += 2) {
+      const x = parseFloat(numbers[i]);
+      const y = parseFloat(numbers[i + 1]);
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
     }
   }
 

@@ -37,7 +37,7 @@ function stateColor(state: ElementVisualState | undefined): string | undefined {
       return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-highlight)';
-    case 'default':
+    case 'revealed':
       return 'var(--color-text-muted)';
     default:
       return undefined;
@@ -54,12 +54,12 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
     case 'incorrect':
     case 'missed':
     case 'highlighted':
-      return 0.3;
+      return 0.6;
     case 'default':
     case 'revealed':
-      return 0.4;
+      return 0.7;
     default:
-      return 0.15;
+      return 0.55;
   }
 }
 
@@ -89,7 +89,8 @@ function renderBoneElements(
           fill: color,
           fillOpacity: stateFillOpacity(state),
           stroke: color,
-          strokeWidth: 0.3,
+          strokeWidth: 0.8,
+          strokeOpacity: 0.8,
         }}
         className={onElementClick ? styles.interactivePath : styles.bonePath}
         onClick={
