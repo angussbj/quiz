@@ -79,7 +79,11 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
   const backgroundLabels = useMemo(() => {
     if (!backgroundPaths) return undefined;
     const allLabels = computeBackgroundLabels(backgroundPaths);
-    const regionValues = definition.dataFilter?.values;
+    const filter = definition.dataFilter;
+    const regionFilter = filter
+      ? (Array.isArray(filter) ? filter : [filter]).find((f) => f.column === 'region')
+      : undefined;
+    const regionValues = regionFilter?.values;
     return allLabels.filter((label) => {
       // Only sovereign countries (sovereign matches name)
       if (!label.sovereign || label.sovereign !== label.name) return false;
@@ -87,7 +91,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
       if (regionValues) {
         if (!label.region) return false;
         const labelRegions = label.region.split('|');
-        return regionValues.some((r) => labelRegions.includes(r));
+        return regionValues.some((r: string) => labelRegions.includes(r));
       }
       return true;
     });
