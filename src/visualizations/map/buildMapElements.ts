@@ -1,7 +1,17 @@
+import type { VisualizationElement } from '../VisualizationElement';
 import type { MapElement } from './MapElement';
 import { projectGeo, wrapPathCoordinates } from './projectGeo';
 
 const DOT_RADIUS = 0.3;
+
+const VALID_LABEL_POSITIONS = new Set(['left', 'right', 'above', 'below']);
+
+function parseLabelPosition(raw: string | undefined): VisualizationElement['labelPosition'] {
+  if (raw && VALID_LABEL_POSITIONS.has(raw)) {
+    return raw as VisualizationElement['labelPosition'];
+  }
+  return undefined;
+}
 
 export function buildMapElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
@@ -30,6 +40,7 @@ export function buildMapElements(
       },
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
+      labelPosition: parseLabelPosition(row['label_position']),
       svgPathData: (row['paths'] ?? '').split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' '),
       code: row[codeColumn] ?? id,
     };

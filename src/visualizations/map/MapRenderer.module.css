@@ -56,7 +56,6 @@
   font-weight: 500;
   pointer-events: none;
   user-select: none;
-  dominant-baseline: central;
 }
 
 .backgroundLabel {

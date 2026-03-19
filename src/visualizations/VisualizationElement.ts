@@ -45,4 +45,6 @@ export interface VisualizationElement {
   readonly interactive: boolean;
   /** Optional group for color coding (e.g., continent, era, element group) */
   readonly group?: string;
+  /** Label placement relative to the element center. Default: 'right'. */
+  readonly labelPosition?: 'left' | 'right' | 'above' | 'below';
 }

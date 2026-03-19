@@ -11,8 +11,7 @@ import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
 const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
-  minScreenPixelDistance: 30,
-  disableAboveScale: 6,
+  minScreenPixelDistance: 10,
   countedState: 'correct',
 };
 
@@ -319,13 +318,22 @@ function MapContent({
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityNames')) return null;
+        const pos = element.labelPosition ?? 'right';
+        const offset = dotRadius * 1.5;
+        const fontSize = dotRadius * 2;
+        const labelProps = pos === 'left'
+          ? { x: element.viewBoxCenter.x - offset, y: element.viewBoxCenter.y, textAnchor: 'end' as const, dominantBaseline: 'central' as const }
+          : pos === 'above'
+          ? { x: element.viewBoxCenter.x, y: element.viewBoxCenter.y - offset, textAnchor: 'middle' as const, dominantBaseline: 'auto' as const }
+          : pos === 'below'
+          ? { x: element.viewBoxCenter.x, y: element.viewBoxCenter.y + offset, textAnchor: 'middle' as const, dominantBaseline: 'hanging' as const }
+          : { x: element.viewBoxCenter.x + offset, y: element.viewBoxCenter.y, textAnchor: 'start' as const, dominantBaseline: 'central' as const };
         return (
           <text
             key={`city-label-${element.id}`}
-            x={element.viewBoxCenter.x + dotRadius * 1.5}
-            y={element.viewBoxCenter.y}
+            {...labelProps}
             className={styles.cityLabel}
-            style={{ fontSize: `${dotRadius * 2}px` }}
+            style={{ fontSize: `${fontSize}px` }}
           >
             {element.label}
           </text>
