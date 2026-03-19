@@ -150,66 +150,68 @@ export function IdentifyMode({
 
   return (
     <div className={styles.container}>
-      {!reviewing ? (
-        <>
-          <div className={styles.progressBar}>
-            <motion.div
-              className={styles.progressFill}
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercent}%` }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            />
-          </div>
-
-          {!quiz.isFinished && (
-            <div className={styles.promptBar}>
-              {promptFields.length > 0 && <IdentifyPromptFields fields={promptFields} />}
-              <span className={styles.promptText}>
-                Click on <span className={styles.promptLabel}>{quiz.currentElementLabel}</span>
-              </span>
-              <span className={styles.progress}>
-                {quiz.correctCount + quiz.skippedCount}/{quiz.totalPrompts}
-              </span>
-              <div className={styles.controls}>
-                <button
-                  className={styles.skipButton}
-                  onClick={handleSkip}
-                  type="button"
-                >
-                  Skip
-                </button>
-                <button
-                  className={styles.giveUpButton}
-                  onClick={handleGiveUp}
-                  type="button"
-                >
-                  Give up
-                </button>
-              </div>
+      <div className={styles.controlsArea}>
+        {!reviewing ? (
+          <>
+            <div className={styles.progressBar}>
+              <motion.div
+                className={styles.progressFill}
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              />
             </div>
-          )}
 
-          {quiz.isFinished && (
-            <div className={styles.promptBar}>
-              <div className={styles.finishedOverlay}>
-                <motion.span
-                  className={styles.finishedPercentage}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
-                >
-                  {quiz.score.percentage}%
-                </motion.span>
-                <span className={styles.finishedScore}>
-                  {quiz.correctCount} of {quiz.totalPrompts} correct
+            {!quiz.isFinished && (
+              <div className={styles.promptBar}>
+                {promptFields.length > 0 && <IdentifyPromptFields fields={promptFields} />}
+                <span className={styles.promptText}>
+                  Click on <span className={styles.promptLabel}>{quiz.currentElementLabel}</span>
                 </span>
+                <span className={styles.progress}>
+                  {quiz.correctCount + quiz.skippedCount}/{quiz.totalPrompts}
+                </span>
+                <div className={styles.controls}>
+                  <button
+                    className={styles.skipButton}
+                    onClick={handleSkip}
+                    type="button"
+                  >
+                    Skip
+                  </button>
+                  <button
+                    className={styles.giveUpButton}
+                    onClick={handleGiveUp}
+                    type="button"
+                  >
+                    Give up
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        </>
-      ) : (
-        reviewResult && <InlineResults result={reviewResult} />
-      )}
+            )}
+
+            {quiz.isFinished && (
+              <div className={styles.promptBar}>
+                <div className={styles.finishedOverlay}>
+                  <motion.span
+                    className={styles.finishedPercentage}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  >
+                    {quiz.score.percentage}%
+                  </motion.span>
+                  <span className={styles.finishedScore}>
+                    {quiz.correctCount} of {quiz.totalPrompts} correct
+                  </span>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          reviewResult && <InlineResults result={reviewResult} />
+        )}
+      </div>
 
       <div className={styles.visualizationArea}>
         <Renderer

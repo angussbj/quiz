@@ -13,6 +13,14 @@
   flex-direction: column;
 }
 
+.controlsArea {
+  flex-shrink: 0;
+  min-height: var(--quiz-controls-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .progressRow {
   display: flex;
   align-items: center;

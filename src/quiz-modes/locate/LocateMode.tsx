@@ -72,52 +72,54 @@ export function LocateMode({
 
   return (
     <div className={styles.container}>
-      {!reviewing ? (
-        <>
-          <div className={styles.promptBar}>
-            {quiz.isFinished ? (
-              <FinishedPrompt
-                correctCount={quiz.correctCount}
-                totalTargets={quiz.totalTargets}
-              />
-            ) : (
-              <PromptDisplay
-                targetLabel={quiz.currentTarget?.label ?? ''}
-                currentIndex={quiz.currentTargetIndex}
+      <div className={styles.controlsArea}>
+        {!reviewing ? (
+          <>
+            <div className={styles.promptBar}>
+              {quiz.isFinished ? (
+                <FinishedPrompt
+                  correctCount={quiz.correctCount}
+                  totalTargets={quiz.totalTargets}
+                />
+              ) : (
+                <PromptDisplay
+                  targetLabel={quiz.currentTarget?.label ?? ''}
+                  currentIndex={quiz.currentTargetIndex}
+                  total={quiz.totalTargets}
+                />
+              )}
+              {!quiz.isFinished && (
+                <div className={styles.controls}>
+                  <button
+                    className={styles.skipButton}
+                    onClick={quiz.handleSkip}
+                  >
+                    Skip
+                  </button>
+                  <button
+                    className={styles.giveUpButton}
+                    onClick={quiz.handleGiveUp}
+                  >
+                    Give up
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.scoreBar}>
+              <span className={styles.scoreLabel}>
+                {quiz.correctCount}/{quiz.currentTargetIndex} correct
+              </span>
+              <ProgressBar
+                current={quiz.currentTargetIndex}
                 total={quiz.totalTargets}
               />
-            )}
-            {!quiz.isFinished && (
-              <div className={styles.controls}>
-                <button
-                  className={styles.skipButton}
-                  onClick={quiz.handleSkip}
-                >
-                  Skip
-                </button>
-                <button
-                  className={styles.giveUpButton}
-                  onClick={quiz.handleGiveUp}
-                >
-                  Give up
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className={styles.scoreBar}>
-            <span className={styles.scoreLabel}>
-              {quiz.correctCount}/{quiz.currentTargetIndex} correct
-            </span>
-            <ProgressBar
-              current={quiz.currentTargetIndex}
-              total={quiz.totalTargets}
-            />
-          </div>
-        </>
-      ) : (
-        reviewResult && <InlineResults result={reviewResult} />
-      )}
+            </div>
+          </>
+        ) : (
+          reviewResult && <InlineResults result={reviewResult} />
+        )}
+      </div>
 
       <div className={styles.visualization}>
         <Renderer

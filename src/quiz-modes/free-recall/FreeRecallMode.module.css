@@ -13,8 +13,15 @@
   flex-direction: column;
 }
 
-.controls {
+.controlsArea {
   flex-shrink: 0;
+  min-height: var(--quiz-controls-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.controls {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);

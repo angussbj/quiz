@@ -110,73 +110,75 @@ export function FreeRecallMode({
         />
       </div>
 
-      {!reviewing ? (
-        <div className={styles.controls}>
-          <div className={styles.progressRow}>
-            <span className={styles.progressText}>
-              {correctCount}/{totalCount}
-            </span>
-            <div className={styles.progressBarTrack}>
-              <div
-                className={styles.progressBarFill}
-                style={{ width: `${percentage}%` }}
-              />
+      <div className={styles.controlsArea}>
+        {!reviewing ? (
+          <div className={styles.controls}>
+            <div className={styles.progressRow}>
+              <span className={styles.progressText}>
+                {correctCount}/{totalCount}
+              </span>
+              <div className={styles.progressBarTrack}>
+                <div
+                  className={styles.progressBarFill}
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+              <span className={styles.progressText}>
+                {Math.round(percentage)}%
+              </span>
             </div>
-            <span className={styles.progressText}>
-              {Math.round(percentage)}%
-            </span>
-          </div>
 
-          {!isFinished && (
-            <div className={styles.inputRow}>
-              <input
-                ref={inputRef}
-                className={styles.answerInput}
-                type="text"
-                value={inputText}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                placeholder="Type an answer…"
-                autoFocus
-                autoComplete="off"
-                autoCorrect="off"
-                spellCheck={false}
-              />
-              <button
-                className={styles.giveUpButton}
-                onClick={handleGiveUp}
-                type="button"
-              >
-                Give up
-              </button>
-            </div>
-          )}
-
-          <AnimatePresence mode="wait">
-            {session.lastMatchedAnswer && (
-              <motion.div
-                key={session.lastMatchedElementId}
-                className={styles.lastAnswer}
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-              >
-                ✓ {session.lastMatchedAnswer}
-              </motion.div>
+            {!isFinished && (
+              <div className={styles.inputRow}>
+                <input
+                  ref={inputRef}
+                  className={styles.answerInput}
+                  type="text"
+                  value={inputText}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type an answer…"
+                  autoFocus
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                <button
+                  className={styles.giveUpButton}
+                  onClick={handleGiveUp}
+                  type="button"
+                >
+                  Give up
+                </button>
+              </div>
             )}
-          </AnimatePresence>
 
-          {isFinished && (
-            <div className={styles.finishedMessage}>
-              <span className={styles.scoreHighlight}>{correctCount}/{totalCount}</span>
-              {correctCount === totalCount ? ' — Perfect!' : ' answered'}
-            </div>
-          )}
-        </div>
-      ) : (
-        reviewResult && <InlineResults result={reviewResult} />
-      )}
+            <AnimatePresence mode="wait">
+              {session.lastMatchedAnswer && (
+                <motion.div
+                  key={session.lastMatchedElementId}
+                  className={styles.lastAnswer}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  ✓ {session.lastMatchedAnswer}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {isFinished && (
+              <div className={styles.finishedMessage}>
+                <span className={styles.scoreHighlight}>{correctCount}/{totalCount}</span>
+                {correctCount === totalCount ? ' — Perfect!' : ' answered'}
+              </div>
+            )}
+          </div>
+        ) : (
+          reviewResult && <InlineResults result={reviewResult} />
+        )}
+      </div>
     </div>
   );
 }

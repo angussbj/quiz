@@ -105,75 +105,77 @@ export function TimelineLocateMode({
 
   return (
     <div className={styles.container}>
-      {!reviewing ? (
-        <>
-          <div className={styles.promptBar}>
-            {quiz.isFinished ? (
-              <FinishedPrompt
-                correctCount={quiz.correctCount}
-                totalTargets={quiz.totalTargets}
-              />
-            ) : (
-              <div className={styles.promptArea}>
-                <PromptDisplay
-                  targetLabel={quiz.currentTarget?.label ?? ''}
-                  currentIndex={quiz.currentTargetIndex}
-                  total={quiz.totalTargets}
-                  needsRange={quiz.currentNeedsRange}
-                  rangePhase={quiz.rangePhase}
-                  pendingStartAnswer={quiz.pendingStartAnswer}
+      <div className={styles.controlsArea}>
+        {!reviewing ? (
+          <>
+            <div className={styles.promptBar}>
+              {quiz.isFinished ? (
+                <FinishedPrompt
+                  correctCount={quiz.correctCount}
+                  totalTargets={quiz.totalTargets}
                 />
-                <div className={styles.inputRow}>
-                  <input
-                    className={`${styles.dateInput} ${inputError ? styles.dateInputError : ''}`}
-                    type="text"
-                    value={dateInput}
-                    onChange={(e) => {
-                      setDateInput(e.target.value);
-                      setInputError(false);
-                    }}
-                    onKeyDown={handleKeyDown}
-                    placeholder={`Type ${precisionLabel} or click timeline (${placeholderExamples[datePrecision]})`}
+              ) : (
+                <div className={styles.promptArea}>
+                  <PromptDisplay
+                    targetLabel={quiz.currentTarget?.label ?? ''}
+                    currentIndex={quiz.currentTargetIndex}
+                    total={quiz.totalTargets}
+                    needsRange={quiz.currentNeedsRange}
+                    rangePhase={quiz.rangePhase}
+                    pendingStartAnswer={quiz.pendingStartAnswer}
                   />
-                  <button
-                    className={styles.submitButton}
-                    onClick={handleDateSubmit}
-                    disabled={dateInput.trim() === ''}
-                  >
-                    Submit
+                  <div className={styles.inputRow}>
+                    <input
+                      className={`${styles.dateInput} ${inputError ? styles.dateInputError : ''}`}
+                      type="text"
+                      value={dateInput}
+                      onChange={(e) => {
+                        setDateInput(e.target.value);
+                        setInputError(false);
+                      }}
+                      onKeyDown={handleKeyDown}
+                      placeholder={`Type ${precisionLabel} or click timeline (${placeholderExamples[datePrecision]})`}
+                    />
+                    <button
+                      className={styles.submitButton}
+                      onClick={handleDateSubmit}
+                      disabled={dateInput.trim() === ''}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              )}
+              {!quiz.isFinished && (
+                <div className={styles.controls}>
+                  <button className={styles.controlButton} onClick={quiz.handleSkip}>
+                    Skip
+                  </button>
+                  <button className={styles.controlButton} onClick={quiz.handleGiveUp}>
+                    Give up
                   </button>
                 </div>
-              </div>
-            )}
-            {!quiz.isFinished && (
-              <div className={styles.controls}>
-                <button className={styles.controlButton} onClick={quiz.handleSkip}>
-                  Skip
-                </button>
-                <button className={styles.controlButton} onClick={quiz.handleGiveUp}>
-                  Give up
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className={styles.scoreBar}>
-            <span className={styles.scoreLabel}>
-              {quiz.correctCount}/{quiz.currentTargetIndex} correct
-            </span>
-            <div className={styles.progressTrack}>
-              <motion.div
-                className={styles.progressFill}
-                initial={{ width: '0%' }}
-                animate={{ width: `${quiz.totalTargets > 0 ? (quiz.currentTargetIndex / quiz.totalTargets) * 100 : 0}%` }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-              />
+              )}
             </div>
-          </div>
-        </>
-      ) : (
-        reviewResult && <InlineResults result={reviewResult} />
-      )}
+
+            <div className={styles.scoreBar}>
+              <span className={styles.scoreLabel}>
+                {quiz.correctCount}/{quiz.currentTargetIndex} correct
+              </span>
+              <div className={styles.progressTrack}>
+                <motion.div
+                  className={styles.progressFill}
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${quiz.totalTargets > 0 ? (quiz.currentTargetIndex / quiz.totalTargets) * 100 : 0}%` }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          reviewResult && <InlineResults result={reviewResult} />
+        )}
+      </div>
 
       <div className={styles.visualization}>
         <Renderer

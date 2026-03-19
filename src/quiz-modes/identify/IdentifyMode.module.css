@@ -6,6 +6,14 @@
   gap: var(--spacing-sm);
 }
 
+.controlsArea {
+  flex-shrink: 0;
+  min-height: var(--quiz-controls-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .promptBar {
   display: flex;
   align-items: center;
