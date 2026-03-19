@@ -148,7 +148,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     title: 'North American Capitals',
     description: 'Name the capital cities of North America, Central America, and the Caribbean.',
     dataFilter: { column: 'subregion', values: ['North America', 'Central America', 'Caribbean'] },
-    initialViewBox: { x: -130, y: -50, width: 72, height: 43 },
+    initialViewBox: { x: -120, y: -40, width: 72, height: 43 },
   },
   {
     ...capitalsQuizBase,

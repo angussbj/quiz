@@ -74,16 +74,20 @@ function main() {
   //   - horizontal: [dot.x + gap, dot.x + gap + labelWidth]
   //   - vertical: [dot.y - halfHeight, dot.y + halfHeight]
   //
-  // These are rough approximations calibrated for typical map zoom levels
-  // on European/dense quizzes.
-  const GAP = 0.4;           // gap between dot edge and label start (degrees)
-  const CHAR_WIDTH = 0.35;   // approximate width per character (degrees)
-  const HALF_HEIGHT = 0.6;   // half the label height (degrees)
-  const DOT_RADIUS = 0.3;    // approximate dot radius for collision target
+  // These are tuned for regional quiz zoom levels where labels are large
+  // relative to city spacing.
+  const GAP = 0.5;           // gap between dot edge and label start (degrees)
+  const CHAR_WIDTH = 0.45;   // approximate width per character (degrees)
+  const HALF_HEIGHT = 0.8;   // half the label height (degrees)
+  const DOT_RADIUS = 0.4;    // approximate dot radius for collision target
 
-  const positions: Map<string, 'left' | 'right'> = new Map();
+  const positions: Map<string, 'left'> = new Map();
 
   for (const a of cities) {
+    // Skip cities that already have a manual position (above/below)
+    const existing = rows[a.rowIndex][posCol];
+    if (existing === 'above' || existing === 'below') continue;
+
     // Check if any city B's dot falls in A's right-label zone
     const labelLeft = a.x + GAP;
     const labelRight = a.x + GAP + a.label.length * CHAR_WIDTH;
@@ -106,13 +110,18 @@ function main() {
     }
   }
 
-  // Apply positions to CSV rows
+  // Apply positions to CSV rows — only set 'left' for auto-detected,
+  // clear back to empty (right) for cities that no longer collide
   let flipped = 0;
-  for (const [id, pos] of positions) {
-    const city = cities.find((c) => c.id === id);
-    if (city) {
-      rows[city.rowIndex][posCol] = pos;
-      flipped++;
+  for (const city of cities) {
+    const existing = rows[city.rowIndex][posCol];
+    if (existing === 'above' || existing === 'below') continue; // preserve manual
+
+    if (positions.has(city.id)) {
+      if (existing !== 'left') flipped++;
+      rows[city.rowIndex][posCol] = 'left';
+    } else {
+      rows[city.rowIndex][posCol] = '';
     }
   }
 
