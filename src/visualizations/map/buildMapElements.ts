@@ -1,5 +1,5 @@
 import type { MapElement } from './MapElement';
-import { projectGeo } from './projectGeo';
+import { projectGeo, wrapPathCoordinates } from './projectGeo';
 
 const DOT_RADIUS = 0.3;
 
@@ -30,7 +30,7 @@ export function buildMapElements(
       },
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
-      svgPathData: row['paths'] ?? '',
+      svgPathData: wrapPathCoordinates(row['paths'] ?? ''),
       code: row[codeColumn] ?? id,
     };
   });

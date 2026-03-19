@@ -1,4 +1,4 @@
-import { parseBackgroundPaths } from '../parseBackgroundPaths';
+import { parseBackgroundPaths } from '@/visualizations/map/loadBackgroundPaths';
 
 describe('parseBackgroundPaths', () => {
   it('parses a single-path row into one BackgroundPath', () => {
@@ -32,12 +32,13 @@ describe('parseBackgroundPaths', () => {
     expect(result[0].id).toBe('germany');
   });
 
-  it('skips rows with missing id', () => {
+  it('includes rows with missing id using empty string', () => {
     const rows = [
       { id: '', name: 'France', group: 'Western Europe', paths: 'M 0,0 Z' },
     ];
     const result = parseBackgroundPaths(rows);
-    expect(result).toHaveLength(0);
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('');
   });
 
   it('falls back to name when group is missing', () => {

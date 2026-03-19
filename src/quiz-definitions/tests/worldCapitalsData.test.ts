@@ -108,4 +108,64 @@ describe('world-capitals.csv data validation', () => {
     }
     expect(missing).toEqual([]);
   });
+
+  it('filters to 54 African countries', () => {
+    const african = applyDataFilter(allRows, { column: 'region', values: ['Africa'] });
+    expect(african.length).toBe(54);
+  });
+
+  it('filters to 49 Asian countries (includes multi-region Turkey and Russia)', () => {
+    const asian = applyDataFilter(allRows, { column: 'region', values: ['Asia'] });
+    expect(asian.length).toBe(49);
+    const countries = asian.map((r) => r.country);
+    expect(countries).toContain('Türkiye');
+    expect(countries).toContain('Russia');
+  });
+
+  it('filters to 14 Oceanian countries', () => {
+    const oceanian = applyDataFilter(allRows, { column: 'region', values: ['Oceania'] });
+    expect(oceanian.length).toBe(14);
+  });
+
+  it('filters North America by subregion to 23 countries', () => {
+    const northAmerican = applyDataFilter(allRows, {
+      column: 'subregion',
+      values: ['North America', 'Central America', 'Caribbean'],
+    });
+    expect(northAmerican.length).toBe(23);
+    const countries = northAmerican.map((r) => r.country);
+    expect(countries).toContain('United States');
+    expect(countries).toContain('Canada');
+    expect(countries).toContain('Mexico');
+    expect(countries).toContain('Cuba');
+    expect(countries).toContain('Panama');
+  });
+
+  it('filters South America by subregion to 12 countries', () => {
+    const southAmerican = applyDataFilter(allRows, {
+      column: 'subregion',
+      values: ['South America'],
+    });
+    expect(southAmerican.length).toBe(12);
+    const countries = southAmerican.map((r) => r.country);
+    expect(countries).toContain('Brazil');
+    expect(countries).toContain('Argentina');
+  });
+
+  it('continent filters cover all 197 rows with no overlap (except multi-region)', () => {
+    const europe = applyDataFilter(allRows, { column: 'region', values: ['Europe'] });
+    const asia = applyDataFilter(allRows, { column: 'region', values: ['Asia'] });
+    const africa = applyDataFilter(allRows, { column: 'region', values: ['Africa'] });
+    const americas = applyDataFilter(allRows, { column: 'region', values: ['Americas'] });
+    const oceania = applyDataFilter(allRows, { column: 'region', values: ['Oceania'] });
+
+    const allIds = new Set([
+      ...europe.map((r) => r.id),
+      ...asia.map((r) => r.id),
+      ...africa.map((r) => r.id),
+      ...americas.map((r) => r.id),
+      ...oceania.map((r) => r.id),
+    ]);
+    expect(allIds.size).toBe(197);
+  });
 });

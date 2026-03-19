@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { assetPath } from '../../utilities/assetPath';
-import type { VisualizationRendererProps } from '../VisualizationRendererProps';
+import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
@@ -9,10 +9,15 @@ import { isMapElement } from './MapElement';
 import { MapCountryLabels } from './MapCountryLabels';
 import styles from './MapRenderer.module.css';
 
-/** Base dot radius in viewBox units at scale=1. Scales inversely with zoom. */
-const BASE_DOT_RADIUS = 0.3;
-const MIN_DOT_RADIUS = 0.05;
-const MAX_DOT_RADIUS = 0.5;
+/** Default clustering for map quizzes: cluster overlapping city dots. */
+const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
+  minScreenPixelDistance: 30,
+  disableAboveScale: 6,
+  countedState: 'correct',
+};
+
+/** City dot radius in screen pixels. Converted to viewBox units at render time. */
+const DOT_SCREEN_RADIUS = 5;
 const GROUP_COLORS = [
   'var(--color-group-1)',
   'var(--color-group-2)',
@@ -89,14 +94,16 @@ export function MapRenderer({
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
   );
   const showBorders = toggles['showBorders'] !== false;
+  const effectiveClustering = clustering ?? DEFAULT_MAP_CLUSTERING;
 
   return (
     <ZoomPanContainer
       elements={elements}
       elementStates={elementStates}
-      clustering={clustering}
+      clustering={effectiveClustering}
       onClusterClick={onClusterClick}
       initialViewBox={initialViewBox}
+      backgroundPaths={backgroundPaths}
     >
       <MapContent
         elements={elements}
@@ -188,9 +195,9 @@ function MapContent({
   backgroundPaths,
   backgroundLabels,
 }: MapContentProps) {
-  const { clusteredElementIds, scale } = useZoomPan();
+  const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
 
-  const dotRadius = Math.min(MAX_DOT_RADIUS, Math.max(MIN_DOT_RADIUS, BASE_DOT_RADIUS / scale));
+  const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
   const visibleDotPositions = useMemo(
     () => elements

@@ -72,6 +72,18 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Branch:** `feat/all-capitals`
 **Scope:** Extend capital city data beyond Europe. Check that the data for Asia, Africa, North America, South America, and Oceania is already in the existing csvs and if there are any edge cases we should check (e.g. Taiwan, Palestine, French Guiana, etc.). Register quiz definitions for each continent and for the world. Follow the same patterns as #17. Use Natural Earth 1:110m data, pre-converted to SVG paths.
 
+### 23. Capital & Border Data for All Continents — DONE
+**Branch:** `feat/all-capitals`
+**Scope:** Extend capital city data beyond Europe. Check that the data for Asia, Africa, North America, South America, and Oceania is already in the existing csvs and if there are any edge cases we should check (e.g. Taiwan, Palestine, French Guiana, etc.). Register quiz definitions for each continent and for the world. Follow the same patterns as #17. Use Natural Earth 1:110m data, pre-converted to SVG paths.
+**What was done:**
+- All 197 capitals and 233 border rows were already present in the shared CSVs. No new data files needed.
+- Extracted `capitalsQuizBase` shared config in `quizRegistry.ts` — all capitals quizzes spread this and only override `id`, `title`, `description`, and `dataFilter`. Ensures consistent toggles (borders, city dots, country names on map, flags on map, prompt country names, prompt flags), presets (easy/medium/hard), column mappings (including `code`), modes, and mode constraints.
+- Registered 4 new quiz definitions: North American Capitals, South American Capitals, Oceanian Capitals, World Capitals.
+- Americas split using `subregion` column: North America = subregions `North America` + `Central America` + `Caribbean` (23 countries); South America = subregion `South America` (12 countries).
+- World quiz has no `dataFilter` — loads all 197 capitals.
+- Asia and Africa upgraded from simpler toggles to full Europe-style config (flags on map, prompt fields, mode constraints) via the shared base.
+- Added data validation tests for all continent filters and the Americas subregion split.
+
 ### 24. Countries Quiz Type — DONE
 **Branch:** `feat/countries-quiz`
 **Scope:** Add a "countries" quiz type — name the country from its shape/location on the map. Different from capitals (which focuses on cities). Create quiz definitions per continent and for the world, registered in the quiz registry. Can reuse the same border data from #23.
