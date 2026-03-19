@@ -94,7 +94,7 @@ describe('useOrderedRecallSession', () => {
 
     expect(result.current.currentElementId).toBe('helium');
     expect(result.current.skippedCount).toBe(1);
-    expect(result.current.elementStates['hydrogen']).toBe('revealed');
+    expect(result.current.elementStates['hydrogen']).toBe('missed');
   });
 
   it('give up finishes and reveals remaining', () => {
@@ -105,9 +105,9 @@ describe('useOrderedRecallSession', () => {
     });
 
     expect(result.current.isFinished).toBe(true);
-    expect(result.current.elementStates['hydrogen']).toBe('revealed');
-    expect(result.current.elementStates['helium']).toBe('revealed');
-    expect(result.current.elementStates['lithium']).toBe('revealed');
+    expect(result.current.elementStates['hydrogen']).toBe('missed');
+    expect(result.current.elementStates['helium']).toBe('missed');
+    expect(result.current.elementStates['lithium']).toBe('missed');
   });
 
   it('finishes with 100% when all answered correctly in order', () => {

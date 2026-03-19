@@ -41,7 +41,7 @@ export function useLocateQuiz(
       // Interactive elements (quiz targets) start hidden — showing their
       // positions would give away the answers. Non-interactive elements
       // (decorative) start revealed.
-      states[element.id] = element.interactive ? 'hidden' : 'revealed';
+      states[element.id] = element.interactive ? 'hidden' : 'context';
     }
     return states;
   });
@@ -154,7 +154,7 @@ export function useLocateQuiz(
     setElementStates((prev) => {
       const next = { ...prev };
       for (let i = currentTargetIndex; i < targetOrder.length; i++) {
-        next[targetOrder[i]] = 'incorrect';
+        next[targetOrder[i]] = 'missed';
       }
       return next;
     });

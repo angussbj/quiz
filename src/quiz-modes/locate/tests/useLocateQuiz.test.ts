@@ -66,7 +66,7 @@ describe('useLocateQuiz', () => {
 
     expect(result.current.elementStates['paris']).toBe('hidden');
     expect(result.current.elementStates['london']).toBe('hidden');
-    expect(result.current.elementStates['border']).toBe('revealed');
+    expect(result.current.elementStates['border']).toBe('context');
   });
 
   it('records distance and advances target on position click', () => {
@@ -190,14 +190,14 @@ describe('useLocateQuiz', () => {
     });
 
     expect(result.current.isFinished).toBe(true);
-    // The first target was answered (correct), rest should be incorrect
+    // The first target was answered (correct), rest should be missed
     expect(result.current.elementStates[firstTarget.id]).toBe('correct');
-    // All other interactive elements should be incorrect
+    // All other interactive elements should be missed (gave up)
     const otherIds = elements
       .filter((e) => e.interactive && e.id !== firstTarget.id)
       .map((e) => e.id);
     for (const id of otherIds) {
-      expect(result.current.elementStates[id]).toBe('incorrect');
+      expect(result.current.elementStates[id]).toBe('missed');
     }
   });
 

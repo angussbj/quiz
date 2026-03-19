@@ -59,7 +59,7 @@ function makeMixedStates(
   for (let i = 0; i < elements.length; i++) {
     const el = elements[i];
     if (i < 5) states[el.id] = 'correct';
-    else if (i < 10) states[el.id] = 'revealed';
+    else if (i < 10) states[el.id] = 'context';
     else if (i === 10) states[el.id] = 'incorrect';
     else if (i === 11) states[el.id] = 'highlighted';
     else states[el.id] = 'hidden';
@@ -91,7 +91,7 @@ type Story = StoryObj<typeof PeriodicTableRenderer>;
 export const AllRevealed: Story = {
   args: {
     elements: sampleElements,
-    elementStates: makeStates(sampleElements, 'revealed'),
+    elementStates: makeStates(sampleElements, 'context'),
     toggles: { showGroups: true },
   },
 };
@@ -123,7 +123,7 @@ export const Highlighted: Story = {
 export const NoGroupColors: Story = {
   args: {
     elements: sampleElements,
-    elementStates: makeStates(sampleElements, 'revealed'),
+    elementStates: makeStates(sampleElements, 'context'),
     toggles: { showGroups: false },
   },
 };

@@ -85,7 +85,7 @@ describe('usePromptedRecallQuiz', () => {
 
     expect(result.current.promptIndex).toBe(1);
     expect(result.current.skippedCount).toBe(1);
-    expect(result.current.elementStates[skippedId]).toBe('revealed');
+    expect(result.current.elementStates[skippedId]).toBe('missed');
   });
 
   it('give up finishes quiz and reveals all remaining', () => {
@@ -100,7 +100,7 @@ describe('usePromptedRecallQuiz', () => {
 
     for (const el of elements) {
       const state = result.current.elementStates[el.id];
-      expect(state === 'revealed' || state === 'correct').toBe(true);
+      expect(state === 'missed' || state === 'correct').toBe(true);
     }
   });
 

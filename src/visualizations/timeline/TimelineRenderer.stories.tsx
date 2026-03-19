@@ -133,7 +133,7 @@ export const WithStates: Story = {
       renaissance: 'correct',
       ww1: 'incorrect',
       'moon-landing': 'highlighted',
-      'cold-war': 'revealed',
+      'cold-war': 'context',
       napoleon: 'hidden',
     },
   },

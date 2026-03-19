@@ -42,7 +42,7 @@ function stateToFill(state: ElementVisualState, groupColorIndex: number | undefi
       return 'var(--color-missed-bg)';
     case 'highlighted':
       return 'var(--color-highlight-bg)';
-    case 'revealed':
+    case 'context':
       return groupColor ?? 'var(--color-surface-raised)';
     case 'hidden':
     default:
@@ -84,7 +84,7 @@ function stateToTextFill(state: ElementVisualState, groupColorIndex: number | un
       return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-text-primary)';
-    case 'revealed':
+    case 'context':
       return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-text-primary)';
     case 'hidden':
     default:
@@ -99,7 +99,7 @@ function isThickStroke(state: ElementVisualState): boolean {
 
 /** Whether the element has been answered — text should always show regardless of toggles. */
 function isAnswered(state: ElementVisualState): boolean {
-  return state === 'revealed' || state === 'correct' || state === 'correct-second'
+  return state === 'context' || state === 'correct' || state === 'correct-second'
     || state === 'correct-third' || state === 'missed';
 }
 

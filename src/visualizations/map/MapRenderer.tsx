@@ -68,7 +68,7 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
     case 'highlighted':
       return 0.3;
     case 'default':
-    case 'revealed':
+    case 'context':
       return 0.4;
     default:
       return 0.15;
@@ -252,7 +252,7 @@ function MapContent({
           so state-colored shapes aren't obscured by neighbouring borders. */}
       {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined)}
       {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect')}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'revealed')}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context')}
       {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct')}
       {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted')}
 

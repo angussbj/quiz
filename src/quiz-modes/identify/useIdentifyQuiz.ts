@@ -28,7 +28,7 @@ export interface IdentifyQuizState {
   readonly score: ScoreResult;
   /** ID of element that was just incorrectly clicked (flashing red with label). */
   readonly flashIncorrectId: string | null;
-  /** ID of element being auto-revealed after max wrong attempts (gold highlight). */
+  /** ID of element being auto-revealed after max wrong attempts (click guard only, not a state source). */
   readonly autoRevealId: string | null;
 }
 
@@ -56,6 +56,7 @@ export function useIdentifyQuiz(
   const [promptIndex, setPromptIndex] = useState(0);
   const [correctIds, setCorrectIds] = useState<ReadonlySet<string>>(new Set());
   const [skippedIds, setSkippedIds] = useState<ReadonlySet<string>>(new Set());
+  const [missedIds, setMissedIds] = useState<ReadonlySet<string>>(new Set());
   const [answeredIds, setAnsweredIds] = useState<ReadonlySet<string>>(new Set());
   const [wrongAttempts, setWrongAttempts] = useState<Readonly<Record<string, number>>>({});
   const [flashIncorrectId, setFlashIncorrectId] = useState<string | null>(null);
@@ -78,10 +79,10 @@ export function useIdentifyQuiz(
     for (const el of elements) {
       if (correctIds.has(el.id)) {
         states[el.id] = correctStateForAttempts(wrongAttempts[el.id] ?? 0);
-      } else if (el.id === autoRevealId) {
+      } else if (missedIds.has(el.id)) {
         states[el.id] = 'missed';
       } else if (skippedIds.has(el.id)) {
-        states[el.id] = 'revealed';
+        states[el.id] = 'incorrect';
       } else if (el.id === flashIncorrectId) {
         states[el.id] = 'incorrect';
       } else {
@@ -89,7 +90,7 @@ export function useIdentifyQuiz(
       }
     }
     return states;
-  }, [elements, correctIds, skippedIds, wrongAttempts, flashIncorrectId, autoRevealId]);
+  }, [elements, correctIds, missedIds, skippedIds, wrongAttempts, flashIncorrectId]);
 
   const score = useMemo(
     () => calculateScore(correctIds.size, totalPrompts),
@@ -177,19 +178,19 @@ export function useIdentifyQuiz(
     clearFlash();
     clearAutoReveal();
 
-    const newSkipped = new Set(skippedIds);
+    const newMissed = new Set(missedIds);
     const newAnswered = new Set(answeredIds);
     for (let i = promptIndex; i < totalPrompts; i++) {
       const id = shuffledOrder[i];
-      if (!correctIds.has(id)) {
-        newSkipped.add(id);
+      if (!correctIds.has(id) && !skippedIds.has(id)) {
+        newMissed.add(id);
       }
       newAnswered.add(id);
     }
-    setSkippedIds(newSkipped);
+    setMissedIds(newMissed);
     setAnsweredIds(newAnswered);
     setPromptIndex(totalPrompts);
-  }, [isFinished, promptIndex, totalPrompts, shuffledOrder, correctIds, skippedIds, answeredIds, clearFlash, clearAutoReveal]);
+  }, [isFinished, promptIndex, totalPrompts, shuffledOrder, correctIds, skippedIds, missedIds, answeredIds, clearFlash, clearAutoReveal]);
 
   return {
     currentElementId,
@@ -197,7 +198,7 @@ export function useIdentifyQuiz(
     promptIndex,
     totalPrompts,
     correctCount: correctIds.size,
-    skippedCount: skippedIds.size,
+    skippedCount: skippedIds.size + missedIds.size,
     isFinished,
     elementStates,
     wrongAttemptsPerElement: wrongAttempts,

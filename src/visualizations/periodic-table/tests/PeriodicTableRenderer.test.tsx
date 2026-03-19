@@ -48,8 +48,8 @@ function makeProps(overrides: Partial<VisualizationRendererProps> = {}): Visuali
       makeElement({ id: 'Li', label: 'Lithium', symbol: 'Li', row: 1, column: 0, group: 'alkali-metal' }),
     ],
     elementStates: {
-      H: 'revealed',
-      He: 'revealed',
+      H: 'context',
+      He: 'context',
       Li: 'hidden',
     },
     toggles: { showSymbols: false },
@@ -123,7 +123,7 @@ describe('PeriodicTableRenderer', () => {
       <PeriodicTableRenderer
         {...makeProps({
           elements: [makeElement({ id: 'H', interactive: false })],
-          elementStates: { H: 'revealed' },
+          elementStates: { H: 'context' },
           onElementClick: handleClick,
         })}
       />,
@@ -188,7 +188,7 @@ describe('PeriodicTableRenderer', () => {
       <PeriodicTableRenderer
         {...makeProps({
           elements: [nonGridElement, makeElement({ id: 'H' })],
-          elementStates: { H: 'revealed' },
+          elementStates: { H: 'context' },
         })}
       />,
     );
@@ -201,7 +201,7 @@ describe('PeriodicTableRenderer', () => {
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elementStates: { H: 'revealed', He: 'revealed', Li: 'revealed' },
+          elementStates: { H: 'context', He: 'context', Li: 'context' },
         })}
       />,
     );
@@ -217,7 +217,7 @@ describe('PeriodicTableRenderer', () => {
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elementStates: { H: 'revealed', He: 'revealed', Li: 'revealed' },
+          elementStates: { H: 'context', He: 'context', Li: 'context' },
         })}
       />,
     );
