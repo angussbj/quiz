@@ -45,44 +45,8 @@ describe('European label placements', () => {
     expect(serbiaLabel!.area).toBeGreaterThan(montenegroLabel!.area);
   });
 
-  // Test Serbia at every zoom level from 1 to 8, with progressive caching (simulating real zoom)
-  it('includes Serbia when zooming progressively from scale 1 to 6', () => {
-    let cache: ReadonlyMap<string, { x: number; y: number }> = new Map();
-
-    // Simulate zooming from 1 → 6 in steps, carrying cache forward
-    const scales = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6];
-    for (const scale of scales) {
-      const result = computeLabelPlacements({
-        labels,
-        scale,
-        showNames: true,
-        showFlags: true,
-        avoidPoints: capitalDots,
-        positionCache: cache,
-      });
-      cache = result.newCache;
-
-      const placedNames = result.placements.map((p) => p.label.name);
-      if (!placedNames.includes('Serbia')) {
-        const serbia = labels.find((l) => l.name === 'Serbia')!;
-        console.log(`Scale ${scale}: Serbia NOT placed. Area: ${serbia.area.toFixed(2)}`);
-        console.log(`  Centers:`, serbia.centers.map((c) => `(${c.x.toFixed(2)}, ${c.y.toFixed(2)})`));
-        console.log(`  Placed ${result.placements.length} labels`);
-
-        const nearby = result.placements.filter((p) => {
-          const dx = p.x - serbia.center.x;
-          const dy = p.y - serbia.center.y;
-          return Math.sqrt(dx * dx + dy * dy) < 10;
-        });
-        console.log(`  Nearby:`, nearby.map((p) => `${p.label.name} at (${p.x.toFixed(2)}, ${p.y.toFixed(2)}) w=${p.width.toFixed(2)} h=${p.height.toFixed(2)}`));
-      }
-      expect(placedNames).toContain('Serbia');
-    }
-  });
-
-  // Test Serbia at each scale without cache (fresh placement)
   for (const scale of [1, 2, 3, 4, 5, 6, 7, 8]) {
-    it(`includes Serbia at scale ${scale} (no cache)`, () => {
+    it(`includes Serbia at scale ${scale}`, () => {
       const result = computeLabelPlacements({
         labels,
         scale,
@@ -114,23 +78,19 @@ describe('European label placements', () => {
     }
   });
 
-  it('flags-only mode places flags when zooming progressively', () => {
-    let cache: ReadonlyMap<string, { x: number; y: number }> = new Map();
-    const scales = [1, 1.5, 2, 2.5, 3, 3.5, 4];
-    for (const scale of scales) {
+  it('flags-only mode places flags at each zoom level', () => {
+    for (const scale of [1, 1.5, 2, 2.5, 3, 3.5, 4]) {
       const result = computeLabelPlacements({
         labels,
         scale,
         showNames: false,
         showFlags: true,
         avoidPoints: capitalDots,
-        positionCache: cache,
       });
-      cache = result.newCache;
 
       const placedCount = result.placements.length;
       if (placedCount < labels.length / 2) {
-        console.log(`Progressive scale ${scale}: only ${placedCount}/${labels.length} flags placed`);
+        console.log(`Scale ${scale}: only ${placedCount}/${labels.length} flags placed`);
       }
       expect(placedCount).toBeGreaterThan(labels.length / 2);
     }
@@ -191,29 +151,12 @@ describe('European label placements', () => {
   });
 
   it('Serbia label is placed near Serbia (not drifted far away) at high zoom', () => {
-    // Simulate progressive zoom to high scale, carrying cache forward
-    let cache: ReadonlyMap<string, { x: number; y: number }> = new Map();
-    const scales = [1, 2, 4, 8, 12, 16, 20];
-    for (const scale of scales) {
-      const result = computeLabelPlacements({
-        labels,
-        scale,
-        showNames: true,
-        showFlags: true,
-        avoidPoints: capitalDots,
-        positionCache: cache,
-      });
-      cache = result.newCache;
-    }
-
-    // Now check placement at scale 20 (what the user saw)
     const result = computeLabelPlacements({
       labels,
       scale: 20,
       showNames: true,
       showFlags: true,
       avoidPoints: capitalDots,
-      positionCache: cache,
     });
 
     const serbiaPlacement = result.placements.find((p) => p.label.name === 'Serbia');

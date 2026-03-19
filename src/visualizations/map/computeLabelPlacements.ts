@@ -210,14 +210,10 @@ export interface ComputeLabelPlacementsOptions {
   readonly showNames: boolean;
   readonly showFlags: boolean;
   readonly avoidPoints: ReadonlyArray<ViewBoxPosition>;
-  /** If set, log detailed placement diagnostics for this label name. */
-  readonly debugLabel?: string;
-  readonly positionCache?: ReadonlyMap<string, ViewBoxPosition>;
 }
 
 export interface ComputeLabelPlacementsResult {
   readonly placements: ReadonlyArray<PlacedLabel>;
-  readonly newCache: ReadonlyMap<string, ViewBoxPosition>;
 }
 
 /**
@@ -225,7 +221,7 @@ export interface ComputeLabelPlacementsResult {
  * Extracted from the MapCountryLabels component's useMemo for testability.
  */
 export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): ComputeLabelPlacementsResult {
-  const { labels, scale, showNames, showFlags, avoidPoints, positionCache } = options;
+  const { labels, scale, showNames, showFlags, avoidPoints } = options;
   const baseFontSize = Math.min(MAX_VIEWBOX_FONT_SIZE, Math.max(MIN_VIEWBOX_FONT_SIZE, BASE_FONT_SIZE / scale));
   const isHighZoom = scale >= HIGH_ZOOM_THRESHOLD;
   const sizesToTry = isHighZoom ? REDUCED_SIZE_FACTORS : [1];
@@ -234,8 +230,6 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
 
   const dotAvoidRadius = Math.max(0.1, 0.35 / scale);
   const placed: Rect[] = [];
-  const cache = positionCache ?? new Map<string, ViewBoxPosition>();
-  const newCache = new Map<string, ViewBoxPosition>();
   for (const point of avoidPoints) {
     placed.push({
       x: point.x - dotAvoidRadius, y: point.y - dotAvoidRadius,
@@ -254,70 +248,52 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
 
     // At high zoom, prevent labels from drifting far outside their country.
     // At low zoom, labels are large relative to countries and drifting is expected.
-    // Only enforce the constraint when labels are small enough to fit within the country.
     const maxDriftFromCountry = isHighZoom ? countryRadius * 2 : undefined;
 
-    const cachedPos = cache.get(label.id);
-    if (cachedPos) {
-      const fontSize = baseFontSize * sizesToTry[0];
+    for (const sizeFactor of sizesToTry) {
+      const fontSize = baseFontSize * sizeFactor;
       const dims = computeDimensions(label, fontSize, showNames, showFlags);
-      if (dims.width > 0 && tryPlace(cachedPos.x, cachedPos.y, dims, label, placed, visible, maxDriftFromCountry)) {
-        newCache.set(label.id, cachedPos);
-        didPlace = true;
-      }
-    }
+      if (dims.width === 0) continue;
 
-    if (!didPlace) {
-      for (const sizeFactor of sizesToTry) {
-        const fontSize = baseFontSize * sizeFactor;
-        const dims = computeDimensions(label, fontSize, showNames, showFlags);
-        if (dims.width === 0) continue;
+      const minStep = Math.max(dims.height * 0.4, dims.width * 0.2);
+      const stepSize = Math.max(countryRadius * 0.2, minStep);
+      const maxDist = Math.max(countryRadius * MAX_DISTANCE_FACTOR, dims.height * 2);
 
-        const minStep = Math.max(dims.height * 0.4, dims.width * 0.2);
-        const stepSize = Math.max(countryRadius * 0.2, minStep);
-        const maxDist = Math.max(countryRadius * MAX_DISTANCE_FACTOR, dims.height * 2);
-        const maxDrift = maxDriftFromCountry;
+      for (const center of centersToTry) {
+        if (tryPlace(center.x, center.y, dims, label, placed, visible)) {
+          didPlace = true;
+          break;
+        }
 
-        for (const center of centersToTry) {
-          // Direct placement at center — no drift constraint needed
-          if (tryPlace(center.x, center.y, dims, label, placed, visible)) {
-            newCache.set(label.id, { x: center.x, y: center.y });
-            didPlace = true;
-            break;
-          }
-
-          if (avoidPoints.length > 0) {
-            const linearStep = Math.max(dotAvoidRadius * 0.5, dims.height * 0.15);
-            const linearMaxDist = Math.max(dotAvoidRadius * 3, dims.height);
-            const awayCandidates = buildAwayFromDotCandidates(
-              center.x, center.y, avoidPoints, linearStep, linearMaxDist,
-            );
-            for (const [cx, cy] of awayCandidates) {
-              if (tryPlace(cx, cy, dims, label, placed, visible, maxDrift)) {
-                newCache.set(label.id, { x: cx, y: cy });
-                didPlace = true;
-                break;
-              }
-            }
-            if (didPlace) break;
-          }
-
-          const spiralCandidates = buildSpiralCandidates(
-            center.x, center.y,
-            Math.max(stepSize, dims.width * 0.3), Math.max(stepSize, dims.height * 0.3),
-            maxDist,
+        if (avoidPoints.length > 0) {
+          const linearStep = Math.max(dotAvoidRadius * 0.5, dims.height * 0.15);
+          const linearMaxDist = Math.max(dotAvoidRadius * 3, dims.height);
+          const awayCandidates = buildAwayFromDotCandidates(
+            center.x, center.y, avoidPoints, linearStep, linearMaxDist,
           );
-          for (const [cx, cy] of spiralCandidates) {
-            if (tryPlace(cx, cy, dims, label, placed, visible, maxDrift)) {
-              newCache.set(label.id, { x: cx, y: cy });
+          for (const [cx, cy] of awayCandidates) {
+            if (tryPlace(cx, cy, dims, label, placed, visible, maxDriftFromCountry)) {
               didPlace = true;
               break;
             }
           }
           if (didPlace) break;
         }
+
+        const spiralCandidates = buildSpiralCandidates(
+          center.x, center.y,
+          Math.max(stepSize, dims.width * 0.3), Math.max(stepSize, dims.height * 0.3),
+          maxDist,
+        );
+        for (const [cx, cy] of spiralCandidates) {
+          if (tryPlace(cx, cy, dims, label, placed, visible, maxDriftFromCountry)) {
+            didPlace = true;
+            break;
+          }
+        }
         if (didPlace) break;
       }
+      if (didPlace) break;
     }
 
     if (!didPlace && isHighZoom) {
@@ -325,7 +301,6 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
       const dims = computeDimensions(label, fontSize, showNames, showFlags);
       const bestCenter = centersToTry[0] ?? label.center;
       if (dims.width > 0) {
-        newCache.set(label.id, { x: bestCenter.x, y: bestCenter.y });
         visible.push({
           label, fontSize: dims.fontSize, flagHeight: dims.flagHeight,
           gapSize: dims.gapSize, width: dims.width, height: dims.height,
@@ -335,5 +310,5 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     }
   }
 
-  return { placements: visible, newCache };
+  return { placements: visible };
 }

@@ -1,8 +1,29 @@
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundLabel } from './BackgroundLabel';
 import { useZoomPan } from '../ZoomPanContext';
 import { computeLabelPlacements } from './computeLabelPlacements';
+
+/**
+ * Base for exponential zoom thresholds at which label positions are recomputed
+ * from scratch. Labels stay fixed between thresholds for visual stability.
+ * Thresholds: 1, base, base^2, base^3, ... (e.g., 1, 2, 4, 8, 16, 32)
+ */
+const ZOOM_THRESHOLD_BASE = 2;
+const ZOOM_THRESHOLD_COUNT = 8;
+
+const ZOOM_THRESHOLDS: ReadonlyArray<number> = Array.from(
+  { length: ZOOM_THRESHOLD_COUNT },
+  (_, i) => ZOOM_THRESHOLD_BASE ** i,
+);
+
+/** Find which zoom band the current scale falls in, returning the threshold value. */
+function quantizeScale(scale: number): number {
+  for (let i = ZOOM_THRESHOLDS.length - 1; i >= 0; i--) {
+    if (scale >= ZOOM_THRESHOLDS[i]) return ZOOM_THRESHOLDS[i];
+  }
+  return ZOOM_THRESHOLDS[0];
+}
 
 interface MapCountryLabelsProps {
   readonly labels: ReadonlyArray<BackgroundLabel>;
@@ -13,20 +34,18 @@ interface MapCountryLabelsProps {
 
 export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: MapCountryLabelsProps) {
   const { scale } = useZoomPan();
-  const positionCacheRef = useRef<Map<string, ViewBoxPosition>>(new Map());
+  const quantizedScale = quantizeScale(scale);
 
   const visibleItems = useMemo(() => {
     const result = computeLabelPlacements({
       labels,
-      scale,
+      scale: quantizedScale,
       showNames,
       showFlags,
       avoidPoints: avoidPoints ?? [],
-      positionCache: positionCacheRef.current,
     });
-    positionCacheRef.current = new Map(result.newCache);
     return result.placements;
-  }, [labels, scale, showNames, showFlags, avoidPoints]);
+  }, [labels, quantizedScale, showNames, showFlags, avoidPoints]);
 
   return (
     <g className="country-labels" pointerEvents="none">
