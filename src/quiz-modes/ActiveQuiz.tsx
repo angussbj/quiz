@@ -6,7 +6,7 @@ import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from './ToggleDefinition';
 import type { QuizConfig } from './QuizShell';
 import { Timer } from './Timer';
-import { ModeAdapter } from './ModeAdapter';
+import { resolveMode } from './resolveMode';
 import { QuizResults } from './QuizResults';
 import { ReviewBar } from './ReviewBar';
 import styles from './ActiveQuiz.module.css';
@@ -26,7 +26,7 @@ export interface ActiveQuizProps {
 }
 
 /**
- * Active quiz phase: renders Timer, ModeAdapter, and QuizResults overlay.
+ * Active quiz phase: renders Timer, the resolved mode component, and QuizResults overlay.
  * Manages elapsed time and detects quiz completion.
  */
 export function ActiveQuiz({
@@ -42,7 +42,6 @@ export function ActiveQuiz({
   rangeColumn,
   initialViewBox,
 }: ActiveQuizProps) {
-  // Split elements into active (quizzed) and background (context) based on range
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
     if (!rangeColumn || !config.elementRange) {
       return { activeElements: elements, activeDataRows: dataRows, backgroundElementIds: new Set<string>() };
@@ -66,7 +65,6 @@ export function ActiveQuiz({
     };
   }, [elements, dataRows, rangeColumn, config.elementRange]);
 
-  // Wrap the renderer to inject background element states and show all elements
   const RangeAwareRenderer = useMemo(() => {
     if (backgroundElementIds.size === 0) return Renderer;
 
@@ -79,7 +77,6 @@ export function ActiveQuiz({
         return states;
       }, [props.elementStates]);
 
-      // Force all toggles on for background elements so symbols are visible
       const mergedToggles = useMemo(() => {
         const toggles: Record<string, Record<string, boolean>> = {};
         if (props.elementToggles) {
@@ -117,7 +114,6 @@ export function ActiveQuiz({
   const [isReviewing, setIsReviewing] = useState(false);
   const isFinished = finishState !== null;
 
-  // Elapsed time counter
   useEffect(() => {
     if (isFinished) return;
     const interval = setInterval(() => {
@@ -126,14 +122,9 @@ export function ActiveQuiz({
     return () => clearInterval(interval);
   }, [isFinished]);
 
-  const handleStatusChange = useCallback(
-    (status: 'active' | 'finished', score: ScoreResult) => {
-      if (status === 'finished') {
-        setFinishState(score);
-      }
-    },
-    [],
-  );
+  const handleFinish = useCallback((score: ScoreResult) => {
+    setFinishState(score);
+  }, []);
 
   const handleTimerExpire = useCallback(() => {
     if (!isFinished) {
@@ -144,6 +135,8 @@ export function ActiveQuiz({
   const handleReview = useCallback(() => {
     setIsReviewing(true);
   }, []);
+
+  const Mode = resolveMode(config.selectedMode, visualizationType);
 
   return (
     <div className={styles.container}>
@@ -158,9 +151,7 @@ export function ActiveQuiz({
       )}
 
       <div className={styles.quizArea}>
-        <ModeAdapter
-          mode={config.selectedMode}
-          visualizationType={visualizationType}
+        <Mode
           elements={activeElements}
           dataRows={activeDataRows}
           columnMappings={columnMappings}
@@ -170,7 +161,7 @@ export function ActiveQuiz({
           Renderer={RangeAwareRenderer}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
-          onStatusChange={handleStatusChange}
+          onFinish={handleFinish}
           forceGiveUp={forceGiveUp}
           reviewing={isReviewing}
           initialViewBox={initialViewBox}

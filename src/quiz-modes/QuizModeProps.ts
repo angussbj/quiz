@@ -1,22 +1,29 @@
-import type { ViewBoxPosition, VisualizationElement } from '@/visualizations/VisualizationElement';
-import type { QuizSessionState } from './QuizSessionState';
+import type { ComponentType } from 'react';
+import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
+import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
+import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ToggleDefinition } from './ToggleDefinition';
+import type { ScoreResult } from '@/scoring/ScoreResult';
 
 /**
- * Props every quiz mode component receives.
- * Contract between QuizShell and mode implementations.
+ * Unified props interface for all quiz mode components.
+ * Every mode receives the same contract from ActiveQuiz.
+ * Modes that don't use a particular prop (e.g. MultipleChoice ignoring Renderer)
+ * simply don't destructure it.
  */
 export interface QuizModeProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
   readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
-  readonly session: QuizSessionState;
-  readonly onTextAnswer: (text: string) => void;
-  readonly onElementSelect: (elementId: string) => void;
-  readonly onPositionSelect: (position: ViewBoxPosition) => void;
-  readonly onChoiceSelect: (choiceIndex: number) => void;
-  readonly onHintRequest: () => void;
-  readonly onSkip: () => void;
-  readonly onGiveUp: () => void;
+  readonly toggleValues: Readonly<Record<string, boolean>>;
+  readonly selectValues?: Readonly<Record<string, string>>;
+  readonly Renderer: ComponentType<VisualizationRendererProps>;
+  readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
+  readonly clustering?: ClusteringConfig;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
+  readonly onFinish: (score: ScoreResult) => void;
+  readonly forceGiveUp?: boolean;
+  readonly reviewing?: boolean;
 }

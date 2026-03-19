@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
-import type { ElementVisualState } from '@/visualizations/VisualizationElement';
-import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
@@ -9,44 +7,30 @@ import { useIdentifyQuiz } from './useIdentifyQuiz';
 import { IdentifyPromptFields, type PromptField } from './IdentifyPromptFields';
 import styles from './IdentifyMode.module.css';
 
-export interface IdentifyModeProps extends QuizModeProps {
-  readonly toggleValues?: Readonly<Record<string, boolean>>;
-  readonly onFinish?: (score: ScoreResult) => void;
-  readonly forceGiveUp?: boolean;
-  readonly reviewing?: boolean;
-  readonly renderVisualization: (props: {
-    readonly elementStates: Readonly<Record<string, ElementVisualState>>;
-    readonly onElementClick: (elementId: string) => void;
-    readonly targetElementId?: string;
-    readonly toggles: Readonly<Record<string, boolean>>;
-    readonly elementToggles: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
-  }) => React.ReactNode;
-}
-
 /**
  * Identify mode: "Click on X" — user clicks elements in the visualization.
- * Manages its own quiz state. Calls QuizModeProps callbacks to notify parent.
+ * Manages its own quiz state. Renders the visualization with a prompt bar above.
  */
 export function IdentifyMode({
   elements,
   dataRows,
-  onElementSelect,
-  onSkip,
-  onGiveUp,
+  toggleDefinitions,
+  toggleValues = {},
+  Renderer,
+  backgroundPaths,
+  backgroundLabels,
+  clustering,
+  initialViewBox,
   onFinish,
   forceGiveUp = false,
   reviewing = false,
-  toggleDefinitions,
-  toggleValues = {},
-  renderVisualization,
-}: IdentifyModeProps) {
+}: QuizModeProps) {
   const quiz = useIdentifyQuiz(elements);
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
   const hasCalledFinish = useRef(false);
 
-  // Force give-up when timer expires
   useEffect(() => {
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
@@ -56,26 +40,20 @@ export function IdentifyMode({
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
-      onFinishRef.current?.(quiz.score);
+      onFinishRef.current(quiz.score);
     }
   }, [quiz.isFinished, quiz.score]);
 
   const handleElementClick = (elementId: string) => {
-    const wasCorrect = elementId === quiz.currentElementId;
     quiz.handleElementClick(elementId);
-    if (wasCorrect) {
-      onElementSelect(elementId);
-    }
   };
 
   const handleSkip = () => {
     quiz.handleSkip();
-    onSkip();
   };
 
   const handleGiveUp = () => {
     quiz.handleGiveUp();
-    onGiveUp();
   };
 
   const elementToggles = useMemo(() => {
@@ -104,12 +82,10 @@ export function IdentifyMode({
     [reviewing, elementToggles, reviewElementStates, toggleKeys],
   );
 
-  // Build a lookup from element ID to data row for prompt fields
   const rowById = useMemo(() => {
     const map = new Map<string, Readonly<Record<string, string>>>();
-    const idColumn = 'id';
     for (const row of dataRows) {
-      const id = row[idColumn];
+      const id = row['id'];
       if (id) map.set(id, row);
     }
     return map;
@@ -196,13 +172,18 @@ export function IdentifyMode({
       )}
 
       <div className={styles.visualizationArea}>
-        {renderVisualization({
-          elementStates: reviewElementStates,
-          onElementClick: handleElementClick,
-          targetElementId: reviewing ? undefined : quiz.currentElementId,
-          toggles: toggleValues,
-          elementToggles: reviewElementToggles,
-        })}
+        <Renderer
+          elements={elements}
+          elementStates={reviewElementStates}
+          onElementClick={reviewing ? undefined : handleElementClick}
+          targetElementId={reviewing ? undefined : quiz.currentElementId}
+          toggles={toggleValues}
+          elementToggles={reviewElementToggles}
+          backgroundPaths={backgroundPaths}
+          backgroundLabels={backgroundLabels}
+          clustering={clustering}
+          initialViewBox={initialViewBox}
+        />
       </div>
     </div>
   );

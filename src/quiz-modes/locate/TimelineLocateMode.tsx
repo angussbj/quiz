@@ -1,9 +1,6 @@
-import { type ComponentType, useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
-import type { VisualizationElement } from '@/visualizations/VisualizationElement';
-import type { ScoreResult } from '@/scoring/ScoreResult';
-import type { ToggleDefinition } from '../ToggleDefinition';
+import type { QuizModeProps } from '../QuizModeProps';
 import type { DatePrecision } from '@/scoring/calculateTimelineLocateScore';
 import { formatTimestamp } from '@/visualizations/timeline/TimelineTimestamp';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
@@ -11,31 +8,24 @@ import { buildReviewElementStates, buildReviewElementToggles } from '../buildRev
 import { useTimelineLocateQuiz } from './useTimelineLocateQuiz';
 import styles from './TimelineLocateMode.module.css';
 
-export interface TimelineLocateModeProps {
-  readonly elements: ReadonlyArray<VisualizationElement>;
-  readonly toggles: Readonly<Record<string, boolean>>;
-  readonly toggleDefinitions?: ReadonlyArray<ToggleDefinition>;
-  readonly Renderer: ComponentType<VisualizationRendererProps>;
-  readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
-  readonly clustering?: ClusteringConfig;
-  readonly onFinish?: (score: ScoreResult) => void;
-  readonly forceGiveUp?: boolean;
-  readonly reviewing?: boolean;
-  readonly datePrecision: DatePrecision;
-}
-
 export function TimelineLocateMode({
   elements,
-  toggles,
+  toggleValues,
   toggleDefinitions = [],
+  selectValues,
   Renderer,
   backgroundPaths,
   clustering,
   onFinish,
   forceGiveUp = false,
   reviewing = false,
-  datePrecision,
-}: TimelineLocateModeProps) {
+}: QuizModeProps) {
+  const rawPrecision = selectValues?.['datePrecision'];
+  const datePrecision: DatePrecision =
+    rawPrecision === 'year' || rawPrecision === 'month' || rawPrecision === 'day'
+      ? rawPrecision
+      : 'month';
+
   const quiz = useTimelineLocateQuiz(elements, datePrecision);
   const [showResults, setShowResults] = useState(false);
   const [dateInput, setDateInput] = useState('');
@@ -54,7 +44,7 @@ export function TimelineLocateMode({
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
-      onFinishRef.current?.({
+      onFinishRef.current({
         correct: quiz.correctCount,
         total: quiz.totalTargets,
         percentage: quiz.totalTargets > 0 ? Math.round((quiz.correctCount / quiz.totalTargets) * 100) : 0,
@@ -70,8 +60,8 @@ export function TimelineLocateMode({
         wrongAttempts: 0,
       };
     }
-    return resolveElementToggles(toggleDefinitions, toggles, elementQuizStates);
-  }, [elements, quiz.elementStates, toggleDefinitions, toggles]);
+    return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
+  }, [elements, quiz.elementStates, toggleDefinitions, toggleValues]);
 
   const toggleKeys = useMemo(
     () => toggleDefinitions.map((t) => t.key),
@@ -97,7 +87,6 @@ export function TimelineLocateMode({
   const handleCloseResults = useCallback(() => setShowResults(false), []);
   const handleOpenResults = useCallback(() => setShowResults(true), []);
 
-  // Clear input when target changes
   useEffect(() => {
     setDateInput('');
     setInputError(false);
@@ -192,7 +181,7 @@ export function TimelineLocateMode({
           elements={elements}
           elementStates={reviewElementStates}
           onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
-          toggles={toggles}
+          toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           clustering={clustering}

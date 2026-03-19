@@ -25,11 +25,14 @@ Principles for selecting and grouping events in history timeline quizzes.
 
 ## CSV Format for Timeline Quizzes
 
-Columns: `id,event,start_year,start_month,start_day,end_year,end_month,end_day,{group_column},event_alternates`
+Columns: `id,{answer_column},start_year[,start_month[,start_day]],end_year[,end_month[,end_day]][,{group_column}],{answer_column}_alternates`
 
-- Single-day events: leave end_year, end_month, end_day empty (4 commas between start_day and group column: `6,,,,European Theatre`)
-- The `event_alternates` column uses `|` as separator
-- IDs should be lowercase-hyphenated versions of the event name
+- The `{answer_column}` name matches `columnMappings.answer` in the quiz definition (e.g. `event` for WW2, `emperor` for Roman Emperors)
+- Month and day columns are optional — omit them entirely for year-precision quizzes (e.g. Roman Emperors uses only `start_year,end_year`)
+- Single-day events (with month/day columns present): leave end_year, end_month, end_day empty (e.g. `6,,,,European Theatre`)
+- `{group_column}` is optional — omit for quizzes with no meaningful thematic grouping
+- The `{answer_column}_alternates` column uses `|` as separator
+- IDs should be lowercase-hyphenated versions of the answer name
 
 ## Locate Mode & Date Precision
 

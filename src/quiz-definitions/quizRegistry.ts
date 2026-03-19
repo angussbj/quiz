@@ -103,6 +103,17 @@ const countriesQuizBase = {
   supportingDataPaths: ['/data/borders/world-borders.csv'],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
+/**
+ * Shared configuration for all timeline quizzes.
+ * Individual definitions spread this and add id, title, description, path, toggles, presets, columnMappings, and dataPath.
+ */
+const timelineQuizBase = {
+  visualizationType: 'timeline' as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
+  defaultMode: 'free-recall-unordered' as const,
+  supportingDataPaths: [] as const,
+} satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'path' | 'toggles' | 'presets' | 'columnMappings' | 'dataPath'>;
+
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
   {
     ...capitalsQuizBase,
@@ -299,9 +310,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     supportingDataPaths: [],
   },
   {
-    id: 'geo-flags-americas',
-    title: 'Americas Flags',
-    description: 'Match countries of the Americas to their flags.',
+    id: 'geo-flags-north-america',
+    title: 'North American Flags',
+    description: 'Match countries of North America, Central America, and the Caribbean to their flags.',
     path: ['Geography', 'Flags'],
     visualizationType: 'flag-grid',
     availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
@@ -317,7 +328,29 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       group: 'subregion',
     },
     dataPath: '/data/capitals/world-capitals.csv',
-    dataFilter: { column: 'region', values: ['Americas'] },
+    dataFilter: { column: 'subregion', values: ['North America', 'Central America', 'Caribbean'] },
+    supportingDataPaths: [],
+  },
+  {
+    id: 'geo-flags-south-america',
+    title: 'South American Flags',
+    description: 'Match South American countries to their flags.',
+    path: ['Geography', 'Flags'],
+    visualizationType: 'flag-grid',
+    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
+    defaultMode: 'multiple-choice',
+    toggles: [
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'country',
+      label: 'country',
+      flag: 'country_code',
+      group: 'subregion',
+    },
+    dataPath: '/data/capitals/world-capitals.csv',
+    dataFilter: { column: 'subregion', values: ['South America'] },
     supportingDataPaths: [],
   },
   {
@@ -418,35 +451,55 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     supportingDataPaths: [],
   },
   {
+    ...timelineQuizBase,
     id: 'hist-emperors-roman',
     title: 'Roman Emperors',
     description: 'Name the emperors of Rome in chronological order.',
     path: ['History', 'Ancient', 'Roman Emperors'],
-    visualizationType: 'timeline',
-    availableModes: ['free-recall-unordered'],
-    defaultMode: 'free-recall-unordered',
     toggles: [
-      { key: 'showDates', label: 'Reign dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showDynasty', label: 'Dynasty colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showLabels', label: 'Emperor names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Reign dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     ],
-    presets: [],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [
+          { value: 'year', label: 'Year' },
+          { value: 'month', label: 'Month' },
+          { value: 'day', label: 'Day' },
+        ],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      {
+        name: 'easy',
+        label: 'Easy',
+        values: { showLabels: true, showDates: true },
+      },
+      {
+        name: 'hard',
+        label: 'Hard',
+        values: { showLabels: false, showDates: false },
+      },
+    ],
     columnMappings: {
       answer: 'emperor',
       label: 'emperor',
-      group: 'dynasty',
     },
     dataPath: '/data/history/ancient/roman-emperors.csv',
-    supportingDataPaths: [],
   },
   {
+    ...timelineQuizBase,
     id: 'hist-timeline-ww2',
     title: 'World War II Timeline',
     description: 'Place key events of World War II on a timeline.',
     path: ['History', 'Modern', 'World War II Timeline'],
-    visualizationType: 'timeline',
-    availableModes: ['free-recall-unordered', 'identify', 'locate'],
-    defaultMode: 'free-recall-unordered',
     toggles: [
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showTheatreColours', label: 'Theatre colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
     ],
@@ -468,12 +521,12 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       {
         name: 'easy',
         label: 'Easy',
-        values: { showDates: true, showTheatreColours: true },
+        values: { showLabels: true, showDates: true, showTheatreColours: true },
       },
       {
         name: 'hard',
         label: 'Hard',
-        values: { showDates: false, showTheatreColours: false },
+        values: { showLabels: false, showDates: false, showTheatreColours: false },
       },
     ],
     columnMappings: {
@@ -482,6 +535,5 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       group: 'theatre',
     },
     dataPath: '/data/history/modern/ww2-timeline.csv',
-    supportingDataPaths: [],
   },
 ];

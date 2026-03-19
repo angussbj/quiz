@@ -1,0 +1,32 @@
+id,emperor,start_year,end_year,dynasty,emperor_alternates
+augustus,Augustus,-27,14,Julio-Claudian,Octavian|Octavianus|Caesar Augustus
+tiberius,Tiberius,14,37,Julio-Claudian,
+caligula,Caligula,37,41,Julio-Claudian,Gaius|Gaius Caesar
+claudius,Claudius,41,54,Julio-Claudian,
+nero,Nero,54,68,Julio-Claudian,
+galba,Galba,68,69,Year of Four Emperors,Servius Galba
+otho,Otho,69,69,Year of Four Emperors,Marcus Otho
+vitellius,Vitellius,69,69,Year of Four Emperors,Aulus Vitellius
+vespasian,Vespasian,69,79,Flavian,
+titus,Titus,79,81,Flavian,
+domitian,Domitian,81,96,Flavian,
+nerva,Nerva,96,98,Nerva-Antonine,
+trajan,Trajan,98,117,Nerva-Antonine,
+hadrian,Hadrian,117,138,Nerva-Antonine,Publius Aelius Hadrianus
+antoninus-pius,Antoninus Pius,138,161,Nerva-Antonine,
+marcus-aurelius,Marcus Aurelius,161,180,Nerva-Antonine,Marcus Aurelius Antoninus|The Philosopher Emperor
+commodus,Commodus,177,192,Nerva-Antonine,
+septimius-severus,Septimius Severus,193,211,Severan,
+caracalla,Caracalla,211,217,Severan,Marcus Aurelius Antoninus
+elagabalus,Elagabalus,218,222,Severan,Heliogabalus
+alexander-severus,Alexander Severus,222,235,Severan,
+maximinus-thrax,Maximinus Thrax,235,238,Crisis of Third Century,Gaius Julius Verus Maximinus
+gordian-iii,Gordian III,238,244,Crisis of Third Century,
+philip-the-arab,Philip the Arab,244,249,Crisis of Third Century,Marcus Julius Philippus
+decius,Decius,249,251,Crisis of Third Century,Gaius Messius Quintus Trajanus Decius
+aurelian,Aurelian,270,275,Crisis of Third Century,Restorer of the World
+diocletian,Diocletian,284,305,Tetrarchy,
+constantine-i,Constantine I,306,337,Constantinian,Constantine the Great
+julian,Julian,361,363,Constantinian,Julian the Apostate
+theodosius-i,Theodosius I,379,395,Theodosian,Theodosius the Great
+romulus-augustulus,Romulus Augustulus,475,476,Western Empire,Romulus Augustus

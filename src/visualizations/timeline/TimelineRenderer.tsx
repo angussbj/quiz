@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CursorTooltip } from '../CursorTooltip';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import { elementToggle } from '../elementToggle';
 import type { TimelineElement } from './TimelineElement';
@@ -361,14 +361,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         </div>
       </div>
 
-      {tooltip && createPortal(
-        <div
-          className={styles.tooltip}
-          style={{ left: tooltip.x + 12, top: tooltip.y - 28 }}
-        >
-          {tooltip.text}
-        </div>,
-        document.body,
+      {tooltip && (
+        <CursorTooltip x={tooltip.x} y={tooltip.y} text={tooltip.text} />
       )}
     </>
   );

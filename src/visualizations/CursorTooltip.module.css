@@ -1,0 +1,14 @@
+.tooltip {
+  position: fixed;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+}

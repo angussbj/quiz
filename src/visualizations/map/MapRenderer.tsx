@@ -152,7 +152,7 @@ function renderShapeElements(
           fill: color,
           fillOpacity: stateFillOpacity(state),
           stroke: color,
-          strokeWidth: stateColor(state) !== undefined ? 0.3 : 0.15,
+          strokeWidth: 0.15,
         }}
         className={onElementClick ? styles.interactivePath : styles.borderPath}
         onClick={

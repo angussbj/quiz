@@ -3,6 +3,7 @@ import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundLabel } from './BackgroundLabel';
 import { useZoomPan } from '../ZoomPanContext';
 import { computeLabelPlacements } from './computeLabelPlacements';
+import { assetPath } from '../../utilities/assetPath';
 
 /**
  * Base for exponential zoom thresholds at which label positions are recomputed
@@ -58,7 +59,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
           <g key={`country-label-${label.id}`}>
             {hasFlag && (
               <image
-                href={`/flags/${label.code}.svg`}
+                href={assetPath(`/flags/${label.code}.svg`)}
                 x={cx - flagWidth / 2}
                 y={y}
                 width={flagWidth}

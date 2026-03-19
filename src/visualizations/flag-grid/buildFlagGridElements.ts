@@ -1,6 +1,7 @@
 import type { FlagGridElement } from './FlagGridElement';
 import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y, FLAG_COLUMNS } from './flagGridLayout';
 import { shuffle } from '@/utilities/shuffle';
+import { assetPath } from '@/utilities/assetPath';
 
 /**
  * Builds flag grid elements from CSV rows.
@@ -30,7 +31,7 @@ export function buildFlagGridElements(
       label: row[labelColumn] ?? id,
       row: rowIndex,
       column: colIndex,
-      flagUrl: `/flags/${countryCode}.svg`,
+      flagUrl: assetPath(`/flags/${countryCode}.svg`),
       viewBoxCenter: { x: x + FLAG_CELL_WIDTH / 2, y: y + FLAG_CELL_HEIGHT / 2 },
       viewBoxBounds: { minX: x, minY: y, maxX: x + FLAG_CELL_WIDTH, maxY: y + FLAG_CELL_HEIGHT },
       interactive: true,

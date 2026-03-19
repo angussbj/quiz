@@ -1,10 +1,6 @@
-import { type ComponentType, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
-import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
-import type { VisualizationElement } from '@/visualizations/VisualizationElement';
-import type { ScoreResult } from '@/scoring/ScoreResult';
-import type { ToggleDefinition } from '../ToggleDefinition';
+import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { useLocateQuiz } from './useLocateQuiz';
@@ -14,27 +10,13 @@ import styles from './LocateMode.module.css';
 
 const RESULTS_DELAY_MS = 1000;
 
-export interface LocateModeProps {
-  readonly elements: ReadonlyArray<VisualizationElement>;
-  readonly toggles: Readonly<Record<string, boolean>>;
-  readonly toggleDefinitions?: ReadonlyArray<ToggleDefinition>;
-  readonly Renderer: ComponentType<VisualizationRendererProps>;
-  readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
-  readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
-  readonly clustering?: ClusteringConfig;
-  readonly onFinish?: (score: ScoreResult) => void;
-  readonly forceGiveUp?: boolean;
-  readonly reviewing?: boolean;
-  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
-}
-
 /**
  * Locate mode: user clicks on the map to locate prompted targets.
  * Self-contained — manages its own quiz state internally.
  */
 export function LocateMode({
   elements,
-  toggles,
+  toggleValues,
   toggleDefinitions = [],
   Renderer,
   backgroundPaths,
@@ -44,7 +26,7 @@ export function LocateMode({
   forceGiveUp = false,
   reviewing = false,
   initialViewBox,
-}: LocateModeProps) {
+}: QuizModeProps) {
   const quiz = useLocateQuiz(elements);
   const [showResults, setShowResults] = useState(false);
 
@@ -52,7 +34,6 @@ export function LocateMode({
   onFinishRef.current = onFinish;
   const hasCalledFinish = useRef(false);
 
-  // Force give-up when timer expires
   useEffect(() => {
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
@@ -62,7 +43,7 @@ export function LocateMode({
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
-      onFinishRef.current?.({
+      onFinishRef.current({
         correct: quiz.correctCount,
         total: quiz.totalTargets,
         percentage: quiz.totalTargets > 0 ? Math.round((quiz.correctCount / quiz.totalTargets) * 100) : 0,
@@ -78,8 +59,8 @@ export function LocateMode({
         wrongAttempts: 0,
       };
     }
-    return resolveElementToggles(toggleDefinitions, toggles, elementQuizStates);
-  }, [elements, quiz.elementStates, toggleDefinitions, toggles]);
+    return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
+  }, [elements, quiz.elementStates, toggleDefinitions, toggleValues]);
 
   const toggleKeys = useMemo(
     () => toggleDefinitions.map((t) => t.key),
@@ -96,7 +77,6 @@ export function LocateMode({
     [reviewing, elementToggles, reviewElementStates, toggleKeys],
   );
 
-  // Show results after a short delay when the quiz finishes
   useEffect(() => {
     if (!quiz.isFinished) return;
     const timer = setTimeout(() => setShowResults(true), RESULTS_DELAY_MS);
@@ -155,7 +135,7 @@ export function LocateMode({
           elements={elements}
           elementStates={reviewElementStates}
           onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
-          toggles={toggles}
+          toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}

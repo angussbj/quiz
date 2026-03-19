@@ -1,25 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { ElementVisualState } from '@/visualizations/VisualizationElement';
-import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { usePromptedRecallQuiz } from './usePromptedRecallQuiz';
 import styles from './PromptedRecallMode.module.css';
-
-export interface PromptedRecallModeProps extends QuizModeProps {
-  readonly toggleValues?: Readonly<Record<string, boolean>>;
-  readonly onFinish?: (score: ScoreResult) => void;
-  readonly forceGiveUp?: boolean;
-  readonly reviewing?: boolean;
-  readonly renderVisualization: (props: {
-    readonly elementStates: Readonly<Record<string, ElementVisualState>>;
-    readonly onElementClick?: (elementId: string) => void;
-    readonly toggles: Readonly<Record<string, boolean>>;
-    readonly elementToggles: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
-  }) => React.ReactNode;
-}
 
 /**
  * Prompted recall mode: an element is highlighted on the visualization
@@ -30,13 +15,16 @@ export function PromptedRecallMode({
   elements,
   dataRows,
   columnMappings,
+  toggleDefinitions,
+  toggleValues = {},
+  Renderer,
+  backgroundPaths,
+  clustering,
+  initialViewBox,
   onFinish,
   forceGiveUp = false,
   reviewing = false,
-  toggleDefinitions,
-  toggleValues = {},
-  renderVisualization,
-}: PromptedRecallModeProps) {
+}: QuizModeProps) {
   const quiz = usePromptedRecallQuiz({
     elements,
     dataRows,
@@ -51,7 +39,6 @@ export function PromptedRecallMode({
   onFinishRef.current = onFinish;
   const hasCalledFinish = useRef(false);
 
-  // Force give-up when timer expires
   useEffect(() => {
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
@@ -61,11 +48,10 @@ export function PromptedRecallMode({
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
-      onFinishRef.current?.(quiz.score);
+      onFinishRef.current(quiz.score);
     }
   }, [quiz.isFinished, quiz.score]);
 
-  // Clear input when advancing to next element
   useEffect(() => {
     if (quiz.promptIndex > prevPromptIndex.current) {
       setInputText('');
@@ -88,14 +74,6 @@ export function PromptedRecallMode({
       quiz.handleTextInput('');
     }
   }, [quiz.handleSubmit, quiz.handleTextInput, inputText]);
-
-  const handleSkip = () => {
-    quiz.handleSkip();
-  };
-
-  const handleGiveUp = () => {
-    quiz.handleGiveUp();
-  };
 
   const elementToggles = useMemo(() => {
     const elementQuizStates: Record<string, ElementQuizState> = {};
@@ -134,11 +112,15 @@ export function PromptedRecallMode({
   return (
     <div className={styles.container}>
       <div className={styles.visualizationArea}>
-        {renderVisualization({
-          elementStates: reviewElementStates,
-          toggles: toggleValues,
-          elementToggles: reviewElementToggles,
-        })}
+        <Renderer
+          elements={elements}
+          elementStates={reviewElementStates}
+          toggles={toggleValues}
+          elementToggles={reviewElementToggles}
+          backgroundPaths={backgroundPaths}
+          clustering={clustering}
+          initialViewBox={initialViewBox}
+        />
       </div>
 
       {!reviewing && (
@@ -175,14 +157,14 @@ export function PromptedRecallMode({
           />
           <button
             className={styles.skipButton}
-            onClick={handleSkip}
+            onClick={() => quiz.handleSkip()}
             type="button"
           >
             Skip
           </button>
           <button
             className={styles.giveUpButton}
-            onClick={handleGiveUp}
+            onClick={() => quiz.handleGiveUp()}
             type="button"
           >
             Give up

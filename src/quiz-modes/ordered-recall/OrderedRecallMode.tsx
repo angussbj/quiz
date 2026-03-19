@@ -1,25 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { ElementVisualState } from '@/visualizations/VisualizationElement';
-import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { useOrderedRecallSession } from './useOrderedRecallSession';
 import styles from './OrderedRecallMode.module.css';
-
-export interface OrderedRecallModeProps extends QuizModeProps {
-  readonly toggleValues?: Readonly<Record<string, boolean>>;
-  readonly onFinish?: (score: ScoreResult) => void;
-  readonly forceGiveUp?: boolean;
-  readonly reviewing?: boolean;
-  readonly renderVisualization: (props: {
-    readonly elementStates: Readonly<Record<string, ElementVisualState>>;
-    readonly onElementClick?: (elementId: string) => void;
-    readonly toggles: Readonly<Record<string, boolean>>;
-    readonly elementToggles: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
-  }) => React.ReactNode;
-}
 
 /**
  * Ordered recall mode: elements must be named in their original data order.
@@ -30,13 +15,15 @@ export function OrderedRecallMode({
   elements,
   dataRows,
   columnMappings,
+  toggleDefinitions,
+  toggleValues = {},
+  Renderer,
+  backgroundPaths,
+  clustering,
   onFinish,
   forceGiveUp = false,
   reviewing = false,
-  toggleDefinitions,
-  toggleValues = {},
-  renderVisualization,
-}: OrderedRecallModeProps) {
+}: QuizModeProps) {
   const quiz = useOrderedRecallSession({
     elements,
     dataRows,
@@ -60,7 +47,7 @@ export function OrderedRecallMode({
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
-      onFinishRef.current?.(quiz.score);
+      onFinishRef.current(quiz.score);
     }
   }, [quiz.isFinished, quiz.score]);
 
@@ -124,11 +111,14 @@ export function OrderedRecallMode({
   return (
     <div className={styles.container}>
       <div className={styles.visualizationArea}>
-        {renderVisualization({
-          elementStates: reviewElementStates,
-          toggles: toggleValues,
-          elementToggles: reviewElementToggles,
-        })}
+        <Renderer
+          elements={elements}
+          elementStates={reviewElementStates}
+          toggles={toggleValues}
+          elementToggles={reviewElementToggles}
+          backgroundPaths={backgroundPaths}
+          clustering={clustering}
+        />
       </div>
 
       {!reviewing && (

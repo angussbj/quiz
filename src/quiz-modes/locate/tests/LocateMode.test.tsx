@@ -45,8 +45,12 @@ function renderLocateMode() {
   return render(
     <LocateMode
       elements={elements}
-      toggles={{}}
+      dataRows={[]}
+      columnMappings={{}}
+      toggleDefinitions={[]}
+      toggleValues={{}}
       Renderer={MockRenderer}
+      onFinish={jest.fn()}
     />,
   );
 }

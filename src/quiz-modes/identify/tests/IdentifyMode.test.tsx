@@ -1,8 +1,7 @@
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { VisualizationRendererProps } from '@/visualizations/VisualizationRendererProps';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
-import type { QuizSessionState } from '../../QuizSessionState';
-import type { ViewBoxPosition } from '@/visualizations/VisualizationElement';
 import { IdentifyMode } from '../IdentifyMode';
 
 function makeElements(count: number): ReadonlyArray<VisualizationElement> {
@@ -15,48 +14,42 @@ function makeElements(count: number): ReadonlyArray<VisualizationElement> {
   }));
 }
 
-const emptySession: QuizSessionState = {
-  toggles: {},
-  elementStates: {},
-  remainingElementIds: [],
-  correctElementIds: [],
-  incorrectElementIds: [],
-  status: 'active',
-  elapsedMs: 0,
-  score: { correct: 0, total: 0, percentage: 0 },
-};
+/** Mock renderer that exposes element click buttons and the current target. */
+function MockRenderer({ elements, onElementClick, targetElementId }: VisualizationRendererProps) {
+  return (
+    <div data-testid="visualization">
+      {elements.map((el) => (
+        <button key={el.id} onClick={() => onElementClick?.(el.id)}>
+          {el.label}
+        </button>
+      ))}
+      {targetElementId && <span data-testid="target">{targetElementId}</span>}
+    </div>
+  );
+}
 
 function renderIdentifyMode(elementCount = 3) {
   const elements = makeElements(elementCount);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const renderViz = jest.fn((_props: any) => <div data-testid="visualization" />);
-
-  const props = {
-    elements,
-    dataRows: [],
-    columnMappings: {},
-    toggleDefinitions: [],
-    session: emptySession,
-    onTextAnswer: jest.fn(),
-    onElementSelect: jest.fn(),
-    onPositionSelect: jest.fn((_pos: ViewBoxPosition) => {}),
-    onChoiceSelect: jest.fn(),
-    onHintRequest: jest.fn(),
-    onSkip: jest.fn(),
-    onGiveUp: jest.fn(),
-    renderVisualization: renderViz,
-  };
-
-  render(<IdentifyMode {...props} />);
-
-  return { ...props, renderViz };
+  render(
+    <IdentifyMode
+      elements={elements}
+      dataRows={[]}
+      columnMappings={{}}
+      toggleDefinitions={[]}
+      toggleValues={{}}
+      Renderer={MockRenderer}
+      onFinish={jest.fn()}
+    />,
+  );
+  return { elements };
 }
 
 describe('IdentifyMode', () => {
   it('renders prompt with element label', () => {
     renderIdentifyMode();
-    expect(screen.getByText(/Click on/)).toBeInTheDocument();
-    expect(screen.getByText(/City \d/)).toBeInTheDocument();
+    const prompt = screen.getByText(/Click on/);
+    expect(prompt).toBeInTheDocument();
+    expect(prompt).toHaveTextContent(/City \d/);
   });
 
   it('shows progress counter', () => {
@@ -75,28 +68,41 @@ describe('IdentifyMode', () => {
     expect(screen.getByTestId('visualization')).toBeInTheDocument();
   });
 
-  it('passes elementStates and onElementClick to visualization', () => {
-    const { renderViz } = renderIdentifyMode();
-    expect(renderViz).toHaveBeenCalled();
-    const vizProps = renderViz.mock.calls[0][0];
-    expect(vizProps.elementStates).toBeDefined();
-    expect(typeof vizProps.onElementClick).toBe('function');
+  it('passes targetElementId to renderer', () => {
+    renderIdentifyMode();
+    expect(screen.getByTestId('target')).toBeInTheDocument();
   });
 
-  it('calls onSkip when skip clicked', async () => {
+  it('clicking the correct element advances progress', async () => {
     const user = userEvent.setup();
-    const { onSkip } = renderIdentifyMode();
+    renderIdentifyMode(3);
+
+    const targetId = screen.getByTestId('target').textContent ?? '';
+    const targetLabel = `City ${targetId.replace('el-', '')}`;
+
+    await user.click(screen.getByRole('button', { name: targetLabel }));
+
+    expect(screen.getByText('1/3')).toBeInTheDocument();
+  });
+
+  it('clicking a wrong element does not advance progress', async () => {
+    const user = userEvent.setup();
+    renderIdentifyMode(3);
+
+    const targetId = screen.getByTestId('target').textContent ?? '';
+    const wrongLabel = targetId === 'el-0' ? 'City 1' : 'City 0';
+
+    await user.click(screen.getByRole('button', { name: wrongLabel }));
+
+    expect(screen.getByText('0/3')).toBeInTheDocument();
+  });
+
+  it('skip advances progress', async () => {
+    const user = userEvent.setup();
+    renderIdentifyMode();
 
     await user.click(screen.getByRole('button', { name: 'Skip' }));
-    expect(onSkip).toHaveBeenCalled();
-  });
-
-  it('calls onGiveUp when give up clicked', async () => {
-    const user = userEvent.setup();
-    const { onGiveUp } = renderIdentifyMode();
-
-    await user.click(screen.getByRole('button', { name: 'Give up' }));
-    expect(onGiveUp).toHaveBeenCalled();
+    expect(screen.getByText('1/3')).toBeInTheDocument();
   });
 
   it('shows finished state after give up', async () => {
@@ -109,62 +115,77 @@ describe('IdentifyMode', () => {
     expect(screen.getByText(/0 of 3 correct/)).toBeInTheDocument();
   });
 
-  it('calls onElementSelect when correct element is clicked', () => {
-    const { renderViz, onElementSelect } = renderIdentifyMode(3);
+  it('calls onFinish when quiz ends', async () => {
+    const user = userEvent.setup();
+    const onFinish = jest.fn();
+    const elements = makeElements(3);
+    render(
+      <IdentifyMode
+        elements={elements}
+        dataRows={[]}
+        columnMappings={{}}
+        toggleDefinitions={[]}
+        toggleValues={{}}
+        Renderer={MockRenderer}
+        onFinish={onFinish}
+      />,
+    );
 
-    // Get the onElementClick callback and targetElementId from the visualization props
-    const vizProps = renderViz.mock.calls[0][0];
-    const targetId = vizProps.targetElementId;
+    await user.click(screen.getByRole('button', { name: 'Give up' }));
 
-    // Simulate clicking the correct element
-    act(() => vizProps.onElementClick(targetId));
-
-    expect(onElementSelect).toHaveBeenCalledWith(targetId);
+    expect(onFinish).toHaveBeenCalledTimes(1);
   });
 
-  it('does not call onElementSelect when wrong element is clicked', () => {
-    const { renderViz, onElementSelect } = renderIdentifyMode(3);
-
-    const vizProps = renderViz.mock.calls[0][0];
-    const targetId = vizProps.targetElementId;
-    // Find an element that isn't the target
-    const wrongId = ['el-0', 'el-1', 'el-2'].find((id) => id !== targetId)!;
-
-    act(() => vizProps.onElementClick(wrongId));
-
-    expect(onElementSelect).not.toHaveBeenCalled();
-  });
-
-  it('passes toggles and elementToggles to visualization', () => {
+  it('passes toggles and elementToggles to renderer', () => {
     const elements = makeElements(2);
     const toggleDefs = [
       { key: 'showDots', label: 'Dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' as const },
     ];
     const toggleValues = { showDots: false };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const renderViz = jest.fn((_props: any) => <div data-testid="visualization" />);
+
+    let capturedToggles: Readonly<Record<string, boolean>> | undefined;
+    function CapturingRenderer(props: VisualizationRendererProps) {
+      capturedToggles = props.toggles;
+      return <div data-testid="visualization" />;
+    }
 
     render(
       <IdentifyMode
         elements={elements}
         dataRows={[]}
         columnMappings={{}}
-        session={emptySession}
-        onTextAnswer={jest.fn()}
-        onElementSelect={jest.fn()}
-        onPositionSelect={jest.fn()}
-        onChoiceSelect={jest.fn()}
-        onHintRequest={jest.fn()}
-        onSkip={jest.fn()}
-        onGiveUp={jest.fn()}
         toggleDefinitions={toggleDefs}
         toggleValues={toggleValues}
-        renderVisualization={renderViz}
+        Renderer={CapturingRenderer}
+        onFinish={jest.fn()}
       />,
     );
 
-    const vizProps = renderViz.mock.calls[0][0];
-    expect(vizProps.toggles).toEqual({ showDots: false });
-    expect(vizProps.elementToggles).toBeDefined();
+    expect(capturedToggles).toEqual({ showDots: false });
+  });
+
+  it('does not pass onElementClick to renderer when reviewing', () => {
+    const elements = makeElements(2);
+    let capturedOnElementClick: ((id: string) => void) | undefined = jest.fn();
+
+    function CapturingRenderer(props: VisualizationRendererProps) {
+      capturedOnElementClick = props.onElementClick;
+      return <div data-testid="visualization" />;
+    }
+
+    render(
+      <IdentifyMode
+        elements={elements}
+        dataRows={[]}
+        columnMappings={{}}
+        toggleDefinitions={[]}
+        toggleValues={{}}
+        Renderer={CapturingRenderer}
+        onFinish={jest.fn()}
+        reviewing
+      />,
+    );
+
+    expect(capturedOnElementClick).toBeUndefined();
   });
 });
