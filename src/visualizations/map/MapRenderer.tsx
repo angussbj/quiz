@@ -123,6 +123,23 @@ export function MapRenderer({
   );
 }
 
+/** Split a combined SVG path `d` string into individual subpaths (each starting with M). */
+function splitSubpaths(d: string): ReadonlyArray<string> {
+  const parts: Array<string> = [];
+  const matches = d.matchAll(/M\s/g);
+  const indices: Array<number> = [];
+  for (const m of matches) {
+    if (m.index !== undefined) indices.push(m.index);
+  }
+  for (let i = 0; i < indices.length; i++) {
+    const start = indices[i];
+    const end = i < indices.length - 1 ? indices[i + 1] : d.length;
+    const sub = d.slice(start, end).trim();
+    if (sub) parts.push(sub);
+  }
+  return parts;
+}
+
 /** Stroke width for river paths in viewBox units (same approach as border stroke-width). */
 const RIVER_STROKE_WIDTH = 0.4;
 
@@ -174,12 +191,20 @@ function renderShapeElements(
     const isStrokePath = element.pathRenderStyle === 'stroke';
 
     if (isStrokePath) {
+      // Split combined path into subpaths. Z-closed subpaths (lake polygons)
+      // render as fills; open subpaths (river lines) render as strokes.
+      const subpaths = splitSubpaths(element.svgPathData);
+      const strokePaths = subpaths.filter((p) => !p.endsWith('Z'));
+      const fillPaths = subpaths.filter((p) => p.endsWith('Z'));
+      const strokeD = strokePaths.join(' ');
+      const fillD = fillPaths.join(' ');
+
       return (
         <g key={`shape-${element.id}`}>
-          {/* Invisible wider path for easier clicking */}
-          {onElementClick && (
+          {/* Invisible wider hit area for clicking (strokes only) */}
+          {onElementClick && strokeD && (
             <path
-              d={element.svgPathData}
+              d={strokeD}
               style={{
                 fill: 'none',
                 stroke: 'transparent',
@@ -194,28 +219,53 @@ function renderShapeElements(
               }}
             />
           )}
-          {/* Visible river stroke */}
-          <path
-            d={element.svgPathData}
-            style={{
-              fill: 'none',
-              stroke: color,
-              strokeWidth: riverStrokeWidth,
-              strokeOpacity: strokeOpacity(state),
-              strokeLinecap: 'round',
-              strokeLinejoin: 'round',
-            }}
-            className={onElementClick ? styles.interactivePath : undefined}
-            pointerEvents={onElementClick ? 'none' : undefined}
-            onClick={
-              onElementClick
-                ? (e) => {
-                    e.stopPropagation();
-                    onElementClick(element.id);
-                  }
-                : undefined
-            }
-          />
+          {/* Filled lake polygons */}
+          {fillD && (
+            <path
+              d={fillD}
+              style={{
+                fill: color,
+                fillOpacity: strokeOpacity(state) * 0.4,
+                stroke: color,
+                strokeWidth: riverStrokeWidth * 0.5,
+                strokeOpacity: strokeOpacity(state) * 0.6,
+              }}
+              pointerEvents={onElementClick ? 'none' : undefined}
+              className={onElementClick ? styles.interactivePath : undefined}
+              onClick={
+                onElementClick
+                  ? (e) => {
+                      e.stopPropagation();
+                      onElementClick(element.id);
+                    }
+                  : undefined
+              }
+            />
+          )}
+          {/* Visible river strokes */}
+          {strokeD && (
+            <path
+              d={strokeD}
+              style={{
+                fill: 'none',
+                stroke: color,
+                strokeWidth: riverStrokeWidth,
+                strokeOpacity: strokeOpacity(state),
+                strokeLinecap: 'round',
+                strokeLinejoin: 'round',
+              }}
+              pointerEvents={onElementClick ? 'none' : undefined}
+              className={onElementClick ? styles.interactivePath : undefined}
+              onClick={
+                onElementClick
+                  ? (e) => {
+                      e.stopPropagation();
+                      onElementClick(element.id);
+                    }
+                  : undefined
+              }
+            />
+          )}
         </g>
       );
     }

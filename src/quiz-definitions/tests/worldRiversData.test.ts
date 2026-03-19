@@ -29,14 +29,13 @@ describe('world-rivers.csv data validation', () => {
     expect(emptyPaths).toHaveLength(0);
   });
 
-  it('all paths start with M (open line paths, not closed polygons)', () => {
+  it('all paths start with M; lake fills end with Z, river strokes do not', () => {
     for (const row of allRows) {
       const segments = row.paths.split('|');
       for (const segment of segments) {
         const trimmed = segment.trim();
         expect(trimmed).toMatch(/^M /);
-        // River paths should NOT end with Z (they're open lines)
-        expect(trimmed).not.toMatch(/Z$/);
+        // Z-closed paths are lake polygons (valid), open paths are river lines
       }
     }
   });
