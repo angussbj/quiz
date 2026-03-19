@@ -120,17 +120,18 @@ const humanBonesQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showLabels', label: 'Bone names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showGroupColors', label: 'Region colors', defaultValue: false, group: 'display' } as const,
   ],
   presets: [
     {
       name: 'easy',
       label: 'Easy',
-      values: { showLabels: true },
+      values: { showLabels: true, showGroupColors: true },
     },
     {
       name: 'hard',
       label: 'Hard',
-      values: { showLabels: false },
+      values: { showLabels: false, showGroupColors: false },
     },
   ],
   columnMappings: {

@@ -37,6 +37,8 @@ function stateColor(state: ElementVisualState | undefined): string | undefined {
       return 'var(--color-missed)';
     case 'highlighted':
       return 'var(--color-highlight)';
+    case 'default':
+      return 'var(--color-text-muted)';
     case 'revealed':
       return 'var(--color-text-muted)';
     default:
@@ -57,9 +59,9 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
       return 0.6;
     case 'default':
     case 'revealed':
-      return 0.7;
-    default:
       return 0.55;
+    default:
+      return 0.5;
   }
 }
 
@@ -70,6 +72,7 @@ function renderBoneElements(
   uniqueGroups: ReadonlyArray<string>,
   onElementClick: ((elementId: string) => void) | undefined,
   targetState: ElementVisualState | undefined,
+  showGroupColors: boolean,
 ) {
   return elements.map((element) => {
     if (!isAnatomyElement(element) || !element.svgPathData) return null;
@@ -80,7 +83,10 @@ function renderBoneElements(
     } else {
       if (state !== targetState) return null;
     }
-    const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
+    const useGroupColor = showGroupColors && state === 'default';
+    const color = useGroupColor
+      ? groupColor(element.group, uniqueGroups)
+      : (stateColor(state) ?? groupColor(element.group, uniqueGroups));
     return (
       <path
         key={`bone-${element.id}`}
@@ -178,6 +184,7 @@ function AnatomyContent({
   );
 
   const showLabels = toggles['showLabels'] ?? false;
+  const showGroupColors = toggles['showGroupColors'] ?? false;
   const labelSize = 5 / (scale * basePixelsPerViewBoxUnit) * 10;
 
   return (
@@ -190,14 +197,15 @@ function AnatomyContent({
       )}
 
       {/* Bone shapes: layered by state for proper z-ordering */}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, undefined)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'missed')}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'incorrect')}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'revealed')}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct')}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-second')}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-third')}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'highlighted')}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, undefined, showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'default', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'missed', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'incorrect', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'revealed', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-second', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-third', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'highlighted', showGroupColors)}
 
       {/* Bone name labels */}
       {showLabels && elements.map((element) => {
