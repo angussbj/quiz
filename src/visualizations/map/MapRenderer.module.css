@@ -28,27 +28,6 @@
   transform: scale(1.5);
 }
 
-@keyframes correctPulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  40% {
-    transform: scale(2);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.correctPulse {
-  transform-origin: center;
-  transform-box: fill-box;
-  animation: correctPulse 400ms ease-out;
-}
-
 .label {
   fill: var(--color-text-secondary);
   font-family: var(--font-family);

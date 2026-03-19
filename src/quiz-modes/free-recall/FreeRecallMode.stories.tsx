@@ -65,7 +65,7 @@ function FreeRecallWithVisualization() {
           elementStates={session.elementStates}
           toggles={session.toggles}
           elementToggles={elementToggles}
-          targetElementId={session.lastMatchedElementId}
+
         />
       </div>
 

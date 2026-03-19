@@ -106,7 +106,6 @@ export function FreeRecallMode({
           elementStates={reviewElementStates}
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
-          targetElementId={reviewing ? undefined : session.lastMatchedElementId}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}

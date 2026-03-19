@@ -115,20 +115,15 @@ describe('MapRenderer', () => {
     expect(berlinDot).toHaveAttribute('fill', 'var(--color-incorrect)');
   });
 
-  it('highlights the target element with a thicker stroke', () => {
-    const { container } = renderMap({ targetElementId: 'paris' });
+  it('applies highlighted state styling to dots', () => {
+    const { container } = renderMap({
+      elementStates: { paris: 'highlighted' },
+    });
     const circles = container.querySelectorAll('circle');
     const parisDot = Array.from(circles).find(
       (c) => c.getAttribute('cx') === String(sampleCityElements[0].viewBoxCenter.x),
     );
-    expect(parisDot).toHaveAttribute('stroke', 'var(--color-highlight)');
-    // Target stroke is 0.5× radius, non-target is 0.27× — verify target is thicker
-    const nonTargetDot = Array.from(circles).find(
-      (c) => c.getAttribute('cx') === String(sampleCityElements[1].viewBoxCenter.x),
-    );
-    const targetStroke = parseFloat(parisDot!.getAttribute('stroke-width')!);
-    const normalStroke = parseFloat(nonTargetDot!.getAttribute('stroke-width')!);
-    expect(targetStroke).toBeGreaterThan(normalStroke);
+    expect(parisDot).toHaveAttribute('fill', 'var(--color-highlight)');
   });
 
   it('renders with no elements', () => {

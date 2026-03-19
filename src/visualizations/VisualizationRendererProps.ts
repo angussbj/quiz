@@ -42,7 +42,6 @@ export interface VisualizationRendererProps {
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: (position: ViewBoxPosition) => void;
   readonly onClusterClick?: (cluster: ElementCluster) => void;
-  readonly targetElementId?: string;
   readonly toggles: Readonly<Record<string, boolean>>;
   /** Per-element toggle overrides. Renderer checks elementToggles[elementId][toggleKey] ?? toggles[toggleKey]. */
   readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
