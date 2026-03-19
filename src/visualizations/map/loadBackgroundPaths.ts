@@ -27,7 +27,7 @@ export function parseBackgroundPaths(
         group: row['group'] ?? row['name'],
         name: row['name'],
         code: row['code'],
-        sovereign: row['sovereign'],
+        sovereign: row['is_sovereign'] === 'true' ? (row['name'] ?? undefined) : undefined,
         region: row['region'],
       });
     }
