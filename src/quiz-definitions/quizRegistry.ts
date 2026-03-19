@@ -149,7 +149,7 @@ const riversQuizBase = {
     latitude: 'latitude',
     longitude: 'longitude',
     group: 'continent',
-    pathStyle: 'stroke',
+    pathRenderStyle: 'stroke',
   },
   dataPath: '/data/rivers/world-rivers.csv',
   supportingDataPaths: ['/data/borders/world-borders.csv'],

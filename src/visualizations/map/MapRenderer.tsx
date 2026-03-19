@@ -92,7 +92,7 @@ export function MapRenderer({
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
   );
   const showBorders = toggles['showBorders'] !== false;
-  // Disable default clustering for stroke-style elements (rivers) since clustering
+  // Disable default clustering for stroke-style elements since clustering
   // by centroid doesn't make sense for line features spread across the map.
   const hasStrokeElements = elements.some((e) => isMapElement(e) && e.pathRenderStyle === 'stroke');
   const effectiveClustering = clustering ?? (hasStrokeElements ? undefined : DEFAULT_MAP_CLUSTERING);

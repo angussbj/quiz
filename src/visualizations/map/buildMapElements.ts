@@ -20,7 +20,7 @@ export function buildMapElements(
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
   const codeColumn = columnMappings['code'] ?? 'code';
-  const pathStyle = columnMappings['pathStyle'] as 'fill' | 'stroke' | undefined;
+  const pathStyle = columnMappings['pathRenderStyle'] as 'fill' | 'stroke' | undefined;
 
   return rows.map((row) => {
     const lat = parseFloat(row['latitude'] ?? '0');
