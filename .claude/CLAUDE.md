@@ -33,6 +33,8 @@ Three-tier architecture with TypeScript interfaces as contracts between tiers.
 2. **SVG viewBox coordinates** — stable "world" space, computed once by renderers, does NOT change with zoom/pan
 3. **Screen pixel coordinates** — computed on-the-fly from viewBox + zoom state, not stored on elements
 
+Map projection: equirectangular — **x = longitude, y = −latitude** (negated so north is up in SVG). See `src/visualizations/map/projectGeo.ts`.
+
 ## Design / UX Direction
 
 The aesthetic is **quiet and satisfying**, like a well-made crossword app. Not gamified, not flashy.
@@ -68,6 +70,7 @@ Border CSV format: `id,name,region,group,paths,latitude,longitude,name_alternate
 Scripts in `scripts/` regenerate the data CSVs from source datasets:
 - `generateWorldCapitals.ts` — from mledoze/countries + dr5hn/cities
 - `generateBorderPaths.ts` — from Natural Earth GeoJSON (equirectangular projection, Douglas-Peucker simplification)
+- `enrichBordersWithCountryData.mjs` — adds `latitude`, `longitude`, `name_alternates`, `is_sovereign` columns to `world-borders.csv` (sovereign countries get coordinates from capitals CSV; territories get centroid coordinates from SVG bounding boxes)
 
 Source files are gitignored (too large). Download URLs are in each script's header comments.
 

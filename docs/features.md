@@ -1,34 +1,8 @@
 # Feature List (Round 2)
 
-Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for their architecture live in `docs/quiz-integration.md`, `docs/toggle-resolution.md`, `docs/zoom-pan-container.md`, and `CLAUDE.md`). Feature 17 and items 18+ are listed below. Features within the same group can be worked on in parallel.
+Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for their architecture live in `docs/quiz-integration.md`, `docs/toggle-resolution.md`, `docs/zoom-pan-container.md`, and `CLAUDE.md`). Features 17–19, 21–24, 27 are also done. Feature 20 and items 25+ are listed below. Features within the same group can be worked on in parallel.
 
 ## Group E: Bug Fixes & Polish (no dependencies between items)
-
-### 18. Timer & Setup Panel Polish — DONE
-**Branch:** `feat/timer-polish`
-**Scope:**
-- **Time limit input styling:** The native number input spinner (up/down arrows) looks bad, especially in dark mode. Replace with custom styled increment/decrement buttons that match the app's design language. Pressing down at 1 minute should clear the field back to blank (no time limit), rather than going to 0.
-- **Timer jumps sideways:** The in-quiz timer shifts horizontally on every other tick. Likely variable-width digits or Framer Motion layout reflow. Fix with `font-variant-numeric: tabular-nums` or a fixed-width container.
-**What was done:**
-- Removed `AnimatePresence`/`motion.span` from `Timer.tsx` — the timer doesn't need tick animations, and they caused layout reflow.
-- Added `font-variant-numeric: tabular-nums` to the timer CSS for fixed-width digits.
-- Replaced `<input type="number">` with `<input type="text" inputMode="numeric">` flanked by custom `[ − ]` / `[ + ]` stepper buttons.
-- Decrementing at 1 (or from blank) clears to `undefined` (no time limit).
-- Stepper buttons styled with theme CSS custom properties, work correctly in dark mode.
-
-### 19. Map Renderer Fixes — DONE
-**Branch:** `feat/map-fixes`
-**Scope:**
-- **Missing countries:** France and Norway don't appear on the map. Investigate whether the SVG paths are missing, malformed, or being filtered out.
-- **Global background outlines:** Background country outlines should include the entire world, not just the quiz region. Zooming to the edges of Europe currently shows abrupt cut-offs. Initial viewport should still be focused on the quiz region, but panning out should reveal neighbouring countries as context.
-- **City dot colours:** City dots currently use different colours from group colour-coding. They should all be a single uniform colour — grouping colours make sense for country shapes or timeline bars, not city markers.
-- **City dots non-interactable in free recall:** When the quiz mode uses text input (free recall), hovering/clicking city dots shouldn't trigger hover effects, animations, or state changes. Interactive styling should only apply in click-based modes (identify, locate).
-**What was done:**
-- Added 5 missing countries to `world-borders.csv` (France, Norway, Kosovo, Vatican City, São Tomé and Príncipe) using Natural Earth 1:110m data via `scripts/add-missing-borders.mjs`.
-- Normalized country names between borders and capitals CSVs. Added `country_alternates` column to capitals CSV.
-- Removed `supportingDataFilter` from `QuizDefinition` — all map quizzes load full world borders as background. Added `supportingDataPaths` to Asia, Africa, and countries quizzes.
-- City dots now use uniform `--color-city-dot` CSS variable instead of group colours.
-- Map interactive styling (hover/click) gated on `onElementClick` prop, not `element.interactive` — city dots are non-interactive in free recall mode.
 
 ### 20. Toggle Features & Identify Mode Fixes
 **Branch:** `feat/toggle-fixes`

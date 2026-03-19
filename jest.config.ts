@@ -9,6 +9,7 @@ const config: Config = {
     '\\.css$': 'identity-obj-proxy',
     '\\.svg(\\?react)?$': '<rootDir>/src/test-support/svgMock.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^(.*)/utilities/assetPath$': '<rootDir>/src/test-support/assetPathMock.ts',
   },
   setupFilesAfterEnv: ['<rootDir>/src/test-support/setup.ts'],
   transform: {

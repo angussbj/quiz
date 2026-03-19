@@ -59,10 +59,21 @@ When a countdown timer expires: Timer `onExpire` → ActiveQuiz sets `forceGiveU
 ## Timeline Renderer Conventions
 
 - `TimelineTimestamp` is a variable-precision array `[year, month?, day?, hour?, minute?, second?]` — not just years. Start timestamps round to period start, end timestamps round to period end.
+- The locate mode date parser accepts multiple formats: ISO (`1944-06-06`), `M/D/Y` (`6/6/1944`), and natural language (`6 Jun 1944`, `June 1944`). Scoring tolerance scales with precision level.
 - `buildTimelineElements()` uses `UNITS_PER_YEAR` (20) as the X-axis scale factor. Track height is dynamically computed to maintain a landscape viewBox aspect ratio.
 - Categories map to theme `--color-group-N` colors (first 8), then generate random vibrant HSL colors for overflow.
 - Inside labels are shown when bars are wide enough; otherwise labels appear beside the bar (truncated to fit gap before next bar).
 - TimelineRenderer supports `showLabels` (hide/show bar labels) and `showBars` (full opacity vs dimmed) toggle keys. Quiz definitions for timeline quizzes should include these in their `ToggleDefinition[]`.
+
+## Select Toggles
+
+`SelectToggleDefinition` supports multi-value settings (e.g. a segmented control for date precision). Defined alongside `ToggleDefinition[]` as `selectToggles` on `QuizDefinition`. Selected value stored in `QuizConfig.selectValues` (a `Record<key, string>`). Any quiz can use them — not limited to timelines.
+
+`datePrecision` (values: `'year'` / `'month'` / `'day'`) is the existing example, and is only meaningful in locate mode. Declare it with `modes: ['locate']` on the `SelectToggleDefinition` to hide it in other modes.
+
+## Map Interactive Styling
+
+Renderers gate hover/click effects on the presence of the `onElementClick` prop — not on `element.interactive`. When `onElementClick` is undefined (e.g. free recall mode), city dots are non-interactive. This is the correct pattern for all map-based renderers.
 
 ## Quiz Data Conventions
 
@@ -70,3 +81,6 @@ When a countdown timer expires: Timer `onExpire` → ActiveQuiz sets `forceGiveU
 - Geography quiz paths are 2-deep: `['Geography', 'Capitals']` not `['Geography', 'Capitals', 'Europe']`. The region is in the quiz title.
 - Quiz IDs follow the pattern `geo-{type}-{region}` (e.g., `geo-capitals-europe`).
 - CSV data is fetched from `public/data/` paths.
+- **Americas subregion split:** North America quiz filters by `subregion` values `['North America', 'Central America', 'Caribbean']` (23 countries); South America filters by `['South America']` (12 countries). Uses `subregion` not `region` (which is just `'Americas'` for all).
+- **World vs continent grouping:** World quizzes set `columnMappings.group = 'region'` for continent-level colour coding. Continent quizzes set `columnMappings.group = 'group'` (subregion) for finer colour coding.
+- **BackgroundPath labels:** `BackgroundPath` has optional `label` and `labelCenter` fields. Non-quiz territory shapes (e.g. dependent territories in a countries quiz) use these to display name labels when the `showCountryNames` toggle is on.
