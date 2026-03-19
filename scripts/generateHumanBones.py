@@ -826,6 +826,26 @@ def main():
                 else:
                     entries.append(fe)
 
+    # Add calcaneus (heel bone) — not present in the front-view SVG because it's
+    # behind the talus. We add a rough elliptical shape positioned behind each talus.
+    # Left calcaneus: behind left talus (centered ~215, 762)
+    # Right calcaneus: behind right talus (centered ~183, 762)
+    # Polygon approximation of ellipses (arc commands break the naive bounds parser).
+    # Left: center (215, 762), rx=12, ry=8; Right: center (183, 762), rx=12, ry=8
+    calcaneus_left = 'M 227,762 L 223,768 L 215,770 L 207,768 L 203,762 L 207,756 L 215,754 L 223,756 Z'
+    calcaneus_right = 'M 195,762 L 191,768 L 183,770 L 175,768 L 171,762 L 175,756 L 183,754 L 191,756 Z'
+    entries.append(BoneEntry(
+        id='calcaneus',
+        name='Calcaneus',
+        name_alternates='heel bone|os calcis|calcaneum',
+        region='Foot',
+        subregion='Ankle',
+        common='true',
+        paths=[calcaneus_left, calcaneus_right],
+        x=199.0,
+        y=762.0,
+    ))
+
     # Sort entries by anatomical order (head to toe)
     region_order = {'Head': 0, 'Torso': 1, 'Thorax': 2, 'Arm': 3, 'Hand': 4, 'Leg': 5, 'Foot': 6}
     entries.sort(key=lambda e: (region_order.get(e.region, 99), e.y))

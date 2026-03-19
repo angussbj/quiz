@@ -17,10 +17,24 @@ const GROUP_COLORS: ReadonlyArray<string> = [
   'var(--color-group-8)',
 ];
 
+/** Distinct hues for per-element coloring (used when showGroupColors is on). */
+const ELEMENT_COLORS: ReadonlyArray<string> = [
+  '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
+  '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4',
+  '#9A6324', '#800000', '#aaffc3', '#808000', '#ffd8b1',
+  '#000075', '#a9a9a9', '#dcbeff', '#469990', '#e6beff',
+  '#ff6961', '#77dd77', '#fdfd96', '#84b6f4', '#fdcae1',
+  '#c23b22', '#03c03c', '#b19cd9', '#ffb347', '#ff6961',
+];
+
 function groupColor(group: string | undefined, groups: ReadonlyArray<string>): string {
   if (!group) return GROUP_COLORS[0];
   const index = groups.indexOf(group);
   return GROUP_COLORS[index >= 0 ? index % GROUP_COLORS.length : 0];
+}
+
+function elementColor(elementIndex: number): string {
+  return ELEMENT_COLORS[elementIndex % ELEMENT_COLORS.length];
 }
 
 function stateColor(state: ElementVisualState | undefined): string | undefined {
@@ -83,17 +97,19 @@ function renderBoneElements(
     } else {
       if (state !== targetState) return null;
     }
-    const useGroupColor = showGroupColors && state === 'default';
-    const color = useGroupColor
-      ? groupColor(element.group, uniqueGroups)
+    const usePerElementColor = showGroupColors && state === 'default';
+    const elementIndex = elements.indexOf(element);
+    const color = usePerElementColor
+      ? elementColor(elementIndex)
       : (stateColor(state) ?? groupColor(element.group, uniqueGroups));
+    const opacity = usePerElementColor ? 0.75 : stateFillOpacity(state);
     return (
       <path
         key={`bone-${element.id}`}
         d={element.svgPathData}
         style={{
           fill: color,
-          fillOpacity: stateFillOpacity(state),
+          fillOpacity: opacity,
           stroke: color,
           strokeWidth: 0.8,
           strokeOpacity: 0.8,
