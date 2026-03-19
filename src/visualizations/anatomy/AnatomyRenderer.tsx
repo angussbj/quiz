@@ -191,9 +191,12 @@ function AnatomyContent({
 
       {/* Bone shapes: layered by state for proper z-ordering */}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, undefined)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'missed')}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'incorrect')}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'revealed')}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct')}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-second')}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-third')}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'highlighted')}
 
       {/* Bone name labels */}
