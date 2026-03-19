@@ -25,11 +25,6 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element, ordered recall following the order by atomic number, prompted recall (new) where element squares are highlighted in a random order and you have to name them). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
 
 
-### 29. Remove `targetElementId` from Renderer Props
-**Branch:** `feat/remove-target-from-renderer`
-**Scope:** Renderers (`MapRenderer`, `PeriodicTableRenderer`) currently receive `targetElementId` via `VisualizationRendererProps` and apply highlight styling directly (highlight stroke, thicker border). This is wrong — it means the correct answer gets a visual indicator in identify mode, defeating the purpose of the quiz. Highlighting decisions belong to quiz modes, not renderers. Renderers should only know about `elementStates`.
-- Remove `targetElementId` from `VisualizationRendererProps`.
-- Remove all `isTarget`-based styling from `MapRenderer` (city dot stroke/strokeWidth on lines ~215-216) and `PeriodicTableRenderer` (rect stroke/strokeWidth on line ~122-123).
-- Quiz modes that need to highlight an element (e.g. the future prompted recall mode, or locate mode's feedback) should express it via `elementStates` using a `'highlighted'` state — renderers already handle that state.
-- Update tests and stories that pass `targetElementId`.
-- Verify identify mode no longer leaks any visual indicator for the correct answer.
+### 29. Remove `targetElementId` from Renderer Props ✅
+**Branch:** `refactor/remove-target-element-id`
+**Done.** Removed `targetElementId` from `VisualizationRendererProps` and all renderers. Identify mode now sets `'highlighted'` state for the current prompt target via `elementStates`. All target-based styling removed from MapRenderer, FlagGridRenderer, PeriodicTableRenderer.

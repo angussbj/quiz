@@ -14,8 +14,9 @@ function makeElements(count: number): ReadonlyArray<VisualizationElement> {
   }));
 }
 
-/** Mock renderer that exposes element click buttons and the current target. */
-function MockRenderer({ elements, onElementClick, targetElementId }: VisualizationRendererProps) {
+/** Mock renderer that exposes element click buttons and the highlighted element. */
+function MockRenderer({ elements, onElementClick, elementStates }: VisualizationRendererProps) {
+  const highlightedId = Object.entries(elementStates).find(([, s]) => s === 'highlighted')?.[0];
   return (
     <div data-testid="visualization">
       {elements.map((el) => (
@@ -23,7 +24,7 @@ function MockRenderer({ elements, onElementClick, targetElementId }: Visualizati
           {el.label}
         </button>
       ))}
-      {targetElementId && <span data-testid="target">{targetElementId}</span>}
+      {highlightedId && <span data-testid="target">{highlightedId}</span>}
     </div>
   );
 }
@@ -68,7 +69,7 @@ describe('IdentifyMode', () => {
     expect(screen.getByTestId('visualization')).toBeInTheDocument();
   });
 
-  it('passes targetElementId to renderer', () => {
+  it('highlights the current element via elementStates', () => {
     renderIdentifyMode();
     expect(screen.getByTestId('target')).toBeInTheDocument();
   });

@@ -199,7 +199,6 @@ export function IdentifyMode({
           elements={elements}
           elementStates={reviewElementStates}
           onElementClick={reviewing ? undefined : handleElementClick}
-          targetElementId={reviewing ? undefined : quiz.currentElementId}
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}

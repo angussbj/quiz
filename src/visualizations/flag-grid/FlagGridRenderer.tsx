@@ -22,7 +22,6 @@ interface FlagCellProps {
   readonly element: FlagGridElement;
   readonly state: ElementVisualState;
   readonly showCountryName: boolean;
-  readonly isTarget: boolean;
   readonly onClick?: (elementId: string) => void;
   readonly onLabelMouseEnter: (label: string, event: React.MouseEvent) => void;
   readonly onLabelMouseMove: (event: React.MouseEvent) => void;
@@ -82,7 +81,6 @@ function FlagCell({
   element,
   state,
   showCountryName,
-  isTarget,
   onClick,
   onLabelMouseEnter,
   onLabelMouseMove,
@@ -118,8 +116,8 @@ function FlagCell({
         rx={4}
         ry={4}
         fill={fill}
-        stroke={isTarget ? 'var(--color-highlight)' : stroke}
-        strokeWidth={isTarget ? 2.5 : 1}
+        stroke={stroke}
+        strokeWidth={1}
       />
       <image
         href={element.flagUrl}
@@ -161,7 +159,6 @@ function FlagGrid({
   elements,
   elementStates,
   onElementClick,
-  targetElementId,
   toggles,
   elementToggles,
 }: VisualizationRendererProps) {
@@ -196,7 +193,6 @@ function FlagGrid({
               element={element}
               state={state}
               showCountryName={elementToggle(elementToggles, toggles, element.id, 'showCountryNames')}
-              isTarget={element.id === targetElementId}
               onClick={onElementClick}
               onLabelMouseEnter={handleLabelMouseEnter}
               onLabelMouseMove={handleLabelMouseMove}

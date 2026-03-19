@@ -22,7 +22,7 @@ Contract between quiz modes (producers) and renderers (consumers).
 |---|---|---|---|---|---|
 | `default` | All at start | — | All at start | — | Unprompted |
 | `hidden` | Toggle-driven | Future slots | — | Unplaced interactive | — |
-| `highlighted` | — | Current slot | — | — | Current prompt |
+| `highlighted` | — | Current slot | Current prompt | — | Current prompt |
 | `correct` | Typed correctly | Typed correctly | Correct (1st) | Placed accurately | Answered correctly |
 | `correct-second` | — | — | Correct (2nd) | — | — |
 | `correct-third` | — | — | Correct (3rd) | — | — |

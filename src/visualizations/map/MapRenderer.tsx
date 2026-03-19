@@ -82,7 +82,6 @@ export function MapRenderer({
   onPositionClick,
   clustering,
   onClusterClick,
-  targetElementId,
   toggles,
   elementToggles,
   backgroundPaths,
@@ -110,7 +109,6 @@ export function MapRenderer({
         elementStates={elementStates}
         onElementClick={onElementClick}
         onPositionClick={onPositionClick}
-        targetElementId={targetElementId}
         uniqueGroups={uniqueGroups}
         showBorders={showBorders}
         toggles={toggles}
@@ -173,7 +171,6 @@ interface MapContentProps {
   readonly elementStates: VisualizationRendererProps['elementStates'];
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: VisualizationRendererProps['onPositionClick'];
-  readonly targetElementId?: string;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly showBorders: boolean;
   readonly toggles: Readonly<Record<string, boolean>>;
@@ -187,7 +184,6 @@ function MapContent({
   elementStates,
   onElementClick,
   onPositionClick,
-  targetElementId,
   uniqueGroups,
   showBorders,
   toggles,
@@ -294,13 +290,7 @@ function MapContent({
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
-        const isTarget = element.id === targetElementId;
-        const isCorrectPulse = isTarget && state === 'correct';
         const color = stateColor(state) ?? 'var(--color-city-dot)';
-        const dotClassName = [
-          onElementClick ? styles.interactiveDot : '',
-          isCorrectPulse ? styles.correctPulse : '',
-        ].filter(Boolean).join(' ') || undefined;
         return (
           <circle
             key={`dot-${element.id}`}
@@ -308,9 +298,9 @@ function MapContent({
             cy={element.viewBoxCenter.y}
             r={dotRadius}
             fill={color}
-            stroke={isTarget ? 'var(--color-highlight)' : 'var(--color-bg-primary)'}
-            strokeWidth={isTarget ? dotRadius * 0.5 : dotRadius * 0.27}
-            className={dotClassName}
+            stroke={'var(--color-bg-primary)'}
+            strokeWidth={dotRadius * 0.27}
+            className={onElementClick ? styles.interactiveDot : undefined}
             onClick={
               onElementClick
                 ? (e) => {

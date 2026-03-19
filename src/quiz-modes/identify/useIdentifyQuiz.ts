@@ -85,12 +85,14 @@ export function useIdentifyQuiz(
         states[el.id] = 'incorrect';
       } else if (el.id === flashIncorrectId) {
         states[el.id] = 'incorrect';
+      } else if (el.id === currentElementId) {
+        states[el.id] = 'highlighted';
       } else {
         states[el.id] = 'default';
       }
     }
     return states;
-  }, [elements, correctIds, missedIds, skippedIds, wrongAttempts, flashIncorrectId]);
+  }, [elements, correctIds, missedIds, skippedIds, wrongAttempts, flashIncorrectId, currentElementId]);
 
   const score = useMemo(
     () => calculateScore(correctIds.size, totalPrompts),

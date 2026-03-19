@@ -66,10 +66,10 @@ export const LabelsOnly: Story = {
   },
 };
 
-export const WithTarget: Story = {
+export const WithHighlighted: Story = {
   args: {
     ...defaultArgs,
-    targetElementId: 'paris',
+    elementStates: { paris: 'highlighted' },
     toggles: { showBorders: true, showCityDots: true, showCountryNames: false },
   },
 };
