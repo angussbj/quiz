@@ -106,6 +106,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
         defaultMode={definition.defaultMode}
         defaultCountdownSeconds={definition.defaultCountdownSeconds}
         toggles={definition.toggles}
+        selectToggles={definition.selectToggles}
         presets={definition.presets}
         modeConstraints={definition.modeConstraints}
         rangeColumn={definition.rangeColumn}
@@ -115,6 +116,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
         {(config) => (
           <ActiveQuiz
             config={config}
+            visualizationType={definition.visualizationType}
             elements={elements}
             dataRows={rows}
             columnMappings={definition.columnMappings}

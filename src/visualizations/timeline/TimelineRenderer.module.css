@@ -1,30 +1,169 @@
-/* Timeline bar */
+/* ---- Container ---- */
+
+.outerContainer {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+}
+
+.outerContainer[data-dragging] {
+  cursor: grabbing;
+}
+
+.innerContainer {
+  position: relative;
+  min-height: 100%;
+  will-change: transform, width;
+}
+
+/* ---- Axis ---- */
+
+.axisArea {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 32px;
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.axisLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.tick {
+  position: absolute;
+  bottom: 0;
+}
+
+.tickMark {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+}
+
+.tickMarkMajor {
+  composes: tickMark;
+  height: 8px;
+  background: var(--color-text-secondary);
+}
+
+.tickMarkMinor {
+  composes: tickMark;
+  height: 5px;
+  background: var(--color-border);
+}
+
+.tickLabel {
+  position: absolute;
+  bottom: 10px;
+  transform: translateX(-50%);
+  font-family: var(--font-family);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.tickLabelMajor {
+  composes: tickLabel;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.tickLabelMinor {
+  composes: tickLabel;
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.gridLine {
+  position: absolute;
+  top: 32px;
+  width: 1px;
+  background: var(--color-border);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ---- Tracks area ---- */
+
+.tracksArea {
+  position: relative;
+  min-height: calc(100% - 32px);
+}
+
+/* ---- Bar ---- */
+
 .bar {
+  position: absolute;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: opacity var(--transition-fast);
-  rx: 4;
-  ry: 4;
+  display: flex;
+  align-items: flex-start;
+  overflow: visible;
 }
 
 .bar:hover {
-  opacity: 0.85;
+  opacity: 0.85 !important;
 }
 
-/* Visual state overrides */
+/* ---- Bar labels ---- */
+
+.barLabel {
+  color: var(--color-on-accent);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 2px 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1.2;
+}
+
+.barLabelOutside {
+  position: absolute;
+  top: 2px;
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---- Visual states ---- */
+
 .barCorrect {
-  fill: var(--color-correct);
+  background-color: var(--color-correct) !important;
 }
 
 .barIncorrect {
-  fill: var(--color-incorrect);
+  background-color: var(--color-incorrect) !important;
 }
 
 .barMissed {
-  fill: var(--color-missed);
+  background-color: var(--color-missed) !important;
 }
 
 .barHighlighted {
-  fill: var(--color-highlight);
+  background-color: var(--color-highlight) !important;
 }
 
 .barHidden {
@@ -35,69 +174,8 @@
   opacity: 0.5;
 }
 
-/* Bar label inside the bar */
-.barLabel {
-  fill: var(--color-on-accent);
-  font-family: var(--font-family);
-  font-weight: 500;
-  user-select: none;
-  pointer-events: none;
-}
+/* ---- Tooltip ---- */
 
-/* Bar label beside/outside the bar */
-.barLabelOutside {
-  fill: var(--color-text-primary);
-  font-family: var(--font-family);
-  font-weight: 500;
-  user-select: none;
-  pointer-events: none;
-}
-
-/* Axis line */
-.axisLine {
-  stroke: var(--color-border);
-  stroke-width: 1;
-}
-
-/* Major tick mark */
-.tickMajor {
-  stroke: var(--color-text-secondary);
-  stroke-width: 1;
-}
-
-/* Minor tick mark */
-.tickMinor {
-  stroke: var(--color-border);
-  stroke-width: 0.5;
-}
-
-/* Major tick label */
-.tickLabelMajor {
-  fill: var(--color-text-primary);
-  font-family: var(--font-family);
-  font-weight: 600;
-  user-select: none;
-  pointer-events: none;
-}
-
-/* Minor tick label */
-.tickLabelMinor {
-  fill: var(--color-text-muted);
-  font-family: var(--font-family);
-  font-weight: 400;
-  user-select: none;
-  pointer-events: none;
-}
-
-/* Vertical grid line from tick into the track area */
-.gridLine {
-  stroke: var(--color-border);
-  stroke-width: 0.5;
-  stroke-dasharray: 4 4;
-  opacity: 0.4;
-}
-
-/* Tooltip container */
 .tooltip {
   position: fixed;
   padding: var(--spacing-xs) var(--spacing-sm);

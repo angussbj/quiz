@@ -1,6 +1,6 @@
 import { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
-import type { VisualizationRendererProps, BackgroundPath } from '@/visualizations/VisualizationRendererProps';
+import type { VisualizationRendererProps, BackgroundPath, VisualizationType } from '@/visualizations/VisualizationRendererProps';
 import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ToggleDefinition } from './ToggleDefinition';
@@ -13,6 +13,7 @@ import styles from './ActiveQuiz.module.css';
 
 export interface ActiveQuizProps {
   readonly config: QuizConfig;
+  readonly visualizationType?: VisualizationType;
   readonly elements: ReadonlyArray<VisualizationElement>;
   readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
@@ -30,6 +31,7 @@ export interface ActiveQuizProps {
  */
 export function ActiveQuiz({
   config,
+  visualizationType,
   elements,
   dataRows,
   columnMappings,
@@ -158,11 +160,13 @@ export function ActiveQuiz({
       <div className={styles.quizArea}>
         <ModeAdapter
           mode={config.selectedMode}
+          visualizationType={visualizationType}
           elements={activeElements}
           dataRows={activeDataRows}
           columnMappings={columnMappings}
           toggleDefinitions={toggleDefinitions}
           toggleValues={config.toggleValues}
+          selectValues={config.selectValues}
           Renderer={RangeAwareRenderer}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}

@@ -1,54 +1,31 @@
-import { useMemo, useState, useCallback, useRef } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
-import { ZoomPanContainer } from '../ZoomPanContainer';
-import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import type { TimelineElement } from './TimelineElement';
 import { isTimelineElement } from './TimelineElement';
 import { buildCategoryColorMap } from './categoryColors';
 import { computeAxisTicks } from './computeAxisTicks';
-import { formatTimestampRange } from './TimelineTimestamp';
+import { formatTimestampRange, timestampToFractionalYear } from './TimelineTimestamp';
 import { UNITS_PER_YEAR } from './buildTimelineElements';
+import { useTimelineZoom } from './useTimelineZoom';
 import styles from './TimelineRenderer.module.css';
 
-/** Default track height for empty timeline fallback. */
-const DEFAULT_TRACK_HEIGHT = 40;
+/** Axis area height in px. */
+const AXIS_HEIGHT = 32;
 
-/**
- * All rendering dimensions derived from track height.
- * Because track height scales with the data range, these produce
- * consistent screen-pixel sizes regardless of the timeline span.
- */
-interface Sizes {
-  readonly fontSize: number;
-  readonly labelPadding: number;
-  readonly minWidthForInsideLabel: number;
-  readonly axisHeight: number;
-  readonly tickFontMajor: number;
-  readonly tickFontMinor: number;
-  readonly majorTickLength: number;
-  readonly minorTickLength: number;
-  readonly cornerRadius: number;
-}
+/** Fixed bar height in pixels (constant, unaffected by zoom). */
+const BAR_HEIGHT = 28;
 
-function computeSizes(trackHeight: number): Sizes {
-  const fontSize = trackHeight * 0.35;
-  const labelPadding = fontSize * 0.3;
-  const charWidth = fontSize * 0.6;
-  return {
-    fontSize,
-    labelPadding,
-    minWidthForInsideLabel: charWidth * 5 + labelPadding * 2,
-    axisHeight: trackHeight * 0.55,
-    tickFontMajor: trackHeight * 0.18,
-    tickFontMinor: trackHeight * 0.14,
-    majorTickLength: trackHeight * 0.12,
-    minorTickLength: trackHeight * 0.08,
-    cornerRadius: trackHeight * 0.06,
-  };
-}
+/** Gap between tracks in pixels. */
+const TRACK_GAP = 6;
+
+/** Vertical offset per sub-layer when bars overlap within a track (px). */
+const LAYER_OFFSET = 22;
+
+/** Minimum visual bar width in pixels (for very short / point events). */
+const MIN_PIXEL_BAR_WIDTH = 8;
 
 interface TooltipState {
   readonly x: number;
@@ -57,37 +34,333 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, clustering } = props;
+  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick } = props;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(800);
 
   const timelineElements = useMemo(
     () => elements.filter(isTimelineElement),
     [elements],
   );
 
+  // Compute horizontal bounds from real elements (exclude spacers)
+  const { minX, maxX } = useMemo(() => {
+    let min = Infinity;
+    let max = -Infinity;
+    for (const el of timelineElements) {
+      if (el.id.startsWith('__spacer')) continue;
+      min = Math.min(min, el.viewBoxBounds.minX);
+      max = Math.max(max, el.viewBoxBounds.maxX);
+    }
+    if (!isFinite(min)) return { minX: 0, maxX: 100 };
+    const padding = UNITS_PER_YEAR * 0.5;
+    return { minX: min - padding, maxX: max + padding };
+  }, [timelineElements]);
+
+  const totalViewBoxWidth = maxX - minX;
+
+  // Track container width
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+    observer.observe(container);
+    setContainerWidth(container.clientWidth);
+    return () => observer.disconnect();
+  }, []);
+
+  const {
+    panOffset,
+    zoom,
+    timelineWidth,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUpOrLeave,
+    isDragging,
+  } = useTimelineZoom({
+    containerRef,
+    totalViewBoxWidth,
+    containerWidth,
+  });
+
   const categoryColorMap = useMemo(
     () => buildCategoryColorMap(timelineElements.map((e) => e.category)),
     [timelineElements],
   );
 
+  // Filter out spacers for rendering
+  const visibleElements = useMemo(
+    () => timelineElements.filter((e) => !e.id.startsWith('__spacer')),
+    [timelineElements],
+  );
+
+  // Axis ticks (more ticks when zoomed in)
+  const minYear = minX / UNITS_PER_YEAR;
+  const maxYear = maxX / UNITS_PER_YEAR;
+  const approximatePixels = totalViewBoxWidth * zoom;
+  const axisTicks = useMemo(
+    () => computeAxisTicks(minYear, maxYear, approximatePixels),
+    [minYear, maxYear, approximatePixels],
+  );
+
+  // Compute pixel positions and per-track sub-layers for overlapping bars.
+  // Vertical positions are computed fresh here (ignoring viewBoxBounds.minY)
+  // so that sub-layers expand each track's height without bleeding into the next.
+  const { barLayouts, totalContentHeight } = useMemo(() => {
+    const layouts = new Map<string, { readonly pixelLeft: number; readonly pixelWidth: number; readonly pixelTop: number; readonly pixelHeight: number; readonly layer: number; readonly outsideGap: number }>();
+    const byTrack = new Map<number, TimelineElement[]>();
+
+    for (const el of visibleElements) {
+      const track = el.track ?? 0;
+      const list = byTrack.get(track) ?? [];
+      list.push(el);
+      byTrack.set(track, list);
+    }
+
+    // Get sorted track numbers
+    const trackNumbers = [...byTrack.keys()].sort((a, b) => a - b);
+
+    // First pass: compute sub-layers per track to know each track's total height
+    const trackLayerCounts = new Map<number, number>();
+    const trackElementLayers = new Map<string, number>();
+
+    for (const trackNum of trackNumbers) {
+      const trackElements = byTrack.get(trackNum) ?? [];
+      const sorted = [...trackElements].sort((a, b) => {
+        const diff = a.viewBoxBounds.minX - b.viewBoxBounds.minX;
+        if (diff !== 0) return diff;
+        return (b.viewBoxBounds.maxX - b.viewBoxBounds.minX) - (a.viewBoxBounds.maxX - a.viewBoxBounds.minX);
+      });
+
+      const pixelExtents = sorted.map((el) => {
+        // Compute from raw timestamps, not viewBoxBounds (which has baked-in minimum width)
+        const startFrac = timestampToFractionalYear(el.start, false);
+        const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
+        const left = (startFrac * UNITS_PER_YEAR - minX) * zoom;
+        const rawWidth = (endFrac - startFrac) * UNITS_PER_YEAR * zoom;
+        const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
+        return { el, left, right: left + width, width };
+      });
+
+      // Greedy layer packing
+      const layerEnds: number[] = [];
+      for (const ext of pixelExtents) {
+        let assignedLayer = -1;
+        for (let i = 0; i < layerEnds.length; i++) {
+          if (layerEnds[i] <= ext.left) {
+            assignedLayer = i;
+            break;
+          }
+        }
+        if (assignedLayer === -1) {
+          assignedLayer = layerEnds.length;
+          layerEnds.push(0);
+        }
+        layerEnds[assignedLayer] = ext.right;
+        trackElementLayers.set(ext.el.id, assignedLayer);
+      }
+
+      trackLayerCounts.set(trackNum, Math.max(1, layerEnds.length));
+    }
+
+    // Second pass: compute track Y positions accounting for sub-layer heights
+    const trackYPositions = new Map<number, number>();
+    let currentY = 0;
+    for (const trackNum of trackNumbers) {
+      trackYPositions.set(trackNum, currentY);
+      const layerCount = trackLayerCounts.get(trackNum) ?? 1;
+      const trackHeight = BAR_HEIGHT + (layerCount - 1) * LAYER_OFFSET;
+      currentY += trackHeight + TRACK_GAP;
+    }
+
+    // Third pass: compute final positions and outside label gaps
+    for (const trackNum of trackNumbers) {
+      const trackY = trackYPositions.get(trackNum) ?? 0;
+      const trackElements = byTrack.get(trackNum) ?? [];
+      const sorted = [...trackElements].sort((a, b) => a.viewBoxBounds.minX - b.viewBoxBounds.minX);
+
+      const pixelExtents = sorted.map((el) => {
+        const startFrac = timestampToFractionalYear(el.start, false);
+        const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
+        const left = (startFrac * UNITS_PER_YEAR - minX) * zoom;
+        const rawWidth = (endFrac - startFrac) * UNITS_PER_YEAR * zoom;
+        const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
+        return { el, left, right: left + width, width };
+      });
+
+      // Group by layer for outside gap computation
+      const byLayer = new Map<number, typeof pixelExtents>();
+      for (const ext of pixelExtents) {
+        const layer = trackElementLayers.get(ext.el.id) ?? 0;
+        const list = byLayer.get(layer) ?? [];
+        list.push(ext);
+        byLayer.set(layer, list);
+      }
+
+      for (const [, layerElements] of byLayer) {
+        const sortedLayer = [...layerElements].sort((a, b) => a.left - b.left);
+        for (let i = 0; i < sortedLayer.length; i++) {
+          const current = sortedLayer[i];
+          const next = sortedLayer[i + 1];
+          const gap = next ? next.left - current.right : Infinity;
+          const layer = trackElementLayers.get(current.el.id) ?? 0;
+
+          layouts.set(current.el.id, {
+            pixelLeft: current.left,
+            pixelWidth: current.width,
+            pixelTop: trackY + layer * LAYER_OFFSET,
+            pixelHeight: BAR_HEIGHT,
+            layer,
+            outsideGap: gap,
+          });
+        }
+      }
+    }
+
+    return { barLayouts: layouts, totalContentHeight: currentY + AXIS_HEIGHT };
+  }, [visibleElements, zoom, minX]);
+
+  // Click handler: convert pixel click → viewBox coordinates
+  const handleAreaClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    if (!onPositionClick) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const pixelX = event.clientX - rect.left;
+    const viewBoxX = (pixelX - panOffset) / zoom + minX;
+    onPositionClick({ x: viewBoxX, y: 0 });
+  }, [onPositionClick, panOffset, zoom, minX]);
+
+  const tooltipTextRef = useRef('');
+  const handleBarMouseEnter = useCallback(
+    (element: TimelineElement, event: React.MouseEvent) => {
+      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
+      tooltipTextRef.current = text;
+      setTooltip({ x: event.clientX, y: event.clientY, text });
+    },
+    [],
+  );
+  const handleBarMouseMove = useCallback((event: React.MouseEvent) => {
+    setTooltip({ x: event.clientX, y: event.clientY, text: tooltipTextRef.current });
+  }, []);
+  const handleBarMouseLeave = useCallback(() => setTooltip(null), []);
+
   return (
     <>
-      <ZoomPanContainer
-        elements={elements}
-        elementStates={elementStates}
-        clustering={clustering}
+      <div
+        ref={containerRef}
+        className={styles.outerContainer}
+        data-dragging={isDragging.current || undefined}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUpOrLeave}
+        onMouseLeave={handleMouseUpOrLeave}
       >
-        <TimelineContent
-          elements={timelineElements}
-          elementStates={elementStates}
-          toggles={toggles}
-          elementToggles={elementToggles}
-          categoryColorMap={categoryColorMap}
-          onElementClick={onElementClick}
-          onPositionClick={onPositionClick}
-          onTooltipChange={setTooltip}
-        />
-      </ZoomPanContainer>
+        <div
+          className={styles.innerContainer}
+          style={{
+            width: `${timelineWidth}px`,
+            transform: `translateX(${panOffset}px)`,
+            minHeight: `${totalContentHeight}px`,
+          }}
+          onClick={handleAreaClick}
+        >
+          {/* Axis */}
+          <div className={styles.axisArea}>
+            {axisTicks.map((tick, i) => {
+              const pixelX = (tick.fractionalYear * UNITS_PER_YEAR - minX) * zoom;
+              return (
+                <div key={i} className={styles.tick} style={{ left: `${pixelX}px` }}>
+                  <div className={tick.isMajor ? styles.tickMarkMajor : styles.tickMarkMinor} />
+                  <div className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}>
+                    {tick.label}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Grid lines (behind bars) */}
+          <div className={styles.tracksArea}>
+            {axisTicks.filter((t) => t.isMajor).map((tick, i) => {
+              const pixelX = (tick.fractionalYear * UNITS_PER_YEAR - minX) * zoom;
+              return (
+                <div
+                  key={`grid-${i}`}
+                  className={styles.gridLine}
+                  style={{ left: `${pixelX}px`, height: `${totalContentHeight - AXIS_HEIGHT}px` }}
+                />
+              );
+            })}
+
+            {/* Bars */}
+            <AnimatePresence>
+              {visibleElements.map((element) => {
+                const layout = barLayouts.get(element.id);
+                if (!layout) return null;
+
+                const isHidden = elementStates[element.id] === 'hidden';
+                const showBar = elementToggle(elementToggles, toggles, element.id, 'showBars');
+                const showLabel = isHidden ? false : elementToggle(elementToggles, toggles, element.id, 'showLabels');
+
+                const stateClass = getStateClass(elementStates[element.id]);
+                const bgColor = stateClass ? undefined : categoryColorMap[element.category] ?? 'var(--color-accent)';
+                const barOpacity = showBar ? 1 : 0.15;
+
+                const showInsideLabel = showLabel && layout.pixelWidth >= 60;
+                const showOutsideLabel = showLabel && !showInsideLabel && layout.outsideGap > 30;
+
+                return (
+                  <motion.div
+                    key={element.id}
+                    className={`${styles.bar} ${stateClass ?? ''}`}
+                    style={{
+                      left: `${layout.pixelLeft}px`,
+                      top: `${layout.pixelTop}px`,
+                      width: `${layout.pixelWidth}px`,
+                      height: `${layout.pixelHeight}px`,
+                      backgroundColor: bgColor,
+                      opacity: barOpacity,
+                      zIndex: layout.layer + 1,
+                    }}
+                    initial={{ opacity: 0, scaleX: 0 }}
+                    animate={{ opacity: barOpacity, scaleX: 1 }}
+                    exit={{ opacity: 0, scaleX: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onElementClick?.(element.id);
+                    }}
+                    onMouseEnter={(e) => handleBarMouseEnter(element, e)}
+                    onMouseMove={handleBarMouseMove}
+                    onMouseLeave={handleBarMouseLeave}
+                  >
+                    {showInsideLabel && (
+                      <span className={styles.barLabel}>{element.label}</span>
+                    )}
+                    {showOutsideLabel && (
+                      <span
+                        className={styles.barLabelOutside}
+                        style={{
+                          left: `${layout.pixelWidth + 4}px`,
+                          maxWidth: `${layout.outsideGap - 8}px`,
+                        }}
+                      >
+                        {element.label}
+                      </span>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+
       {tooltip && createPortal(
         <div
           className={styles.tooltip}
@@ -101,315 +374,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   );
 }
 
-interface TimelineContentProps {
-  readonly elements: ReadonlyArray<TimelineElement>;
-  readonly elementStates: Readonly<Record<string, string>>;
-  readonly toggles: Readonly<Record<string, boolean>>;
-  readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
-  readonly categoryColorMap: Readonly<Record<string, string>>;
-  readonly onElementClick?: (elementId: string) => void;
-  readonly onPositionClick?: (position: { readonly x: number; readonly y: number }) => void;
-  readonly onTooltipChange: (tooltip: TooltipState | null) => void;
-}
-
-function TimelineContent({
-  elements,
-  elementStates,
-  toggles,
-  elementToggles,
-  categoryColorMap,
-  onElementClick,
-  onPositionClick,
-  onTooltipChange,
-}: TimelineContentProps) {
-  const { scale, clusteredElementIds } = useZoomPan();
-
-  const visibleElements = useMemo(
-    () => elements.filter((e) =>
-      !clusteredElementIds.has(e.id) && !e.id.startsWith('__spacer'),
-    ),
-    [elements, clusteredElementIds],
-  );
-
-  const { minX, maxX, maxTrackY, trackHeight } = useMemo(() => {
-    let min = Infinity;
-    let max = -Infinity;
-    let maxY = 0;
-    for (const el of elements) {
-      min = Math.min(min, el.viewBoxBounds.minX);
-      max = Math.max(max, el.viewBoxBounds.maxX);
-      maxY = Math.max(maxY, el.viewBoxBounds.maxY);
-    }
-    if (!isFinite(min)) return { minX: 0, maxX: 100, maxTrackY: DEFAULT_TRACK_HEIGHT, trackHeight: DEFAULT_TRACK_HEIGHT };
-    const h = elements.length > 0
-      ? elements[0].viewBoxBounds.maxY - elements[0].viewBoxBounds.minY
-      : DEFAULT_TRACK_HEIGHT;
-    return { minX: min, maxX: max, maxTrackY: maxY, trackHeight: h };
-  }, [elements]);
-
-  const sizes = useMemo(() => computeSizes(trackHeight), [trackHeight]);
-
-  const minYear = minX / UNITS_PER_YEAR;
-  const maxYear = maxX / UNITS_PER_YEAR;
-  const approximatePixels = (maxX - minX) * scale;
-
-  const axisTicks = useMemo(
-    () => computeAxisTicks(minYear, maxYear, approximatePixels),
-    [minYear, maxYear, approximatePixels],
-  );
-
-  const axisY = -sizes.axisHeight;
-
-  const tooltipTextRef = useRef('');
-
-  const handleBarMouseEnter = useCallback(
-    (element: TimelineElement, event: React.MouseEvent) => {
-      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
-      tooltipTextRef.current = text;
-      onTooltipChange({ x: event.clientX, y: event.clientY, text });
-    },
-    [onTooltipChange],
-  );
-
-  const handleBarMouseMove = useCallback(
-    (event: React.MouseEvent) => {
-      onTooltipChange({
-        x: event.clientX,
-        y: event.clientY,
-        text: tooltipTextRef.current,
-      });
-    },
-    [onTooltipChange],
-  );
-
-  const handleBarMouseLeave = useCallback(() => {
-    onTooltipChange(null);
-  }, [onTooltipChange]);
-
-  const handleSvgClick = useCallback(
-    (event: React.MouseEvent<SVGGElement>) => {
-      if (!onPositionClick) return;
-      const svg = (event.target as SVGElement).ownerSVGElement;
-      if (!svg) return;
-      const point = svg.createSVGPoint();
-      point.x = event.clientX;
-      point.y = event.clientY;
-      const ctm = svg.getScreenCTM();
-      if (!ctm) return;
-      const svgPoint = point.matrixTransform(ctm.inverse());
-      onPositionClick({ x: svgPoint.x, y: svgPoint.y });
-    },
-    [onPositionClick],
-  );
-
-  // Compute available space for outside labels (gap to next bar on same track)
-  const outsideLabelSpace = useMemo(() => {
-    const byTrack = new Map<number, TimelineElement[]>();
-    for (const el of visibleElements) {
-      const track = el.track ?? 0;
-      const list = byTrack.get(track) ?? [];
-      list.push(el);
-      byTrack.set(track, list);
-    }
-    const result = new Map<string, number>();
-    for (const [, trackElements] of byTrack) {
-      const sorted = [...trackElements].sort(
-        (a, b) => a.viewBoxBounds.minX - b.viewBoxBounds.minX,
-      );
-      for (let i = 0; i < sorted.length; i++) {
-        const current = sorted[i];
-        const next = sorted[i + 1];
-        const gap = next
-          ? next.viewBoxBounds.minX - current.viewBoxBounds.maxX
-          : Infinity;
-        result.set(current.id, gap);
-      }
-    }
-    return result;
-  }, [visibleElements]);
-
-  return (
-    <g onClick={handleSvgClick}>
-      <TimelineAxis
-        ticks={axisTicks}
-        axisY={axisY}
-        sizes={sizes}
-        minX={minX}
-        maxX={maxX}
-        maxTrackY={maxTrackY}
-      />
-
-      <AnimatePresence>
-        {visibleElements.map((element) => {
-          const showBar = elementToggle(elementToggles, toggles, element.id, 'showBars');
-          const showLabel = elementToggle(elementToggles, toggles, element.id, 'showLabels');
-          return (
-            <TimelineBar
-              key={element.id}
-              element={element}
-              color={categoryColorMap[element.category] ?? 'var(--color-accent)'}
-              state={elementStates[element.id]}
-              sizes={sizes}
-              outsideSpace={outsideLabelSpace.get(element.id) ?? Infinity}
-              showBar={showBar}
-              showLabel={showLabel}
-              onClick={onElementClick}
-              onMouseEnter={handleBarMouseEnter}
-              onMouseMove={handleBarMouseMove}
-              onMouseLeave={handleBarMouseLeave}
-            />
-          );
-        })}
-      </AnimatePresence>
-    </g>
-  );
-}
-
-interface TimelineAxisProps {
-  readonly ticks: ReadonlyArray<{
-    readonly fractionalYear: number;
-    readonly label: string;
-    readonly isMajor: boolean;
-  }>;
-  readonly axisY: number;
-  readonly sizes: Sizes;
-  readonly minX: number;
-  readonly maxX: number;
-  readonly maxTrackY: number;
-}
-
-function TimelineAxis({ ticks, axisY, sizes, minX, maxX, maxTrackY }: TimelineAxisProps) {
-  return (
-    <g>
-      <line className={styles.axisLine} x1={minX} y1={0} x2={maxX} y2={0} />
-
-      {ticks.map((tick, i) => {
-        const x = tick.fractionalYear * UNITS_PER_YEAR;
-        const tickLen = tick.isMajor ? sizes.majorTickLength : sizes.minorTickLength;
-        const tickGap = sizes.minorTickLength * 0.4;
-        return (
-          <g key={i}>
-            <line
-              className={tick.isMajor ? styles.tickMajor : styles.tickMinor}
-              x1={x}
-              y1={axisY + sizes.axisHeight - tickLen}
-              x2={x}
-              y2={axisY + sizes.axisHeight}
-            />
-            <text
-              className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}
-              x={x}
-              y={axisY + sizes.axisHeight - tickLen - tickGap}
-              textAnchor="middle"
-              fontSize={tick.isMajor ? sizes.tickFontMajor : sizes.tickFontMinor}
-            >
-              {tick.label}
-            </text>
-            {tick.isMajor && (
-              <line className={styles.gridLine} x1={x} y1={0} x2={x} y2={maxTrackY} />
-            )}
-          </g>
-        );
-      })}
-    </g>
-  );
-}
-
-interface TimelineBarProps {
-  readonly element: TimelineElement;
-  readonly color: string;
-  readonly state: string | undefined;
-  readonly sizes: Sizes;
-  readonly outsideSpace: number;
-  readonly showBar: boolean;
-  readonly showLabel: boolean;
-  readonly onClick?: (elementId: string) => void;
-  readonly onMouseEnter: (element: TimelineElement, event: React.MouseEvent) => void;
-  readonly onMouseMove: (event: React.MouseEvent) => void;
-  readonly onMouseLeave: () => void;
-}
-
-function TimelineBar({
-  element,
-  color,
-  state,
-  sizes,
-  outsideSpace,
-  showBar,
-  showLabel,
-  onClick,
-  onMouseEnter,
-  onMouseMove,
-  onMouseLeave,
-}: TimelineBarProps) {
-  const { minX, minY, maxX, maxY } = element.viewBoxBounds;
-  const width = maxX - minX;
-  const height = maxY - minY;
-
-  const stateClass = state ? getStateClass(state) : undefined;
-  const fillColor = stateClass ? undefined : color;
-  const barOpacity = showBar ? 1 : 0.15;
-
-  const showInsideLabel = showLabel && width >= sizes.minWidthForInsideLabel;
-  const outsideLabel = showLabel && !showInsideLabel
-    ? truncateLabel(element.label, outsideSpace - sizes.labelPadding, sizes)
-    : null;
-
-  // Translate to the bar's left-center so scaleX expands from the left edge.
-  // All child coordinates are relative to (minX, minY).
-  return (
-    <g transform={`translate(${minX}, ${minY})`}>
-      <motion.g
-        initial={{ opacity: 0, scaleX: 0 }}
-        animate={{ opacity: barOpacity, scaleX: 1 }}
-        exit={{ opacity: 0, scaleX: 0 }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        style={{ originX: 0, originY: 0.5 }}
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick?.(element.id);
-        }}
-        onMouseEnter={(e) => onMouseEnter(element, e)}
-        onMouseMove={onMouseMove}
-        onMouseLeave={onMouseLeave}
-      >
-        <rect
-          className={`${styles.bar} ${stateClass ?? ''}`}
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          fill={fillColor}
-          rx={sizes.cornerRadius}
-          ry={sizes.cornerRadius}
-        />
-        {showInsideLabel ? (
-          <text
-            className={styles.barLabel}
-            x={sizes.labelPadding}
-            y={height / 2}
-            dominantBaseline="central"
-            fontSize={sizes.fontSize}
-          >
-            {truncateLabel(element.label, width, sizes)}
-          </text>
-        ) : outsideLabel ? (
-          <text
-            className={styles.barLabelOutside}
-            x={width + sizes.labelPadding}
-            y={height / 2}
-            dominantBaseline="central"
-            fontSize={sizes.fontSize}
-          >
-            {outsideLabel}
-          </text>
-        ) : null}
-      </motion.g>
-    </g>
-  );
-}
-
-function getStateClass(state: string): string | undefined {
+function getStateClass(state: string | undefined): string | undefined {
   switch (state) {
     case 'correct': return styles.barCorrect;
     case 'correct-second': return styles.barCorrect;
@@ -421,13 +386,4 @@ function getStateClass(state: string): string | undefined {
     case 'revealed': return styles.barRevealed;
     default: return undefined;
   }
-}
-
-function truncateLabel(label: string, availableWidth: number, sizes: Sizes): string {
-  const charWidth = sizes.fontSize * 0.6;
-  const maxChars = Math.floor((availableWidth - sizes.labelPadding * 2) / charWidth);
-  if (maxChars <= 0) return '';
-  if (label.length <= maxChars) return label;
-  if (maxChars <= 3) return label.slice(0, maxChars);
-  return label.slice(0, maxChars - 1) + '\u2026';
 }

@@ -1,6 +1,6 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
-import type { ToggleDefinition, TogglePreset } from './ToggleDefinition';
+import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
@@ -13,6 +13,7 @@ export interface ElementRange {
 
 export interface QuizConfig {
   readonly toggleValues: Readonly<Record<string, boolean>>;
+  readonly selectValues: Readonly<Record<string, string>>;
   readonly selectedMode: QuizModeType;
   readonly countdownSeconds: number | undefined;
   readonly elementRange: ElementRange | undefined;
@@ -26,6 +27,7 @@ interface QuizShellProps {
   readonly defaultMode: QuizModeType;
   readonly defaultCountdownSeconds?: number;
   readonly toggles: ReadonlyArray<ToggleDefinition>;
+  readonly selectToggles?: ReadonlyArray<SelectToggleDefinition>;
   readonly presets: ReadonlyArray<TogglePreset>;
   readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
   readonly rangeColumn?: string;
@@ -48,6 +50,7 @@ export function QuizShell({
   defaultMode,
   defaultCountdownSeconds,
   toggles,
+  selectToggles,
   presets,
   modeConstraints,
   rangeColumn,
@@ -63,7 +66,7 @@ export function QuizShell({
   );
   const [rangeMin, setRangeMin] = useState<number | undefined>(undefined);
   const [rangeMaxValue, setRangeMaxValue] = useState<number | undefined>(undefined);
-  const toggleState = useToggleState(toggles, presets);
+  const toggleState = useToggleState(toggles, presets, selectToggles);
 
   const applyModeConstraints = useCallback((mode: QuizModeType) => {
     const constraints = modeConstraints?.[mode] ?? [];
@@ -121,6 +124,9 @@ export function QuizShell({
         onRangeMaxChange={setRangeMaxValue}
         onStart={handleStart}
         modeConstraints={modeConstraints}
+        selectToggles={selectToggles}
+        selectValues={toggleState.selectValues}
+        onSelectChange={toggleState.setSelect}
       />
     );
   }
@@ -131,6 +137,7 @@ export function QuizShell({
 
   const config: QuizConfig = {
     toggleValues: toggleState.values,
+    selectValues: toggleState.selectValues,
     selectedMode,
     countdownSeconds: countdownMinutes !== undefined ? countdownMinutes * 60 : undefined,
     elementRange,
