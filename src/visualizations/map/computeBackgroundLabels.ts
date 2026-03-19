@@ -1,6 +1,7 @@
+import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundPath } from '../VisualizationRendererProps';
 import type { BackgroundLabel } from './BackgroundLabel';
-import { computePathCentroid, computePathArea } from './computePathCentroid';
+import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter } from './computePathCentroid';
 
 /**
  * Derive one label per unique country from background paths.
@@ -38,10 +39,17 @@ export function computeBackgroundLabels(
         largest = path;
       }
     }
+    const centroid = computePathCentroid(largest.svgPathData);
+    const bboxCenter = computeBoundingBoxCenter(largest.svgPathData);
+    const polylabelCenter = computePolylabel(largest.svgPathData);
+    // Order: polylabel first (best for most shapes), then bbox center, then centroid
+    const centers = [polylabelCenter, bboxCenter, centroid]
+      .filter((c): c is ViewBoxPosition => c !== null);
     labels.push({
       id: name,
       name,
-      center: computePathCentroid(largest.svgPathData),
+      center: centroid,
+      centers: centers.length > 0 ? centers : [centroid],
       code: largest.code,
       sovereign: largest.sovereign,
       area: totalArea,
