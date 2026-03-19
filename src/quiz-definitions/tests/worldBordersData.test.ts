@@ -2,7 +2,8 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { parseCsv } from '../parseCsv';
 import { applyDataFilter } from '../applyDataFilter';
-import { parseBackgroundPaths } from '../parseBackgroundPaths';
+import { parseBackgroundPaths } from '@/visualizations/map/loadBackgroundPaths';
+// Pass no wrapLongitude — tests validate raw CSV data without coordinate wrapping
 
 const csvPath = resolve(__dirname, '../../../public/data/borders/world-borders.csv');
 const csvText = readFileSync(csvPath, 'utf8');
@@ -49,6 +50,18 @@ describe('world-borders.csv data validation', () => {
     const names = european.map((r) => r.name);
     expect(names).toContain('Türkiye');
     expect(names).toContain('Russia');
+  });
+
+  it('Taiwan has region and group set', () => {
+    const taiwan = allRows.find((r) => r.id === 'taiwan');
+    expect(taiwan).toBeDefined();
+    expect(taiwan!.region).toBe('Asia');
+    expect(taiwan!.group).toBe('Eastern Asia');
+  });
+
+  it('every row has a non-empty region', () => {
+    const missingRegion = allRows.filter((r) => !r.region);
+    expect(missingRegion).toHaveLength(0);
   });
 
   it('parseBackgroundPaths produces valid output from European borders', () => {

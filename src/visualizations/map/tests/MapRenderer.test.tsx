@@ -24,6 +24,8 @@ function renderMap(overrides: Partial<VisualizationRendererProps> = {}) {
     toggles: { showBorders: true, showCityDots: true, showCountryNames: false },
     backgroundPaths: sampleBackgroundPaths,
     backgroundLabels: sampleBackgroundLabels,
+    // Disable clustering in tests so elements render individually
+    clustering: { minScreenPixelDistance: 0, disableAboveScale: 0, countedState: 'correct' },
     ...overrides,
   };
   return render(<MapRenderer {...defaults} />);
@@ -120,7 +122,13 @@ describe('MapRenderer', () => {
       (c) => c.getAttribute('cx') === String(sampleCityElements[0].viewBoxCenter.x),
     );
     expect(parisDot).toHaveAttribute('stroke', 'var(--color-highlight)');
-    expect(parisDot).toHaveAttribute('stroke-width', '0.15');
+    // Target stroke is 0.5× radius, non-target is 0.27× — verify target is thicker
+    const nonTargetDot = Array.from(circles).find(
+      (c) => c.getAttribute('cx') === String(sampleCityElements[1].viewBoxCenter.x),
+    );
+    const targetStroke = parseFloat(parisDot!.getAttribute('stroke-width')!);
+    const normalStroke = parseFloat(nonTargetDot!.getAttribute('stroke-width')!);
+    expect(targetStroke).toBeGreaterThan(normalStroke);
   });
 
   it('renders with no elements', () => {

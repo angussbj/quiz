@@ -18,4 +18,6 @@ export interface BackgroundLabel {
   readonly area: number;
   /** Region (e.g., 'Europe', 'Asia') for filtering. May be pipe-separated for multi-region. */
   readonly region?: string;
+  /** Subregion / group (e.g., 'South America', 'Caribbean') for filtering. */
+  readonly group?: string;
 }

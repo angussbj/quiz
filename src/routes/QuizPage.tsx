@@ -80,22 +80,21 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
     if (!backgroundPaths) return undefined;
     const allLabels = computeBackgroundLabels(backgroundPaths);
     const filter = definition.dataFilter;
-    const regionFilter = filter
-      ? (Array.isArray(filter) ? filter : [filter]).find((f) => f.column === 'region')
-      : undefined;
-    const regionValues = regionFilter?.values;
+    const filters = filter ? (Array.isArray(filter) ? filter : [filter]) : [];
+    const regionFilter = filters.find((f) => f.column === 'region' || f.column === 'subregion');
     return allLabels.filter((label) => {
       // Only sovereign countries (sovereign matches name)
       if (!label.sovereign || label.sovereign !== label.name) return false;
-      // Filter to quiz region if defined
-      if (regionValues) {
-        if (!label.region) return false;
-        const labelRegions = label.region.split('|');
-        return regionValues.some((r: string) => labelRegions.includes(r));
+      // Filter to quiz region/subregion if defined
+      if (regionFilter) {
+        const labelField = regionFilter.column === 'subregion' ? label.group : label.region;
+        if (!labelField) return false;
+        const labelValues = labelField.split('|');
+        return regionFilter.values.some((v: string) => labelValues.includes(v));
       }
       return true;
     });
-  }, [backgroundPaths, definition.dataFilter?.values]);
+  }, [backgroundPaths, definition.dataFilter]);
   const Renderer = resolveRenderer(definition.visualizationType);
 
   return (

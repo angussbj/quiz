@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchQuizData } from '@/quiz-definitions/fetchQuizData';
 import type { BackgroundPath } from '../VisualizationRendererProps';
 import { parseBackgroundPaths } from './loadBackgroundPaths';
+import { WRAP_LONGITUDE } from './projectGeo';
 
 /**
  * Fetch and parse supporting data CSV into BackgroundPath[] for map borders.
@@ -20,7 +21,7 @@ export function useBackgroundPaths(
     let cancelled = false;
     fetchQuizData(dataPath)
       .then((rows) => {
-        if (!cancelled) setPaths(parseBackgroundPaths(rows));
+        if (!cancelled) setPaths(parseBackgroundPaths(rows, WRAP_LONGITUDE));
       })
       .catch(() => {
         if (!cancelled) setPaths([]);

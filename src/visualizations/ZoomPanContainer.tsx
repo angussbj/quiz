@@ -8,7 +8,7 @@ import {
 } from 'react-zoom-pan-pinch';
 import { AnimatePresence } from 'framer-motion';
 import type { VisualizationElement, ElementVisualState } from './VisualizationElement';
-import type { ClusteringConfig, ElementCluster } from './VisualizationRendererProps';
+import type { ClusteringConfig, ElementCluster, BackgroundPath } from './VisualizationRendererProps';
 import { ZoomPanContext } from './ZoomPanContext';
 import { computeClusters } from './computeClusters';
 import { computeViewBox } from './computeViewBox';
@@ -23,6 +23,8 @@ interface ZoomPanContainerProps {
   readonly clustering?: ClusteringConfig;
   readonly onClusterClick?: (cluster: ElementCluster) => void;
   readonly initialViewBox?: ViewBox;
+  /** Background paths used to expand the viewBox so panning reveals all content. */
+  readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
 }
 
 interface ContainerSize {
@@ -50,6 +52,49 @@ function quantise(value: number, step: number): number {
 
 const SCALE_QUANTUM = 0.1;
 
+/** Max zoom when zooming into a cluster badge click. */
+const MAX_CLUSTER_SCALE = 80;
+
+/**
+ * Compute the initial scale and position to frame an initialViewBox within
+ * the container, given the full SVG viewBox and container dimensions.
+ */
+function computeInitialTransform(
+  target: ViewBox,
+  viewBox: ViewBox,
+  containerSize: ContainerSize,
+): { scale: number; posX: number; posY: number } | undefined {
+  if (containerSize.width === 0 || containerSize.height === 0) return undefined;
+
+  const basePixelsPerViewBoxUnit = Math.min(
+    containerSize.width / viewBox.width,
+    containerSize.height / viewBox.height,
+  );
+
+  const cameraWidth = target.width;
+  const cameraHeight = target.height;
+  const cameraCenterX = target.x + target.width / 2;
+  const cameraCenterY = target.y + target.height / 2;
+
+  const scale = Math.min(
+    containerSize.width / (cameraWidth * basePixelsPerViewBoxUnit),
+    containerSize.height / (cameraHeight * basePixelsPerViewBoxUnit),
+  );
+
+  const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
+  const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
+  const offsetX = (containerSize.width - svgPixelWidth) / 2;
+  const offsetY = (containerSize.height - svgPixelHeight) / 2;
+
+  const contentX = offsetX + (cameraCenterX - viewBox.x) * basePixelsPerViewBoxUnit;
+  const contentY = offsetY + (cameraCenterY - viewBox.y) * basePixelsPerViewBoxUnit;
+
+  const posX = containerSize.width / 2 - contentX * scale;
+  const posY = containerSize.height / 2 - contentY * scale;
+
+  return { scale, posX, posY };
+}
+
 export function ZoomPanContainer({
   children,
   elements,
@@ -57,10 +102,11 @@ export function ZoomPanContainer({
   clustering,
   onClusterClick,
   initialViewBox,
+  backgroundPaths,
 }: ZoomPanContainerProps) {
   const viewBox = useMemo(
-    () => initialViewBox ?? computeViewBox(elements),
-    [elements, initialViewBox],
+    () => initialViewBox ?? computeViewBox(elements, backgroundPaths),
+    [elements, initialViewBox, backgroundPaths],
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState<ContainerSize>({ width: 0, height: 0 });
@@ -76,13 +122,31 @@ export function ZoomPanContainer({
     return () => observer.disconnect();
   }, []);
 
+  // When no explicit initialViewBox, auto-compute from element positions
+  // so the initial view frames the quiz elements (not the full world).
+  const effectiveInitialViewBox: ViewBox | undefined = useMemo(() => {
+    if (initialViewBox) return initialViewBox;
+    if (elements.length === 0) return undefined;
+    return computeViewBox(elements);
+  }, [initialViewBox, elements]);
+
+  // Pre-compute initial scale so TransformWrapper starts at the right
+  // zoom level (avoids a flash of wrong-sized badges on first frame).
+  const initialCamera = useMemo(() => {
+    if (!effectiveInitialViewBox || containerSize.width === 0) return undefined;
+    return computeInitialTransform(effectiveInitialViewBox, viewBox, containerSize);
+  }, [effectiveInitialViewBox, viewBox, containerSize]);
+
   return (
     <div ref={containerRef} className={styles.container}>
       <TransformWrapper
-        initialScale={1}
+        key={initialCamera ? `cam-${initialCamera.scale.toFixed(2)}` : 'default'}
+        initialScale={initialCamera?.scale ?? 1}
+        initialPositionX={initialCamera?.posX}
+        initialPositionY={initialCamera?.posY}
         minScale={0.5}
-        maxScale={20}
-        centerOnInit
+        maxScale={MAX_CLUSTER_SCALE}
+        centerOnInit={!effectiveInitialViewBox}
         limitToBounds={false}
         smooth
         pinch={{ step: 3 }}
@@ -95,6 +159,8 @@ export function ZoomPanContainer({
           elementStates={elementStates}
           clustering={clustering}
           onClusterClick={onClusterClick}
+          initialViewBox={effectiveInitialViewBox}
+          initialScale={initialCamera?.scale ?? 1}
         >
           {children}
         </ZoomPanInner>
@@ -111,6 +177,8 @@ interface ZoomPanInnerProps {
   readonly elementStates?: Readonly<Record<string, ElementVisualState>>;
   readonly clustering?: ClusteringConfig;
   readonly onClusterClick?: (cluster: ElementCluster) => void;
+  readonly initialViewBox?: ViewBox;
+  readonly initialScale: number;
 }
 
 function ZoomPanInner({
@@ -121,20 +189,77 @@ function ZoomPanInner({
   elementStates,
   clustering,
   onClusterClick,
+  initialViewBox,
+  initialScale,
 }: ZoomPanInnerProps) {
-  const { setTransform } = useControls();
-  const scaleRef = useRef(1);
-  const quantisedScaleRef = useRef(1);
-  const [quantisedScale, setQuantisedScale] = useState(1);
+  const { setTransform, centerView } = useControls();
+  const scaleRef = useRef(initialScale);
+  const quantisedScaleRef = useRef(quantise(initialScale, SCALE_QUANTUM));
+  const [quantisedScale, setQuantisedScale] = useState(quantise(initialScale, SCALE_QUANTUM));
+
+  // Track initial transform for reset and "away from home" detection
+  const initialTransformRef = useRef<{ scale: number; posX: number; posY: number } | null>(null);
+  const [currentTransform, setCurrentTransform] = useState({ posX: 0, posY: 0, scale: initialScale });
+
+  // Record initial transform once container is sized
+  useEffect(() => {
+    if (initialTransformRef.current) return;
+    if (containerSize.width === 0) return;
+    if (initialViewBox) {
+      const initial = computeInitialTransform(initialViewBox, viewBox, containerSize);
+      if (initial) {
+        initialTransformRef.current = initial;
+        return;
+      }
+    }
+    initialTransformRef.current = { scale: 1, posX: 0, posY: 0 };
+  }, [initialViewBox, viewBox, containerSize]);
+
+  const currentTransformRef = useRef(currentTransform);
 
   useTransformEffect(({ state }) => {
     scaleRef.current = state.scale;
+    const prev = currentTransformRef.current;
+    const posX = state.positionX;
+    const posY = state.positionY;
+    // Only update state when values actually change to avoid infinite re-render
+    if (prev.posX !== posX || prev.posY !== posY || prev.scale !== state.scale) {
+      const next = { posX, posY, scale: state.scale };
+      currentTransformRef.current = next;
+      setCurrentTransform(next);
+    }
     const q = quantise(state.scale, SCALE_QUANTUM);
     if (q !== quantisedScaleRef.current) {
       quantisedScaleRef.current = q;
       setQuantisedScale(q);
     }
   });
+
+  // Show reset when the camera bounds area is less than half the visible area.
+  // We approximate this by comparing current scale to initial scale: if we've
+  // zoomed in past 2x the initial scale, or panned far enough that the initial
+  // center is offscreen, show the button.
+  const showResetButton = useMemo(() => {
+    const initial = initialTransformRef.current;
+    if (!initial) return false;
+    // Zoomed in past 2x initial
+    if (currentTransform.scale > initial.scale * 2) return true;
+    // Panned far: check if the shift exceeds half the container dimension
+    if (containerSize.width === 0) return false;
+    const dx = Math.abs(currentTransform.posX - initial.posX);
+    const dy = Math.abs(currentTransform.posY - initial.posY);
+    if (dx > containerSize.width * 0.5 || dy > containerSize.height * 0.5) return true;
+    return false;
+  }, [currentTransform, containerSize]);
+
+  const handleReset = useCallback(() => {
+    const initial = initialTransformRef.current;
+    if (initial) {
+      setTransform(initial.posX, initial.posY, initial.scale, 300, 'easeOut');
+    } else {
+      centerView(1, 300, 'easeOut');
+    }
+  }, [setTransform, centerView]);
 
   const basePixelsPerViewBoxUnit =
     containerSize.width > 0
@@ -185,7 +310,7 @@ function ZoomPanInner({
 
       const ZOOM_PADDING = 0.7;
       const targetScale = Math.min(
-        20,
+        MAX_CLUSTER_SCALE,
         ZOOM_PADDING *
           Math.min(
             containerSize.width / (bboxWidth * basePixelsPerViewBoxUnit),
@@ -215,8 +340,9 @@ function ZoomPanInner({
     () => ({
       scale: quantisedScale,
       clusteredElementIds,
+      basePixelsPerViewBoxUnit,
     }),
-    [quantisedScale, clusteredElementIds],
+    [quantisedScale, clusteredElementIds, basePixelsPerViewBoxUnit],
   );
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
@@ -239,6 +365,7 @@ function ZoomPanInner({
                 key={cluster.elementIds.join(',')}
                 cluster={cluster}
                 matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
+                elementStates={elementStates}
                 scale={quantisedScale}
                 basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
                 onClick={handleClusterClick}
@@ -247,6 +374,11 @@ function ZoomPanInner({
           </AnimatePresence>
         </svg>
       </TransformComponent>
+      {showResetButton && (
+        <button className={styles.resetButton} onClick={handleReset}>
+          Reset
+        </button>
+      )}
     </ZoomPanContext.Provider>
   );
 }

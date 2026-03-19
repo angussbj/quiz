@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { parseCsv } from '../../../quiz-definitions/parseCsv';
-import { parseBackgroundPaths } from '../../../quiz-definitions/parseBackgroundPaths';
+import { parseBackgroundPaths } from '../loadBackgroundPaths';
 import { applyDataFilter } from '../../../quiz-definitions/applyDataFilter';
 import { computeBackgroundLabels } from '../computeBackgroundLabels';
 import { computeLabelPlacements } from '../computeLabelPlacements';
