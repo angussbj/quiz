@@ -60,6 +60,48 @@ const capitalsQuizBase = {
   },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
+/**
+ * Shared configuration for all countries quizzes.
+ * Individual definitions spread this and add id, title, description, dataFilter, and group mapping.
+ */
+const countriesQuizBase = {
+  path: ['Geography', 'Countries'] as const,
+  visualizationType: 'map' as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
+  defaultMode: 'free-recall-unordered' as const,
+  toggles: [
+    { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
+  ],
+  presets: [
+    {
+      name: 'easy',
+      label: 'Easy',
+      values: { showBorders: true, showCountryNames: true, showMapFlags: true },
+    },
+    {
+      name: 'medium',
+      label: 'Medium',
+      values: { showBorders: true, showCountryNames: false, showMapFlags: false },
+    },
+    {
+      name: 'hard',
+      label: 'Hard',
+      values: { showBorders: false, showCountryNames: false, showMapFlags: false },
+    },
+  ],
+  columnMappings: {
+    answer: 'name',
+    label: 'name',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    group: 'group',
+  },
+  dataPath: '/data/borders/world-borders.csv',
+  supportingDataPaths: ['/data/borders/world-borders.csv'],
+} satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
+
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
   {
     ...capitalsQuizBase,
@@ -113,45 +155,81 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     initialViewBox: { x: -169, y: -70, width: 360, height: 130 },
   },
   {
+    ...countriesQuizBase,
     id: 'geo-countries-europe',
     title: 'European Countries',
     description: 'Identify the countries of Europe on a map.',
-    path: ['Geography', 'Countries'],
-    visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify'],
-    defaultMode: 'free-recall-unordered',
-    toggles: [
-      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
-      { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } },
+    dataFilter: [
+      { column: 'is_sovereign', values: ['true'] },
+      { column: 'region', values: ['Europe'] },
     ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      group: 'region',
-    },
-    dataPath: '/data/geography/countries/europe.csv',
-    supportingDataPaths: ['/data/borders/world-borders.csv'],
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
   },
   {
+    ...countriesQuizBase,
     id: 'geo-countries-asia',
     title: 'Asian Countries',
     description: 'Identify the countries of Asia on a map.',
-    path: ['Geography', 'Countries'],
-    visualizationType: 'map',
-    availableModes: ['free-recall-unordered', 'identify'],
-    defaultMode: 'free-recall-unordered',
-    toggles: [
-      { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
+    dataFilter: [
+      { column: 'is_sovereign', values: ['true'] },
+      { column: 'region', values: ['Asia'] },
     ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      group: 'region',
-    },
-    dataPath: '/data/geography/countries/asia.csv',
-    supportingDataPaths: ['/data/borders/world-borders.csv'],
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
+  },
+  {
+    ...countriesQuizBase,
+    id: 'geo-countries-africa',
+    title: 'African Countries',
+    description: 'Identify the countries of Africa on a map.',
+    dataFilter: [
+      { column: 'is_sovereign', values: ['true'] },
+      { column: 'region', values: ['Africa'] },
+    ],
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
+  },
+  {
+    ...countriesQuizBase,
+    id: 'geo-countries-north-america',
+    title: 'North American Countries',
+    description: 'Identify the countries of North America, Central America, and the Caribbean.',
+    dataFilter: [
+      { column: 'is_sovereign', values: ['true'] },
+      { column: 'group', values: ['North America', 'Central America', 'Caribbean'] },
+    ],
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
+    initialViewBox: { x: -130, y: -50, width: 72, height: 43 },
+  },
+  {
+    ...countriesQuizBase,
+    id: 'geo-countries-south-america',
+    title: 'South American Countries',
+    description: 'Identify the countries of South America on a map.',
+    dataFilter: [
+      { column: 'is_sovereign', values: ['true'] },
+      { column: 'group', values: ['South America'] },
+    ],
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
+    initialViewBox: { x: -85, y: -15, width: 55, height: 73 },
+  },
+  {
+    ...countriesQuizBase,
+    id: 'geo-countries-oceania',
+    title: 'Oceanian Countries',
+    description: 'Identify the countries of Oceania on a map.',
+    dataFilter: [
+      { column: 'is_sovereign', values: ['true'] },
+      { column: 'region', values: ['Oceania'] },
+    ],
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
+  },
+  {
+    ...countriesQuizBase,
+    id: 'geo-countries-world',
+    title: 'World Countries',
+    description: 'Identify all sovereign countries of the world on a map.',
+    dataFilter: { column: 'is_sovereign', values: ['true'] },
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'region' },
+    initialViewBox: { x: -169, y: -70, width: 360, height: 130 },
   },
   {
     id: 'geo-flags-europe',
