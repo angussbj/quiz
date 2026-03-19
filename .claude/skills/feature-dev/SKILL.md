@@ -1,15 +1,17 @@
 ---
 name: feature-dev
-description: Develop a feature end-to-end — worktree, implementation, PR with screenshots, feedback, merge. Invoke with /feature-dev <number> where number matches docs/features.md.
+description: Develop a feature end-to-end — worktree, implementation, PR with screenshots, feedback, merge. Invoke with /feature-dev <number> (from docs/features.md) or /feature-dev <short description> for ad-hoc features.
 ---
 
 # Feature Development
 
-Develop a feature from docs/features.md end-to-end.
+Develop a feature end-to-end in a worktree.
 
 ## Arguments
 
-Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find the feature by number. If the number doesn't match, ask the user which feature they mean.
+Takes either:
+- A **feature number** (e.g., `/feature-dev 1`) — read `docs/features.md` to find the feature by number. If the number doesn't match, ask the user which feature they mean.
+- A **short description** (e.g., `/feature-dev add dark mode toggle to settings page`) — use the description directly as the feature spec. There is no entry in `docs/features.md` for this case.
 
 ## General instructions
 
@@ -17,11 +19,14 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 
 ## Phase 1: Setup
 
-1. Read `docs/features.md` and find the feature.
+1. Determine the feature:
+   - **If a number**: Read `docs/features.md` and find the feature.
+   - **If a description**: Use the description as the feature spec. Read `docs/features.md` anyway to check for related or overlapping features, and to understand the broader roadmap context.
 2. Announce: "Starting feature: **<title>**" and summarise the scope in 1–2 sentences.
 3. Enter a worktree using the `EnterWorktree` tool with a short name for the feature (e.g., `csv-loader`). This creates the worktree and branch (`worktree-<name>`), and switches the shell's working directory to it. Then run `npm install`.
 4. Start the dev server (`npm run dev`) and note the port. It will run in the background automatically. **DO NOT** add `&` to get it to run in the background.
-5. Verify the setup: run `npm run typecheck` and `npm test`.
+5. Name the conversation "<port> - <title>" (using /rename tool).
+6. Verify the setup: run `npm run typecheck` and `npm test`.
 
 ## Phase 2: Research and planning
 
@@ -42,12 +47,12 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 4. If you get stuck or uncertain about a design decision, ask the user rather than guessing.
 5. Document the code as you go, so that other agents can find it and understand how things work. Add to or create new .md files in `docs`, and mention new files in CLAUDE.md (or one of the other files if it's too detailed) so that agents can automatically find these docs.
 6. Update `docs/features.md` if anything you've done or learned affects other features. Examples: design decisions that change how a downstream feature should be implemented, new testing that should happen as part of another feature (e.g., "visually test X when feature Y is built"), API changes that alter assumptions in other feature specs, or notes/warnings for whoever picks up a dependent feature.
-7. Mark the feature as done in `docs/features.md` by adding **DONE** to the feature heading (e.g., `### 1. CSV Data Loader — DONE`).
+7. If the feature came from `docs/features.md`, mark it as done by adding **DONE** to the feature heading (e.g., `### 1. CSV Data Loader — DONE`).
 
 ## Phase 4: Implementation Self-Review
 
 1. Launch the `local-code-review` agent (from `.claude/agents/local-code-review.md`). In the prompt, give it:
-   - The feature spec from `docs/features.md`
+   - The feature spec (from `docs/features.md` if numbered, or the user's description if ad-hoc)
    - The user's answers to your clarifying questions from Phase 2
    - **Do NOT** include your own reasoning, design notes, or implementation plans — let the reviewer form their own opinions from the code and spec alone. The agent knows to read the diff and CLAUDE.md itself.
 2. Review the agent's feedback. Where you agree, make the changes and commit. Where you disagree, think carefully about whether the reviewer has a point you missed. If there's a genuine disagreement about the best approach, briefly present both sides to the user and ask them to decide.
@@ -63,7 +68,7 @@ Takes a feature number (e.g., `/feature-dev 1`). Read `docs/features.md` to find
 2. Push the branch (use `git rev-parse --abbrev-ref HEAD` if you need the branch name).
 3. If the feature has visual output, take screenshots of it working in the browser. These can't be added to the PR, but we will share them with the user for review. Check that they look correct as you take them, and return to Phase 3 if needed to fix any issues.
   3a. If it's all wired up, take screenshots using the dev server you started. Otherwise create a storybook, run it, and use it for screenshots.
-  3b. If it involves animations or interactions that can't be captured in a screenshot, create a screen recording. 
+  3b. If it involves animations or interactions that can't be captured in a screenshot, create a screen recording.
   3c. Pure logic features (parsers, scoring, etc.) can skip screenshots. Save all screenshots and screen recordings to a `screenshots/` directory in the worktree root (create it if it doesn't exist).
 4. Create a PR with `gh pr create`. Include:
    - Summary of what was built

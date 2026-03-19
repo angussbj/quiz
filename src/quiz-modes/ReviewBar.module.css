@@ -16,7 +16,7 @@
 
 .score {
   font-family: var(--font-family);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
