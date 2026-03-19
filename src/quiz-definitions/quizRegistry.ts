@@ -110,6 +110,104 @@ const countriesQuizBase = {
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
+ * Shared configuration for all human bones quizzes.
+ * Individual definitions spread this and add id, title, description, and dataFilter.
+ */
+const humanBonesQuizBase = {
+  path: ['Science', 'Biology', 'Human Bones'] as const,
+  visualizationType: 'anatomy' as const,
+  availableModes: ['free-recall-unordered', 'identify', 'prompted-recall'] as const,
+  defaultMode: 'free-recall-unordered' as const,
+  toggles: [
+    { key: 'showLabels', label: 'Bone names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+  ],
+  presets: [
+    {
+      name: 'easy',
+      label: 'Easy',
+      values: { showLabels: true },
+    },
+    {
+      name: 'hard',
+      label: 'Hard',
+      values: { showLabels: false },
+    },
+  ],
+  columnMappings: {
+    answer: 'name',
+    label: 'name',
+    group: 'region',
+  },
+  dataPath: '/data/science/biology/human-bones.csv',
+  supportingDataPaths: [] as const,
+} satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
+
+const humanBonesQuizzes: ReadonlyArray<QuizDefinition> = [
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-common',
+    title: 'Human Bones (Common)',
+    description: 'Name the commonly known bones of the human skeleton.',
+    dataFilter: { column: 'common', values: ['true'] },
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-all',
+    title: 'Human Bones (All)',
+    description: 'Name all bones of the human skeleton, including ribs and lesser-known bones.',
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-head',
+    title: 'Head Bones',
+    description: 'Name the bones of the head and skull.',
+    dataFilter: { column: 'region', values: ['Head'] },
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-torso',
+    title: 'Torso Bones',
+    description: 'Name the bones of the torso: spine, sternum, pelvis, and shoulder girdle.',
+    dataFilter: { column: 'region', values: ['Torso'] },
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-ribcage',
+    title: 'Rib Cage',
+    description: 'Identify all 12 pairs of ribs.',
+    dataFilter: { column: 'subregion', values: ['Rib Cage'] },
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-arm',
+    title: 'Arm Bones',
+    description: 'Name the bones of the arm: humerus, radius, and ulna.',
+    dataFilter: { column: 'region', values: ['Arm'] },
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-hand',
+    title: 'Hand Bones',
+    description: 'Name the bone groups of the hand: carpals, metacarpals, and phalanges.',
+    dataFilter: { column: 'region', values: ['Hand'] },
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-leg',
+    title: 'Leg Bones',
+    description: 'Name the bones of the leg: femur, patella, tibia, and fibula.',
+    dataFilter: { column: 'region', values: ['Leg'] },
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-foot',
+    title: 'Foot Bones',
+    description: 'Name the bone groups of the foot: tarsals, metatarsals, and phalanges.',
+    dataFilter: { column: 'region', values: ['Foot'] },
+  },
+];
+
+/**
  * Shared configuration for all timeline quizzes.
  * Individual definitions spread this and add id, title, description, path, toggles, presets, columnMappings, and dataPath.
  */
@@ -440,24 +538,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     groupFilterColumn: 'category',
     groupFilterLabel: 'Element category',
   },
-  {
-    id: 'sci-human-bones',
-    title: 'Human Bones',
-    description: 'Name the bones of the human skeleton.',
-    path: ['Science', 'Biology', 'Human Bones'],
-    visualizationType: 'grid',
-    availableModes: ['free-recall-unordered', 'identify'],
-    defaultMode: 'free-recall-unordered',
-    toggles: [],
-    presets: [],
-    columnMappings: {
-      answer: 'bone',
-      label: 'bone',
-      group: 'region',
-    },
-    dataPath: '/data/science/biology/human-bones.csv',
-    supportingDataPaths: [],
-  },
+  ...humanBonesQuizzes,
   {
     ...timelineQuizBase,
     id: 'hist-emperors-roman',
