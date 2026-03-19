@@ -4,6 +4,9 @@ import type { BackgroundLabel } from './BackgroundLabel';
 import { useZoomPan } from '../ZoomPanContext';
 import { computeLabelPlacements } from './computeLabelPlacements';
 
+// TODO: Remove after debugging label placement
+const SHOW_DEBUG_RECTS = true;
+
 interface MapCountryLabelsProps {
   readonly labels: ReadonlyArray<BackgroundLabel>;
   readonly showNames: boolean;
@@ -15,7 +18,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
   const { scale } = useZoomPan();
   const positionCacheRef = useRef<Map<string, ViewBoxPosition>>(new Map());
 
-  const visibleItems = useMemo(() => {
+  const { visibleItems, debugRects, debugDotAvoidRadius } = useMemo(() => {
     const result = computeLabelPlacements({
       labels,
       scale,
@@ -25,18 +28,41 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
       positionCache: positionCacheRef.current,
     });
     positionCacheRef.current = new Map(result.newCache);
-    return result.placements;
+    return {
+      visibleItems: result.placements,
+      debugRects: result.debugRects,
+      debugDotAvoidRadius: result.debugDotAvoidRadius,
+    };
   }, [labels, scale, showNames, showFlags, avoidPoints]);
+
+  // Split debug rects into dot rects and label rects based on size
+  // Dot rects are square (w === h) with size === dotAvoidRadius * 2
+  const dotRectSize = debugDotAvoidRadius * 2;
 
   return (
     <g className="country-labels" pointerEvents="none">
+      {/* Debug: collision rects */}
+      {SHOW_DEBUG_RECTS && debugRects.map((rect, i) => {
+        const isDotRect = Math.abs(rect.w - dotRectSize) < 0.001 && Math.abs(rect.h - dotRectSize) < 0.001;
+        return (
+          <rect
+            key={`debug-rect-${i}`}
+            x={rect.x}
+            y={rect.y}
+            width={rect.w}
+            height={rect.h}
+            fill={isDotRect ? 'rgba(255, 0, 0, 0.15)' : 'rgba(0, 100, 255, 0.15)'}
+            stroke={isDotRect ? 'rgba(255, 0, 0, 0.4)' : 'rgba(0, 100, 255, 0.4)'}
+            strokeWidth={0.5 / scale}
+          />
+        );
+      })}
+
+      {/* Actual labels */}
       {visibleItems.map(({ label, fontSize, flagHeight, gapSize, width, x, y }) => {
         const flagWidth = flagHeight * 4 / 3;
         const hasFlag = showFlags && !!label.code;
-        // Center of the label box
         const cx = x + width / 2;
-        // Layout: flag on top, gap, then text — both centered horizontally
-        let curY = y;
 
         return (
           <g key={`country-label-${label.id}`}>
@@ -44,19 +70,17 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints }: 
               <image
                 href={`/flags/${label.code}.svg`}
                 x={cx - flagWidth / 2}
-                y={curY}
+                y={y}
                 width={flagWidth}
                 height={flagHeight}
               />
             )}
-            {/* Advance past flag + gap for text positioning */}
             {showNames && (
               <text
                 x={cx}
                 y={(() => {
                   let textY = y;
                   if (hasFlag) textY += flagHeight + gapSize;
-                  // SVG text y is the baseline; offset by ~0.8em for top-aligned positioning
                   return textY + fontSize * 0.85;
                 })()}
                 textAnchor="middle"
