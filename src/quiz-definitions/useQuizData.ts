@@ -30,9 +30,13 @@ export type QuizDataState = QuizDataIdle | QuizDataLoading | QuizDataLoaded | Qu
  */
 export function useQuizData(
   dataPath: string | undefined,
-  dataFilter?: DataFilter,
+  dataFilter?: DataFilter | ReadonlyArray<DataFilter>,
 ): QuizDataState {
-  const filterKey = dataFilter ? `${dataFilter.column}:${dataFilter.values.join(',')}` : '';
+  const filterKey = dataFilter
+    ? (Array.isArray(dataFilter) ? dataFilter : [dataFilter])
+        .map((f) => `${f.column}:${f.values.join(',')}`)
+        .join(';')
+    : '';
   const [state, setState] = useState<QuizDataState>({ status: 'idle' });
 
   useEffect(() => {

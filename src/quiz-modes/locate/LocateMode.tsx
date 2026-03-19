@@ -25,6 +25,7 @@ export interface LocateModeProps {
   readonly onFinish?: (score: ScoreResult) => void;
   readonly forceGiveUp?: boolean;
   readonly reviewing?: boolean;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
 }
 
 /**
@@ -42,6 +43,7 @@ export function LocateMode({
   onFinish,
   forceGiveUp = false,
   reviewing = false,
+  initialViewBox,
 }: LocateModeProps) {
   const quiz = useLocateQuiz(elements);
   const [showResults, setShowResults] = useState(false);
@@ -158,6 +160,7 @@ export function LocateMode({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
+          initialViewBox={initialViewBox}
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
         />
 

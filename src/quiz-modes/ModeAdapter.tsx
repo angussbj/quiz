@@ -33,6 +33,7 @@ export interface ModeAdapterProps {
   readonly forceGiveUp?: boolean;
   /** When true, the quiz is in review mode — no answers accepted, missed items labeled. */
   readonly reviewing?: boolean;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
 }
 
 const noop = () => {};
@@ -57,6 +58,7 @@ export function ModeAdapter({
   onStatusChange,
   forceGiveUp = false,
   reviewing = false,
+  initialViewBox,
 }: ModeAdapterProps) {
   switch (mode) {
     case 'free-recall-unordered':
@@ -71,6 +73,7 @@ export function ModeAdapter({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
+          initialViewBox={initialViewBox}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
           reviewing={reviewing}
@@ -88,6 +91,7 @@ export function ModeAdapter({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
+          initialViewBox={initialViewBox}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
           reviewing={reviewing}
@@ -104,6 +108,7 @@ export function ModeAdapter({
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
           clustering={clustering}
+          initialViewBox={initialViewBox}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
           reviewing={reviewing}
@@ -120,6 +125,7 @@ export function ModeAdapter({
           Renderer={Renderer}
           backgroundPaths={backgroundPaths}
           clustering={clustering}
+          initialViewBox={initialViewBox}
           onStatusChange={onStatusChange}
           forceGiveUp={forceGiveUp}
           reviewing={reviewing}
@@ -172,6 +178,7 @@ interface FreeRecallAdapterProps {
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
   readonly reviewing: boolean;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
 }
 
 function FreeRecallAdapter({
@@ -187,6 +194,7 @@ function FreeRecallAdapter({
   onStatusChange,
   forceGiveUp,
   reviewing,
+  initialViewBox,
 }: FreeRecallAdapterProps) {
   const { session, elementToggles, handleTextAnswer, handleGiveUp } = useFreeRecallSession({
     elements,
@@ -241,6 +249,7 @@ function FreeRecallAdapter({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
+          initialViewBox={initialViewBox}
         />
       </div>
       {!reviewing && (
@@ -278,6 +287,7 @@ interface IdentifyAdapterProps {
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
   readonly reviewing: boolean;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
 }
 
 const STUB_SESSION: QuizSessionState = {
@@ -304,6 +314,7 @@ function IdentifyAdapter({
   onStatusChange,
   forceGiveUp,
   reviewing,
+  initialViewBox,
 }: IdentifyAdapterProps) {
   const handleFinish = (score: ScoreResult) => {
     onStatusChange('finished', score);
@@ -338,6 +349,7 @@ function IdentifyAdapter({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
+          initialViewBox={initialViewBox}
         />
       )}
     />
@@ -355,6 +367,7 @@ interface LocateAdapterProps {
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
   readonly reviewing: boolean;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
 }
 
 function LocateAdapter({
@@ -368,6 +381,7 @@ function LocateAdapter({
   onStatusChange,
   forceGiveUp,
   reviewing,
+  initialViewBox,
 }: LocateAdapterProps) {
   const handleFinish = (score: ScoreResult) => {
     onStatusChange('finished', score);
@@ -385,6 +399,7 @@ function LocateAdapter({
       onFinish={handleFinish}
       forceGiveUp={forceGiveUp}
       reviewing={reviewing}
+      initialViewBox={initialViewBox}
     />
   );
 }
@@ -401,6 +416,7 @@ interface RenderVisualizationAdapterProps {
   readonly onStatusChange: (status: 'active' | 'finished', score: ScoreResult) => void;
   readonly forceGiveUp: boolean;
   readonly reviewing: boolean;
+  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
 }
 
 function PromptedRecallAdapter({
@@ -415,6 +431,7 @@ function PromptedRecallAdapter({
   onStatusChange,
   forceGiveUp,
   reviewing,
+  initialViewBox,
 }: RenderVisualizationAdapterProps) {
   const handleFinish = (score: ScoreResult) => {
     onStatusChange('finished', score);
@@ -446,6 +463,7 @@ function PromptedRecallAdapter({
           elementToggles={renderProps.elementToggles}
           backgroundPaths={backgroundPaths}
           clustering={clustering}
+          initialViewBox={initialViewBox}
         />
       )}
     />

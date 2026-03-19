@@ -72,37 +72,25 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Branch:** `feat/all-capitals`
 **Scope:** Extend capital city data beyond Europe. Check that the data for Asia, Africa, North America, South America, and Oceania is already in the existing csvs and if there are any edge cases we should check (e.g. Taiwan, Palestine, French Guiana, etc.). Register quiz definitions for each continent and for the world. Follow the same patterns as #17. Use Natural Earth 1:110m data, pre-converted to SVG paths.
 
-### 24. Countries Quiz Type
+### 24. Countries Quiz Type — DONE
 **Branch:** `feat/countries-quiz`
 **Scope:** Add a "countries" quiz type — name the country from its shape/location on the map. Different from capitals (which focuses on cities). Create quiz definitions per continent and for the world, registered in the quiz registry. Can reuse the same border data from #23.
+**What was built:**
+- Enriched `world-borders.csv` with `latitude`, `longitude`, `name_alternates`, and `is_sovereign` columns. Sovereign countries (197) get coordinates from `world-capitals.csv`; territories (40) get centroid coordinates computed from SVG path bounding boxes. Script: `scripts/enrichBordersWithCountryData.mjs`.
+- Extended `DataFilter` to support multiple filters (array with AND logic). Countries quizzes filter by both `is_sovereign` and `region`/`group`.
+- Added 8 quiz definitions: Europe, Asia, Africa, North America, South America, Oceania, and World. All use `world-borders.csv` directly with multi-filters. Modes: free recall, identify, locate. Toggles: borders, country names (on-reveal), flags (hint after 2). Easy/Medium/Hard presets.
+- Extended `BackgroundPath` with optional `label` and `labelCenter`. Non-quiz territories show name labels when the `showCountryNames` toggle is on.
+- North/South America split uses `group` (subregion) filter: North America includes `North America`, `Central America`, `Caribbean` subregions.
+**Notes:** The `columnMappings.answer` is `'name'` so `matchAnswer` automatically checks `name_alternates` for alternate country names. The world quiz groups by `region` (continent-level colours), while continent quizzes group by `group` (subregion colours).
 
-### 25. Flags Quiz Type — DONE
-**Branch:** `worktree-flags-quiz`
+### 25. Flags Quiz Type
+**Branch:** `feat/flags-quiz`
 **Scope:** Add a "flags" quiz type — identify the country from its flag, or pick the flag for a given country - this should be selectable on the quiz configuration screen. Create quiz definitions per continent and for the world. Can reuse the same data CSVs as capitals/countries with different column mappings.
-**What was done:**
-- Added `country_code` column (ISO 3166-1 alpha-2) to `world-capitals.csv` via `scripts/addCountryCodes.ts`. Fixed pre-existing field alignment bug where codes were shifted into `country_alternates`.
-- 271 flag SVGs bundled in `public/flags/{code}.svg`.
-- New `flag-grid` visualization type: `FlagGridElement`, `buildFlagGridElements` (shuffled 8-column layout), `FlagGridRenderer` (SVG `<image>` elements, state-based borders, country name on reveal).
-- New `multiple-choice` quiz mode (previously a stub): `useMultipleChoiceQuiz` hook (shuffled prompts, 6 random distractors, correct/incorrect flash feedback, auto-advance), `MultipleChoiceMode` component with `renderChoice` render prop for quiz-specific visuals.
-- Quiz definitions for Europe, Asia, Africa, Americas, Oceania, and World flags. All reuse `world-capitals.csv` with region filters and `flag: 'country_code'` column mapping.
-- Available modes: free-recall-unordered, multiple-choice. Prompted recall to be added after rebase on that feature's branch.
-**Notes for other features:**
-- Feature 26 (Periodic Table) should consider using multiple-choice mode — it's now generic via the `renderChoice` prop.
-- The `MultipleChoiceMode` prompt is hardcoded as "Which flag is X?" — needs a `promptTemplate` prop if reused for non-flag quizzes.
+**Note from #24:** `DataFilter` now supports arrays (AND logic), so filtering by both region and sovereignty is straightforward. The pattern from countries quiz definitions can be reused.
 
-### 26. Periodic Table Quiz — DONE
-**Branch:** `worktree-periodic-table`
+### 26. Periodic Table Quiz
+**Branch:** `feat/periodic-table-quiz`
 **Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element, ordered recall following the order by atomic number, prompted recall (new) where element squares are highlighted in a random order and you have to name them). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
-**What was done:**
-- `periodic-table.csv`: 118 elements with atomic weight, block, standard state, density, electronegativity, year discovered, and name alternates. Data cross-checked against PubChem. Sorted by atomic number.
-- **Prompted recall mode** (new, generic): inverse of identify — an element is highlighted on the visualization and the user types its name. Auto-matches as you type. On Enter with wrong answer, flashes incorrect. Skip/give-up available. Works for any quiz definition, not periodic-table-specific.
-- **Ordered recall mode** (`free-recall-ordered`): sequential free recall — answers must come in CSV row order. Current element highlighted. Same input pattern as prompted recall.
-- **Renderer updates**: removed `isTarget` from `PeriodicTableRenderer` (highlighting now driven by `'highlighted'` elementState per feature 28 approach). Added `showAtomicNumbers` toggle rendering (top-left of cell when zoomed). Added `showNames` toggle for independent label visibility. Made `showGroups` a proper `ToggleDefinition`.
-- **Registry**: 4 modes (free recall, prompted recall, ordered recall, identify). Toggles: showSymbols (on-reveal), showAtomicNumbers (on-reveal), showNames (on-reveal), showGroups/category colours (never). Easy/Hard presets. Removed `sci-element-symbols` quiz.
-- Both new modes use `renderVisualization` render prop pattern (like IdentifyMode). Both new hooks follow `useIdentifyQuiz` patterns with `matchAnswer` for answer checking.
-**Note (prompted recall):** The `'prompted-recall'` QuizModeType is generic. Any quiz definition can opt into it by adding `'prompted-recall'` to `availableModes`. The mode highlights each element in random order and the user types the answer. Toggle resolution via `resolveElementToggles` handles hiding labels/symbols for unanswered elements.
-**Note (ordered recall):** `'free-recall-ordered'` uses CSV row order (no shuffling). For periodic table, this means atomic number order. Other quizzes can use it too — the order depends on their CSV sorting.
-**Note (feature 28):** This feature partially implements feature 28's goal — `PeriodicTableRenderer` no longer uses `targetElementId` for highlighting. The `MapRenderer` still does (feature 28 should clean that up).
 
 ### 27. WWII Timeline Quiz
 **Branch:** `feat/wwii-timeline`

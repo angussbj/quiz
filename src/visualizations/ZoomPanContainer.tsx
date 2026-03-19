@@ -22,6 +22,7 @@ interface ZoomPanContainerProps {
   readonly elementStates?: Readonly<Record<string, ElementVisualState>>;
   readonly clustering?: ClusteringConfig;
   readonly onClusterClick?: (cluster: ElementCluster) => void;
+  readonly initialViewBox?: ViewBox;
 }
 
 interface ContainerSize {
@@ -55,8 +56,12 @@ export function ZoomPanContainer({
   elementStates,
   clustering,
   onClusterClick,
+  initialViewBox,
 }: ZoomPanContainerProps) {
-  const viewBox = useMemo(() => computeViewBox(elements), [elements]);
+  const viewBox = useMemo(
+    () => initialViewBox ?? computeViewBox(elements),
+    [elements, initialViewBox],
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState<ContainerSize>({ width: 0, height: 0 });
 

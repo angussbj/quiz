@@ -62,6 +62,15 @@
   user-select: none;
 }
 
+.stateLabel {
+  fill: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: 0.8px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+
 .backgroundLabel {
   fill: var(--color-text-secondary);
   font-family: var(--font-family);
