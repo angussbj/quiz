@@ -75,6 +75,7 @@ Source files are gitignored (too large). Download URLs are in each script's head
 
 ### File Organization
 - One component/interface per file. One responsibility per file.
+- Break long functions into multiple smaller functions, and large classes into multiple smaller classes. Functions and classes should each have one clear responsibility.
 - File names match main export: PascalCase for components/interfaces (`MapRenderer.tsx`, `QuizDefinition.ts`), camelCase for functions/hooks (`calculateScore.ts`, `useLocalStorage.ts`).
 - Tests go in a `tests/` directory next to the code: `foo/Bar.ts` → `foo/tests/Bar.test.ts`
 - Keep directories small. Split when a directory exceeds ~8 files.
@@ -122,6 +123,12 @@ Source files are gitignored (too large). Download URLs are in each script's head
 ### Git
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`
 - One logical change per commit
+- When moving files to reorganise a directory, keep the move isolated in its own commit:
+  1. Stash work in progress: `git stash`
+  2. Move the files
+  3. Run `npm test` and `npm run typecheck` and fix any issues
+  4. Commit the move with a clear description
+  5. Pop the stash: `git stash pop`
 
 ### Detailed docs
 - `docs/zoom-pan-container.md` — ZoomPanContainer architecture, clustering algorithm, coordinate space handling
