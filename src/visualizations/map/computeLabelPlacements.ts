@@ -32,7 +32,7 @@ interface LabelDimensions {
   readonly height: number;
 }
 
-export type Rect = { x: number; y: number; w: number; h: number };
+type Rect = { x: number; y: number; w: number; h: number };
 
 /** Build the collision rects (flag + text separately) for a label at a given center position. */
 function buildLabelRects(
@@ -218,10 +218,6 @@ export interface ComputeLabelPlacementsOptions {
 export interface ComputeLabelPlacementsResult {
   readonly placements: ReadonlyArray<PlacedLabel>;
   readonly newCache: ReadonlyMap<string, ViewBoxPosition>;
-  /** All collision rects used during placement (dots + labels). For debug visualization only. */
-  readonly debugRects: ReadonlyArray<Rect>;
-  /** The dot avoid radius used for this scale. */
-  readonly debugDotAvoidRadius: number;
 }
 
 /**
@@ -339,5 +335,5 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     }
   }
 
-  return { placements: visible, newCache, debugRects: placed, debugDotAvoidRadius: dotAvoidRadius };
+  return { placements: visible, newCache };
 }
