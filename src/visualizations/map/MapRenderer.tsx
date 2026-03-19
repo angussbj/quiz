@@ -120,6 +120,31 @@ export function MapRenderer({
   );
 }
 
+/** Stroke width for river paths in viewBox units. */
+const RIVER_STROKE_WIDTH = 0.4;
+
+/** Wider hit area for clicking river paths (invisible, rendered beneath visible stroke). */
+const RIVER_HIT_STROKE_WIDTH = 2.0;
+
+function strokeOpacity(state: ElementVisualState | undefined): number {
+  switch (state) {
+    case 'hidden':
+      return 0;
+    case 'correct':
+    case 'correct-second':
+    case 'correct-third':
+    case 'incorrect':
+    case 'missed':
+    case 'highlighted':
+      return 1;
+    case 'default':
+    case 'context':
+      return 0.7;
+    default:
+      return 0.4;
+  }
+}
+
 /** Render shape elements filtered to a specific state (or undefined for default/no-state). */
 function renderShapeElements(
   elements: VisualizationRendererProps['elements'],
@@ -141,6 +166,55 @@ function renderShapeElements(
       if (state !== targetState) return null;
     }
     const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
+    const isStrokePath = element.pathRenderStyle === 'stroke';
+
+    if (isStrokePath) {
+      return (
+        <g key={`shape-${element.id}`}>
+          {/* Invisible wider path for easier clicking */}
+          {onElementClick && (
+            <path
+              d={element.svgPathData}
+              style={{
+                fill: 'none',
+                stroke: 'transparent',
+                strokeWidth: RIVER_HIT_STROKE_WIDTH,
+                strokeLinecap: 'round',
+                strokeLinejoin: 'round',
+              }}
+              className={styles.interactivePath}
+              onClick={(e) => {
+                e.stopPropagation();
+                onElementClick(element.id);
+              }}
+            />
+          )}
+          {/* Visible river stroke */}
+          <path
+            d={element.svgPathData}
+            style={{
+              fill: 'none',
+              stroke: color,
+              strokeWidth: RIVER_STROKE_WIDTH,
+              strokeOpacity: strokeOpacity(state),
+              strokeLinecap: 'round',
+              strokeLinejoin: 'round',
+            }}
+            className={onElementClick ? styles.interactivePath : undefined}
+            pointerEvents={onElementClick ? 'none' : undefined}
+            onClick={
+              onElementClick
+                ? (e) => {
+                    e.stopPropagation();
+                    onElementClick(element.id);
+                  }
+                : undefined
+            }
+          />
+        </g>
+      );
+    }
+
     return (
       <path
         key={`shape-${element.id}`}

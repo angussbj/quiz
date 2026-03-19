@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { VisualizationElement, ViewBoxPosition, ElementVisualState } from '@/visualizations/VisualizationElement';
 import { isMapElement } from '@/visualizations/map/MapElement';
+import { closestPointOnPath } from '@/visualizations/map/closestPointOnPath';
 import { calculateGreatCircleDistance } from '@/scoring/calculateGreatCircleDistance';
 import { calculateLocateAnswerScore, isLocateAnswerCorrect } from '@/scoring/calculateLocateAnswerScore';
 import { shuffle } from '@/utilities/shuffle';
@@ -92,6 +93,17 @@ export function useLocateQuiz(
       if (isMapElement(targetElement)) {
         const clickLat = -clickPosition.y;
         const clickLng = clickPosition.x;
+
+        // For stroke-style paths (rivers), find the closest point on the path
+        if (targetElement.pathRenderStyle === 'stroke' && targetElement.svgPathData) {
+          const closest = closestPointOnPath(clickPosition, targetElement.svgPathData);
+          if (closest) {
+            const closestLat = -closest.y;
+            const closestLng = closest.x;
+            return calculateGreatCircleDistance(clickLat, clickLng, closestLat, closestLng);
+          }
+        }
+
         return calculateGreatCircleDistance(
           clickLat,
           clickLng,
