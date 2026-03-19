@@ -9,8 +9,9 @@ groups are unlabeled (ribs, femur right, etc.). This script:
 1. Maps all labeled and unlabeled SVG groups to bone names
 2. Separates the 101-path rib group (g845) into individual ribs by Y-position
 3. Merges left/right pairs into a single bone entry (since the quiz treats them as one)
-4. Computes centroid coordinates from path data for label placement
-5. Outputs CSV with: id, name, name_alternates, region, subregion, common, paths, x, y
+4. Breaks down hands and feet into individual bones (carpals, metacarpals, phalanges by digit, etc.)
+5. Computes centroid coordinates from path data for label placement
+6. Outputs CSV with: id, name, name_alternates, region, subregion, common, paths, x, y
 
 Usage:
     python3 scripts/generateHumanBones.py /path/to/Human_skeleton_front_en.svg
@@ -45,7 +46,6 @@ class BoneEntry:
 
 def extract_path_numbers(d_attr: str) -> list[tuple[float, float]]:
     """Extract coordinate pairs from an SVG path d attribute (rough approximation)."""
-    # Match M/L/C command coordinates - we just want all number pairs
     numbers = re.findall(r'[-+]?\d*\.?\d+', d_attr)
     coords = []
     for i in range(0, len(numbers) - 1, 2):
@@ -184,7 +184,7 @@ def separate_ribs(rib_group) -> list[BoneEntry]:
     # Now assign shading/detail paths to the nearest main path cluster
     detail_paths = [p for p in all_paths if not p['is_main']]
 
-    def assign_detail_to_cluster(detail, clusters, side_filter):
+    def assign_detail_to_cluster(detail, clusters):
         """Find the nearest cluster for a detail path."""
         best_cluster = None
         best_dist = float('inf')
@@ -213,11 +213,11 @@ def separate_ribs(rib_group) -> list[BoneEntry]:
         # Assign nearby detail paths
         for detail in detail_paths:
             if detail['cx'] < midline_x:
-                cluster_idx = assign_detail_to_cluster(detail, left_clusters, 'left')
+                cluster_idx = assign_detail_to_cluster(detail, left_clusters)
                 if cluster_idx == left_idx:
                     rib_paths.append(detail['d'])
             else:
-                cluster_idx = assign_detail_to_cluster(detail, right_clusters, 'right')
+                cluster_idx = assign_detail_to_cluster(detail, right_clusters)
                 if cluster_idx == right_idx:
                     rib_paths.append(detail['d'])
 
@@ -245,9 +245,6 @@ def separate_ribs(rib_group) -> list[BoneEntry]:
             y=cy,
         ))
 
-    # Remaining paths that weren't assigned to any rib (e.g., costal cartilage)
-    # We'll skip these - they'll be background detail
-
     return entries
 
 
@@ -263,12 +260,10 @@ LABELED_BONES = {
     'Coccyx': ('coccyx', 'Coccyx', 'tailbone|coccygeal vertebrae', 'Torso', 'Spine', 'true'),
     'Manubrium': ('manubrium', 'Manubrium', 'manubrium of sternum', 'Torso', 'Thorax', 'true'),
     'Sternum': ('sternum', 'Sternum', 'breastbone|sternum body', 'Torso', 'Thorax', 'true'),
-    'Cranium': ('cranium', 'Cranium', 'skull cap|calvaria|neurocranium', 'Head', 'Skull', 'true'),
-    'Mandible': ('mandible', 'Mandible', 'jawbone|lower jaw', 'Head', 'Skull', 'true'),
     'ClavicleRight': ('clavicle', 'Clavicle', 'collarbone', 'Torso', 'Shoulder Girdle', 'true'),
     'ClavicleLeft': (None, None, None, None, None, None),  # Merged with right
     'Scapula': ('scapula', 'Scapula', 'shoulder blade|shoulder bone', 'Torso', 'Shoulder Girdle', 'true'),
-    'PelvicGirdle': ('pelvis', 'Pelvis', 'pelvic girdle|hip bone|os coxae|innominate bone', 'Torso', 'Pelvis', 'true'),
+    'PelvicGirdle': ('pelvis', 'Pelvis', 'pelvic girdle|hip bone|os coxae|innominate bone|ilium', 'Torso', 'Pelvis', 'true'),
     'HumerusLeft': ('humerus', 'Humerus', 'upper arm bone', 'Arm', 'Upper Arm', 'true'),
     'HumerusRight': (None, None, None, None, None, None),  # Merged with left
     'RadiusLeft': ('radius', 'Radius', 'radial bone', 'Arm', 'Forearm', 'true'),
@@ -282,9 +277,9 @@ LABELED_BONES = {
     'FibulaRight': (None, None, None, None, None, None),
     'PatellaLeft': ('patella', 'Patella', 'kneecap|knee cap', 'Leg', 'Knee', 'true'),
     'PatellaRight': (None, None, None, None, None, None),
-    'FootLeft': (None, None, None, None, None, None),   # We'll break this into sub-bones
+    'FootLeft': (None, None, None, None, None, None),   # Broken into sub-bones
     'FootRight': (None, None, None, None, None, None),
-    'HandLeft': (None, None, None, None, None, None),    # We'll break this into sub-bones
+    'HandLeft': (None, None, None, None, None, None),    # Broken into sub-bones
     'HandRight': (None, None, None, None, None, None),
     'Skull': (None, None, None, None, None, None),       # We use Cranium + Mandible instead
 }
@@ -294,12 +289,12 @@ UNLABELED_GROUPS = {
     'g845': ('rib-cage', 'RIBS', None, 'Thorax', 'Rib Cage', None),  # Special: separated into individual ribs
     'g801': ('xiphoid-process', 'Xiphoid Process', 'xiphoid|ensiform process', 'Torso', 'Thorax', ''),
     'g3760': (None, None, None, None, None, None),  # Right femur - merged with left
-    'g447': (None, None, None, None, None, None),    # Right femur head detail - merged
     'g1609': ('hyoid', 'Hyoid', 'hyoid bone|lingual bone', 'Head', 'Throat', ''),
     'g1753': (None, None, None, None, None, None),   # Right elbow detail - merged with ulna
 }
 
 # Merge map: SVG IDs whose paths should be combined with a primary bone
+# NOTE: g447 is the lower pelvis (ischium/pubis area) — merged into pelvis, NOT femur
 MERGE_MAP = {
     'ClavicleLeft': 'ClavicleRight',
     'HumerusRight': 'HumerusLeft',
@@ -309,13 +304,276 @@ MERGE_MAP = {
     'FibulaRight': 'FibulaLeft',
     'PatellaRight': 'PatellaLeft',
     'g3760': 'FemurLeft',
-    'g447': 'FemurLeft',
-    'g1753': 'UlnaRight',  # Actually merges into UlnaLeft via chain
+    'g447': 'PelvicGirdle',    # ischium/pubis area — belongs to pelvis, not femur
+    'g1753': 'UlnaRight',      # Actually merges into UlnaLeft via chain
 }
 
 
+# ─── Tarsal identification by SVG group ID ───
+# Identified by comparing SVG sub-group positions with anatomical reference images.
+# Left foot (front view): medial = lower X, lateral = higher X, proximal = lower Y, distal = higher Y
+# These will be verified visually and may need adjustment.
+TARSAL_NAMES_LEFT = {
+    'g13': ('talus', 'Talus', 'ankle bone|astragalus', 'true'),
+    'g23': ('cuboid', 'Cuboid', 'cuboid bone|os cuboideum', ''),
+    'g29': ('navicular', 'Navicular', 'navicular bone|scaphoid of foot', ''),
+    'g35': ('lateral-cuneiform', 'Lateral Cuneiform', 'third cuneiform|external cuneiform', ''),
+    'g41': ('intermediate-cuneiform', 'Intermediate Cuneiform', 'second cuneiform|middle cuneiform', ''),
+    'g47': ('medial-cuneiform', 'Medial Cuneiform', 'first cuneiform|internal cuneiform', ''),
+}
+# Right foot sub-groups — same order (verified by matching structure)
+TARSAL_NAMES_RIGHT = {
+    'g195': 'talus',
+    'g205': 'cuboid',
+    'g211': 'navicular',
+    'g217': 'lateral-cuneiform',
+    'g223': 'intermediate-cuneiform',
+    'g229': 'medial-cuneiform',
+}
+
+# ─── Carpal identification by SVG group ID ───
+# Left hand (front view): lateral (thumb side) = higher X, medial (pinky side) = lower X
+# Proximal row (wrist): higher Y (closer to forearm), Distal row: lower Y (closer to fingers)
+# Note: in SVG, Y increases downward. Hand is below the forearm.
+CARPAL_NAMES_LEFT = {
+    'g2001': ('scaphoid', 'Scaphoid', 'scaphoid bone|navicular of hand', ''),
+    'g2019': ('lunate', 'Lunate', 'lunate bone|semilunar bone', ''),
+    'g2057': ('trapezium', 'Trapezium', 'greater multangular|trapezium bone', ''),
+    'g2047': ('hamate', 'Hamate', 'hamate bone|unciform bone', ''),
+    'g2009': ('capitate', 'Capitate', 'capitate bone|os magnum', ''),
+    'g2063': ('trapezoid', 'Trapezoid', 'lesser multangular|trapezoid bone', ''),
+    'g1993': ('triquetrum', 'Triquetrum', 'triquetral bone|triangular bone', ''),
+    'g2035': ('pisiform', 'Pisiform', 'pisiform bone|pea bone', ''),
+}
+CARPAL_NAMES_RIGHT = {
+    'g2127': 'scaphoid',      # low X = thumb side, proximal
+    'g2135': 'lunate',        # center, most proximal
+    'g2253': 'triquetrum',    # high X = pinky side, proximal
+    'g2121': 'trapezium',     # lowest X = thumb side, distal
+    'g2147': 'trapezoid',     # low-mid X, distal
+    'g2275': 'capitate',      # center, distal
+    'g2263': 'hamate',        # high X = pinky side, distal
+    'g2281': 'pisiform',      # sits on triquetrum, most distal
+}
+
+
+def extract_individual_tarsals(tarsal_group, side: str, tarsal_names: dict) -> list[BoneEntry]:
+    """Extract individual tarsal bones from a tarsal group."""
+    entries_by_id = {}
+
+    for child in tarsal_group:
+        if child.tag != f'{{{SVG_NS}}}g':
+            continue
+        gid = child.get('id', '')
+        paths = collect_paths(child)
+        if not paths:
+            continue
+
+        if side == 'left' and gid in TARSAL_NAMES_LEFT:
+            bone_id, name, alts, common = TARSAL_NAMES_LEFT[gid]
+        elif side == 'right' and gid in tarsal_names:
+            bone_id = tarsal_names[gid]
+            # Look up full name from left side mapping
+            for left_gid, (lid, lname, lalts, lcommon) in TARSAL_NAMES_LEFT.items():
+                if lid == bone_id:
+                    name, alts, common = lname, lalts, lcommon
+                    break
+            else:
+                name, alts, common = bone_id, '', ''
+        else:
+            # Unknown group — use temporary label
+            bone_id = f'tarsal-{gid}'
+            name = f'Tarsal ({gid})'
+            alts, common = '', ''
+
+        if bone_id in entries_by_id:
+            entries_by_id[bone_id].paths.extend(paths)
+            cx, cy = multi_path_centroid(entries_by_id[bone_id].paths)
+            entries_by_id[bone_id].x = cx
+            entries_by_id[bone_id].y = cy
+        else:
+            cx, cy = multi_path_centroid(paths)
+            entries_by_id[bone_id] = BoneEntry(
+                id=bone_id,
+                name=name,
+                name_alternates=alts,
+                region='Foot',
+                subregion='Ankle',
+                common=common,
+                paths=paths,
+                x=cx, y=cy,
+            )
+
+    return list(entries_by_id.values())
+
+
+def extract_individual_carpals(carpal_group, side: str, carpal_names: dict) -> list[BoneEntry]:
+    """Extract individual carpal bones from a carpal group."""
+    entries_by_id = {}
+
+    for child in carpal_group:
+        if child.tag != f'{{{SVG_NS}}}g':
+            continue
+        gid = child.get('id', '')
+        paths = collect_paths(child)
+        if not paths:
+            continue
+
+        if side == 'left' and gid in CARPAL_NAMES_LEFT:
+            bone_id, name, alts, common = CARPAL_NAMES_LEFT[gid]
+        elif side == 'right' and gid in carpal_names:
+            bone_id = carpal_names[gid]
+            for left_gid, (lid, lname, lalts, lcommon) in CARPAL_NAMES_LEFT.items():
+                if lid == bone_id:
+                    name, alts, common = lname, lalts, lcommon
+                    break
+            else:
+                name, alts, common = bone_id, '', ''
+        else:
+            bone_id = f'carpal-{gid}'
+            name = f'Carpal ({gid})'
+            alts, common = '', ''
+
+        if bone_id in entries_by_id:
+            entries_by_id[bone_id].paths.extend(paths)
+            cx, cy = multi_path_centroid(entries_by_id[bone_id].paths)
+            entries_by_id[bone_id].x = cx
+            entries_by_id[bone_id].y = cy
+        else:
+            cx, cy = multi_path_centroid(paths)
+            entries_by_id[bone_id] = BoneEntry(
+                id=bone_id,
+                name=name,
+                name_alternates=alts,
+                region='Hand',
+                subregion='Wrist',
+                common=common,
+                paths=paths,
+                x=cx, y=cy,
+            )
+
+    return list(entries_by_id.values())
+
+
+def extract_numbered_bones(group, prefix: str, name_template: str, alts_template: str,
+                           region: str, subregion: str, common: str, sort_key: str = 'x') -> list[BoneEntry]:
+    """Extract numbered bones (metacarpals 1-5, metatarsals 1-5) from a group.
+
+    Sub-groups are sorted by position to assign numbers.
+    For metacarpals/metatarsals: 1 = thumb/big-toe side (varies by hand/foot and view).
+    """
+    items = []
+    for child in group:
+        if child.tag != f'{{{SVG_NS}}}g':
+            continue
+        paths = collect_paths(child)
+        if not paths:
+            continue
+        cx, cy = multi_path_centroid(paths)
+        items.append((cx, cy, paths))
+
+    # Sort by position
+    if sort_key == 'x':
+        items.sort(key=lambda x: x[0])
+    else:
+        items.sort(key=lambda x: x[1])
+
+    entries = []
+    for i, (cx, cy, paths) in enumerate(items):
+        num = i + 1
+        bone_id = f'{prefix}-{num}'
+        name = name_template.format(num)
+        alts = alts_template.format(num, num)
+        entries.append(BoneEntry(
+            id=bone_id,
+            name=name,
+            name_alternates=alts,
+            region=region,
+            subregion=subregion,
+            common=common,
+            paths=paths,
+            x=cx, y=cy,
+        ))
+
+    return entries
+
+
+def extract_phalanges_by_digit(phalanx_group, digit_names: list[str], prefix: str,
+                                region: str, subregion_template: str,
+                                common: str, sort_key: str = 'x') -> list[BoneEntry]:
+    """Extract phalanges grouped by digit (finger/toe).
+
+    Sub-groups are first clustered by X position into digits, then all paths
+    within a digit cluster are merged.
+    """
+    # Collect all leaf sub-groups with their centroids
+    items = []
+    for child in phalanx_group.iter(f'{{{SVG_NS}}}g'):
+        # Only process groups that directly contain paths (leaf groups)
+        direct_paths = [p for p in child if p.tag == f'{{{SVG_NS}}}path']
+        if not direct_paths:
+            continue
+        paths = [p.get('d', '') for p in direct_paths if p.get('d', '')]
+        if not paths:
+            continue
+        cx, cy = multi_path_centroid(paths)
+        items.append({'cx': cx, 'cy': cy, 'paths': paths})
+
+    if not items:
+        return []
+
+    # Sort by X position
+    items.sort(key=lambda x: x['cx'])
+
+    # Cluster into digits by X proximity
+    num_digits = len(digit_names)
+    if len(items) <= num_digits:
+        # Each item is a digit
+        clusters = [[item] for item in items]
+    else:
+        # Gap-based clustering
+        gaps = []
+        for i in range(1, len(items)):
+            gap = items[i]['cx'] - items[i-1]['cx']
+            gaps.append((gap, i))
+        gaps.sort(reverse=True)
+        boundaries = sorted([g[1] for g in gaps[:num_digits - 1]])
+
+        clusters = []
+        prev = 0
+        for b in boundaries:
+            clusters.append(items[prev:b])
+            prev = b
+        clusters.append(items[prev:])
+
+    entries = []
+    for i, cluster in enumerate(clusters):
+        if i >= num_digits:
+            break
+        all_paths = []
+        for item in cluster:
+            all_paths.extend(item['paths'])
+        cx, cy = multi_path_centroid(all_paths)
+        digit_name = digit_names[i]
+        bone_id = f'{prefix}-{digit_name.lower().replace(" ", "-")}'
+        name = f'{digit_name} Phalanges'
+        alts = f'{digit_name.lower()} bones|phalanges of {digit_name.lower()}'
+        entries.append(BoneEntry(
+            id=bone_id,
+            name=name,
+            name_alternates=alts,
+            region=region,
+            subregion=subregion_template.format(digit_name),
+            common=common,
+            paths=all_paths,
+            x=cx, y=cy,
+        ))
+
+    return entries
+
+
 def extract_hand_bones(hand_group, side: str) -> list[BoneEntry]:
-    """Extract individual bone groups from a hand group."""
+    """Extract individual bones from a hand group."""
     entries = []
 
     for child in hand_group:
@@ -323,75 +581,64 @@ def extract_hand_bones(hand_group, side: str) -> list[BoneEntry]:
             continue
         label = child.get(f'{{{INK_NS}}}label', '')
         child_id = child.get('id', '')
-
-        if not label and not child_id:
-            continue
-
         name_lower = (label or child_id).lower()
 
         if 'metacarpal' in name_lower:
-            paths = collect_paths(child)
-            cx, cy = multi_path_centroid(paths)
-            if not any(e.id == 'metacarpals' for e in entries):
-                entries.append(BoneEntry(
-                    id='metacarpals',
-                    name='Metacarpals',
-                    name_alternates='metacarpal bones|hand bones',
-                    region='Hand',
-                    subregion='Palm',
-                    common='true',
-                    paths=paths,
-                    x=cx, y=cy,
-                ))
-            else:
-                for e in entries:
-                    if e.id == 'metacarpals':
-                        e.paths.extend(paths)
-                        e.x, e.y = multi_path_centroid(e.paths)
+            # For left hand front view: thumb (1st) = highest X, pinky (5th) = lowest X
+            # For right hand: thumb = lowest X, pinky = highest X
+            sub_entries = extract_numbered_bones(
+                child,
+                prefix='metacarpal',
+                name_template='Metacarpal {}',
+                alts_template='{}st metacarpal|metacarpal bone {}' if '{}' == '1' else 'metacarpal {}|metacarpal bone {}',
+                region='Hand',
+                subregion='Palm',
+                common='true',
+                sort_key='x',
+            )
+            # For left hand (front view), X increases toward thumb, so reverse numbering
+            # Metacarpal 1 = thumb side. In front view of left hand, thumb is at higher X.
+            if side == 'left':
+                sub_entries.reverse()
+            # Fix numbering after reverse
+            for i, e in enumerate(sub_entries):
+                num = i + 1
+                e.id = f'metacarpal-{num}'
+                e.name = f'Metacarpal {num}'
+                ordinal = {1: '1st', 2: '2nd', 3: '3rd', 4: '4th', 5: '5th'}[num]
+                e.name_alternates = f'{ordinal} metacarpal|metacarpal bone {num}'
+            entries.extend(sub_entries)
+
         elif 'carpal' in name_lower:
-            paths = collect_paths(child)
-            cx, cy = multi_path_centroid(paths)
-            if not any(e.id == 'carpals' for e in entries):
-                entries.append(BoneEntry(
-                    id='carpals',
-                    name='Carpals',
-                    name_alternates='carpal bones|wrist bones',
-                    region='Hand',
-                    subregion='Wrist',
-                    common='true',
-                    paths=paths,
-                    x=cx, y=cy,
-                ))
-            else:
-                for e in entries:
-                    if e.id == 'carpals':
-                        e.paths.extend(paths)
-                        e.x, e.y = multi_path_centroid(e.paths)
+            carpal_names = CARPAL_NAMES_RIGHT if side == 'right' else {}
+            sub_entries = extract_individual_carpals(child, side, carpal_names)
+            entries.extend(sub_entries)
+
         elif 'phalang' in name_lower:
-            paths = collect_paths(child)
-            cx, cy = multi_path_centroid(paths)
-            if not any(e.id == 'phalanges-hand' for e in entries):
-                entries.append(BoneEntry(
-                    id='phalanges-hand',
-                    name='Phalanges (Hand)',
-                    name_alternates='finger bones|hand phalanges|phalanges of the hand',
-                    region='Hand',
-                    subregion='Fingers',
-                    common='true',
-                    paths=paths,
-                    x=cx, y=cy,
-                ))
-            else:
-                for e in entries:
-                    if e.id == 'phalanges-hand':
-                        e.paths.extend(paths)
-                        e.x, e.y = multi_path_centroid(e.paths)
+            # Group phalanges by finger
+            # For left hand front view: thumb at highest X, pinky at lowest X
+            # For right hand: thumb at lowest X, pinky at highest X
+            digit_names = ['Thumb', 'Index Finger', 'Middle Finger', 'Ring Finger', 'Little Finger']
+            sub_entries = extract_phalanges_by_digit(
+                child,
+                digit_names=digit_names if side == 'right' else list(reversed(digit_names)),
+                prefix='phalanx-hand',
+                region='Hand',
+                subregion_template='{}',
+                common='true',
+            )
+            if side == 'left':
+                sub_entries.reverse()
+                # Re-assign IDs in correct order
+                for i, e in enumerate(sub_entries):
+                    e.id = f'phalanx-hand-{digit_names[i].lower().replace(" ", "-")}'
+            entries.extend(sub_entries)
 
     return entries
 
 
 def extract_foot_bones(foot_group, side: str) -> list[BoneEntry]:
-    """Extract individual bone groups from a foot group."""
+    """Extract individual bones from a foot group."""
     entries = []
 
     for child in foot_group:
@@ -399,66 +646,56 @@ def extract_foot_bones(foot_group, side: str) -> list[BoneEntry]:
             continue
         label = child.get(f'{{{INK_NS}}}label', '')
         child_id = child.get('id', '')
-
         name_lower = (label or child_id).lower()
 
         if 'metatarsal' in name_lower:
-            paths = collect_paths(child)
-            cx, cy = multi_path_centroid(paths)
-            if not any(e.id == 'metatarsals' for e in entries):
-                entries.append(BoneEntry(
-                    id='metatarsals',
-                    name='Metatarsals',
-                    name_alternates='metatarsal bones|foot bones',
-                    region='Foot',
-                    subregion='Midfoot',
-                    common='true',
-                    paths=paths,
-                    x=cx, y=cy,
-                ))
-            else:
-                for e in entries:
-                    if e.id == 'metatarsals':
-                        e.paths.extend(paths)
-                        e.x, e.y = multi_path_centroid(e.paths)
+            # Metatarsal 1 = big toe side (medial)
+            # Left foot front view: medial = lower X
+            # Right foot front view: medial = higher X
+            sub_entries = extract_numbered_bones(
+                child,
+                prefix='metatarsal',
+                name_template='Metatarsal {}',
+                alts_template='metatarsal {}|metatarsal bone {}',
+                region='Foot',
+                subregion='Midfoot',
+                common='true',
+                sort_key='x',
+            )
+            # For left foot (front view): lower X = medial = 1st metatarsal
+            # For right foot (front view): higher X = medial = 1st metatarsal, so reverse
+            if side == 'right':
+                sub_entries.reverse()
+            for i, e in enumerate(sub_entries):
+                num = i + 1
+                e.id = f'metatarsal-{num}'
+                e.name = f'Metatarsal {num}'
+                ordinal = {1: '1st', 2: '2nd', 3: '3rd', 4: '4th', 5: '5th'}[num]
+                e.name_alternates = f'{ordinal} metatarsal|metatarsal bone {num}'
+            entries.extend(sub_entries)
+
         elif 'tarsal' in name_lower:
-            paths = collect_paths(child)
-            cx, cy = multi_path_centroid(paths)
-            if not any(e.id == 'tarsals' for e in entries):
-                entries.append(BoneEntry(
-                    id='tarsals',
-                    name='Tarsals',
-                    name_alternates='tarsal bones|ankle bones',
-                    region='Foot',
-                    subregion='Ankle',
-                    common='true',
-                    paths=paths,
-                    x=cx, y=cy,
-                ))
-            else:
-                for e in entries:
-                    if e.id == 'tarsals':
-                        e.paths.extend(paths)
-                        e.x, e.y = multi_path_centroid(e.paths)
+            tarsal_names = TARSAL_NAMES_RIGHT if side == 'right' else {}
+            sub_entries = extract_individual_tarsals(child, side, tarsal_names)
+            entries.extend(sub_entries)
+
         elif 'phalang' in name_lower:
-            paths = collect_paths(child)
-            cx, cy = multi_path_centroid(paths)
-            if not any(e.id == 'phalanges-foot' for e in entries):
-                entries.append(BoneEntry(
-                    id='phalanges-foot',
-                    name='Phalanges (Foot)',
-                    name_alternates='toe bones|foot phalanges|phalanges of the foot',
-                    region='Foot',
-                    subregion='Toes',
-                    common='true',
-                    paths=paths,
-                    x=cx, y=cy,
-                ))
-            else:
-                for e in entries:
-                    if e.id == 'phalanges-foot':
-                        e.paths.extend(paths)
-                        e.x, e.y = multi_path_centroid(e.paths)
+            digit_names = ['Big Toe', '2nd Toe', '3rd Toe', '4th Toe', 'Little Toe']
+            # Left foot front view: big toe at highest X (lateral in image = medial anatomically)
+            # Right foot front view: big toe at lowest X
+            sub_entries = extract_phalanges_by_digit(
+                child,
+                digit_names=list(reversed(digit_names)) if side == 'left' else digit_names,
+                prefix='phalanx-foot',
+                region='Foot',
+                subregion_template='{}',
+                common='true',
+            )
+            if side == 'left':
+                sub_entries.reverse()
+                for i, e in enumerate(sub_entries):
+                    e.id = f'phalanx-foot-{digit_names[i].lower().replace(" ", "-")}'
+            entries.extend(sub_entries)
 
     return entries
 
@@ -563,10 +800,11 @@ def main():
             x=cx, y=cy,
         ))
 
-    # Process hands (decompose into carpals, metacarpals, phalanges)
+    # Process hands (decompose into individual carpals, metacarpals, phalanges by digit)
     for hand_id in ['HandLeft', 'HandRight']:
         if hand_id in children_by_id:
-            hand_entries = extract_hand_bones(children_by_id[hand_id], 'left' if 'Left' in hand_id else 'right')
+            side = 'left' if 'Left' in hand_id else 'right'
+            hand_entries = extract_hand_bones(children_by_id[hand_id], side)
             for he in hand_entries:
                 existing = next((e for e in entries if e.id == he.id), None)
                 if existing:
@@ -575,10 +813,11 @@ def main():
                 else:
                     entries.append(he)
 
-    # Process feet (decompose into tarsals, metatarsals, phalanges)
+    # Process feet (decompose into individual tarsals, metatarsals, phalanges by digit)
     for foot_id in ['FootLeft', 'FootRight']:
         if foot_id in children_by_id:
-            foot_entries = extract_foot_bones(children_by_id[foot_id], 'left' if 'Left' in foot_id else 'right')
+            side = 'left' if 'Left' in foot_id else 'right'
+            foot_entries = extract_foot_bones(children_by_id[foot_id], side)
             for fe in foot_entries:
                 existing = next((e for e in entries if e.id == fe.id), None)
                 if existing:
@@ -586,16 +825,6 @@ def main():
                     existing.x, existing.y = multi_path_centroid(existing.paths)
                 else:
                     entries.append(fe)
-
-    # Also collect the loose unlabeled paths as background detail
-    # (we won't include these in the quiz CSV, but log them)
-    loose_paths = []
-    for child in skeleton_layer:
-        cid = child.get('id', '')
-        tag = child.tag.replace(f'{{{SVG_NS}}}', '')
-        if tag == 'path' and cid not in LABELED_BONES and cid != 'Sternum':
-            loose_paths.append(cid)
-    print(f"\n  {len(loose_paths)} loose unlabeled paths (background detail, not included in CSV)")
 
     # Sort entries by anatomical order (head to toe)
     region_order = {'Head': 0, 'Torso': 1, 'Thorax': 2, 'Arm': 3, 'Hand': 4, 'Leg': 5, 'Foot': 6}
@@ -628,7 +857,7 @@ def main():
     print("\nBone summary:")
     for e in entries:
         path_count = len(e.paths)
-        print(f"  {e.id:<25} {e.name:<30} {e.region:<10} {e.subregion:<20} paths={path_count}")
+        print(f"  {e.id:<30} {e.name:<30} {e.region:<10} {e.subregion:<20} common={e.common:<5} paths={path_count}")
 
 
 if __name__ == '__main__':
