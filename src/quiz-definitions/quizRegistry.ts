@@ -15,31 +15,38 @@ import type { QuizDefinition } from './QuizDefinition';
 const capitalsQuizBase = {
   path: ['Geography', 'Capitals'] as const,
   visualizationType: 'map' as const,
-  availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
-    { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
+    { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify'] } as const,
-    { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'flag', column: 'code' }, modes: ['identify'] } as const,
+  ],
+  selectToggles: [
+    { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: 'off', group: 'display', modes: ['identify'], promptField: { type: 'flag', column: 'code' }, options: [
+      { value: 'off', label: 'Off' },
+      { value: 'hint', label: 'Hint' },
+      { value: 'on', label: 'On' },
+    ] },
   ],
   presets: [
     {
       name: 'easy',
       label: 'Easy',
-      values: { showBorders: true, showCityDots: true, showCountryNames: true, showMapFlags: true, showPromptCountryNames: true, showPromptFlags: true },
+      values: { showBorders: true, showCityDots: true, showCityNames: true, showCountryNames: true, showMapFlags: true, showPromptCountryNames: true },
     },
     {
       name: 'medium',
       label: 'Medium',
-      values: { showBorders: true, showCityDots: true, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false, showPromptFlags: false },
+      values: { showBorders: true, showCityDots: true, showCityNames: false, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false },
     },
     {
       name: 'hard',
       label: 'Hard',
-      values: { showBorders: false, showCityDots: false, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false, showPromptFlags: false },
+      values: { showBorders: false, showCityDots: false, showCityNames: false, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false },
     },
   ],
   columnMappings: {
@@ -55,7 +62,6 @@ const capitalsQuizBase = {
   modeConstraints: {
     identify: [
       { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
-      { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one hint must be enabled in identify mode' },
     ],
   },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;

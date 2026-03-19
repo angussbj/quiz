@@ -1,14 +1,12 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useMemo, useRef } from 'react';
+import { motion } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
+import { InlineResults } from '../InlineResults';
 import { useLocateQuiz } from './useLocateQuiz';
 import { LocateFeedback } from './LocateFeedback';
-import { LocateResults } from './LocateResults';
 import styles from './LocateMode.module.css';
-
-const RESULTS_DELAY_MS = 1000;
 
 /**
  * Locate mode: user clicks on the map to locate prompted targets.
@@ -25,10 +23,10 @@ export function LocateMode({
   onFinish,
   forceGiveUp = false,
   reviewing = false,
+  reviewResult,
   initialViewBox,
 }: QuizModeProps) {
   const quiz = useLocateQuiz(elements);
-  const [showResults, setShowResults] = useState(false);
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
@@ -62,56 +60,35 @@ export function LocateMode({
     return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
   }, [elements, quiz.elementStates, toggleDefinitions, toggleValues]);
 
-  const toggleKeys = useMemo(
-    () => toggleDefinitions.map((t) => t.key),
-    [toggleDefinitions],
-  );
-
   const reviewElementStates = useMemo(
     () => reviewing ? buildReviewElementStates(quiz.elementStates) : quiz.elementStates,
     [reviewing, quiz.elementStates],
   );
 
   const reviewElementToggles = useMemo(
-    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
-    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleDefinitions) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
-
-  useEffect(() => {
-    if (!quiz.isFinished) return;
-    const timer = setTimeout(() => setShowResults(true), RESULTS_DELAY_MS);
-    return () => clearTimeout(timer);
-  }, [quiz.isFinished]);
-
-  const handleCloseResults = useCallback(() => setShowResults(false), []);
-  const handleOpenResults = useCallback(() => setShowResults(true), []);
 
   return (
     <div className={styles.container}>
-      {!reviewing && (
-        <div className={styles.promptBar}>
-          {quiz.isFinished ? (
-            <FinishedPrompt
-              correctCount={quiz.correctCount}
-              totalTargets={quiz.totalTargets}
-            />
-          ) : (
-            <PromptDisplay
-              targetLabel={quiz.currentTarget?.label ?? ''}
-              currentIndex={quiz.currentTargetIndex}
-              total={quiz.totalTargets}
-            />
-          )}
-          <div className={styles.controls}>
+      {!reviewing ? (
+        <>
+          <div className={styles.promptBar}>
             {quiz.isFinished ? (
-              <button
-                className={styles.skipButton}
-                onClick={handleOpenResults}
-              >
-                Show results
-              </button>
+              <FinishedPrompt
+                correctCount={quiz.correctCount}
+                totalTargets={quiz.totalTargets}
+              />
             ) : (
-              <>
+              <PromptDisplay
+                targetLabel={quiz.currentTarget?.label ?? ''}
+                currentIndex={quiz.currentTargetIndex}
+                total={quiz.totalTargets}
+              />
+            )}
+            {!quiz.isFinished && (
+              <div className={styles.controls}>
                 <button
                   className={styles.skipButton}
                   onClick={quiz.handleSkip}
@@ -124,10 +101,22 @@ export function LocateMode({
                 >
                   Give up
                 </button>
-              </>
+              </div>
             )}
           </div>
-        </div>
+
+          <div className={styles.scoreBar}>
+            <span className={styles.scoreLabel}>
+              {quiz.correctCount}/{quiz.currentTargetIndex} correct
+            </span>
+            <ProgressBar
+              current={quiz.currentTargetIndex}
+              total={quiz.totalTargets}
+            />
+          </div>
+        </>
+      ) : (
+        reviewResult && <InlineResults result={reviewResult} />
       )}
 
       <div className={styles.visualization}>
@@ -143,31 +132,7 @@ export function LocateMode({
           initialViewBox={initialViewBox}
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
         />
-
-        <AnimatePresence>
-          {showResults && !reviewing && (
-            <LocateResults
-              correctCount={quiz.correctCount}
-              totalTargets={quiz.totalTargets}
-              averageDistance={quiz.averageDistance}
-              totalScore={quiz.totalScore}
-              onClose={handleCloseResults}
-            />
-          )}
-        </AnimatePresence>
       </div>
-
-      {!reviewing && (
-        <div className={styles.scoreBar}>
-          <span className={styles.scoreLabel}>
-            {quiz.correctCount}/{quiz.currentTargetIndex} correct
-          </span>
-          <ProgressBar
-            current={quiz.currentTargetIndex}
-            total={quiz.totalTargets}
-          />
-        </div>
-      )}
     </div>
   );
 }

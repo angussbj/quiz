@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
+import { InlineResults } from '../InlineResults';
 import { useOrderedRecallSession } from './useOrderedRecallSession';
 import styles from './OrderedRecallMode.module.css';
 
@@ -23,6 +24,7 @@ export function OrderedRecallMode({
   onFinish,
   forceGiveUp = false,
   reviewing = false,
+  reviewResult,
 }: QuizModeProps) {
   const quiz = useOrderedRecallSession({
     elements,
@@ -85,19 +87,14 @@ export function OrderedRecallMode({
     return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
   }, [elements, quiz.answeredElementIds, quiz.wrongAttemptsPerElement, toggleDefinitions, toggleValues]);
 
-  const toggleKeys = useMemo(
-    () => toggleDefinitions.map((t) => t.key),
-    [toggleDefinitions],
-  );
-
   const reviewElementStates = useMemo(
     () => reviewing ? buildReviewElementStates(quiz.elementStates) : quiz.elementStates,
     [reviewing, quiz.elementStates],
   );
 
   const reviewElementToggles = useMemo(
-    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
-    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleDefinitions) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
   const progressPercent = quiz.totalPrompts > 0
@@ -121,78 +118,81 @@ export function OrderedRecallMode({
         />
       </div>
 
-      {!reviewing && (
-        <div className={styles.progressRow}>
-          <span className={styles.progressText}>
-            {quiz.correctCount}/{quiz.totalPrompts}
-          </span>
-          <div className={styles.progressBarTrack}>
-            <div
-              className={styles.progressBarFill}
-              style={{ width: `${progressPercent}%` }}
-            />
+      {!reviewing ? (
+        <>
+          <div className={styles.progressRow}>
+            <span className={styles.progressText}>
+              {quiz.correctCount}/{quiz.totalPrompts}
+            </span>
+            <div className={styles.progressBarTrack}>
+              <div
+                className={styles.progressBarFill}
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <span className={styles.progressText}>
+              {Math.round(progressPercent)}%
+            </span>
           </div>
-          <span className={styles.progressText}>
-            {Math.round(progressPercent)}%
-          </span>
-        </div>
-      )}
 
-      {!quiz.isFinished && !reviewing && (
-        <div className={styles.inputRow}>
-          <span className={styles.promptLabel}>
-            {quiz.promptIndex + 1} of {quiz.totalPrompts}
-          </span>
-          <input
-            ref={inputRef}
-            className={inputClassName}
-            type="text"
-            value={inputText}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Type the name..."
-            autoFocus
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-          />
-          <button
-            className={styles.skipButton}
-            onClick={quiz.handleSkip}
-            type="button"
-          >
-            Skip
-          </button>
-          <button
-            className={styles.giveUpButton}
-            onClick={quiz.handleGiveUp}
-            type="button"
-          >
-            Give up
-          </button>
-        </div>
-      )}
+          {!quiz.isFinished && (
+            <div className={styles.inputRow}>
+              <span className={styles.promptLabel}>
+                {quiz.promptIndex + 1} of {quiz.totalPrompts}
+              </span>
+              <input
+                ref={inputRef}
+                className={inputClassName}
+                type="text"
+                value={inputText}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type the name..."
+                autoFocus
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+              />
+              <button
+                className={styles.skipButton}
+                onClick={quiz.handleSkip}
+                type="button"
+              >
+                Skip
+              </button>
+              <button
+                className={styles.giveUpButton}
+                onClick={quiz.handleGiveUp}
+                type="button"
+              >
+                Give up
+              </button>
+            </div>
+          )}
 
-      <AnimatePresence mode="wait">
-        {quiz.lastMatchedAnswer && (
-          <motion.div
-            key={quiz.lastMatchedElementId}
-            className={styles.lastAnswer}
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            ✓ {quiz.lastMatchedAnswer}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={quiz.lastMatchedElementId ?? 'empty'}
+              className={styles.lastAnswer}
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: quiz.lastMatchedAnswer ? 1 : 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              aria-hidden={!quiz.lastMatchedAnswer}
+            >
+              {quiz.lastMatchedAnswer ? `✓ ${quiz.lastMatchedAnswer}` : '\u00a0'}
+            </motion.div>
+          </AnimatePresence>
 
-      {quiz.isFinished && !reviewing && (
-        <div className={styles.finishedMessage}>
-          <span className={styles.scoreHighlight}>{quiz.correctCount}/{quiz.totalPrompts}</span>
-          {quiz.correctCount === quiz.totalPrompts ? ' — Perfect!' : ' answered'}
-        </div>
+          {quiz.isFinished && (
+            <div className={styles.finishedMessage}>
+              <span className={styles.scoreHighlight}>{quiz.correctCount}/{quiz.totalPrompts}</span>
+              {quiz.correctCount === quiz.totalPrompts ? ' — Perfect!' : ' answered'}
+            </div>
+          )}
+        </>
+      ) : (
+        reviewResult && <InlineResults result={reviewResult} />
       )}
     </div>
   );

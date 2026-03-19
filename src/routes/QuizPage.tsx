@@ -121,6 +121,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             dataRows={rows}
             columnMappings={definition.columnMappings}
             toggleDefinitions={definition.toggles}
+            selectToggleDefinitions={definition.selectToggles}
             Renderer={Renderer}
             backgroundPaths={backgroundPaths}
             backgroundLabels={backgroundLabels}

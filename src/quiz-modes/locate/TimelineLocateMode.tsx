@@ -1,10 +1,11 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import type { DatePrecision } from '@/scoring/calculateTimelineLocateScore';
 import { formatTimestamp } from '@/visualizations/timeline/TimelineTimestamp';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
+import { InlineResults } from '../InlineResults';
 import { useTimelineLocateQuiz } from './useTimelineLocateQuiz';
 import styles from './TimelineLocateMode.module.css';
 
@@ -19,6 +20,7 @@ export function TimelineLocateMode({
   onFinish,
   forceGiveUp = false,
   reviewing = false,
+  reviewResult,
 }: QuizModeProps) {
   const rawPrecision = selectValues?.['datePrecision'];
   const datePrecision: DatePrecision =
@@ -27,7 +29,6 @@ export function TimelineLocateMode({
       : 'month';
 
   const quiz = useTimelineLocateQuiz(elements, datePrecision);
-  const [showResults, setShowResults] = useState(false);
   const [dateInput, setDateInput] = useState('');
   const [inputError, setInputError] = useState(false);
 
@@ -63,29 +64,15 @@ export function TimelineLocateMode({
     return resolveElementToggles(toggleDefinitions, toggleValues, elementQuizStates);
   }, [elements, quiz.elementStates, toggleDefinitions, toggleValues]);
 
-  const toggleKeys = useMemo(
-    () => toggleDefinitions.map((t) => t.key),
-    [toggleDefinitions],
-  );
-
   const reviewElementStates = useMemo(
     () => reviewing ? buildReviewElementStates(quiz.elementStates) : quiz.elementStates,
     [reviewing, quiz.elementStates],
   );
 
   const reviewElementToggles = useMemo(
-    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
-    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleDefinitions) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
-
-  useEffect(() => {
-    if (!quiz.isFinished) return;
-    const timer = setTimeout(() => setShowResults(true), 1000);
-    return () => clearTimeout(timer);
-  }, [quiz.isFinished]);
-
-  const handleCloseResults = useCallback(() => setShowResults(false), []);
-  const handleOpenResults = useCallback(() => setShowResults(true), []);
 
   useEffect(() => {
     setDateInput('');
@@ -118,62 +105,74 @@ export function TimelineLocateMode({
 
   return (
     <div className={styles.container}>
-      {!reviewing && (
-        <div className={styles.promptBar}>
-          {quiz.isFinished ? (
-            <FinishedPrompt
-              correctCount={quiz.correctCount}
-              totalTargets={quiz.totalTargets}
-            />
-          ) : (
-            <div className={styles.promptArea}>
-              <PromptDisplay
-                targetLabel={quiz.currentTarget?.label ?? ''}
-                currentIndex={quiz.currentTargetIndex}
-                total={quiz.totalTargets}
-                needsRange={quiz.currentNeedsRange}
-                rangePhase={quiz.rangePhase}
-                pendingStartAnswer={quiz.pendingStartAnswer}
-              />
-              <div className={styles.inputRow}>
-                <input
-                  className={`${styles.dateInput} ${inputError ? styles.dateInputError : ''}`}
-                  type="text"
-                  value={dateInput}
-                  onChange={(e) => {
-                    setDateInput(e.target.value);
-                    setInputError(false);
-                  }}
-                  onKeyDown={handleKeyDown}
-                  placeholder={`Type ${precisionLabel} or click timeline (${placeholderExamples[datePrecision]})`}
-                />
-                <button
-                  className={styles.submitButton}
-                  onClick={handleDateSubmit}
-                  disabled={dateInput.trim() === ''}
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-          )}
-          <div className={styles.controls}>
+      {!reviewing ? (
+        <>
+          <div className={styles.promptBar}>
             {quiz.isFinished ? (
-              <button className={styles.controlButton} onClick={handleOpenResults}>
-                Show results
-              </button>
+              <FinishedPrompt
+                correctCount={quiz.correctCount}
+                totalTargets={quiz.totalTargets}
+              />
             ) : (
-              <>
+              <div className={styles.promptArea}>
+                <PromptDisplay
+                  targetLabel={quiz.currentTarget?.label ?? ''}
+                  currentIndex={quiz.currentTargetIndex}
+                  total={quiz.totalTargets}
+                  needsRange={quiz.currentNeedsRange}
+                  rangePhase={quiz.rangePhase}
+                  pendingStartAnswer={quiz.pendingStartAnswer}
+                />
+                <div className={styles.inputRow}>
+                  <input
+                    className={`${styles.dateInput} ${inputError ? styles.dateInputError : ''}`}
+                    type="text"
+                    value={dateInput}
+                    onChange={(e) => {
+                      setDateInput(e.target.value);
+                      setInputError(false);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    placeholder={`Type ${precisionLabel} or click timeline (${placeholderExamples[datePrecision]})`}
+                  />
+                  <button
+                    className={styles.submitButton}
+                    onClick={handleDateSubmit}
+                    disabled={dateInput.trim() === ''}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            )}
+            {!quiz.isFinished && (
+              <div className={styles.controls}>
                 <button className={styles.controlButton} onClick={quiz.handleSkip}>
                   Skip
                 </button>
                 <button className={styles.controlButton} onClick={quiz.handleGiveUp}>
                   Give up
                 </button>
-              </>
+              </div>
             )}
           </div>
-        </div>
+
+          <div className={styles.scoreBar}>
+            <span className={styles.scoreLabel}>
+              {quiz.correctCount}/{quiz.currentTargetIndex} correct
+            </span>
+            <div className={styles.progressTrack}>
+              <motion.div
+                className={styles.progressFill}
+                initial={{ width: '0%' }}
+                animate={{ width: `${quiz.totalTargets > 0 ? (quiz.currentTargetIndex / quiz.totalTargets) * 100 : 0}%` }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        reviewResult && <InlineResults result={reviewResult} />
       )}
 
       <div className={styles.visualization}>
@@ -186,34 +185,7 @@ export function TimelineLocateMode({
           backgroundPaths={backgroundPaths}
           clustering={clustering}
         />
-
-        <AnimatePresence>
-          {showResults && !reviewing && (
-            <TimelineLocateResults
-              correctCount={quiz.correctCount}
-              totalTargets={quiz.totalTargets}
-              totalScore={quiz.totalScore}
-              onClose={handleCloseResults}
-            />
-          )}
-        </AnimatePresence>
       </div>
-
-      {!reviewing && (
-        <div className={styles.scoreBar}>
-          <span className={styles.scoreLabel}>
-            {quiz.correctCount}/{quiz.currentTargetIndex} correct
-          </span>
-          <div className={styles.progressTrack}>
-            <motion.div
-              className={styles.progressFill}
-              initial={{ width: '0%' }}
-              animate={{ width: `${quiz.totalTargets > 0 ? (quiz.currentTargetIndex / quiz.totalTargets) * 100 : 0}%` }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -274,41 +246,3 @@ function FinishedPrompt({
   );
 }
 
-function TimelineLocateResults({
-  correctCount,
-  totalTargets,
-  totalScore,
-  onClose,
-}: {
-  readonly correctCount: number;
-  readonly totalTargets: number;
-  readonly totalScore: number;
-  readonly onClose: () => void;
-}) {
-  const percentage = totalTargets > 0 ? Math.round((correctCount / totalTargets) * 100) : 0;
-  const avgScore = totalTargets > 0 ? Math.round((totalScore / totalTargets) * 100) : 0;
-
-  return (
-    <motion.div
-      className={styles.resultsOverlay}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <div className={styles.resultsCard}>
-        <h2 className={styles.resultsTitle}>Results</h2>
-        <div className={styles.resultsStat}>
-          <span className={styles.resultsLabel}>Correct</span>
-          <span className={styles.resultsValue}>{correctCount}/{totalTargets} ({percentage}%)</span>
-        </div>
-        <div className={styles.resultsStat}>
-          <span className={styles.resultsLabel}>Average score</span>
-          <span className={styles.resultsValue}>{avgScore}%</span>
-        </div>
-        <button className={styles.resultsClose} onClick={onClose}>
-          Close
-        </button>
-      </div>
-    </motion.div>
-  );
-}

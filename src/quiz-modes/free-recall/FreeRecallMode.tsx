@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
+import { InlineResults } from '../InlineResults';
 import { useFreeRecallSession } from './useFreeRecallSession';
 import styles from './FreeRecallMode.module.css';
 
@@ -27,6 +28,7 @@ export function FreeRecallMode({
   onFinish,
   forceGiveUp = false,
   reviewing = false,
+  reviewResult,
 }: QuizModeProps) {
   const { session, elementToggles, handleTextAnswer, handleGiveUp } = useFreeRecallSession({
     elements,
@@ -66,19 +68,14 @@ export function FreeRecallMode({
     prevCorrectCount.current = session.correctElementIds.length;
   }, [session.correctElementIds.length]);
 
-  const toggleKeys = useMemo(
-    () => toggleDefinitions.map((t) => t.key),
-    [toggleDefinitions],
-  );
-
   const reviewElementStates = useMemo(
     () => reviewing ? buildReviewElementStates(session.elementStates) : session.elementStates,
     [reviewing, session.elementStates],
   );
 
   const reviewElementToggles = useMemo(
-    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
-    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleDefinitions) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
   const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +110,7 @@ export function FreeRecallMode({
         />
       </div>
 
-      {!reviewing && (
+      {!reviewing ? (
         <div className={styles.controls}>
           <div className={styles.progressRow}>
             <span className={styles.progressText}>
@@ -177,6 +174,8 @@ export function FreeRecallMode({
             </div>
           )}
         </div>
+      ) : (
+        reviewResult && <InlineResults result={reviewResult} />
       )}
     </div>
   );

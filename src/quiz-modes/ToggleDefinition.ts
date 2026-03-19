@@ -45,4 +45,6 @@ export interface SelectToggleDefinition {
   readonly group: string;
   /** If set, this toggle only appears in the setup panel for these modes. */
   readonly modes?: ReadonlyArray<string>;
+  /** If set, this select toggle can add a field to the identify mode prompt bar. */
+  readonly promptField?: PromptFieldConfig;
 }

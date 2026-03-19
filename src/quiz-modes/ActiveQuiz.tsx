@@ -3,12 +3,11 @@ import type { VisualizationElement, ElementVisualState } from '@/visualizations/
 import type { VisualizationRendererProps, BackgroundPath, VisualizationType } from '@/visualizations/VisualizationRendererProps';
 import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { ScoreResult } from '@/scoring/ScoreResult';
-import type { ToggleDefinition } from './ToggleDefinition';
+import type { ReviewResult } from './QuizModeProps';
+import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
 import type { QuizConfig } from './QuizShell';
 import { Timer } from './Timer';
 import { resolveMode } from './resolveMode';
-import { QuizResults } from './QuizResults';
-import { ReviewBar } from './ReviewBar';
 import styles from './ActiveQuiz.module.css';
 
 export interface ActiveQuizProps {
@@ -18,6 +17,7 @@ export interface ActiveQuizProps {
   readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
+  readonly selectToggleDefinitions?: ReadonlyArray<SelectToggleDefinition>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
@@ -26,7 +26,7 @@ export interface ActiveQuizProps {
 }
 
 /**
- * Active quiz phase: renders Timer, the resolved mode component, and QuizResults overlay.
+ * Active quiz phase: renders Timer and the resolved mode component.
  * Manages elapsed time and detects quiz completion.
  */
 export function ActiveQuiz({
@@ -36,6 +36,7 @@ export function ActiveQuiz({
   dataRows,
   columnMappings,
   toggleDefinitions,
+  selectToggleDefinitions,
   Renderer,
   backgroundPaths,
   backgroundLabels,
@@ -111,7 +112,6 @@ export function ActiveQuiz({
   const [finishState, setFinishState] = useState<ScoreResult | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [forceGiveUp, setForceGiveUp] = useState(false);
-  const [isReviewing, setIsReviewing] = useState(false);
   const isFinished = finishState !== null;
 
   useEffect(() => {
@@ -132,9 +132,16 @@ export function ActiveQuiz({
     }
   }, [isFinished]);
 
-  const handleReview = useCallback(() => {
-    setIsReviewing(true);
-  }, []);
+  const reviewResult: ReviewResult | undefined = useMemo(() => {
+    if (!finishState) return undefined;
+    return {
+      correct: finishState.correct,
+      total: finishState.total,
+      percentage: finishState.percentage,
+      elapsedSeconds,
+      onRetry: config.onReconfigure,
+    };
+  }, [finishState, elapsedSeconds, config.onReconfigure]);
 
   const Mode = resolveMode(config.selectedMode, visualizationType);
 
@@ -156,6 +163,7 @@ export function ActiveQuiz({
           dataRows={activeDataRows}
           columnMappings={columnMappings}
           toggleDefinitions={toggleDefinitions}
+          selectToggleDefinitions={selectToggleDefinitions}
           toggleValues={config.toggleValues}
           selectValues={config.selectValues}
           Renderer={RangeAwareRenderer}
@@ -163,31 +171,11 @@ export function ActiveQuiz({
           backgroundLabels={backgroundLabels}
           onFinish={handleFinish}
           forceGiveUp={forceGiveUp}
-          reviewing={isReviewing}
+          reviewing={isFinished}
+          reviewResult={reviewResult}
           initialViewBox={initialViewBox}
         />
       </div>
-
-      {isFinished && !isReviewing && (
-        <QuizResults
-          correct={finishState.correct}
-          total={finishState.total}
-          percentage={finishState.percentage}
-          elapsedSeconds={elapsedSeconds}
-          onRetry={config.onReconfigure}
-          onReview={config.selectedMode !== 'multiple-choice' ? handleReview : undefined}
-        />
-      )}
-
-      {isReviewing && finishState && (
-        <ReviewBar
-          correct={finishState.correct}
-          total={finishState.total}
-          percentage={finishState.percentage}
-          elapsedSeconds={elapsedSeconds}
-          onRetry={config.onReconfigure}
-        />
-      )}
     </div>
   );
 }

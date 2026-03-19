@@ -50,6 +50,15 @@
   user-select: none;
 }
 
+.cityLabel {
+  fill: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-weight: 500;
+  pointer-events: none;
+  user-select: none;
+  dominant-baseline: central;
+}
+
 .backgroundLabel {
   fill: var(--color-text-secondary);
   font-family: var(--font-family);

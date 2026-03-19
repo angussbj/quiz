@@ -14,9 +14,8 @@ function makeElements(count: number): ReadonlyArray<VisualizationElement> {
   }));
 }
 
-/** Mock renderer that exposes element click buttons and the highlighted element. */
-function MockRenderer({ elements, onElementClick, elementStates }: VisualizationRendererProps) {
-  const highlightedId = Object.entries(elementStates).find(([, s]) => s === 'highlighted')?.[0];
+/** Mock renderer that exposes element click buttons. */
+function MockRenderer({ elements, onElementClick }: VisualizationRendererProps) {
   return (
     <div data-testid="visualization">
       {elements.map((el) => (
@@ -24,7 +23,6 @@ function MockRenderer({ elements, onElementClick, elementStates }: Visualization
           {el.label}
         </button>
       ))}
-      {highlightedId && <span data-testid="target">{highlightedId}</span>}
     </div>
   );
 }
@@ -69,19 +67,37 @@ describe('IdentifyMode', () => {
     expect(screen.getByTestId('visualization')).toBeInTheDocument();
   });
 
-  it('highlights the current element via elementStates', () => {
-    renderIdentifyMode();
-    expect(screen.getByTestId('target')).toBeInTheDocument();
+  it('does not highlight the current element in elementStates', () => {
+    const elements = makeElements(3);
+    let capturedStates: Readonly<Record<string, string>> = {};
+    function CapturingRenderer(props: VisualizationRendererProps) {
+      capturedStates = props.elementStates;
+      return <div data-testid="visualization" />;
+    }
+    render(
+      <IdentifyMode
+        elements={elements}
+        dataRows={[]}
+        columnMappings={{}}
+        toggleDefinitions={[]}
+        toggleValues={{}}
+        Renderer={CapturingRenderer}
+        onFinish={jest.fn()}
+      />,
+    );
+    const states = Object.values(capturedStates);
+    expect(states).not.toContain('highlighted');
+    expect(states.every((s) => s === 'default')).toBe(true);
   });
 
   it('clicking the correct element advances progress', async () => {
     const user = userEvent.setup();
     renderIdentifyMode(3);
 
-    const targetId = screen.getByTestId('target').textContent ?? '';
-    const targetLabel = `City ${targetId.replace('el-', '')}`;
+    // Read the prompted label from "Click on <label>"
+    const promptLabel = screen.getByText(/Click on/).querySelector('span')?.textContent ?? '';
 
-    await user.click(screen.getByRole('button', { name: targetLabel }));
+    await user.click(screen.getByRole('button', { name: promptLabel }));
 
     expect(screen.getByText('1/3')).toBeInTheDocument();
   });
@@ -90,8 +106,8 @@ describe('IdentifyMode', () => {
     const user = userEvent.setup();
     renderIdentifyMode(3);
 
-    const targetId = screen.getByTestId('target').textContent ?? '';
-    const wrongLabel = targetId === 'el-0' ? 'City 1' : 'City 0';
+    const promptLabel = screen.getByText(/Click on/).querySelector('span')?.textContent ?? '';
+    const wrongLabel = promptLabel === 'City 0' ? 'City 1' : 'City 0';
 
     await user.click(screen.getByRole('button', { name: wrongLabel }));
 

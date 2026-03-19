@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
+import { InlineResults } from '../InlineResults';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
 import { IdentifyPromptFields, type PromptField } from './IdentifyPromptFields';
 import styles from './IdentifyMode.module.css';
@@ -15,7 +16,9 @@ export function IdentifyMode({
   elements,
   dataRows,
   toggleDefinitions,
+  selectToggleDefinitions = [],
   toggleValues = {},
+  selectValues = {},
   Renderer,
   backgroundPaths,
   backgroundLabels,
@@ -24,6 +27,7 @@ export function IdentifyMode({
   onFinish,
   forceGiveUp = false,
   reviewing = false,
+  reviewResult,
 }: QuizModeProps) {
   const quiz = useIdentifyQuiz(elements);
 
@@ -90,19 +94,14 @@ export function IdentifyMode({
     return overrides;
   }, [elements, quiz.answeredElementIds, quiz.wrongAttemptsPerElement, quiz.elementStates, toggleDefinitions, toggleValues]);
 
-  const toggleKeys = useMemo(
-    () => toggleDefinitions.map((t) => t.key),
-    [toggleDefinitions],
-  );
-
   const reviewElementStates = useMemo(
     () => reviewing ? buildReviewElementStates(quiz.elementStates) : quiz.elementStates,
     [reviewing, quiz.elementStates],
   );
 
   const reviewElementToggles = useMemo(
-    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleKeys) : elementToggles,
-    [reviewing, elementToggles, reviewElementStates, toggleKeys],
+    () => reviewing ? buildReviewElementToggles(elementToggles, reviewElementStates, toggleDefinitions) : elementToggles,
+    [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
   const rowById = useMemo(() => {
@@ -113,6 +112,10 @@ export function IdentifyMode({
     }
     return map;
   }, [dataRows]);
+
+  const currentWrongAttempts = quiz.currentElementId
+    ? (quiz.wrongAttemptsPerElement[quiz.currentElementId] ?? 0)
+    : 0;
 
   const promptFields = useMemo((): ReadonlyArray<PromptField> => {
     if (!quiz.currentElementId) return [];
@@ -128,8 +131,18 @@ export function IdentifyMode({
         fields.push({ type: toggleDef.promptField.type, value });
       }
     }
+    for (const selectDef of selectToggleDefinitions) {
+      if (!selectDef.promptField) continue;
+      const selectValue = selectValues[selectDef.key] ?? selectDef.defaultValue;
+      if (selectValue === 'off') continue;
+      if (selectValue === 'hint' && currentWrongAttempts < 1) continue;
+      const value = row[selectDef.promptField.column];
+      if (value) {
+        fields.push({ type: selectDef.promptField.type, value });
+      }
+    }
     return fields;
-  }, [quiz.currentElementId, rowById, toggleDefinitions, toggleValues]);
+  }, [quiz.currentElementId, rowById, toggleDefinitions, toggleValues, selectToggleDefinitions, selectValues, currentWrongAttempts]);
 
   const progressPercent = quiz.totalPrompts > 0
     ? (quiz.correctCount + quiz.skippedCount) / quiz.totalPrompts * 100
@@ -137,61 +150,65 @@ export function IdentifyMode({
 
   return (
     <div className={styles.container}>
-      {!reviewing && (
-        <div className={styles.progressBar}>
-          <motion.div
-            className={styles.progressFill}
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercent}%` }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-          />
-        </div>
-      )}
-
-      {!quiz.isFinished && !reviewing && (
-        <div className={styles.promptBar}>
-          {promptFields.length > 0 && <IdentifyPromptFields fields={promptFields} />}
-          <span className={styles.promptText}>
-            Click on <span className={styles.promptLabel}>{quiz.currentElementLabel}</span>
-          </span>
-          <span className={styles.progress}>
-            {quiz.correctCount + quiz.skippedCount}/{quiz.totalPrompts}
-          </span>
-          <div className={styles.controls}>
-            <button
-              className={styles.skipButton}
-              onClick={handleSkip}
-              type="button"
-            >
-              Skip
-            </button>
-            <button
-              className={styles.giveUpButton}
-              onClick={handleGiveUp}
-              type="button"
-            >
-              Give up
-            </button>
+      {!reviewing ? (
+        <>
+          <div className={styles.progressBar}>
+            <motion.div
+              className={styles.progressFill}
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />
           </div>
-        </div>
-      )}
 
-      {quiz.isFinished && !reviewing && (
-        <div className={styles.promptBar}>
-          <div className={styles.finishedOverlay}>
-            <motion.span
-              className={styles.finishedPercentage}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-            >
-              {quiz.score.percentage}%
-            </motion.span>
-            <span className={styles.finishedScore}>
-              {quiz.correctCount} of {quiz.totalPrompts} correct
-            </span>
-          </div>
-        </div>
+          {!quiz.isFinished && (
+            <div className={styles.promptBar}>
+              {promptFields.length > 0 && <IdentifyPromptFields fields={promptFields} />}
+              <span className={styles.promptText}>
+                Click on <span className={styles.promptLabel}>{quiz.currentElementLabel}</span>
+              </span>
+              <span className={styles.progress}>
+                {quiz.correctCount + quiz.skippedCount}/{quiz.totalPrompts}
+              </span>
+              <div className={styles.controls}>
+                <button
+                  className={styles.skipButton}
+                  onClick={handleSkip}
+                  type="button"
+                >
+                  Skip
+                </button>
+                <button
+                  className={styles.giveUpButton}
+                  onClick={handleGiveUp}
+                  type="button"
+                >
+                  Give up
+                </button>
+              </div>
+            </div>
+          )}
+
+          {quiz.isFinished && (
+            <div className={styles.promptBar}>
+              <div className={styles.finishedOverlay}>
+                <motion.span
+                  className={styles.finishedPercentage}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                >
+                  {quiz.score.percentage}%
+                </motion.span>
+                <span className={styles.finishedScore}>
+                  {quiz.correctCount} of {quiz.totalPrompts} correct
+                </span>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        reviewResult && <InlineResults result={reviewResult} />
       )}
 
       <div className={styles.visualizationArea}>

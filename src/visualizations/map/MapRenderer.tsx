@@ -284,7 +284,7 @@ function MapContent({
         );
       })}
 
-      {/* City dot markers (rendered last = on top of flags) */}
+      {/* City dot markers */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
@@ -310,6 +310,25 @@ function MapContent({
                 : undefined
             }
           />
+        );
+      })}
+
+      {/* City name labels (rendered on top of dots) */}
+      {elements.map((element) => {
+        if (clusteredElementIds.has(element.id)) return null;
+        const state = elementStates[element.id];
+        if (state === 'hidden') return null;
+        if (!elementToggle(elementToggles, toggles, element.id, 'showCityNames')) return null;
+        return (
+          <text
+            key={`city-label-${element.id}`}
+            x={element.viewBoxCenter.x + dotRadius * 1.5}
+            y={element.viewBoxCenter.y}
+            className={styles.cityLabel}
+            style={{ fontSize: `${dotRadius * 2}px` }}
+          >
+            {element.label}
+          </text>
         );
       })}
     </g>

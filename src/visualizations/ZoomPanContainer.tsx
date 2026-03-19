@@ -137,10 +137,18 @@ export function ZoomPanContainer({
     return computeInitialTransform(effectiveInitialViewBox, viewBox, containerSize);
   }, [effectiveInitialViewBox, viewBox, containerSize]);
 
+  // Stable key: lock after first valid camera so container resizes
+  // (e.g., switching to review mode) don't remount TransformWrapper.
+  const stableKeyRef = useRef<string | undefined>(undefined);
+  if (initialCamera && stableKeyRef.current === undefined) {
+    stableKeyRef.current = `cam-${initialCamera.scale.toFixed(2)}`;
+  }
+  const wrapperKey = stableKeyRef.current ?? (initialCamera ? `cam-${initialCamera.scale.toFixed(2)}` : 'default');
+
   return (
     <div ref={containerRef} className={styles.container}>
       <TransformWrapper
-        key={initialCamera ? `cam-${initialCamera.scale.toFixed(2)}` : 'default'}
+        key={wrapperKey}
         initialScale={initialCamera?.scale ?? 1}
         initialPositionX={initialCamera?.posX}
         initialPositionY={initialCamera?.posY}

@@ -1,4 +1,4 @@
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { VisualizationRendererProps } from '@/visualizations/VisualizationRendererProps';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
@@ -102,7 +102,7 @@ describe('LocateMode', () => {
     expect(newPrompt).not.toBe(initialPrompt);
   });
 
-  it('shows finished message after give up, then results after delay', async () => {
+  it('shows finished message after give up', async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     renderLocateMode();
 
@@ -110,38 +110,9 @@ describe('LocateMode', () => {
 
     // Finished message appears immediately
     expect(screen.getByText(/Finished/)).toBeInTheDocument();
-    // Results not shown yet
-    expect(screen.queryByText('Results')).not.toBeInTheDocument();
-
-    // After 1s delay, results overlay appears
-    act(() => { jest.advanceTimersByTime(1100); });
-    await waitFor(() => {
-      expect(screen.getByText('Results')).toBeInTheDocument();
-    });
-  });
-
-  it('can dismiss and reopen results', async () => {
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    renderLocateMode();
-
-    await user.click(screen.getByRole('button', { name: 'Give up' }));
-    act(() => { jest.advanceTimersByTime(1100); });
-
-    await waitFor(() => {
-      expect(screen.getByText('Results')).toBeInTheDocument();
-    });
-
-    // Close results
-    await user.click(screen.getByRole('button', { name: 'View map' }));
-    await waitFor(() => {
-      expect(screen.queryByText('Results')).not.toBeInTheDocument();
-    });
-
-    // Reopen results
-    await user.click(screen.getByRole('button', { name: 'Show results' }));
-    await waitFor(() => {
-      expect(screen.getByText('Results')).toBeInTheDocument();
-    });
+    // Skip and Give up buttons are gone
+    expect(screen.queryByRole('button', { name: 'Skip' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Give up' })).not.toBeInTheDocument();
   });
 
   it('shows score bar with correct count', async () => {

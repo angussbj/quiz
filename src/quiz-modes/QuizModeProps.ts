@@ -2,7 +2,7 @@ import type { ComponentType } from 'react';
 import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
 import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
-import type { ToggleDefinition } from './ToggleDefinition';
+import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 
 /**
@@ -11,11 +11,20 @@ import type { ScoreResult } from '@/scoring/ScoreResult';
  * Modes that don't use a particular prop (e.g. MultipleChoice ignoring Renderer)
  * simply don't destructure it.
  */
+export interface ReviewResult {
+  readonly correct: number;
+  readonly total: number;
+  readonly percentage: number;
+  readonly elapsedSeconds: number;
+  readonly onRetry: () => void;
+}
+
 export interface QuizModeProps {
   readonly elements: ReadonlyArray<VisualizationElement>;
   readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly columnMappings: Readonly<Record<string, string>>;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
+  readonly selectToggleDefinitions?: ReadonlyArray<SelectToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly selectValues?: Readonly<Record<string, string>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
@@ -26,4 +35,5 @@ export interface QuizModeProps {
   readonly onFinish: (score: ScoreResult) => void;
   readonly forceGiveUp?: boolean;
   readonly reviewing?: boolean;
+  readonly reviewResult?: ReviewResult;
 }
