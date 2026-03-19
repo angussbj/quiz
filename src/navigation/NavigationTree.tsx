@@ -60,7 +60,7 @@ function TreeNode({ node, path, expandedPaths, onTogglePath, searchQuery }: Tree
   if (isLeaf) {
     return (
       <li className={styles.nodeItem}>
-        <Link to={`/quiz/${node.quizId}`} className={styles.quizLink}>
+        <Link to={`/${node.quizId}`} className={styles.quizLink}>
           <HighlightedLabel label={node.label} query={searchQuery} />
         </Link>
       </li>

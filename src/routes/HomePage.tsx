@@ -12,7 +12,7 @@ export default function HomePage() {
 
   const categorySegments = useMemo(() => {
     const path = location.pathname;
-    if (path === '/' || path.startsWith('/quiz/')) return [];
+    if (path === '/') return [];
     return path.split('/').filter(Boolean).map(decodeURIComponent);
   }, [location.pathname]);
 

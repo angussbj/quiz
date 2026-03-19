@@ -17,7 +17,7 @@ describe('Breadcrumbs', () => {
   });
 
   it('renders quiz breadcrumbs with path segments', () => {
-    renderBreadcrumbs('/quiz/geo-capitals-europe');
+    renderBreadcrumbs('/geo-capitals-europe');
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Geography')).toBeInTheDocument();
     expect(screen.getByText('Capitals')).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe('Breadcrumbs', () => {
   });
 
   it('makes intermediate segments clickable links', () => {
-    renderBreadcrumbs('/quiz/geo-capitals-europe');
+    renderBreadcrumbs('/geo-capitals-europe');
     const homeLink = screen.getByText('Home');
     expect(homeLink.closest('a')).toHaveAttribute('href', '/');
 
@@ -37,7 +37,7 @@ describe('Breadcrumbs', () => {
   });
 
   it('marks the last segment as current page', () => {
-    renderBreadcrumbs('/quiz/geo-capitals-europe');
+    renderBreadcrumbs('/geo-capitals-europe');
     const current = screen.getByText('European Capitals');
     expect(current).toHaveAttribute('aria-current', 'page');
   });
@@ -49,9 +49,10 @@ describe('Breadcrumbs', () => {
     expect(screen.getByText('Capitals')).toBeInTheDocument();
   });
 
-  it('renders nothing for unknown quiz IDs', () => {
-    const { container } = renderBreadcrumbs('/quiz/nonexistent');
-    expect(container.querySelector('nav')).toBeNull();
+  it('renders category breadcrumbs for unknown single-segment paths', () => {
+    renderBreadcrumbs('/nonexistent');
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Nonexistent')).toBeInTheDocument();
   });
 
   it('capitalizes category URL segments', () => {

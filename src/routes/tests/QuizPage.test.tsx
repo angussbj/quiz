@@ -5,9 +5,9 @@ import QuizPage from '../QuizPage';
 
 function renderQuizPage(quizId: string) {
   return render(
-    <MemoryRouter initialEntries={[`/quiz/${quizId}`]}>
+    <MemoryRouter initialEntries={[`/${quizId}`]}>
       <Routes>
-        <Route path="/quiz/*" element={<QuizPage />} />
+        <Route path="/*" element={<QuizPage />} />
       </Routes>
     </MemoryRouter>,
   );

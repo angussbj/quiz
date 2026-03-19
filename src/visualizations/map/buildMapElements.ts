@@ -30,7 +30,7 @@ export function buildMapElements(
       },
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
-      svgPathData: wrapPathCoordinates(row['paths'] ?? ''),
+      svgPathData: (row['paths'] ?? '').split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' '),
       code: row[codeColumn] ?? id,
     };
   });

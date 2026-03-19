@@ -71,6 +71,7 @@ const countriesQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
     { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
   ],
@@ -78,17 +79,17 @@ const countriesQuizBase = {
     {
       name: 'easy',
       label: 'Easy',
-      values: { showBorders: true, showCountryNames: true, showMapFlags: true },
+      values: { showBorders: true, showCityDots: false, showCountryNames: true, showMapFlags: true },
     },
     {
       name: 'medium',
       label: 'Medium',
-      values: { showBorders: true, showCountryNames: false, showMapFlags: false },
+      values: { showBorders: true, showCityDots: false, showCountryNames: false, showMapFlags: false },
     },
     {
       name: 'hard',
       label: 'Hard',
-      values: { showBorders: false, showCountryNames: false, showMapFlags: false },
+      values: { showBorders: false, showCityDots: false, showCountryNames: false, showMapFlags: false },
     },
   ],
   columnMappings: {

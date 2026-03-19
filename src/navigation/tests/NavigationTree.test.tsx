@@ -71,7 +71,7 @@ describe('NavigationTree', () => {
   it('renders quiz links with correct href', () => {
     renderTree(new Set(['Geography']));
     const link = screen.getByRole('link', { name: 'Capitals' });
-    expect(link).toHaveAttribute('href', '/quiz/caps');
+    expect(link).toHaveAttribute('href', '/caps');
   });
 
   it('has accessible navigation landmark', () => {

@@ -42,8 +42,8 @@ export function Breadcrumbs() {
 
   let segments: ReadonlyArray<BreadcrumbSegment>;
 
-  if (pathname.startsWith('/quiz/')) {
-    const quizId = pathname.slice('/quiz/'.length);
+  const quizId = pathname.slice(1);
+  if (getQuizById(quizId)) {
     const quizSegments = buildQuizBreadcrumbs(quizId);
     if (!quizSegments) return null;
     segments = quizSegments;
