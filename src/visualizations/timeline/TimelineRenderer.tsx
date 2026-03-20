@@ -238,8 +238,11 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   const tooltipTextRef = useRef('');
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
-      // Don't show tooltip when labels are hidden for this element
-      if (!elementToggle(elementToggles, toggles, element.id, 'showLabels')) return;
+      if (!elementToggle(elementToggles, toggles, element.id, 'showLabels')) {
+        tooltipTextRef.current = '';
+        setTooltip(null);
+        return;
+      }
       const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
       tooltipTextRef.current = text;
       setTooltip({ x: event.clientX, y: event.clientY, text });
@@ -247,6 +250,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     [elementToggles, toggles],
   );
   const handleBarMouseMove = useCallback((event: React.MouseEvent) => {
+    if (!tooltipTextRef.current) return;
     setTooltip({ x: event.clientX, y: event.clientY, text: tooltipTextRef.current });
   }, []);
   const handleBarMouseLeave = useCallback(() => setTooltip(null), []);
