@@ -1,13 +1,13 @@
 /**
- * Computes initial label_position values for world-capitals.csv.
+ * Computes initial label_position values for a city CSV file.
  *
  * Heuristic: for each city A, if any city B's dot falls in the approximate
  * area where A's right-side label would render, flip A to 'left'.
  *
- * Usage: npx tsx scripts/computeCityLabelPositions.ts
+ * Usage: npx tsx scripts/computeCityLabelPositions.ts [csv-path]
  *
- * Writes the updated CSV back to public/data/capitals/world-capitals.csv
- * with a new `label_position` column.
+ * If no path is given, defaults to public/data/capitals/world-capitals.csv.
+ * Writes the updated CSV back in place with updated `label_position` column.
  */
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -15,7 +15,9 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CSV_PATH = resolve(__dirname, '../public/data/capitals/world-capitals.csv');
+const CSV_PATH = process.argv[2]
+  ? resolve(process.argv[2])
+  : resolve(__dirname, '../public/data/capitals/world-capitals.csv');
 
 interface City {
   id: string;
