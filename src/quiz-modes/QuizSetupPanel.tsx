@@ -91,8 +91,8 @@ export function QuizSetupPanel({
     [modeConstraints, selectedMode],
   );
   const constraintResult = useMemo(
-    () => resolveToggleConstraints(activeConstraints, toggleValues),
-    [activeConstraints, toggleValues],
+    () => resolveToggleConstraints(activeConstraints, toggleValues, selectValues),
+    [activeConstraints, toggleValues, selectValues],
   );
 
   // Merge forced values into the displayed toggle values

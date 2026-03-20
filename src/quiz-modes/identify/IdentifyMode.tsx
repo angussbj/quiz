@@ -5,7 +5,8 @@ import { resolveElementToggles, type ElementQuizState } from '../resolveElementT
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { InlineResults } from '../InlineResults';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
-import { IdentifyPromptFields, type PromptField } from './IdentifyPromptFields';
+import { IdentifyPromptFields } from './IdentifyPromptFields';
+import { buildPromptFields } from '../buildPromptFields';
 import styles from './IdentifyMode.module.css';
 
 /**
@@ -118,31 +119,11 @@ export function IdentifyMode({
     ? (quiz.wrongAttemptsPerElement[quiz.currentElementId] ?? 0)
     : 0;
 
-  const promptFields = useMemo((): ReadonlyArray<PromptField> => {
+  const promptFields = useMemo(() => {
     if (!quiz.currentElementId) return [];
     const row = rowById.get(quiz.currentElementId);
     if (!row) return [];
-
-    const fields: PromptField[] = [];
-    for (const toggleDef of toggleDefinitions) {
-      if (!toggleDef.promptField) continue;
-      if (!toggleValues[toggleDef.key]) continue;
-      const value = row[toggleDef.promptField.column];
-      if (value) {
-        fields.push({ type: toggleDef.promptField.type, value });
-      }
-    }
-    for (const selectDef of selectToggleDefinitions) {
-      if (!selectDef.promptField) continue;
-      const selectValue = selectValues[selectDef.key] ?? selectDef.defaultValue;
-      if (selectValue === 'off') continue;
-      if (selectValue === 'hint' && currentWrongAttempts < 1) continue;
-      const value = row[selectDef.promptField.column];
-      if (value) {
-        fields.push({ type: selectDef.promptField.type, value });
-      }
-    }
-    return fields;
+    return buildPromptFields(row, toggleDefinitions, toggleValues, selectToggleDefinitions, selectValues, currentWrongAttempts);
   }, [quiz.currentElementId, rowById, toggleDefinitions, toggleValues, selectToggleDefinitions, selectValues, currentWrongAttempts]);
 
   const progressPercent = quiz.totalPrompts > 0

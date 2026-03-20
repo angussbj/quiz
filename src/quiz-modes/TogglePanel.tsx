@@ -124,37 +124,45 @@ export function TogglePanel({
             })}
             {filteredSelectToggles
               .filter((st) => st.group === group)
-              .map((selectToggle) => (
-                <div key={selectToggle.key} className={styles.selectRow}>
-                  <span className={styles.selectLabel}>{selectToggle.label}</span>
-                  <SegmentedControl
-                    options={selectToggle.options}
-                    value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
-                    onChange={(value) => onSelectChange?.(selectToggle.key, value)}
-                  />
-                </div>
-              ))}
+              .map((selectToggle) => {
+                const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
+                return (
+                  <div key={selectToggle.key} className={styles.selectRow}>
+                    <span className={styles.selectLabel}>{selectToggle.label}</span>
+                    <SegmentedControl
+                      options={selectToggle.options}
+                      value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
+                      onChange={(value) => onSelectChange?.(selectToggle.key, value)}
+                      preventOff={cannotDisable}
+                    />
+                  </div>
+                );
+              })}
           </div>
         </section>
       ))}
 
       {filteredSelectToggles
         .filter((st) => !groups.some((g) => g.group === st.group))
-        .map((selectToggle) => (
-          <section key={selectToggle.key} className={styles.section}>
-            <h2 className={styles.sectionTitle}>{formatGroupLabel(selectToggle.group)}</h2>
-            <div className={styles.toggleList}>
-              <div className={styles.selectRow}>
-                <span className={styles.selectLabel}>{selectToggle.label}</span>
-                <SegmentedControl
-                  options={selectToggle.options}
-                  value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
-                  onChange={(value) => onSelectChange?.(selectToggle.key, value)}
-                />
+        .map((selectToggle) => {
+          const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
+          return (
+            <section key={selectToggle.key} className={styles.section}>
+              <h2 className={styles.sectionTitle}>{formatGroupLabel(selectToggle.group)}</h2>
+              <div className={styles.toggleList}>
+                <div className={styles.selectRow}>
+                  <span className={styles.selectLabel}>{selectToggle.label}</span>
+                  <SegmentedControl
+                    options={selectToggle.options}
+                    value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
+                    onChange={(value) => onSelectChange?.(selectToggle.key, value)}
+                    preventOff={cannotDisable}
+                  />
+                </div>
               </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
     </div>
   );
 }
@@ -163,23 +171,31 @@ function SegmentedControl({
   options,
   value,
   onChange,
+  preventOff = false,
 }: {
   readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
   readonly value: string;
   readonly onChange: (value: string) => void;
+  readonly preventOff?: boolean;
 }) {
   return (
     <div className={styles.segmentedControl}>
-      {options.map((option) => (
-        <button
-          key={option.value}
-          className={styles.segmentButton}
-          data-active={option.value === value || undefined}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-        </button>
-      ))}
+      {options.map((option) => {
+        const isDisabled = preventOff && option.value === 'off';
+        return (
+          <button
+            key={option.value}
+            className={styles.segmentButton}
+            data-active={option.value === value || undefined}
+            disabled={isDisabled}
+            onClick={() => {
+              if (!isDisabled) onChange(option.value);
+            }}
+          >
+            {option.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

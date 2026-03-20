@@ -50,6 +50,12 @@
   transition: width var(--transition-normal);
 }
 
+.promptFieldsRow {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-md);
+}
+
 .inputRow {
   display: flex;
   gap: var(--spacing-sm);

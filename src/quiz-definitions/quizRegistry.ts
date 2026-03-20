@@ -23,10 +23,10 @@ const capitalsQuizBase = {
     { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify'] } as const,
+    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify', 'prompted-recall'] } as const,
   ],
   selectToggles: [
-    { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: 'off', group: 'display', modes: ['identify'], promptField: { type: 'flag', column: 'code' }, options: [
+    { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: 'off', group: 'display', modes: ['identify', 'prompted-recall'], promptField: { type: 'flag', column: 'country_code' }, options: [
       { value: 'off', label: 'Off' },
       { value: 'hint', label: 'Hint' },
       { value: 'on', label: 'On' },
@@ -62,6 +62,10 @@ const capitalsQuizBase = {
   modeConstraints: {
     identify: [
       { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
+      { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one prompt hint is required' },
+    ],
+    'prompted-recall': [
+      { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one prompt hint is required' },
     ],
   },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;

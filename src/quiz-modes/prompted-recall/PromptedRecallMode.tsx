@@ -5,6 +5,8 @@ import { resolveElementToggles, type ElementQuizState } from '../resolveElementT
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { InlineResults } from '../InlineResults';
 import { usePromptedRecallQuiz } from './usePromptedRecallQuiz';
+import { IdentifyPromptFields } from '../identify/IdentifyPromptFields';
+import { buildPromptFields } from '../buildPromptFields';
 import styles from './PromptedRecallMode.module.css';
 
 /**
@@ -17,7 +19,9 @@ export function PromptedRecallMode({
   dataRows,
   columnMappings,
   toggleDefinitions,
+  selectToggleDefinitions = [],
   toggleValues = {},
+  selectValues = {},
   Renderer,
   backgroundPaths,
   clustering,
@@ -100,6 +104,26 @@ export function PromptedRecallMode({
     [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
+  const rowById = useMemo(() => {
+    const map = new Map<string, Readonly<Record<string, string>>>();
+    for (const row of dataRows) {
+      const id = row['id'];
+      if (id) map.set(id, row);
+    }
+    return map;
+  }, [dataRows]);
+
+  const currentWrongAttempts = quiz.currentElementId
+    ? (quiz.wrongAttemptsPerElement[quiz.currentElementId] ?? 0)
+    : 0;
+
+  const promptFields = useMemo(() => {
+    if (!quiz.currentElementId) return [];
+    const row = rowById.get(quiz.currentElementId);
+    if (!row) return [];
+    return buildPromptFields(row, toggleDefinitions, toggleValues, selectToggleDefinitions, selectValues, currentWrongAttempts);
+  }, [quiz.currentElementId, rowById, toggleDefinitions, toggleValues, selectToggleDefinitions, selectValues, currentWrongAttempts]);
+
   const progressPercent = quiz.totalPrompts > 0
     ? (quiz.correctCount + quiz.skippedCount) / quiz.totalPrompts * 100
     : 0;
@@ -139,6 +163,12 @@ export function PromptedRecallMode({
                 {Math.round(progressPercent)}%
               </span>
             </div>
+
+            {!quiz.isFinished && promptFields.length > 0 && (
+              <div className={styles.promptFieldsRow}>
+                <IdentifyPromptFields fields={promptFields} />
+              </div>
+            )}
 
             {!quiz.isFinished && (
               <div className={styles.inputRow}>
