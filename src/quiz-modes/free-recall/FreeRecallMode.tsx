@@ -91,6 +91,11 @@ export function FreeRecallMode({
     }
   }, []);
 
+  const putInView = useMemo(
+    () => (session.lastMatchedElementId ? [session.lastMatchedElementId] : undefined),
+    [session.lastMatchedElementId],
+  );
+
   const isFinished = session.status === 'finished';
   const correctCount = session.correctElementIds.length;
   const totalCount = correctCount + session.remainingElementIds.length;
@@ -109,6 +114,7 @@ export function FreeRecallMode({
           backgroundLabels={backgroundLabels}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
+          putInView={putInView}
         />
       </div>
 

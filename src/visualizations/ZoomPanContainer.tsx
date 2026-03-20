@@ -25,6 +25,8 @@ interface ZoomPanContainerProps {
   readonly initialCameraPosition?: ViewBox;
   /** Background paths used to expand the viewBox so panning reveals all content. */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  /** Element IDs to bring into view when this array reference changes. Zooms out if needed; never zooms in. */
+  readonly putInView?: ReadonlyArray<string>;
 }
 
 interface ContainerSize {
@@ -103,6 +105,7 @@ export function ZoomPanContainer({
   onClusterClick,
   initialCameraPosition,
   backgroundPaths,
+  putInView,
 }: ZoomPanContainerProps) {
   const viewBox = useMemo(
     () => computeViewBox(elements, backgroundPaths),
@@ -171,6 +174,7 @@ export function ZoomPanContainer({
           onClusterClick={onClusterClick}
           initialCameraPosition={effectiveCameraPosition}
           initialScale={initialCamera?.scale ?? 1}
+          putInView={putInView}
         >
           {children}
         </ZoomPanInner>
@@ -189,6 +193,7 @@ interface ZoomPanInnerProps {
   readonly onClusterClick?: (cluster: ElementCluster) => void;
   readonly initialCameraPosition?: ViewBox;
   readonly initialScale: number;
+  readonly putInView?: ReadonlyArray<string>;
 }
 
 function ZoomPanInner({
@@ -201,6 +206,7 @@ function ZoomPanInner({
   onClusterClick,
   initialCameraPosition,
   initialScale,
+  putInView,
 }: ZoomPanInnerProps) {
   const { setTransform, centerView } = useControls();
   const scaleRef = useRef(initialScale);
@@ -277,10 +283,21 @@ function ZoomPanInner({
 
   // Debounce scale changes for cluster computation so smooth zoom animations
   // don't trigger expensive recalculations on every quantised step.
-  const CLUSTER_DEBOUNCE_MS = 50;
+  // Throttle scale changes for cluster computation so smooth zoom animations
+  // don't trigger expensive recalculations on every quantised step. Uses a
+  // trailing-edge throttle: waits at least 50ms after the first change, then
+  // updates every 50ms while zoom continues.
+  const CLUSTER_THROTTLE_MS = 50;
   const [clusterScale, setClusterScale] = useState(quantisedScale);
+  const lastClusterUpdateRef = useRef(0);
   useEffect(() => {
-    const timer = setTimeout(() => setClusterScale(quantisedScale), CLUSTER_DEBOUNCE_MS);
+    const now = Date.now();
+    const elapsed = now - lastClusterUpdateRef.current;
+    const delay = Math.max(0, CLUSTER_THROTTLE_MS - elapsed);
+    const timer = setTimeout(() => {
+      lastClusterUpdateRef.current = Date.now();
+      setClusterScale(quantisedScale);
+    }, delay);
     return () => clearTimeout(timer);
   }, [quantisedScale]);
 
@@ -364,6 +381,61 @@ function ZoomPanInner({
     },
     [elements, containerSize, viewBox, basePixelsPerViewBoxUnit, onClusterClick, setTransform],
   );
+
+  // Bring specified elements into view when putInView changes.
+  // Zooms out if needed to show them all; never zooms in. One-shot.
+  const putInViewLatestRef = useRef({ elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform });
+  putInViewLatestRef.current = { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform };
+
+  useEffect(() => {
+    if (!putInView || putInView.length === 0) return;
+    const { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform } = putInViewLatestRef.current;
+
+    const targetElements = elements.filter((e) => putInView.includes(e.id));
+    if (targetElements.length === 0 || containerSize.width === 0) return;
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const el of targetElements) {
+      minX = Math.min(minX, el.viewBoxBounds.minX);
+      minY = Math.min(minY, el.viewBoxBounds.minY);
+      maxX = Math.max(maxX, el.viewBoxBounds.maxX);
+      maxY = Math.max(maxY, el.viewBoxBounds.maxY);
+    }
+
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const bboxWidth = maxX - minX;
+    const bboxHeight = maxY - minY;
+
+    const ZOOM_PADDING = 0.7;
+    const targetScale = (bboxWidth > 0 || bboxHeight > 0)
+      ? Math.min(
+          MAX_CLUSTER_SCALE,
+          ZOOM_PADDING * Math.min(
+            containerSize.width / (bboxWidth * basePixelsPerViewBoxUnit),
+            containerSize.height / (bboxHeight * basePixelsPerViewBoxUnit),
+          ),
+        )
+      : scaleRef.current;
+
+    // Never zoom in — cap at current scale
+    const finalScale = Math.min(targetScale, scaleRef.current);
+
+    const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
+    const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
+    const offsetX = (containerSize.width - svgPixelWidth) / 2;
+    const offsetY = (containerSize.height - svgPixelHeight) / 2;
+    const contentX = offsetX + (cx - viewBox.x) * basePixelsPerViewBoxUnit;
+    const contentY = offsetY + (cy - viewBox.y) * basePixelsPerViewBoxUnit;
+
+    setTransform(
+      containerSize.width / 2 - contentX * finalScale,
+      containerSize.height / 2 - contentY * finalScale,
+      finalScale,
+      400,
+      'easeOut',
+    );
+  }, [putInView]); // reference equality — callers control when this fires
 
   const contextValue = useMemo(
     () => ({

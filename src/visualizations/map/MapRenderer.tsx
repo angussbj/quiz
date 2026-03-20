@@ -90,6 +90,7 @@ export function MapRenderer({
   backgroundLabels,
   svgOverlay,
   initialCameraPosition,
+  putInView,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -108,6 +109,7 @@ export function MapRenderer({
       onClusterClick={onClusterClick}
       initialCameraPosition={initialCameraPosition}
       backgroundPaths={backgroundPaths}
+      putInView={putInView}
     >
       <MapContent
         elements={elements}
@@ -179,6 +181,8 @@ function renderShapeElements(
   targetState: ElementVisualState | undefined,
   riverStrokeWidth: number,
   riverHitStrokeWidth: number,
+  toggles: Readonly<Record<string, boolean>>,
+  nameToState: Readonly<Record<string, ElementVisualState | undefined>>,
 ) {
   return elements.map((element) => {
     if (!isMapElement(element) || !element.svgPathData) return null;
@@ -192,8 +196,19 @@ function renderShapeElements(
     } else {
       if (state !== targetState) return null;
     }
-    const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
     const isStrokePath = element.pathRenderStyle === 'stroke';
+
+    // When 'includeTributaries' is off, tributaries inherit their parent river's visual state
+    // so they appear as a visual extension of the parent rather than as standalone quiz elements.
+    const parentState = isStrokePath && element.tributaryOf && !toggles['includeTributaries']
+      ? nameToState[element.tributaryOf]
+      : undefined;
+    const effectiveState = parentState !== undefined ? parentState : state;
+    const isTributaryProxy = parentState !== undefined;
+
+    // Rivers use a neutral water color instead of region-based group colors
+    const color = stateColor(effectiveState) ?? (isStrokePath ? 'var(--color-lake)' : groupColor(element.group, uniqueGroups));
+    const effectiveRiverStrokeWidth = isStrokePath && effectiveState === 'highlighted' ? riverStrokeWidth * 2.5 : riverStrokeWidth;
 
     if (isStrokePath) {
       // Split combined path into subpaths. Z-closed subpaths (lake polygons)
@@ -203,11 +218,13 @@ function renderShapeElements(
       const fillPaths = subpaths.filter((p) => p.endsWith('Z'));
       const strokeD = strokePaths.join(' ');
       const fillD = fillPaths.join(' ');
+      // Tributary proxies are non-interactive: no click handler, no hit area
+      const handleClick = isTributaryProxy ? undefined : onElementClick;
 
       return (
         <g key={`shape-${element.id}`}>
-          {/* Invisible wider hit area for clicking (strokes only) */}
-          {onElementClick && strokeD && (
+          {/* Invisible wider hit area for clicking (strokes only, non-tributary-proxy) */}
+          {handleClick && strokeD && (
             <path
               d={strokeD}
               style={{
@@ -220,7 +237,7 @@ function renderShapeElements(
               className={styles.interactivePath}
               onClick={(e) => {
                 e.stopPropagation();
-                onElementClick(element.id);
+                handleClick(element.id);
               }}
             />
           )}
@@ -230,18 +247,18 @@ function renderShapeElements(
               d={fillD}
               style={{
                 fill: color,
-                fillOpacity: strokeOpacity(state) * 0.4,
+                fillOpacity: strokeOpacity(effectiveState) * 0.4,
                 stroke: color,
-                strokeWidth: riverStrokeWidth * 0.7,
-                strokeOpacity: strokeOpacity(state),
+                strokeWidth: effectiveRiverStrokeWidth * 0.7,
+                strokeOpacity: strokeOpacity(effectiveState),
               }}
-              pointerEvents={onElementClick ? 'none' : undefined}
-              className={onElementClick ? styles.interactivePath : undefined}
+              pointerEvents={handleClick ? 'none' : undefined}
+              className={handleClick ? styles.interactivePath : undefined}
               onClick={
-                onElementClick
+                handleClick
                   ? (e) => {
                       e.stopPropagation();
-                      onElementClick(element.id);
+                      handleClick(element.id);
                     }
                   : undefined
               }
@@ -254,18 +271,18 @@ function renderShapeElements(
               style={{
                 fill: 'none',
                 stroke: color,
-                strokeWidth: riverStrokeWidth,
-                strokeOpacity: strokeOpacity(state),
+                strokeWidth: effectiveRiverStrokeWidth,
+                strokeOpacity: strokeOpacity(effectiveState),
                 strokeLinecap: 'round',
                 strokeLinejoin: 'round',
               }}
-              pointerEvents={onElementClick ? 'none' : undefined}
-              className={onElementClick ? styles.interactivePath : undefined}
+              pointerEvents={handleClick ? 'none' : undefined}
+              className={handleClick ? styles.interactivePath : undefined}
               onClick={
-                onElementClick
+                handleClick
                   ? (e) => {
                       e.stopPropagation();
-                      onElementClick(element.id);
+                      handleClick(element.id);
                     }
                   : undefined
               }
@@ -358,6 +375,18 @@ function MapContent({
 
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
+  // Maps river name → element state, used to resolve tributary proxy colors.
+  // Keyed by element label (river name); first match wins when multiple rows share a name.
+  const nameToState = useMemo(() => {
+    const map: Record<string, ElementVisualState | undefined> = {};
+    for (const el of elements) {
+      if (isMapElement(el) && el.pathRenderStyle === 'stroke' && !(el.label in map)) {
+        map[el.label] = elementStates[el.id];
+      }
+    }
+    return map;
+  }, [elements, elementStates]);
+
   const visibleDotPositions = useMemo(
     () => elements
       .filter((el) => {
@@ -426,13 +455,13 @@ function MapContent({
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
 
       {/* Country name labels and flags (from background border data, unified overlap detection) */}
       {(toggles['showCountryNames'] || toggles['showMapFlags']) && backgroundLabels && (
@@ -450,6 +479,8 @@ function MapContent({
         if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
+        // Skip label for tributaries rendered as parent-colour proxies (not quiz items)
+        if (element.tributaryOf && !toggles['includeTributaries']) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showRiverNames')) return null;
         const color = stateColor(state) ?? 'var(--color-text-primary)';
         const anchor = element.labelAnchor ?? element.viewBoxCenter;

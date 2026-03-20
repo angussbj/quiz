@@ -143,7 +143,7 @@ export function useIdentifyQuiz(
           setFlashIncorrectId(elementId);
           flashTimeoutRef.current = setTimeout(() => {
             setFlashIncorrectId(null);
-            // Show correct answer in gold
+            // Show correct answer highlighted
             setAutoRevealId(currentElementId);
             setSkippedIds((prev) => new Set([...prev, currentElementId]));
             setAnsweredIds((prev) => new Set([...prev, currentElementId]));

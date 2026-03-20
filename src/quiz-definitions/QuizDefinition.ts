@@ -66,6 +66,10 @@ export interface QuizDefinition<K extends string = string> {
   }>>;
   /** When true, elements excluded by range/group filters are hidden entirely instead of shown as context. */
   readonly hideFilteredElements?: boolean;
+  /** Column in the data CSV that stores the parent river name for tributary rivers.
+   *  When the 'includeTributaries' toggle is false, rows with a non-empty value in this
+   *  column are excluded from the quiz and rendered as visual context (parent river colour). */
+  readonly tributaryColumn?: string;
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
   readonly initialCameraPosition?: {
     readonly x: number;

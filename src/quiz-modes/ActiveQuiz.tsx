@@ -26,6 +26,7 @@ export interface ActiveQuizProps {
   readonly rangeColumn?: string;
   readonly groupFilterColumn?: string;
   readonly hideFilteredElements?: boolean;
+  readonly tributaryColumn?: string;
   readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
   readonly groupFilterCameraPositions?: Readonly<Record<string, {
     readonly x: number;
@@ -54,13 +55,16 @@ export function ActiveQuiz({
   rangeColumn,
   groupFilterColumn,
   hideFilteredElements,
+  tributaryColumn,
   initialCameraPosition,
   groupFilterCameraPositions,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
     const hasRangeFilter = rangeColumn && config.elementRange;
     const hasGroupFilter = groupFilterColumn && config.selectedGroups;
-    if (!hasRangeFilter && !hasGroupFilter) {
+    // Exclude tributaries when 'includeTributaries' toggle is explicitly off
+    const hasTributaryFilter = tributaryColumn && config.toggleValues['includeTributaries'] === false;
+    if (!hasRangeFilter && !hasGroupFilter && !hasTributaryFilter) {
       return { activeElements: elements, activeDataRows: dataRows, backgroundElementIds: new Set<string>() };
     }
     const activeIds = new Set<string>();
@@ -77,6 +81,10 @@ export function ActiveQuiz({
         const group = row[groupFilterColumn] ?? '';
         if (!config.selectedGroups.has(group)) passes = false;
       }
+      if (passes && hasTributaryFilter) {
+        // Rows with a non-empty tributary_of value are tributaries — exclude from quiz
+        if (row[tributaryColumn]) passes = false;
+      }
       if (passes) {
         activeIds.add(id);
       } else {
@@ -88,7 +96,7 @@ export function ActiveQuiz({
       activeDataRows: dataRows.filter((row) => activeIds.has(row['id'] ?? '')),
       backgroundElementIds: bgIds,
     };
-  }, [elements, dataRows, rangeColumn, config.elementRange, groupFilterColumn, config.selectedGroups]);
+  }, [elements, dataRows, rangeColumn, config.elementRange, groupFilterColumn, config.selectedGroups, tributaryColumn, config.toggleValues]);
 
   const FilterAwareRenderer = useMemo(() => {
     if (backgroundElementIds.size === 0) return Renderer;

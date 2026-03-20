@@ -40,7 +40,7 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick } = props;
+  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, putInView } = props;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
@@ -285,6 +285,26 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     }
     prevElementStatesRef.current = elementStates;
   }, [elementStates, barLayouts, scrollIntoView]);
+
+  // Bring specified elements into view when putInView changes.
+  const putInViewLatestRef = useRef({ barLayouts, scrollIntoView });
+  putInViewLatestRef.current = { barLayouts, scrollIntoView };
+
+  useEffect(() => {
+    if (!putInView || putInView.length === 0) return;
+    const { barLayouts, scrollIntoView } = putInViewLatestRef.current;
+    let minLeft = Infinity;
+    let maxRight = -Infinity;
+    for (const id of putInView) {
+      const layout = barLayouts.get(id);
+      if (layout) {
+        minLeft = Math.min(minLeft, layout.pixelLeft);
+        maxRight = Math.max(maxRight, layout.pixelLeft + layout.pixelWidth);
+      }
+    }
+    if (minLeft === Infinity) return;
+    scrollIntoView(minLeft, maxRight - minLeft);
+  }, [putInView]);
 
   // Click handler: convert pixel click → viewBox coordinates
   const handleAreaClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {

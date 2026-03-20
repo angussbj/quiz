@@ -145,6 +145,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             rangeColumn={definition.rangeColumn}
             groupFilterColumn={definition.groupFilterColumn}
             hideFilteredElements={definition.hideFilteredElements}
+            tributaryColumn={definition.tributaryColumn}
             initialCameraPosition={definition.initialCameraPosition}
             groupFilterCameraPositions={definition.groupFilterCameraPositions}
           />

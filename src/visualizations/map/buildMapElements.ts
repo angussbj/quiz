@@ -96,6 +96,7 @@ export function buildMapElements(
     }
 
     const id = row['id'] ?? '';
+    const tributaryOf = row['tributary_of'] || undefined;
     return {
       id,
       label: row[labelColumn] ?? id,
@@ -109,6 +110,7 @@ export function buildMapElements(
       code: row[codeColumn] ?? id,
       pathRenderStyle: pathStyle,
       labelAnchor,
+      tributaryOf,
     };
   });
 }

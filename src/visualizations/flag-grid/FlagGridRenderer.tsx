@@ -218,6 +218,7 @@ export function FlagGridRenderer(props: VisualizationRendererProps) {
       elementStates={props.elementStates}
       clustering={props.clustering}
       onClusterClick={props.onClusterClick}
+      putInView={props.putInView}
     >
       <FlagGrid {...props} />
       {props.svgOverlay}

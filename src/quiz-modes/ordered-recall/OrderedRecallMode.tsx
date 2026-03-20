@@ -100,6 +100,46 @@ export function OrderedRecallMode({
     [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
+  const [putInViewId, setPutInViewId] = useState<string | undefined>(quiz.currentElementId);
+  const prevCurrentIdRef = useRef<string | undefined>(quiz.currentElementId);
+  const elementStatesRef = useRef(quiz.elementStates);
+  elementStatesRef.current = quiz.elementStates;
+  const putInViewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const prevId = prevCurrentIdRef.current;
+    prevCurrentIdRef.current = quiz.currentElementId;
+
+    if (putInViewTimerRef.current) {
+      clearTimeout(putInViewTimerRef.current);
+      putInViewTimerRef.current = null;
+    }
+
+    // If previous element was skipped (now 'missed'), wait ~500ms before panning to next
+    if (quiz.currentElementId && prevId && elementStatesRef.current[prevId] === 'missed') {
+      const nextId = quiz.currentElementId;
+      putInViewTimerRef.current = setTimeout(() => {
+        setPutInViewId(nextId);
+        putInViewTimerRef.current = null;
+      }, 500);
+    } else {
+      setPutInViewId(quiz.currentElementId);
+    }
+
+    return () => {
+      if (putInViewTimerRef.current) {
+        clearTimeout(putInViewTimerRef.current);
+        putInViewTimerRef.current = null;
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- only run when currentElementId changes
+  }, [quiz.currentElementId]);
+
+  const putInView = useMemo(
+    () => (putInViewId ? [putInViewId] : undefined),
+    [putInViewId],
+  );
+
   const progressPercent = quiz.totalPrompts > 0
     ? (quiz.correctCount + quiz.skippedCount) / quiz.totalPrompts * 100
     : 0;
@@ -119,6 +159,7 @@ export function OrderedRecallMode({
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
           clustering={clustering}
+          putInView={putInView}
         />
       </div>
 

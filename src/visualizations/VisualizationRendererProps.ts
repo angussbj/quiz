@@ -81,6 +81,12 @@ export interface VisualizationRendererProps {
     readonly width: number;
     readonly height: number;
   };
+  /**
+   * Element IDs to bring into view when this array changes (by reference).
+   * The visualisation pans and/or zooms OUT to show all specified elements.
+   * It will never zoom in. One-shot — does not keep them in view after the move.
+   */
+  readonly putInView?: ReadonlyArray<string>;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy';

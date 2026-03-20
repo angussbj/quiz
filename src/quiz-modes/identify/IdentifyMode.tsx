@@ -127,6 +127,11 @@ export function IdentifyMode({
     return buildPromptFields(row, toggleDefinitions, toggleValues, selectToggleDefinitions, selectValues, currentWrongAttempts);
   }, [quiz.currentElementId, rowById, toggleDefinitions, toggleValues, selectToggleDefinitions, selectValues, currentWrongAttempts]);
 
+  const putInView = useMemo(
+    () => (quiz.autoRevealId ? [quiz.autoRevealId] : undefined),
+    [quiz.autoRevealId],
+  );
+
   const progressPercent = quiz.totalPrompts > 0
     ? (quiz.correctCount + quiz.skippedCount) / quiz.totalPrompts * 100
     : 0;
@@ -208,6 +213,7 @@ export function IdentifyMode({
           backgroundLabels={backgroundLabels}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
+          putInView={putInView}
         />
       </div>
     </div>

@@ -91,7 +91,7 @@ const humanBonesQuizBase = {
   path: ['Science', 'Biology'],
   visualizationType: 'anatomy' as const,
   availableModes: ['free-recall-unordered', 'identify', 'prompted-recall'] as const,
-  defaultMode: 'free-recall-unordered' as const,
+  defaultMode: 'identify' as const,
   toggles: [
     { key: 'showLabels', label: 'Bone names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showGroupColors', label: 'Region colors', defaultValue: false, group: 'display' } as const,
@@ -114,7 +114,7 @@ const humanBonesQuizBase = {
 const timelineQuizBase = {
   visualizationType: 'timeline' as const,
   availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
-  defaultMode: 'free-recall-unordered' as const,
+  defaultMode: 'identify' as const,
   supportingDataPaths: [] as const,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'path' | 'toggles' | 'presets' | 'columnMappings' | 'dataPath'>;
 
@@ -130,6 +130,7 @@ const largestCitiesQuiz = {
   description: 'Name the largest cities in the world by population.',
   path: ['Geography'],
   availableModes: [...capitalsQuizBase.availableModes, 'free-recall-ordered'] as const,
+  defaultMode: 'identify' as const,
   dataPath: '/data/cities/largest-cities.csv',
   initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
   rangeColumn: 'rank',
@@ -146,11 +147,12 @@ const riversQuizBase = {
   path: ['Geography'],
   visualizationType: 'map' as const,
   availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
-  defaultMode: 'free-recall-unordered' as const,
+  defaultMode: 'identify' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'includeTributaries', label: 'Include tributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
   ],
   presets: [],
   columnMappings: {
@@ -163,6 +165,7 @@ const riversQuizBase = {
   },
   dataPath: '/data/rivers/world-rivers.csv',
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/medium-lakes.csv'],
+  tributaryColumn: 'tributary_of',
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 
@@ -302,6 +305,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the major rivers of the world.',
     dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
     initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
+    rangeColumn: 'discharge_rank',
+    rangeLabel: 'Top rivers by discharge',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
     groupFilterCameraPositions: {

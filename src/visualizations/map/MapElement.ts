@@ -11,6 +11,8 @@ export interface MapElement extends VisualizationElement {
   readonly pathRenderStyle?: 'fill' | 'stroke';
   /** Anchor point for label rendering (e.g. point along river path). Falls back to viewBoxCenter. */
   readonly labelAnchor?: ViewBoxPosition;
+  /** Name of the direct parent river (e.g. 'Mississippi' for 'Ohio'). Undefined for top-level rivers. */
+  readonly tributaryOf?: string;
 }
 
 export function isMapElement(element: VisualizationElement): element is MapElement {

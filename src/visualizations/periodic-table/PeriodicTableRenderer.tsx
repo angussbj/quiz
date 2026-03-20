@@ -132,8 +132,7 @@ function GridCell({
   const interactive = element.interactive;
 
   const hasAtomicNumber = atomicNumberVisible && element.atomicNumber > 0;
-  const hasName = nameVisible;
-  const symbolY = hasAtomicNumber || hasName
+  const symbolY = hasAtomicNumber || nameVisible
     ? y + CELL_SIZE * 0.45
     : y + CELL_SIZE / 2;
 
@@ -300,6 +299,7 @@ export function PeriodicTableRenderer(props: VisualizationRendererProps) {
       elementStates={props.elementStates}
       clustering={props.clustering}
       onClusterClick={props.onClusterClick}
+      putInView={props.putInView}
     >
       <PeriodicTableGrid {...props} />
       {props.svgOverlay}
