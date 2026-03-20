@@ -21,6 +21,13 @@ export interface TimelineZoomResult {
   readonly handleMouseMove: (e: React.MouseEvent) => void;
   readonly handleMouseUpOrLeave: () => void;
   readonly isDragging: React.RefObject<boolean>;
+  /** True while a programmatic scroll animation is in progress. */
+  readonly isScrolling: boolean;
+  /**
+   * Smooth-scroll to bring the element into view. `pixelLeft` and
+   * `pixelWidth` are in timeline pixel coordinates (before pan offset).
+   */
+  readonly scrollIntoView: (pixelLeft: number, pixelWidth: number) => void;
 }
 
 /**
@@ -150,6 +157,27 @@ export function useTimelineZoom({
     isDragging.current = false;
   }, []);
 
+  // Programmatic scroll: bring an element into view (by timeline pixel coords)
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scrollIntoView = useCallback((pixelLeft: number, pixelWidth: number) => {
+    setPanAndZoom((state) => {
+      const elementLeft = pixelLeft + state.panOffset;
+      const elementRight = elementLeft + pixelWidth;
+      const margin = 60;
+      if (elementLeft >= margin && elementRight <= containerWidthRef.current - margin) {
+        return state; // already fully visible
+      }
+      const pixelCenter = pixelLeft + pixelWidth / 2;
+      const newPanOffset = containerWidthRef.current / 2 - pixelCenter;
+      return { zoom: state.zoom, panOffset: clampPanOffset(newPanOffset) };
+    });
+    setIsScrolling(true);
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 400);
+  }, [clampPanOffset]);
+
   // Re-clamp if container resizes or minZoom changes
   useEffect(() => {
     const clampedZoom = Math.max(minZoom, panAndZoom.zoom);
@@ -167,5 +195,7 @@ export function useTimelineZoom({
     handleMouseMove,
     handleMouseUpOrLeave,
     isDragging,
+    isScrolling,
+    scrollIntoView,
   };
 }

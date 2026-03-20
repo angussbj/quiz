@@ -82,6 +82,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     handleMouseMove,
     handleMouseUpOrLeave,
     isDragging,
+    isScrolling,
+    scrollIntoView,
   } = useTimelineZoom({
     containerRef,
     totalViewBoxWidth,
@@ -225,6 +227,22 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     return { barLayouts: layouts, totalContentHeight: currentY + AXIS_HEIGHT };
   }, [visibleElements, zoom, minX]);
 
+  // Scroll to newly-revealed elements (state transitions to correct/highlighted from hidden)
+  const prevElementStatesRef = useRef<Readonly<Record<string, string>>>({});
+  useEffect(() => {
+    const prev = prevElementStatesRef.current;
+    for (const [id, state] of Object.entries(elementStates)) {
+      const isRevealed =
+        (state === 'correct' || state === 'correct-second' || state === 'correct-third') &&
+        prev[id] !== state;
+      if (isRevealed) {
+        const layout = barLayouts.get(id);
+        if (layout) scrollIntoView(layout.pixelLeft, layout.pixelWidth);
+      }
+    }
+    prevElementStatesRef.current = elementStates;
+  }, [elementStates, barLayouts, scrollIntoView]);
+
   // Click handler: convert pixel click → viewBox coordinates
   const handleAreaClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     if (!onPositionClick) return;
@@ -272,6 +290,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
             width: `${timelineWidth}px`,
             transform: `translateX(${panOffset}px)`,
             minHeight: `${totalContentHeight}px`,
+            transition: isScrolling && !isDragging.current ? 'transform 0.4s ease-out' : undefined,
           }}
           onClick={handleAreaClick}
         >
