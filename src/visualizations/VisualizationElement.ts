@@ -47,7 +47,7 @@ export interface VisualizationElement {
   /** Optional group for color coding (e.g., continent, era, element group) */
   readonly group?: string;
   /** Label placement relative to the element center. Default: 'right'. Subtypes may override with a richer type. */
-  readonly labelPosition?: 'left' | 'right' | 'above' | 'below' | LeaderLineLabelPosition;
+  readonly labelPosition?: 'left' | 'right' | 'above' | 'below' | 'above-left' | 'above-right' | 'below-left' | 'below-right' | LeaderLineLabelPosition;
 }
 
 /** Pre-computed label position for leader-line style labels (e.g. anatomy diagrams) */

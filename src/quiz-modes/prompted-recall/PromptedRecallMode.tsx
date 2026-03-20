@@ -20,6 +20,7 @@ export function PromptedRecallMode({
   toggleValues = {},
   Renderer,
   backgroundPaths,
+  lakePaths,
   clustering,
   initialCameraPosition,
   onFinish,
@@ -117,6 +118,7 @@ export function PromptedRecallMode({
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
+          lakePaths={lakePaths}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
         />

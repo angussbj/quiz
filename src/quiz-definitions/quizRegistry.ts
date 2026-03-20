@@ -23,6 +23,7 @@ const capitalsQuizBase = {
     { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify'] } as const,
   ],
   selectToggles: [
@@ -58,7 +59,7 @@ const capitalsQuizBase = {
     code: 'country_code',
   },
   dataPath: '/data/capitals/world-capitals.csv',
-  supportingDataPaths: ['/data/borders/world-borders.csv'],
+  supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
   modeConstraints: {
     identify: [
       { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
@@ -80,6 +81,7 @@ const countriesQuizBase = {
     { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
     { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
+    { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
   presets: [
     {
@@ -106,7 +108,7 @@ const countriesQuizBase = {
     group: 'group',
   },
   dataPath: '/data/borders/world-borders.csv',
-  supportingDataPaths: ['/data/borders/world-borders.csv'],
+  supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
@@ -218,6 +220,116 @@ const timelineQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   supportingDataPaths: [] as const,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'path' | 'toggles' | 'presets' | 'columnMappings' | 'dataPath'>;
+
+/**
+ * Shared configuration for all rivers quizzes.
+ */
+const riversQuizBase = {
+  path: ['Geography', 'Rivers'] as const,
+  visualizationType: 'map' as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
+  defaultMode: 'free-recall-unordered' as const,
+  toggles: [
+    { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+  ],
+  presets: [
+    {
+      name: 'easy',
+      label: 'Easy',
+      values: { showBorders: true, showRiverNames: true },
+    },
+    {
+      name: 'hard',
+      label: 'Hard',
+      values: { showBorders: false, showRiverNames: false },
+    },
+  ],
+  columnMappings: {
+    answer: 'name',
+    label: 'name',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    group: 'continent',
+    pathRenderStyle: 'stroke',
+  },
+  dataPath: '/data/rivers/world-rivers.csv',
+  supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/medium-lakes.csv'],
+} satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
+
+function buildRiversQuizzes(): ReadonlyArray<QuizDefinition> {
+  const continents: ReadonlyArray<{
+    readonly id: string;
+    readonly title: string;
+    readonly description: string;
+    readonly filterValues: ReadonlyArray<string>;
+    readonly initialCameraPosition?: QuizDefinition['initialCameraPosition'];
+  }> = [
+    {
+      id: 'geo-rivers-europe',
+      title: 'European Rivers',
+      description: 'Name the major rivers of Europe.',
+      filterValues: ['Europe'],
+    },
+    {
+      id: 'geo-rivers-asia',
+      title: 'Asian Rivers',
+      description: 'Name the major rivers of Asia.',
+      filterValues: ['Asia'],
+    },
+    {
+      id: 'geo-rivers-africa',
+      title: 'African Rivers',
+      description: 'Name the major rivers of Africa.',
+      filterValues: ['Africa'],
+    },
+    {
+      id: 'geo-rivers-north-america',
+      title: 'North American Rivers',
+      description: 'Name the major rivers of North America.',
+      filterValues: ['North America'],
+      initialCameraPosition: { x: -130, y: -55, width: 80, height: 50 },
+    },
+    {
+      id: 'geo-rivers-south-america',
+      title: 'South American Rivers',
+      description: 'Name the major rivers of South America.',
+      filterValues: ['South America'],
+      initialCameraPosition: { x: -85, y: -15, width: 55, height: 73 },
+    },
+    {
+      id: 'geo-rivers-oceania',
+      title: 'Oceanian Rivers',
+      description: 'Name the major rivers of Oceania.',
+      filterValues: ['Oceania'],
+    },
+  ];
+
+  const quizzes: Array<QuizDefinition> = continents.map((c) => ({
+    ...riversQuizBase,
+    id: c.id,
+    title: c.title,
+    description: c.description,
+    dataFilter: [
+      { column: 'continent', values: c.filterValues },
+      { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
+    ],
+    ...(c.initialCameraPosition ? { initialCameraPosition: c.initialCameraPosition } : {}),
+  }));
+
+  // World quiz — all continents, scalerank <= 5
+  quizzes.push({
+    ...riversQuizBase,
+    id: 'geo-rivers-world',
+    title: 'World Rivers',
+    description: 'Name the major rivers of the world.',
+    dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5'] },
+    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
+  });
+
+  return quizzes;
+}
 
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
   {
@@ -626,6 +738,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/history/modern/ww2-timeline.csv',
   },
+  ...buildRiversQuizzes(),
 
   // ===== World War I =====
   {

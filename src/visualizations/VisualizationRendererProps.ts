@@ -23,6 +23,12 @@ export interface ClusteringConfig {
   readonly countedState: ElementVisualState;
 }
 
+/** A lake polygon rendered as background decoration on a map. */
+export interface LakePath {
+  readonly id: string;
+  readonly svgPathData: string;
+}
+
 /** Decorative SVG path rendered behind interactive elements (e.g., country borders on a map). */
 export interface BackgroundPath {
   readonly id: string;
@@ -36,6 +42,12 @@ export interface BackgroundPath {
   readonly sovereign?: string;
   /** Region (e.g., 'Europe', 'Asia') for filtering. May be pipe-separated for multi-region. */
   readonly region?: string;
+}
+
+/** A lake polygon rendered as background decoration on a map. */
+export interface LakePath {
+  readonly id: string;
+  readonly svgPathData: string;
 }
 
 /**
@@ -54,6 +66,8 @@ export interface VisualizationRendererProps {
   readonly clustering?: ClusteringConfig;
   /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  /** Lake polygons rendered as background decoration */
+  readonly lakePaths?: ReadonlyArray<LakePath>;
   /** Labels positioned at background shape centroids (e.g., country names) */
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   /** Additional SVG content rendered on top of all elements (e.g., feedback overlays) */

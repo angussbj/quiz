@@ -21,6 +21,7 @@ export function IdentifyMode({
   selectValues = {},
   Renderer,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
   clustering,
   initialCameraPosition,
@@ -222,6 +223,7 @@ export function IdentifyMode({
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
+          lakePaths={lakePaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}

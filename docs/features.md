@@ -29,3 +29,15 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 ### 29. Remove `targetElementId` from Renderer Props ✅
 **Branch:** `refactor/remove-target-element-id`
 **Done.** Removed `targetElementId` from `VisualizationRendererProps` and all renderers. Identify mode now sets `'highlighted'` state for the current prompt target via `elementStates`. All target-based styling removed from MapRenderer, FlagGridRenderer, PeriodicTableRenderer.
+
+### 30. Rivers Quiz — DONE
+**Branch:** `worktree-rivers-quiz`
+**Scope:** "Largest rivers" quiz by continent and globally using the map renderer. Uses Natural Earth `ne_10m_rivers_lake_centerlines` data, converted to equirectangular SVG paths via `scripts/generateRiverPaths.ts`. Rivers render as stroked lines (not filled polygons). All four quiz modes supported: free recall, identify, locate (distance-to-closest-point-on-path via `closestPointOnPath`), prompted recall. Country borders as a toggle (default on). World quiz: scalerank <= 5 (~201 rivers). Continent quizzes: scalerank <= 6.
+**Key design decisions:**
+- `MapElement.pathRenderStyle` field (`'fill' | 'stroke'`) controls how map elements render — fill for countries, stroke for rivers.
+- `closestPointOnPath` utility parses SVG path `d` strings and finds the closest point on the polyline, used by locate mode for distance calculation.
+- Clustering is automatically disabled for stroke-style elements (centroid clustering doesn't make sense for line features).
+- City dots and flag images are skipped for stroke-style elements.
+- River stroke width uses fixed viewBox units (0.15 visible, 2.0 hit area), matching how country borders work.
+- `renderShapeElements` renders shapes in state layers (default, incorrect, missed, context, correct, highlighted) so state-colored shapes aren't obscured by neighbours.
+**Notes for other features:** The `pathRenderStyle` pattern could be reused for other line-based geographic features (e.g. mountain ranges, coastlines).
