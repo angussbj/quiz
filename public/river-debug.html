@@ -73,7 +73,10 @@
 
     async function render(region) {
       const base = location.pathname.replace(/\/river-debug\.html$/, '');
-      const riverText = await fetch(base + '/data/rivers/world-rivers.csv').then(r => r.text());
+      const [riverText, borderText] = await Promise.all([
+        fetch(base + '/data/rivers/world-rivers.csv').then(r => r.text()),
+        fetch(base + '/data/borders/world-borders.csv').then(r => r.text()),
+      ]);
 
       let rivers = parseCsv(riverText);
       if (region) {
@@ -88,7 +91,6 @@
       // Compute viewBox from river bounds
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
       for (const r of rivers) {
-        // Use latitude/longitude for bounds (converted to equirectangular: x=lng, y=-lat)
         const lng = parseFloat(r.longitude);
         const lat = parseFloat(r.latitude);
         if (isNaN(lng) || isNaN(lat)) continue;
@@ -102,9 +104,28 @@
       const pad = 5;
       svg.setAttribute('viewBox', `${minX-pad} ${minY-pad} ${maxX-minX+pad*2} ${maxY-minY+pad*2}`);
 
+      // Draw country borders first (underneath rivers)
+      const borders = parseCsv(borderText);
+      for (const b of borders) {
+        if (!b.paths) continue;
+        const segments = b.paths.split('|');
+        for (const seg of segments) {
+          const trimmed = seg.trim();
+          if (!trimmed) continue;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', trimmed);
+          path.setAttribute('fill', '#ddd');
+          path.setAttribute('stroke', '#bbb');
+          path.setAttribute('stroke-width', '0.15');
+          svg.appendChild(path);
+        }
+      }
+
       // Draw rivers with unique colors
       const legend = document.getElementById('legend');
       legend.innerHTML = '';
+
+      const STROKE_WIDTH = 0.4;
 
       rivers.forEach((r, i) => {
         const color = hslColor(i, rivers.length);
@@ -122,13 +143,13 @@
             path.setAttribute('fill', color);
             path.setAttribute('fill-opacity', '0.25');
             path.setAttribute('stroke', color);
-            path.setAttribute('stroke-width', '0.1');
+            path.setAttribute('stroke-width', String(STROKE_WIDTH * 0.5));
             path.setAttribute('stroke-opacity', '0.5');
           } else {
             // River stroke
             path.setAttribute('fill', 'none');
             path.setAttribute('stroke', color);
-            path.setAttribute('stroke-width', '0.5');
+            path.setAttribute('stroke-width', String(STROKE_WIDTH));
             path.setAttribute('stroke-opacity', '0.9');
             path.setAttribute('stroke-linecap', 'round');
             path.setAttribute('stroke-linejoin', 'round');
