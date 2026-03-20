@@ -520,10 +520,12 @@ function MapContent({
         );
       })}
 
-      {/* City name labels (rendered on top of dots — not for stroke-style paths like rivers) */}
+      {/* City name labels (rendered on top of dots — not for stroke-style paths like rivers or fill shapes like countries) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
+        // Shape elements (countries) use MapCountryLabels, not element labels
+        if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityNames')) return null;

@@ -97,7 +97,8 @@
       "Bash(do echo:*)",
       "Bash(echo \"$path\")",
       "Bash(mv:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "Bash(lsof:*)"
     ]
   }
 }
