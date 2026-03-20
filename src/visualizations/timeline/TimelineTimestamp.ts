@@ -98,6 +98,18 @@ export function timestampToFractionalYear(
   return year + baseDayFraction + hourFraction + minuteFraction + secondFraction;
 }
 
+/**
+ * Format a year with comma separators for |year| > 9999.
+ * E.g. 12212 → "12,212", -65000000 → "-65,000,000".
+ */
+export function formatYear(year: number): string {
+  const abs = Math.abs(year);
+  if (abs <= 9999) return String(year);
+  const digits = String(abs);
+  const withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return year < 0 ? `-${withCommas}` : withCommas;
+}
+
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -113,7 +125,7 @@ export function formatTimestamp(timestamp: TimelineTimestamp, short?: boolean): 
   const [year, month, day, hour, minute, second] = timestamp;
 
   if (month === undefined) {
-    return String(year);
+    return formatYear(year);
   }
 
   const monthName = short
@@ -121,24 +133,24 @@ export function formatTimestamp(timestamp: TimelineTimestamp, short?: boolean): 
     : MONTH_NAMES[month - 1];
 
   if (day === undefined) {
-    return `${monthName} ${year}`;
+    return `${monthName} ${formatYear(year)}`;
   }
 
   if (hour === undefined) {
-    return `${day} ${monthName} ${year}`;
+    return `${day} ${monthName} ${formatYear(year)}`;
   }
 
   const pad = (n: number) => String(n).padStart(2, '0');
 
   if (minute === undefined) {
-    return `${day} ${monthName} ${year}, ${pad(hour)}:00`;
+    return `${day} ${monthName} ${formatYear(year)}, ${pad(hour)}:00`;
   }
 
   if (second === undefined) {
-    return `${day} ${monthName} ${year}, ${pad(hour)}:${pad(minute)}`;
+    return `${day} ${monthName} ${formatYear(year)}, ${pad(hour)}:${pad(minute)}`;
   }
 
-  return `${day} ${monthName} ${year}, ${pad(hour)}:${pad(minute)}:${pad(second)}`;
+  return `${day} ${monthName} ${formatYear(year)}, ${pad(hour)}:${pad(minute)}:${pad(second)}`;
 }
 
 /**

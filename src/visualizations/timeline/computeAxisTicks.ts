@@ -1,3 +1,5 @@
+import { formatYear } from './TimelineTimestamp';
+
 /**
  * A tick mark on the time axis.
  * Major ticks get larger labels (e.g., century/decade); minor ticks get smaller ones (e.g., year/month).
@@ -6,6 +8,8 @@ export interface AxisTick {
   readonly fractionalYear: number;
   readonly label: string;
   readonly isMajor: boolean;
+  /** Whether to render a text label for this tick. False for minor ticks at coarse zoom levels to prevent overlap. */
+  readonly showLabel: boolean;
 }
 
 /**
@@ -32,6 +36,8 @@ const TICK_LEVELS: ReadonlyArray<{
   readonly formatMinor: (year: number) => string;
   /** Approximate minimum screen pixels between minor ticks for this level to activate */
   readonly minPixelsPerMinorTick: number;
+  /** Whether to show labels on minor ticks. False at coarse scales where minor labels would overlap. */
+  readonly showMinorLabels: boolean;
 }> = [
   // Geological: billion-year scale (Hadean, Archean, Proterozoic eons)
   {
@@ -40,6 +46,7 @@ const TICK_LEVELS: ReadonlyArray<{
     formatMajor: (y) => formatGeologicalYear(y, 1_000_000_000, 'Ga'),
     formatMinor: (y) => formatGeologicalYear(y, 1_000_000_000, 'Ga'),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: false,
   },
   // Geological: hundred-million-year scale (Phanerozoic eons, eras)
   {
@@ -48,6 +55,7 @@ const TICK_LEVELS: ReadonlyArray<{
     formatMajor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
     formatMinor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: false,
   },
   // Geological: ten-million-year scale (geological periods)
   {
@@ -56,6 +64,7 @@ const TICK_LEVELS: ReadonlyArray<{
     formatMajor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
     formatMinor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: false,
   },
   // Deep time: million-year scale (evolution, early hominids)
   {
@@ -64,55 +73,62 @@ const TICK_LEVELS: ReadonlyArray<{
     formatMajor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
     formatMinor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: false,
   },
   // Prehistoric: hundred-thousand-year scale (Ice Ages, early humans)
   {
     majorInterval: 100_000,
     minorInterval: 10_000,
-    formatMajor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k BCE` : `${y}`,
-    formatMinor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k` : `${y}`,
+    formatMajor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k BCE` : formatYear(y),
+    formatMinor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k` : formatYear(y),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: false,
   },
   // Prehistoric: ten-thousand-year scale (early civilizations, stone age)
   {
     majorInterval: 10_000,
     minorInterval: 1_000,
-    formatMajor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k BCE` : `${y}`,
-    formatMinor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k` : `${y}`,
+    formatMajor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k BCE` : formatYear(y),
+    formatMinor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k` : formatYear(y),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: false,
   },
   // Historical: thousand-year scale (ancient history)
   {
     majorInterval: 1000,
     minorInterval: 100,
-    formatMajor: (y) => `${y}`,
-    formatMinor: (y) => `${y}`,
+    formatMajor: (y) => formatYear(y),
+    formatMinor: (y) => formatYear(y),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: true,
   },
   {
     majorInterval: 100,
     minorInterval: 10,
-    formatMajor: (y) => `${y}`,
-    formatMinor: (y) => `${y}`,
+    formatMajor: (y) => formatYear(y),
+    formatMinor: (y) => formatYear(y),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: true,
   },
   {
     majorInterval: 10,
     minorInterval: 1,
-    formatMajor: (y) => `${y}`,
-    formatMinor: (y) => `${y}`,
+    formatMajor: (y) => formatYear(y),
+    formatMinor: (y) => formatYear(y),
     minPixelsPerMinorTick: 40,
+    showMinorLabels: true,
   },
   {
     majorInterval: 1,
     minorInterval: 1 / 12,
-    formatMajor: (y) => `${y}`,
+    formatMajor: (y) => formatYear(y),
     formatMinor: (y) => {
       const month = Math.round((y % 1) * 12);
       const monthNames = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
       return monthNames[month] ?? '';
     },
     minPixelsPerMinorTick: 20,
+    showMinorLabels: true,
   },
 ];
 
@@ -133,14 +149,26 @@ export function computeAxisTicks(
 
   const pixelsPerYear = availablePixels / range;
 
-  // Find the best tick level: the finest level where minor ticks are spaced far enough apart
-  let bestLevel = TICK_LEVELS[0];
-  for (const level of TICK_LEVELS) {
+  // Find the finest level where minor ticks are spaced far enough apart (not too dense).
+  let levelIndex = 0;
+  for (let i = 0; i < TICK_LEVELS.length; i++) {
+    const level = TICK_LEVELS[i];
     const pixelsPerMinorTick = pixelsPerYear * level.minorInterval;
     if (pixelsPerMinorTick >= level.minPixelsPerMinorTick) {
-      bestLevel = level;
+      levelIndex = i;
     }
   }
+
+  // Advance to finer levels until the visible range spans at least one full major interval
+  // (guaranteeing ≥2 major tick labels on screen). This prevents a too-sparse axis when
+  // falling back to a coarse level for a range smaller than its major interval.
+  while (levelIndex < TICK_LEVELS.length - 1) {
+    const level = TICK_LEVELS[levelIndex];
+    if (range >= level.majorInterval) break;
+    levelIndex++;
+  }
+
+  const bestLevel = TICK_LEVELS[levelIndex];
 
   const ticks: AxisTick[] = [];
 
@@ -160,6 +188,7 @@ export function computeAxisTicks(
       fractionalYear: t,
       label: isMajor ? bestLevel.formatMajor(Math.round(t)) : bestLevel.formatMinor(t),
       isMajor,
+      showLabel: isMajor || bestLevel.showMinorLabels,
     });
   }
 

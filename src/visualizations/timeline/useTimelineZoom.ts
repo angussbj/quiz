@@ -72,9 +72,10 @@ export function useTimelineZoom({
   const dragStartPanOffset = useRef(0);
 
   const clampPanOffset = useCallback((offset: number) => {
+    const buffer = containerWidthRef.current / 3;
     return Math.max(
-      containerWidthRef.current - timelineWidthRef.current,
-      Math.min(0, offset),
+      containerWidthRef.current - timelineWidthRef.current - buffer,
+      Math.min(buffer, offset),
     );
   }, []);
 

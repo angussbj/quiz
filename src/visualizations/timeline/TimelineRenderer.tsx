@@ -18,11 +18,17 @@ const AXIS_HEIGHT = 32;
 /** Fixed bar height in pixels (constant, unaffected by zoom). */
 const BAR_HEIGHT = 28;
 
-/** Gap between tracks in pixels. */
+/** Gap between tracks in pixels (used when tracks don't need compression). */
 const TRACK_GAP = 6;
 
 /** Vertical offset per sub-layer when bars overlap within a track (px). */
 const LAYER_OFFSET = 22;
+
+/** Maximum number of tracks before vertical compression kicks in. */
+const COMPRESS_THRESHOLD = 12;
+
+/** Minimum visible height per track when compressed (enough for one line of text). */
+const MIN_TRACK_STEP = 16;
 
 /** Minimum visual bar width in pixels (for very short / point events). */
 const MIN_PIXEL_BAR_WIDTH = 8;
@@ -101,20 +107,23 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     [timelineElements],
   );
 
-  // Axis ticks (more ticks when zoomed in)
-  const minYear = minX / UNITS_PER_YEAR;
-  const maxYear = maxX / UNITS_PER_YEAR;
-  const approximatePixels = totalViewBoxWidth * zoom;
+  // Axis ticks: compute for the visible viewport so labels are always on screen.
+  // Derive the year range actually visible from pan/zoom state.
+  // Fall back to full data range when container hasn't measured yet (e.g. jsdom).
+  const hasValidViewport = containerWidth > 0 && zoom > 0;
+  const visibleStartYear = hasValidViewport ? (-panOffset / zoom + minX) / UNITS_PER_YEAR : minX / UNITS_PER_YEAR;
+  const visibleEndYear = hasValidViewport ? ((containerWidth - panOffset) / zoom + minX) / UNITS_PER_YEAR : maxX / UNITS_PER_YEAR;
+  const effectivePixels = containerWidth || timelineWidth || 800;
   const axisTicks = useMemo(
-    () => computeAxisTicks(minYear, maxYear, approximatePixels),
-    [minYear, maxYear, approximatePixels],
+    () => computeAxisTicks(visibleStartYear, visibleEndYear, effectivePixels),
+    [visibleStartYear, visibleEndYear, effectivePixels],
   );
 
   // Compute pixel positions and per-track sub-layers for overlapping bars.
   // Vertical positions are computed fresh here (ignoring viewBoxBounds.minY)
   // so that sub-layers expand each track's height without bleeding into the next.
   const { barLayouts, totalContentHeight } = useMemo(() => {
-    const layouts = new Map<string, { readonly pixelLeft: number; readonly pixelWidth: number; readonly pixelTop: number; readonly pixelHeight: number; readonly layer: number; readonly outsideGap: number }>();
+    const layouts = new Map<string, { readonly pixelLeft: number; readonly pixelWidth: number; readonly pixelTop: number; readonly pixelHeight: number; readonly layer: number; readonly outsideGap: number; readonly trackIndex: number }>();
     const byTrack = new Map<number, TimelineElement[]>();
 
     for (const el of visibleElements) {
@@ -171,17 +180,43 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     }
 
     // Second pass: compute track Y positions accounting for sub-layer heights
+    // When there are many tracks, compress vertical spacing so bars overlap
     const trackYPositions = new Map<number, number>();
-    let currentY = 0;
+    const needsCompression = trackNumbers.length > COMPRESS_THRESHOLD;
+
+    // Compute natural track steps (height of each track including sub-layers + gap)
+    const naturalTrackSteps: number[] = [];
     for (const trackNum of trackNumbers) {
-      trackYPositions.set(trackNum, currentY);
       const layerCount = trackLayerCounts.get(trackNum) ?? 1;
       const trackHeight = BAR_HEIGHT + (layerCount - 1) * LAYER_OFFSET;
-      currentY += trackHeight + TRACK_GAP;
+      naturalTrackSteps.push(trackHeight + TRACK_GAP);
+    }
+
+    // If compressed, scale down track steps to fit a target height
+    let effectiveTrackSteps = naturalTrackSteps;
+    if (needsCompression) {
+      const targetHeight = COMPRESS_THRESHOLD * (BAR_HEIGHT + TRACK_GAP);
+      const naturalTotal = naturalTrackSteps.reduce((sum, s) => sum + s, 0);
+      const scale = Math.min(1, targetHeight / naturalTotal);
+      effectiveTrackSteps = naturalTrackSteps.map((step) =>
+        Math.max(MIN_TRACK_STEP, step * scale),
+      );
+    }
+
+    let currentY = 0;
+    for (let i = 0; i < trackNumbers.length; i++) {
+      trackYPositions.set(trackNumbers[i], currentY);
+      currentY += effectiveTrackSteps[i];
     }
 
     // Third pass: compute final positions and outside label gaps
-    for (const trackNum of trackNumbers) {
+    // When compressed, also scale the sub-layer offset
+    const effectiveLayerOffset = needsCompression
+      ? Math.max(MIN_TRACK_STEP, LAYER_OFFSET * Math.min(1, (COMPRESS_THRESHOLD * (BAR_HEIGHT + TRACK_GAP)) / naturalTrackSteps.reduce((sum, s) => sum + s, 0)))
+      : LAYER_OFFSET;
+
+    for (let ti = 0; ti < trackNumbers.length; ti++) {
+      const trackNum = trackNumbers[ti];
       const trackY = trackYPositions.get(trackNum) ?? 0;
       const trackElements = byTrack.get(trackNum) ?? [];
       const sorted = [...trackElements].sort((a, b) => a.viewBoxBounds.minX - b.viewBoxBounds.minX);
@@ -215,10 +250,11 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
           layouts.set(current.el.id, {
             pixelLeft: current.left,
             pixelWidth: current.width,
-            pixelTop: trackY + layer * LAYER_OFFSET,
+            pixelTop: trackY + layer * effectiveLayerOffset,
             pixelHeight: BAR_HEIGHT,
             layer,
             outsideGap: gap,
+            trackIndex: ti,
           });
         }
       }
@@ -227,15 +263,19 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     return { barLayouts: layouts, totalContentHeight: currentY + AXIS_HEIGHT };
   }, [visibleElements, zoom, minX]);
 
-  // Scroll to newly-revealed elements (state transitions to correct/highlighted from hidden)
+  // Scroll to newly-revealed elements (correct answers, or incorrect/missed when first becoming visible)
   const prevElementStatesRef = useRef<Readonly<Record<string, string>>>({});
   useEffect(() => {
     const prev = prevElementStatesRef.current;
     for (const [id, state] of Object.entries(elementStates)) {
-      const isRevealed =
+      const prevState = prev[id];
+      const isCorrectReveal =
         (state === 'correct' || state === 'correct-second' || state === 'correct-third') &&
-        prev[id] !== state;
-      if (isRevealed) {
+        prevState !== state;
+      const isWrongReveal =
+        (state === 'incorrect' || state === 'missed') &&
+        (prevState === 'hidden' || prevState === 'default');
+      if (isCorrectReveal || isWrongReveal) {
         const layout = barLayouts.get(id);
         if (layout) scrollIntoView(layout.pixelLeft, layout.pixelWidth);
       }
@@ -301,9 +341,11 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
               return (
                 <div key={i} className={styles.tick} style={{ left: `${pixelX}px` }}>
                   <div className={tick.isMajor ? styles.tickMarkMajor : styles.tickMarkMinor} />
-                  <div className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}>
-                    {tick.label}
-                  </div>
+                  {tick.showLabel && (
+                    <div className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}>
+                      {tick.label}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -356,7 +398,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                       height: `${layout.pixelHeight}px`,
                       backgroundColor: bgColor,
                       opacity: barOpacity,
-                      zIndex: layout.layer + 1,
+                      zIndex: layout.trackIndex * 10 + layout.layer + 1,
                     }}
                     initial={{ opacity: 0, scaleX: 0 }}
                     animate={{ opacity: barOpacity, scaleX: 1 }}
