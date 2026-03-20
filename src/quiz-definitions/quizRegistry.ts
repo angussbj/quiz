@@ -171,6 +171,7 @@ const largestCitiesQuiz = {
   rangeLabel: 'Top cities',
   groupFilterColumn: 'region',
   groupFilterLabel: 'Region',
+  hideFilteredElements: true,
   modeConstraints: {
     identify: [
       { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },

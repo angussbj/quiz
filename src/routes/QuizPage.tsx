@@ -153,6 +153,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
             groupFilterColumn={definition.groupFilterColumn}
+            hideFilteredElements={definition.hideFilteredElements}
             initialCameraPosition={definition.initialCameraPosition}
           />
         )}

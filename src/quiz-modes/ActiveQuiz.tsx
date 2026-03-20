@@ -23,6 +23,7 @@ export interface ActiveQuizProps {
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly rangeColumn?: string;
   readonly groupFilterColumn?: string;
+  readonly hideFilteredElements?: boolean;
   readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
 }
 
@@ -43,6 +44,7 @@ export function ActiveQuiz({
   backgroundLabels,
   rangeColumn,
   groupFilterColumn,
+  hideFilteredElements,
   initialCameraPosition,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
@@ -80,6 +82,7 @@ export function ActiveQuiz({
 
   const FilterAwareRenderer = useMemo(() => {
     if (backgroundElementIds.size === 0) return Renderer;
+    if (hideFilteredElements) return Renderer;
 
     function WrappedRenderer(props: VisualizationRendererProps) {
       const mergedStates = useMemo(() => {
@@ -119,7 +122,7 @@ export function ActiveQuiz({
     }
     WrappedRenderer.displayName = 'FilterAwareRenderer';
     return WrappedRenderer;
-  }, [Renderer, elements, backgroundElementIds]);
+  }, [Renderer, elements, backgroundElementIds, hideFilteredElements]);
 
   const [finishState, setFinishState] = useState<ScoreResult | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
