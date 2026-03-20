@@ -332,8 +332,17 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                 const showBar = elementToggle(elementToggles, toggles, element.id, 'showBars');
                 const showLabel = isHidden ? false : elementToggle(elementToggles, toggles, element.id, 'showLabels');
 
-                const stateClass = getStateClass(elementStates[element.id]);
-                const bgColor = stateClass ? undefined : categoryColorMap[element.category] ?? 'var(--color-accent)';
+                const state = elementStates[element.id];
+                const stateClass = getStateClass(state);
+                const showColours = elementToggle(elementToggles, toggles, element.id, 'showColours');
+                // States that provide their own background via CSS class — pass '' so Framer Motion
+                // clears its cached inline backgroundColor, allowing the CSS !important rule to apply.
+                const stateOwnsBackground =
+                  state === 'correct' || state === 'correct-second' || state === 'correct-third' ||
+                  state === 'incorrect' || state === 'missed' || state === 'highlighted';
+                const bgColor = stateOwnsBackground
+                  ? ''
+                  : (showColours ? (categoryColorMap[element.category] ?? 'var(--color-accent)') : 'var(--color-accent)');
                 const barOpacity = showBar ? 1 : 0.15;
 
                 const showInsideLabel = showLabel && layout.pixelWidth >= 60;
