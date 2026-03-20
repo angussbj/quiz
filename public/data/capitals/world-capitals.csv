@@ -53,41 +53,41 @@ tunis,Tunis,Tunisia,36.819,10.1658,Africa,Northern Africa,,,tn,
 kampala,Kampala,Uganda,0.3163,32.5822,Africa,Eastern Africa,,,ug,
 lusaka,Lusaka,Zambia,-15.4067,28.2871,Africa,Eastern Africa,,,zm,
 harare,Harare,Zimbabwe,-17.8277,31.0534,Africa,Eastern Africa,,,zw,
-saint-john-s,Saint John's,Antigua and Barbuda,17.1175,-61.8456,Americas,Caribbean,,Antigua,ag,
-buenos-aires,Buenos Aires,Argentina,-34.6037,-58.3816,Americas,South America,,,ar,left
-nassau,Nassau,Bahamas,25.0667,-77.3333,Americas,Caribbean,,The Bahamas,bs,
-bridgetown,Bridgetown,Barbados,13.1073,-59.6202,Americas,Caribbean,,,bb,
-belmopan,Belmopan,Belize,17.25,-88.7667,Americas,Central America,,,bz,
-sucre,Sucre,Bolivia,-19.0333,-65.2627,Americas,South America,,,bo,
-brasilia,Brasília,Brazil,-15.7797,-47.9297,Americas,South America,Brasília,,br,
-ottawa,Ottawa,Canada,45.4112,-75.6981,Americas,North America,,,ca,
-santiago,Santiago,Chile,-33.4569,-70.6483,Americas,South America,,,cl,
-bogota,Bogotá,Colombia,4.711,-74.0721,Americas,South America,Bogotá,,co,
-san-jose,San José,Costa Rica,10.9517,-85.1361,Americas,Central America,,,cr,
-havana,Havana,Cuba,23.133,-82.383,Americas,Caribbean,,,cu,
-roseau,Roseau,Dominica,15.3017,-61.3881,Americas,Caribbean,,,dm,
-santo-domingo,Santo Domingo,Dominican Republic,18.4719,-69.8923,Americas,Caribbean,,,do,
-quito,Quito,Ecuador,-0.2298,-78.5249,Americas,South America,,,ec,
-san-salvador,San Salvador,El Salvador,13.6894,-89.1872,Americas,Central America,,,sv,left
-st-george-s,St. George's,Grenada,12.0564,-61.7485,Americas,Caribbean,,,gd,left
-guatemala-city,Guatemala City,Guatemala,14.6407,-90.5133,Americas,Central America,,,gt,left
-georgetown,Georgetown,Guyana,6.8045,-58.1553,Americas,South America,,,gy,left
-port-au-prince,Port-au-Prince,Haiti,18.5435,-72.3388,Americas,Caribbean,,,ht,above
-tegucigalpa,Tegucigalpa,Honduras,14.0818,-87.2068,Americas,Central America,,,hn,
-kingston,Kingston,Jamaica,17.997,-76.7936,Americas,Caribbean,,,jm,left
-mexico-city,Mexico City,Mexico,19.4285,-99.1277,Americas,North America,"Ciudad de Mexico|Ciudad de México",,mx,
-managua,Managua,Nicaragua,12.1328,-86.2504,Americas,Central America,,,ni,left
-panama-city,Panama City,Panama,8.9936,-79.5197,Americas,Central America,,,pa,
-asuncion,Asunción,Paraguay,-25.2637,-57.5759,Americas,South America,Asunción,,py,
-lima,Lima,Peru,-12.0432,-77.0282,Americas,South America,,,pe,
-basseterre,Basseterre,Saint Kitts and Nevis,17.3026,-62.7177,Americas,Caribbean,,St Kitts and Nevis|St Kitts,kn,left
-castries,Castries,Saint Lucia,13.9957,-61.0061,Americas,Caribbean,,St Lucia,lc,left
-kingstown,Kingstown,Saint Vincent and the Grenadines,13.1553,-61.2274,Americas,Caribbean,,"St Vincent and the Grenadines|St Vincent",vc,left
-paramaribo,Paramaribo,Suriname,5.8664,-55.1668,Americas,South America,,,sr,
-port-of-spain,Port of Spain,Trinidad and Tobago,10.6667,-61.5189,Americas,Caribbean,,Trinidad,tt,
-washington-d-c,Washington D.C.,United States,38.8951,-77.0364,Americas,North America,"Washington D.C.|Washington DC","USA|US|America|United States of America",us,
-montevideo,Montevideo,Uruguay,-34.9033,-56.1882,Americas,South America,,,uy,
-caracas,Caracas,Venezuela,10.5,-66.9333,Americas,South America,,,ve,
+saint-john-s,Saint John's,Antigua and Barbuda,17.1175,-61.8456,North America,Caribbean,,Antigua,ag,
+buenos-aires,Buenos Aires,Argentina,-34.6037,-58.3816,South America,South America,,,ar,left
+nassau,Nassau,Bahamas,25.0667,-77.3333,North America,Caribbean,,The Bahamas,bs,
+bridgetown,Bridgetown,Barbados,13.1073,-59.6202,North America,Caribbean,,,bb,
+belmopan,Belmopan,Belize,17.25,-88.7667,North America,Central America,,,bz,
+sucre,Sucre,Bolivia,-19.0333,-65.2627,South America,South America,,,bo,
+brasilia,Brasília,Brazil,-15.7797,-47.9297,South America,South America,Brasília,,br,
+ottawa,Ottawa,Canada,45.4112,-75.6981,North America,North America,,,ca,
+santiago,Santiago,Chile,-33.4569,-70.6483,South America,South America,,,cl,
+bogota,Bogotá,Colombia,4.711,-74.0721,South America,South America,Bogotá,,co,
+san-jose,San José,Costa Rica,10.9517,-85.1361,North America,Central America,,,cr,
+havana,Havana,Cuba,23.133,-82.383,North America,Caribbean,,,cu,
+roseau,Roseau,Dominica,15.3017,-61.3881,North America,Caribbean,,,dm,
+santo-domingo,Santo Domingo,Dominican Republic,18.4719,-69.8923,North America,Caribbean,,,do,
+quito,Quito,Ecuador,-0.2298,-78.5249,South America,South America,,,ec,
+san-salvador,San Salvador,El Salvador,13.6894,-89.1872,North America,Central America,,,sv,left
+st-george-s,St. George's,Grenada,12.0564,-61.7485,North America,Caribbean,,,gd,left
+guatemala-city,Guatemala City,Guatemala,14.6407,-90.5133,North America,Central America,,,gt,left
+georgetown,Georgetown,Guyana,6.8045,-58.1553,South America,South America,,,gy,left
+port-au-prince,Port-au-Prince,Haiti,18.5435,-72.3388,North America,Caribbean,,,ht,above
+tegucigalpa,Tegucigalpa,Honduras,14.0818,-87.2068,North America,Central America,,,hn,
+kingston,Kingston,Jamaica,17.997,-76.7936,North America,Caribbean,,,jm,left
+mexico-city,Mexico City,Mexico,19.4285,-99.1277,North America,North America,"Ciudad de Mexico|Ciudad de México",,mx,
+managua,Managua,Nicaragua,12.1328,-86.2504,North America,Central America,,,ni,left
+panama-city,Panama City,Panama,8.9936,-79.5197,North America,Central America,,,pa,
+asuncion,Asunción,Paraguay,-25.2637,-57.5759,South America,South America,Asunción,,py,
+lima,Lima,Peru,-12.0432,-77.0282,South America,South America,,,pe,
+basseterre,Basseterre,Saint Kitts and Nevis,17.3026,-62.7177,North America,Caribbean,,St Kitts and Nevis|St Kitts,kn,left
+castries,Castries,Saint Lucia,13.9957,-61.0061,North America,Caribbean,,St Lucia,lc,left
+kingstown,Kingstown,Saint Vincent and the Grenadines,13.1553,-61.2274,North America,Caribbean,,"St Vincent and the Grenadines|St Vincent",vc,left
+paramaribo,Paramaribo,Suriname,5.8664,-55.1668,South America,South America,,,sr,
+port-of-spain,Port of Spain,Trinidad and Tobago,10.6667,-61.5189,North America,Caribbean,,Trinidad,tt,
+washington-d-c,Washington D.C.,United States,38.8951,-77.0364,North America,North America,"Washington D.C.|Washington DC","USA|US|America|United States of America",us,
+montevideo,Montevideo,Uruguay,-34.9033,-56.1882,South America,South America,,,uy,
+caracas,Caracas,Venezuela,10.5,-66.9333,South America,South America,,,ve,
 kabul,Kabul,Afghanistan,34.5281,69.1723,Asia,Southern Asia,,,af,left
 yerevan,Yerevan,Armenia,40.1811,44.5136,Asia,Western Asia,"Jerevan|Erevan",,am,left
 baku,Baku,Azerbaijan,40.3777,49.892,Asia,Western Asia,Bakı,,az,

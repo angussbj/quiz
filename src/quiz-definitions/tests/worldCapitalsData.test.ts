@@ -71,11 +71,12 @@ describe('world-capitals.csv data validation', () => {
     expect(countries).toContain('Kosovo');
   });
 
-  it('has 5 logical regions (some rows are multi-region)', () => {
+  it('has 6 logical regions (some rows are multi-region)', () => {
     const regions = new Set(allRows.flatMap((r) => r.region.split('|')));
-    expect(regions.size).toBe(5);
+    expect(regions.size).toBe(6);
     expect(regions).toContain('Africa');
-    expect(regions).toContain('Americas');
+    expect(regions).toContain('North America');
+    expect(regions).toContain('South America');
     expect(regions).toContain('Asia');
     expect(regions).toContain('Europe');
     expect(regions).toContain('Oceania');
@@ -127,11 +128,8 @@ describe('world-capitals.csv data validation', () => {
     expect(oceanian.length).toBe(14);
   });
 
-  it('filters North America by subregion to 23 countries', () => {
-    const northAmerican = applyDataFilter(allRows, {
-      column: 'subregion',
-      values: ['North America', 'Central America', 'Caribbean'],
-    });
+  it('filters to 23 North American countries', () => {
+    const northAmerican = applyDataFilter(allRows, { column: 'region', values: ['North America'] });
     expect(northAmerican.length).toBe(23);
     const countries = northAmerican.map((r) => r.country);
     expect(countries).toContain('United States');
@@ -141,11 +139,8 @@ describe('world-capitals.csv data validation', () => {
     expect(countries).toContain('Panama');
   });
 
-  it('filters South America by subregion to 12 countries', () => {
-    const southAmerican = applyDataFilter(allRows, {
-      column: 'subregion',
-      values: ['South America'],
-    });
+  it('filters to 12 South American countries', () => {
+    const southAmerican = applyDataFilter(allRows, { column: 'region', values: ['South America'] });
     expect(southAmerican.length).toBe(12);
     const countries = southAmerican.map((r) => r.country);
     expect(countries).toContain('Brazil');
@@ -156,14 +151,16 @@ describe('world-capitals.csv data validation', () => {
     const europe = applyDataFilter(allRows, { column: 'region', values: ['Europe'] });
     const asia = applyDataFilter(allRows, { column: 'region', values: ['Asia'] });
     const africa = applyDataFilter(allRows, { column: 'region', values: ['Africa'] });
-    const americas = applyDataFilter(allRows, { column: 'region', values: ['Americas'] });
+    const northAmerica = applyDataFilter(allRows, { column: 'region', values: ['North America'] });
+    const southAmerica = applyDataFilter(allRows, { column: 'region', values: ['South America'] });
     const oceania = applyDataFilter(allRows, { column: 'region', values: ['Oceania'] });
 
     const allIds = new Set([
       ...europe.map((r) => r.id),
       ...asia.map((r) => r.id),
       ...africa.map((r) => r.id),
-      ...americas.map((r) => r.id),
+      ...northAmerica.map((r) => r.id),
+      ...southAmerica.map((r) => r.id),
       ...oceania.map((r) => r.id),
     ]);
     expect(allIds.size).toBe(197);
