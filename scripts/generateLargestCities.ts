@@ -22,7 +22,7 @@
  *     -o scripts/source-data/cities.csv
  *
  * The population numbers, growth rates, and ranks come from the raw CSV.
- * Coordinates come from SimpleMaps worldcities, with manual overrides where needed.
+ * Coordinates come from dr5hn/countries-states-cities-database, with manual overrides where needed.
  * Region/subregion come from mledoze/countries.json via the cca2 country code.
  */
 
@@ -284,12 +284,21 @@ const COORDINATE_OVERRIDES: Readonly<Record<string, { readonly lat: number; read
   'Al-Hudaydah|YE': { lat: 14.7979, lng: 42.9544 },
   'Misratah|LY': { lat: 32.3754, lng: 15.0925 },
   'Banghazi|LY': { lat: 32.1167, lng: 20.0667 },
+  // Fixes for cities matched to wrong same-named places in dr5hn database
+  'Copenhagen|DK': { lat: 55.6761, lng: 12.5683 },
+  'San Antonio|US': { lat: 29.4241, lng: -98.4936 },
+  'Chihuahua|MX': { lat: 28.6320, lng: -106.0691 },
+  'Wuxi|CN': { lat: 31.5700, lng: 120.2900 },
+  'Xiangyang|CN': { lat: 32.0090, lng: 112.1220 },
+  'Yiwu|CN': { lat: 29.3065, lng: 120.0750 },
+  'Ganzhou|CN': { lat: 25.8310, lng: 114.9330 },
+  'Luzhou|CN': { lat: 28.8717, lng: 105.4423 },
 };
 
 // ------------------------------------------------------------------
 // City name aliases: raw CSV name → worldcities lookup name
 // When the raw CSV uses a non-standard romanisation, map it to the
-// name used in the SimpleMaps worldcities database.
+// name used in the dr5hn cities database.
 // ------------------------------------------------------------------
 
 const CITY_NAME_ALIASES: Readonly<Record<string, string>> = {
@@ -512,6 +521,23 @@ interface OutputRow {
   readonly cityAlternates: string;
 }
 
+// Pre-compute which base IDs have duplicates so we can disambiguate at build time
+function buildIdSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+const idCounts = new Map<string, number>();
+for (const raw of rawCities) {
+  const displayName = DISPLAY_NAME_OVERRIDES[raw.city] ?? raw.city;
+  const slug = buildIdSlug(displayName);
+  idCounts.set(slug, (idCounts.get(slug) ?? 0) + 1);
+}
+
 const rows: Array<OutputRow> = [];
 const missing: Array<string> = [];
 
@@ -573,12 +599,10 @@ for (const raw of rawCities) {
 
   const displayName = DISPLAY_NAME_OVERRIDES[raw.city] ?? raw.city;
 
-  const id = displayName
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+  const baseId = buildIdSlug(displayName);
+  const id = (idCounts.get(baseId) ?? 0) > 1
+    ? `${baseId}-${raw.cca2.toLowerCase()}`
+    : baseId;
 
   rows.push({
     id,
@@ -598,18 +622,6 @@ for (const raw of rawCities) {
 
 // Sort by rank
 rows.sort((a, b) => a.rank - b.rank);
-
-// Deduplicate IDs by appending country code where needed
-const idCounts = new Map<string, number>();
-for (const row of rows) {
-  idCounts.set(row.id, (idCounts.get(row.id) ?? 0) + 1);
-}
-for (const row of rows) {
-  if ((idCounts.get(row.id) ?? 0) > 1) {
-    const mutableRow = row as { id: string };
-    mutableRow.id = `${row.id}-${row.countryCode}`;
-  }
-}
 
 // Build CSV
 const header = 'id,city,country,country_code,latitude,longitude,population,growth_rate,rank,region,subregion,city_alternates,label_position';
