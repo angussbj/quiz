@@ -86,7 +86,7 @@ export function MapRenderer({
   backgroundPaths,
   backgroundLabels,
   svgOverlay,
-  initialViewBox,
+  initialCameraPosition,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -100,7 +100,7 @@ export function MapRenderer({
       elementStates={elementStates}
       clustering={effectiveClustering}
       onClusterClick={onClusterClick}
-      initialViewBox={initialViewBox}
+      initialCameraPosition={initialCameraPosition}
       backgroundPaths={backgroundPaths}
     >
       <MapContent

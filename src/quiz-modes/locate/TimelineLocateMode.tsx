@@ -40,7 +40,7 @@ export function TimelineLocateMode({
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
     }
-  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]); // eslint-disable-line react-hooks/exhaustive-deps -- quiz property access is intentional
 
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
@@ -51,6 +51,7 @@ export function TimelineLocateMode({
         percentage: quiz.totalTargets > 0 ? Math.round((quiz.correctCount / quiz.totalTargets) * 100) : 0,
       });
     }
+     
   }, [quiz.isFinished, quiz.correctCount, quiz.totalTargets]);
 
   const elementToggles = useMemo(() => {

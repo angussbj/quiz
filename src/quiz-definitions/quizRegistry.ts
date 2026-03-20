@@ -148,7 +148,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     title: 'North American Capitals',
     description: 'Name the capital cities of North America, Central America, and the Caribbean.',
     dataFilter: { column: 'subregion', values: ['North America', 'Central America', 'Caribbean'] },
-    initialViewBox: { x: -120, y: -40, width: 72, height: 43 },
+    initialCameraPosition: { x: -120, y: -40, width: 72, height: 43 },
   },
   {
     ...capitalsQuizBase,
@@ -156,7 +156,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     title: 'South American Capitals',
     description: 'Name the capital cities of South American countries.',
     dataFilter: { column: 'subregion', values: ['South America'] },
-    initialViewBox: { x: -85, y: -15, width: 55, height: 73 },
+    initialCameraPosition: { x: -85, y: -15, width: 55, height: 73 },
   },
   {
     ...capitalsQuizBase,
@@ -170,7 +170,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'geo-capitals-world',
     title: 'World Capitals',
     description: 'Name all 197 capital cities of the world.',
-    initialViewBox: { x: -169, y: -70, width: 360, height: 130 },
+    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
   },
   {
     ...countriesQuizBase,
@@ -215,7 +215,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { column: 'group', values: ['North America', 'Central America', 'Caribbean'] },
     ],
     columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
-    initialViewBox: { x: -130, y: -50, width: 72, height: 43 },
+    initialCameraPosition: { x: -130, y: -50, width: 72, height: 43 },
   },
   {
     ...countriesQuizBase,
@@ -227,7 +227,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { column: 'group', values: ['South America'] },
     ],
     columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
-    initialViewBox: { x: -85, y: -15, width: 55, height: 73 },
+    initialCameraPosition: { x: -85, y: -15, width: 55, height: 73 },
   },
   {
     ...countriesQuizBase,
@@ -247,7 +247,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Identify all sovereign countries of the world on a map.',
     dataFilter: { column: 'is_sovereign', values: ['true'] },
     columnMappings: { ...countriesQuizBase.columnMappings, group: 'region' },
-    initialViewBox: { x: -169, y: -70, width: 360, height: 130 },
+    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
   },
   {
     id: 'geo-flags-europe',

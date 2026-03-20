@@ -8,19 +8,6 @@ export interface ViewBox {
   readonly height: number;
 }
 
-/**
- * Explicit camera bounds in viewBox coordinates.
- * Controls the initial zoom and position without clipping the SVG content.
- * The full viewBox still encompasses all elements and background paths;
- * cameraBounds just determines where the camera starts.
- */
-export interface CameraBounds {
-  readonly top: number;
-  readonly left: number;
-  readonly bottom: number;
-  readonly right: number;
-}
-
 const PADDING_FRACTION = 0.05;
 
 /**

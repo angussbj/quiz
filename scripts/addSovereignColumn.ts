@@ -104,7 +104,6 @@ function main() {
   // Header: id,name,region,group,code,paths
   const header = bordersLines[0];
   const headerFields = header.split(',');
-  const codeIndex = headerFields.indexOf('code');
   const pathsIndex = headerFields.indexOf('paths');
 
   // Insert 'sovereign' before 'paths' (after 'code')

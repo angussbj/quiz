@@ -66,7 +66,9 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests",
       "WebFetch(domain:commons.wikimedia.org)",
       "WebFetch(domain:github.com)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(npx eslint:*)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot"
     ]
   }
 }

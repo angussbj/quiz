@@ -24,7 +24,7 @@ export function LocateMode({
   forceGiveUp = false,
   reviewing = false,
   reviewResult,
-  initialViewBox,
+  initialCameraPosition,
 }: QuizModeProps) {
   const quiz = useLocateQuiz(elements);
 
@@ -36,7 +36,7 @@ export function LocateMode({
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
     }
-  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]); // eslint-disable-line react-hooks/exhaustive-deps -- quiz property access is intentional
 
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
@@ -47,6 +47,7 @@ export function LocateMode({
         percentage: quiz.totalTargets > 0 ? Math.round((quiz.correctCount / quiz.totalTargets) * 100) : 0,
       });
     }
+     
   }, [quiz.isFinished, quiz.correctCount, quiz.totalTargets]);
 
   const elementToggles = useMemo(() => {
@@ -131,7 +132,7 @@ export function LocateMode({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
-          initialViewBox={initialViewBox}
+          initialCameraPosition={initialCameraPosition}
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
         />
       </div>

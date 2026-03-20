@@ -65,6 +65,7 @@ export function useQuizData(
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dataFilter is serialized into filterKey for stable identity
   }, [dataPath, filterKey]);
 
   return state;

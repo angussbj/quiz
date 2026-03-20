@@ -32,13 +32,14 @@ export function MultipleChoiceMode({
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
     }
-  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]); // eslint-disable-line react-hooks/exhaustive-deps -- quiz property access is intentional
 
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
       onFinishRef.current(quiz.score);
     }
+     
   }, [quiz.isFinished, quiz.score]);
 
   const progressPercent = quiz.totalPrompts > 0

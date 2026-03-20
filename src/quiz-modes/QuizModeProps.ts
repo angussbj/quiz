@@ -31,7 +31,7 @@ export interface QuizModeProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly clustering?: ClusteringConfig;
-  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
+  readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
   readonly onFinish: (score: ScoreResult) => void;
   readonly forceGiveUp?: boolean;
   readonly reviewing?: boolean;

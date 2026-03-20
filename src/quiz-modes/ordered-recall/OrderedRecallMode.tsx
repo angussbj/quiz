@@ -44,13 +44,14 @@ export function OrderedRecallMode({
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
     }
-  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]); // eslint-disable-line react-hooks/exhaustive-deps -- quiz property access is intentional
 
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
       onFinishRef.current(quiz.score);
     }
+     
   }, [quiz.isFinished, quiz.score]);
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export function OrderedRecallMode({
     const text = event.target.value;
     setInputText(text);
     quiz.handleTextInput(text);
-  }, [quiz.handleTextInput]);
+  }, [quiz.handleTextInput]); // eslint-disable-line react-hooks/exhaustive-deps -- quiz property access is intentional
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -74,6 +75,7 @@ export function OrderedRecallMode({
       setInputText('');
       quiz.handleTextInput('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- quiz property access is intentional
   }, [quiz.handleSubmit, quiz.handleTextInput, inputText]);
 
   const elementToggles = useMemo(() => {

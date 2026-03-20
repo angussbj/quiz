@@ -23,7 +23,7 @@ export function IdentifyMode({
   backgroundPaths,
   backgroundLabels,
   clustering,
-  initialViewBox,
+  initialCameraPosition,
   onFinish,
   forceGiveUp = false,
   reviewing = false,
@@ -39,13 +39,14 @@ export function IdentifyMode({
     if (forceGiveUp && !quiz.isFinished) {
       quiz.handleGiveUp();
     }
-  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]);
+  }, [forceGiveUp, quiz.isFinished, quiz.handleGiveUp]); // eslint-disable-line react-hooks/exhaustive-deps -- quiz property access is intentional
 
   useEffect(() => {
     if (quiz.isFinished && !hasCalledFinish.current) {
       hasCalledFinish.current = true;
       onFinishRef.current(quiz.score);
     }
+     
   }, [quiz.isFinished, quiz.score]);
 
   const handleElementClick = (elementId: string) => {
@@ -223,7 +224,7 @@ export function IdentifyMode({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
-          initialViewBox={initialViewBox}
+          initialCameraPosition={initialCameraPosition}
         />
       </div>
     </div>

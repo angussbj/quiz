@@ -99,13 +99,6 @@ function douglasPeucker(points: ReadonlyArray<Point>, epsilon: number): Readonly
 // Coordinate conversion
 // ------------------------------------------------------------------
 
-/** Equirectangular: x = longitude, y = -latitude. Rounds to 2 decimal places. */
-function geoToSvg(lng: number, lat: number): string {
-  const x = Math.round(lng * 100) / 100;
-  const y = Math.round(-lat * 100) / 100;
-  return `${x} ${y}`;
-}
-
 function ringToPath(ring: ReadonlyArray<ReadonlyArray<number>>, epsilon: number): string {
   const points: Array<Point> = ring.map(([lng, lat]) => [lng, -lat] as Point);
   const simplified = douglasPeucker(points, epsilon);

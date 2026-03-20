@@ -24,7 +24,7 @@ export function FreeRecallMode({
   backgroundPaths,
   backgroundLabels,
   clustering,
-  initialViewBox,
+  initialCameraPosition,
   onFinish,
   forceGiveUp = false,
   reviewing = false,
@@ -106,7 +106,7 @@ export function FreeRecallMode({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
-          initialViewBox={initialViewBox}
+          initialCameraPosition={initialCameraPosition}
         />
       </div>
 

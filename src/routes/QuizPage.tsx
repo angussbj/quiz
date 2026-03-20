@@ -126,7 +126,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             backgroundPaths={backgroundPaths}
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
-            initialViewBox={definition.initialViewBox}
+            initialCameraPosition={definition.initialCameraPosition}
           />
         )}
       </QuizShell>

@@ -22,7 +22,7 @@ export interface ActiveQuizProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly rangeColumn?: string;
-  readonly initialViewBox?: VisualizationRendererProps['initialViewBox'];
+  readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
 }
 
 /**
@@ -41,7 +41,7 @@ export function ActiveQuiz({
   backgroundPaths,
   backgroundLabels,
   rangeColumn,
-  initialViewBox,
+  initialCameraPosition,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
     if (!rangeColumn || !config.elementRange) {
@@ -173,7 +173,7 @@ export function ActiveQuiz({
           forceGiveUp={forceGiveUp}
           reviewing={isFinished}
           reviewResult={reviewResult}
-          initialViewBox={initialViewBox}
+          initialCameraPosition={initialCameraPosition}
         />
       </div>
     </div>

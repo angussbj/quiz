@@ -71,7 +71,10 @@ export function QuizSetupPanel({
 }: QuizSetupPanelProps) {
   const showModeSelector = availableModes.length > 1;
 
-  const activeConstraints = modeConstraints?.[selectedMode] ?? [];
+  const activeConstraints = useMemo(
+    () => modeConstraints?.[selectedMode] ?? [],
+    [modeConstraints, selectedMode],
+  );
   const constraintResult = useMemo(
     () => resolveToggleConstraints(activeConstraints, toggleValues),
     [activeConstraints, toggleValues],

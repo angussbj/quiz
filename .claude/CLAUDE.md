@@ -61,7 +61,7 @@ When multiple quiz definitions share the same structure (e.g. all capitals quizz
 
 `QuizDefinition.dataFilter` filters rows at load time: `{ column: 'region', values: ['Europe'] }`. Multiple values act as OR. Array of filters uses AND logic. Adding a new region quiz requires only a new registry entry — no new data files.
 
-`QuizDefinition.initialViewBox` (`{x, y, width, height}` in equirectangular viewBox coordinates) sets the initial camera framing. If omitted, the camera auto-fits the quiz elements. Quizzes covering a large continent/world should set this explicitly so the view starts zoomed to the relevant region rather than fully zoomed out.
+`QuizDefinition.initialCameraPosition` (`{x, y, width, height}` in equirectangular viewBox coordinates) sets the initial camera framing without clipping the SVG — users can pan beyond it. If omitted, the camera auto-fits the quiz elements. Quizzes covering a large continent/world should set this explicitly so the view starts zoomed to the relevant region rather than fully zoomed out.
 
 Border CSV format: `id,name,region,group,paths,latitude,longitude,name_alternates,is_sovereign` where `paths` contains pipe-separated SVG path `d` strings. The `is_sovereign` column (`"true"`/`""`) controls the `sovereign` field on `BackgroundPath` — sovereign countries get `sovereign = name`, territories get `sovereign = undefined`. Use `parseBackgroundPaths()` from `src/visualizations/map/loadBackgroundPaths.ts` to convert to `BackgroundPath[]`. Pass a `wrapLongitude` to shift the antimeridian (e.g., `-169` for Oceania so Kiribati renders on the right edge instead of split).
 

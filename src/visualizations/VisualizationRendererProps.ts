@@ -52,8 +52,8 @@ export interface VisualizationRendererProps {
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   /** Additional SVG content rendered on top of all elements (e.g., feedback overlays) */
   readonly svgOverlay?: ReactNode;
-  /** Override the initial viewBox instead of computing from element bounds. */
-  readonly initialViewBox?: {
+  /** Override the initial camera position instead of computing from element bounds. */
+  readonly initialCameraPosition?: {
     readonly x: number;
     readonly y: number;
     readonly width: number;

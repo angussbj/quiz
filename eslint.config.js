@@ -19,5 +19,16 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Allow _prefixed unused vars (common for unused function parameters)
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      // React compiler rules that produce false positives for our patterns:
+      // - refs: flags intentional ref reads in useMemo/render (e.g. stable keys)
+      // - set-state-in-effect: flags standard async fetch→setState patterns
+      // - globals: flags valid global access patterns
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/globals': 'off',
+    },
   },
 ])
