@@ -1,14 +1,14 @@
 id,event,start_year,start_month,start_day,end_year,end_month,end_day,theatre,event_alternates
 invasion-of-poland,Invasion of Poland,1939,9,1,1939,10,6,European Theatre,September Campaign|Poland Campaign
 fall-of-france,Fall of France,1940,5,10,1940,6,25,European Theatre,Battle of France
-battle-of-britain,Battle of Britain,1940,7,10,1940,10,31,European Theatre,
+battle-of-britain,Battle of Britain,1940,7,10,1940,10,31,European Theatre,RAF vs Luftwaffe|Battle of Britain 1940
 the-blitz,The Blitz,1940,9,7,1941,5,11,European Theatre,London Blitz|Blitz
 d-day,D-Day,1944,6,6,,,,European Theatre,Normandy Landings|Operation Overlord|Normandy Invasion
 liberation-of-paris,Liberation of Paris,1944,8,19,1944,8,25,European Theatre,Battle for Paris
 battle-of-the-bulge,Battle of the Bulge,1944,12,16,1945,1,16,European Theatre,Ardennes Offensive|Ardennes Counteroffensive
-ve-day,VE Day,1945,5,8,,,,European Theatre,Victory in Europe Day|Victory in Europe
+ve-day,VE Day,1945,5,8,,,,European Theatre,Victory in Europe Day|Victory in Europe|End of War in Europe
 operation-barbarossa,Operation Barbarossa,1941,6,22,1941,12,5,Eastern Front,Barbarossa
-battle-of-moscow,Battle of Moscow,1941,9,30,1942,1,7,Eastern Front,
+battle-of-moscow,Battle of Moscow,1941,9,30,1942,1,7,Eastern Front,Moscow|Defence of Moscow|Operation Typhoon
 siege-of-leningrad,Siege of Leningrad,1941,9,8,1944,1,27,Eastern Front,Leningrad Blockade|Blockade of Leningrad
 battle-of-stalingrad,Battle of Stalingrad,1942,8,23,1943,2,2,Eastern Front,Stalingrad
 battle-of-kursk,Battle of Kursk,1943,7,5,1943,8,23,Eastern Front,Kursk
@@ -20,13 +20,13 @@ battle-of-midway,Battle of Midway,1942,6,4,1942,6,7,Pacific Theatre,Midway
 guadalcanal-campaign,Guadalcanal Campaign,1942,8,7,1943,2,9,Pacific Theatre,Battle of Guadalcanal|Guadalcanal
 battle-of-iwo-jima,Battle of Iwo Jima,1945,2,19,1945,3,26,Pacific Theatre,Iwo Jima
 battle-of-okinawa,Battle of Okinawa,1945,4,1,1945,6,21,Pacific Theatre,Okinawa
-atomic-bombing-of-hiroshima,Atomic Bombing of Hiroshima,1945,8,6,,,,Pacific Theatre,Hiroshima|Bombing of Hiroshima
-atomic-bombing-of-nagasaki,Atomic Bombing of Nagasaki,1945,8,9,,,,Pacific Theatre,Nagasaki|Bombing of Nagasaki
-vj-day,VJ Day,1945,8,15,,,,Pacific Theatre,Victory over Japan Day|Victory in the Pacific
+atomic-bombing-of-hiroshima,Atomic Bombing of Hiroshima,1945,8,6,,,,Pacific Theatre,Hiroshima|Bombing of Hiroshima|First Atomic Bomb
+atomic-bombing-of-nagasaki,Atomic Bombing of Nagasaki,1945,8,9,,,,Pacific Theatre,Nagasaki|Bombing of Nagasaki|Second Atomic Bomb
+vj-day,VJ Day,1945,8,15,,,,Pacific Theatre,Victory over Japan Day|Victory in the Pacific|End of World War 2|Japan Surrenders
 nazi-soviet-pact,Nazi-Soviet Pact,1939,8,23,,,,Diplomacy & Politics,Molotov-Ribbentrop Pact|German-Soviet Non-Aggression Pact
 lend-lease-act,Lend-Lease Act,1941,3,11,,,,Diplomacy & Politics,Lend-Lease
-atlantic-charter,Atlantic Charter,1941,8,14,,,,Diplomacy & Politics,
-wannsee-conference,Wannsee Conference,1942,1,20,,,,Diplomacy & Politics,
+atlantic-charter,Atlantic Charter,1941,8,14,,,,Diplomacy & Politics,Roosevelt-Churchill Declaration|Anglo-American Charter
+wannsee-conference,Wannsee Conference,1942,1,20,,,,Diplomacy & Politics,Wannsee|Planning of the Holocaust|Final Solution Conference
 yalta-conference,Yalta Conference,1945,2,4,1945,2,11,Diplomacy & Politics,Yalta
 potsdam-conference,Potsdam Conference,1945,7,17,1945,8,2,Diplomacy & Politics,Potsdam
 japan-formal-surrender,Japan's Formal Surrender,1945,9,2,,,,Diplomacy & Politics,Japanese Instrument of Surrender|Surrender of Japan

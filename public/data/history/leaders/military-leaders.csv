@@ -17,7 +17,7 @@ sun-tzu,Sun Tzu,-544,-496,Asia,Sun Zi|Sun Wu|Master Sun
 cao-cao,Cao Cao,155,220,Asia,Wei Wu|Mengde
 toyotomi-hideyoshi,Toyotomi Hideyoshi,1537,1598,Asia,Hashiba Hideyoshi|Kinoshita Tokichiro
 yi-sun-sin,Yi Sun-sin,1545,1598,Asia,Yi Sunshin|Admiral Yi
-vo-nguyen-giap,Vo Nguyen Giap,1911,2013,Asia,General Giap|Vo Nguyen Giap
+vo-nguyen-giap,Vo Nguyen Giap,1911,2013,Asia,General Giap|Vo Nguyen Giap|Giap
 subotai,Subutai,1175,1248,Asia,Subutai|Subodei|Subetei
 zhuge-liang,Zhuge Liang,181,234,Asia,Kongming|Crouching Dragon
 wu-qi,Wu Qi,-440,-381,Asia,Wu Zi|Wu Ch'i
@@ -26,19 +26,19 @@ charles-martel,Charles Martel,688,741,Europe,Charles the Hammer|Carolus Martellu
 charlemagne,Charlemagne,742,814,Europe,Charles the Great|Karl der Große|Carolus Magnus
 richard-i,Richard I,1157,1199,Europe,Richard the Lionheart|Richard Coeur de Lion
 joan-of-arc,Joan of Arc,1412,1431,Europe,Jeanne d'Arc|The Maid of Orleans
-gustavus-adolphus,Gustavus Adolphus,1594,1632,Europe,Gustav II Adolf|Lion of the North
-john-churchill,John Churchill,1650,1722,Europe,Duke of Marlborough|1st Duke of Marlborough
-eugene-of-savoy,Eugene of Savoy,1663,1736,Europe,Prince Eugene|François-Eugène de Savoie
+gustavus-adolphus,Gustavus Adolphus,1594,1632,Europe,Gustav II Adolf|Lion of the North|Gustavus
+john-churchill,John Churchill,1650,1722,Europe,Duke of Marlborough|1st Duke of Marlborough|Churchill|Marlborough
+eugene-of-savoy,Eugene of Savoy,1663,1736,Europe,Prince Eugene|François-Eugène de Savoie|Eugene
 napoleon-bonaparte,Napoleon Bonaparte,1769,1821,Europe,Napoleon I|Napoleon
 arthur-wellesley,Arthur Wellesley,1769,1852,Europe,Duke of Wellington|Wellington|Iron Duke
-horatio-nelson,Horatio Nelson,1758,1805,Europe,Admiral Nelson|Viscount Nelson
-mikhail-kutuzov,Mikhail Kutuzov,1745,1813,Europe,Mikhail Golenishchev-Kutuzov|Field Marshal Kutuzov
+horatio-nelson,Horatio Nelson,1758,1805,Europe,Admiral Nelson|Viscount Nelson|Nelson
+mikhail-kutuzov,Mikhail Kutuzov,1745,1813,Europe,Mikhail Golenishchev-Kutuzov|Field Marshal Kutuzov|Kutuzov
 gebhard-blucher,Gebhard von Blücher,1742,1819,Europe,Marshal Forward|Blücher
 helmuth-von-moltke,Helmuth von Moltke the Elder,1800,1891,Europe,Moltke|Der grosse Schweiger
-erwin-rommel,Erwin Rommel,1891,1944,Europe,The Desert Fox|Rommel
-georgy-zhukov,Georgy Zhukov,1896,1974,Europe,Marshal Zhukov|Georgi Zhukov
-bernard-montgomery,Bernard Montgomery,1887,1976,Europe,Monty|Viscount Montgomery|1st Viscount Montgomery of Alamein
-erich-von-manstein,Erich von Manstein,1887,1973,Europe,Fritz Erich von Manstein|Field Marshal Manstein
+erwin-rommel,Erwin Rommel,1891,1944,Europe,The Desert Fox|Rommel|Desert Fox
+georgy-zhukov,Georgy Zhukov,1896,1974,Europe,Marshal Zhukov|Georgi Zhukov|Zhukov
+bernard-montgomery,Bernard Montgomery,1887,1976,Europe,Monty|Viscount Montgomery|1st Viscount Montgomery of Alamein|Montgomery
+erich-von-manstein,Erich von Manstein,1887,1973,Europe,Fritz Erich von Manstein|Field Marshal Manstein|Manstein
 chandragupta-maurya,Chandragupta Maurya,-340,-297,Asia,Sandrokottos|Androcottus
 mehmed-ii,Mehmed II,1432,1481,Middle East,Mehmed the Conqueror|Fatih Sultan Mehmed|Muhammad II
 suleiman-the-magnificent,Suleiman the Magnificent,1494,1566,Middle East,Suleiman I|Kanuni Sultan Süleyman|The Lawgiver
@@ -47,25 +47,25 @@ nader-shah,Nader Shah,1698,1747,Middle East,Nader Qoli Beg|Napoleon of Persia
 shaka-zulu,Shaka Zulu,1787,1828,Africa,Shaka kaSenzangakhona|Shaka
 yaa-asantewaa,Yaa Asantewaa,1840,1921,Africa,Yaa Asantewaa|Queen Mother of Ejisu
 menelik-ii,Menelik II,1844,1913,Africa,Sahle Maryam|Emperor of Ethiopia
-toussaint-louverture,Toussaint Louverture,1743,1803,North America,François-Dominique Toussaint|Toussaint Bréda|The Black Napoleon
+toussaint-louverture,Toussaint Louverture,1743,1803,North America,François-Dominique Toussaint|Toussaint Bréda|The Black Napoleon|Toussaint|Louverture
 tippu-tip,Tippu Tip,1832,1905,Africa,Hamad ibn Muhammad ibn Juma ibn Rajab el Murjebi|Hamed bin Muhammed
 samori-ture,Samori Touré,1830,1900,Africa,Samori Ture|Almami Samori|Napoleon of the Sudan
 abdallahi-ibn-muhammad,Abdallahi ibn Muhammad,1846,1899,Africa,The Khalifa|Khalifa Abdallahi
 dedan-kimathi,Dedan Kimathi,1920,1957,Africa,Field Marshal Kimathi|Dedan Kimathi Waciuri
-george-washington,George Washington,1732,1799,North America,Commander-in-Chief Washington|Father of His Country
-ulysses-grant,Ulysses S. Grant,1822,1885,North America,Hiram Ulysses Grant|Unconditional Surrender Grant|Sam Grant
-william-sherman,William Tecumseh Sherman,1820,1891,North America,Uncle Billy|Cump Sherman
-stonewall-jackson,Stonewall Jackson,1824,1863,North America,Thomas Jonathan Jackson|Old Blue Light
-robert-e-lee,Robert E. Lee,1807,1870,North America,Marse Robert|The Gray Fox
-george-patton,George Patton,1885,1945,North America,Old Blood and Guts|Georgie Patton
-douglas-macarthur,Douglas MacArthur,1880,1964,North America,Old Soldier|Supreme Commander MacArthur
-chester-nimitz,Chester Nimitz,1885,1966,North America,Fleet Admiral Nimitz|CINCPAC
-simon-bolivar,Simón Bolívar,1783,1830,South America,El Libertador|Liberator of America
-jose-de-san-martin,José de San Martín,1778,1850,South America,El Libertador|Protector of Peru
-francisco-de-miranda,Francisco de Miranda,1750,1816,South America,El Precursor|The Precursor
-antonio-jose-de-sucre,Antonio José de Sucre,1795,1830,South America,Gran Mariscal de Ayacucho|The Grand Marshal
-emiliano-zapata,Emiliano Zapata,1879,1919,North America,Caudillo del Sur|The Attila of the South
-pancho-villa,Pancho Villa,1878,1923,North America,Francisco Villa|El Centauro del Norte|The Centaur of the North
-miguel-hidalgo,Miguel Hidalgo,1753,1811,North America,Father of Mexican Independence|El Cura Hidalgo
-che-guevara,Che Guevara,1928,1967,South America,Ernesto Guevara|El Che
-pedro-de-valdivia,Pedro de Valdivia,1497,1553,South America,Conquistador Valdivia
+george-washington,George Washington,1732,1799,North America,Commander-in-Chief Washington|Father of His Country|Washington
+ulysses-grant,Ulysses S. Grant,1822,1885,North America,Hiram Ulysses Grant|Unconditional Surrender Grant|Sam Grant|Grant
+william-sherman,William Tecumseh Sherman,1820,1891,North America,Uncle Billy|Cump Sherman|Sherman
+stonewall-jackson,Stonewall Jackson,1824,1863,North America,Thomas Jonathan Jackson|Old Blue Light|Jackson
+robert-e-lee,Robert E. Lee,1807,1870,North America,Marse Robert|The Gray Fox|Lee
+george-patton,George Patton,1885,1945,North America,Old Blood and Guts|Georgie Patton|Patton
+douglas-macarthur,Douglas MacArthur,1880,1964,North America,Old Soldier|Supreme Commander MacArthur|MacArthur
+chester-nimitz,Chester Nimitz,1885,1966,North America,Fleet Admiral Nimitz|CINCPAC|Nimitz
+simon-bolivar,Simón Bolívar,1783,1830,South America,El Libertador|Liberator of America|Bolivar
+jose-de-san-martin,José de San Martín,1778,1850,South America,El Libertador|Protector of Peru|San Martin
+francisco-de-miranda,Francisco de Miranda,1750,1816,South America,El Precursor|The Precursor|Miranda
+antonio-jose-de-sucre,Antonio José de Sucre,1795,1830,South America,Gran Mariscal de Ayacucho|The Grand Marshal|Sucre
+emiliano-zapata,Emiliano Zapata,1879,1919,North America,Caudillo del Sur|The Attila of the South|Zapata
+pancho-villa,Pancho Villa,1878,1923,North America,Francisco Villa|El Centauro del Norte|The Centaur of the North|Villa
+miguel-hidalgo,Miguel Hidalgo,1753,1811,North America,Father of Mexican Independence|El Cura Hidalgo|Hidalgo
+che-guevara,Che Guevara,1928,1967,South America,Ernesto Guevara|El Che|Guevara
+pedro-de-valdivia,Pedro de Valdivia,1497,1553,South America,Conquistador Valdivia|Valdivia

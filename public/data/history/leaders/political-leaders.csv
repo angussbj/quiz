@@ -6,23 +6,23 @@ alexander-the-great,Alexander the Great,-356,-323,Asia,Alexander III of Macedon|
 pericles,Pericles,-495,-429,Europe,Perikles|First Citizen of Athens
 charlemagne,Charlemagne,742,814,Europe,Charles the Great|Charles I|King of the Franks|Emperor of the West
 napoleon-bonaparte,Napoleon Bonaparte,1769,1821,Europe,Napoleon I|Emperor of the French
-queen-victoria,Queen Victoria,1819,1901,Europe,Alexandrina Victoria|Victoria of the United Kingdom
-winston-churchill,Winston Churchill,1874,1965,Europe,Sir Winston Churchill|Prime Minister of Britain
+queen-victoria,Queen Victoria,1819,1901,Europe,Alexandrina Victoria|Victoria of the United Kingdom|Victoria
+winston-churchill,Winston Churchill,1874,1965,Europe,Sir Winston Churchill|Prime Minister of Britain|Churchill
 vladimir-lenin,Vladimir Lenin,1870,1924,Europe,Vladimir Ilyich Ulyanov|Lenin|Leader of Soviet Russia
 joseph-stalin,Joseph Stalin,1878,1953,Europe,Ioseb Jughashvili|Stalin|General Secretary of Soviet Union
-adolph-hitler,Adolf Hitler,1889,1945,Europe,Führer|Chancellor of Germany
-otto-von-bismarck,Otto von Bismarck,1815,1898,Europe,Iron Chancellor|Prince Bismarck|Chancellor of Germany
+adolph-hitler,Adolf Hitler,1889,1945,Europe,Führer|Chancellor of Germany|Hitler
+otto-von-bismarck,Otto von Bismarck,1815,1898,Europe,Iron Chancellor|Prince Bismarck|Chancellor of Germany|Bismarck
 elizabeth-i,Elizabeth I,1533,1603,Europe,Virgin Queen|Gloriana|Queen of England
 louis-xiv,Louis XIV,1638,1715,Europe,Sun King|Louis the Great|King of France
-peter-the-great,Peter the Great,1672,1725,Europe,Peter I|Pyotr Alexeyevich|Tsar of Russia
-catherine-the-great,Catherine the Great,1729,1796,Europe,Catherine II|Yekaterina Alexeyevna|Empress of Russia
-constantine-i,Constantine I,272,337,Europe,Constantine the Great|First Christian Emperor|Flavius Valerius Constantinus
-justinian-i,Justinian I,482,565,Europe,Justinian the Great|Byzantine Emperor|Flavius Petrus Sabbatius Iustinianus
+peter-the-great,Peter the Great,1672,1725,Europe,Peter I|Pyotr Alexeyevich|Tsar of Russia|Peter
+catherine-the-great,Catherine the Great,1729,1796,Europe,Catherine II|Yekaterina Alexeyevna|Empress of Russia|Catherine
+constantine-i,Constantine I,272,337,Europe,Constantine the Great|First Christian Emperor|Flavius Valerius Constantinus|Constantine
+justinian-i,Justinian I,482,565,Europe,Justinian the Great|Byzantine Emperor|Flavius Petrus Sabbatius Iustinianus|Justinian
 queen-isabella-i,Queen Isabella I,1451,1504,Europe,Isabella of Castile|La Católica|Queen of Spain
 qin-shi-huang,Qin Shi Huang,-259,-210,Asia,First Emperor of China|Ying Zheng|Qin Shihuangdi
 genghis-khan,Genghis Khan,1162,1227,Asia,Temujin|Chinggis Khan|Great Khan of the Mongol Empire
 kublai-khan,Kublai Khan,1215,1294,Asia,Setsen Khan|Yuan Shizu|Emperor of China|Khagan of the Mongol Empire
-mao-zedong,Mao Zedong,1893,1976,Asia,Mao Tse-tung|Chairman Mao|Great Helmsman
+mao-zedong,Mao Zedong,1893,1976,Asia,Mao Tse-tung|Chairman Mao|Great Helmsman|Mao
 emperor-meiji,Emperor Meiji,1852,1912,Asia,Mutsuhito|Meiji Emperor|Emperor of Japan
 ashoka-the-great,Ashoka the Great,-304,-232,Asia,Ashoka Maurya|Priyadarshi|Emperor of the Maurya Empire
 akbar-the-great,Akbar the Great,1542,1605,Asia,Akbar I|Jalaluddin Muhammad Akbar|Mughal Emperor
@@ -53,25 +53,25 @@ umar-ibn-al-khattab,Umar ibn al-Khattab,584,644,Middle East,Omar|Second Caliph o
 montezuma-ii,Montezuma II,1466,1520,North America,Moctezuma Xocoyotzin|Aztec Emperor|Huey Tlatoani
 pachacuti,Pachacuti,1418,1471,South America,Pachacutec|Cusi Yupanqui|Inca Emperor|Sapa Inca
 simon-bolivar,Simon Bolivar,1783,1830,South America,El Libertador|Liberator of South America|Simon Jose Antonio
-jose-de-san-martin,Jose de San Martin,1778,1850,South America,El Libertador del Sur|General San Martin|Liberator of Argentina
-getulio-vargas,Getulio Vargas,1882,1954,South America,Father of the Poor|President of Brazil
-fidel-castro,Fidel Castro,1926,2016,North America,El Comandante|Fidel Alejandro Castro Ruz|President of Cuba
-george-washington,George Washington,1732,1799,North America,First President|Father of His Country|General Washington
-abraham-lincoln,Abraham Lincoln,1809,1865,North America,Honest Abe|Great Emancipator|16th President of the US
-franklin-d-roosevelt,Franklin D. Roosevelt,1882,1945,North America,FDR|32nd President of the US|New Deal President
-john-a-macdonald,John A. Macdonald,1815,1891,North America,Sir John A.|First Prime Minister of Canada
-benito-juarez,Benito Juarez,1806,1872,North America,Benito Pablo Juarez Garcia|President of Mexico|El Benemérito
+jose-de-san-martin,Jose de San Martin,1778,1850,South America,El Libertador del Sur|General San Martin|Liberator of Argentina|San Martin
+getulio-vargas,Getulio Vargas,1882,1954,South America,Father of the Poor|President of Brazil|Vargas
+fidel-castro,Fidel Castro,1926,2016,North America,El Comandante|Fidel Alejandro Castro Ruz|President of Cuba|Castro
+george-washington,George Washington,1732,1799,North America,First President|Father of His Country|General Washington|Washington
+abraham-lincoln,Abraham Lincoln,1809,1865,North America,Honest Abe|Great Emancipator|16th President of the US|Lincoln
+franklin-d-roosevelt,Franklin D. Roosevelt,1882,1945,North America,FDR|32nd President of the US|New Deal President|Roosevelt
+john-a-macdonald,John A. Macdonald,1815,1891,North America,Sir John A.|First Prime Minister of Canada|Macdonald
+benito-juarez,Benito Juarez,1806,1872,North America,Benito Pablo Juarez Garcia|President of Mexico|El Benemérito|Juarez
 sitting-bull,Sitting Bull,1831,1890,North America,Tatanka Iyotanka|Hunkpapa Lakota Leader
-thomas-jefferson,Thomas Jefferson,1743,1826,North America,3rd President of the US|Author of Declaration of Independence
+thomas-jefferson,Thomas Jefferson,1743,1826,North America,3rd President of the US|Author of Declaration of Independence|Jefferson
 cuauhtemoc,Cuauhtemoc,1495,1525,North America,Guatemoc|Last Aztec Emperor|Huey Tlatoani
 kamehameha-i,Kamehameha I,1758,1819,Oceania,Napoleon of the Pacific|First King of Hawaii|Kamehameha the Great
 queen-liliuokalani,Queen Liliuokalani,1838,1917,Oceania,Lydia Kamakaeha|Last Monarch of Hawaii
 tahiti-pomare-ii,Pomare II,1782,1821,Oceania,King of Tahiti|Pomare the Great
 robert-muldoon,Robert Muldoon,1921,1992,Oceania,Piggy Muldoon|Prime Minister of New Zealand
-gough-whitlam,Gough Whitlam,1916,2014,Oceania,Edward Gough Whitlam|Prime Minister of Australia
-malcolm-fraser,Malcolm Fraser,1930,2015,Oceania,John Malcolm Fraser|Prime Minister of Australia
-mahatma-gandhi,Mahatma Gandhi,1869,1948,Asia,Mohandas Karamchand Gandhi|Father of the Nation|Bapu
-jawaharlal-nehru,Jawaharlal Nehru,1889,1964,Asia,Pandit Nehru|First Prime Minister of India|Chacha Nehru
+gough-whitlam,Gough Whitlam,1916,2014,Oceania,Edward Gough Whitlam|Prime Minister of Australia|Whitlam
+malcolm-fraser,Malcolm Fraser,1930,2015,Oceania,John Malcolm Fraser|Prime Minister of Australia|Fraser
+mahatma-gandhi,Mahatma Gandhi,1869,1948,Asia,Mohandas Karamchand Gandhi|Father of the Nation|Bapu|Gandhi
+jawaharlal-nehru,Jawaharlal Nehru,1889,1964,Asia,Pandit Nehru|First Prime Minister of India|Chacha Nehru|Nehru
 mao-ii-seonghwa,Sejong the Great,1397,1450,Asia,Sejong|King Sejong|Fourth King of Joseon Dynasty
 attila-the-hun,Attila the Hun,406,453,Europe,Scourge of God|King of the Huns|Flagellum Dei
 tamerlane,Tamerlane,1336,1405,Asia,Timur|Timur the Lame|Amir Timur|Tamburlaine
