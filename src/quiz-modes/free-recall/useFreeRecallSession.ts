@@ -19,6 +19,7 @@ interface FreeRecallSessionResult {
   readonly elementToggles: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
   readonly handleTextAnswer: (text: string) => void;
   readonly handleGiveUp: () => void;
+  readonly ambiguousMessage: string | undefined;
 }
 
 /**
@@ -38,6 +39,7 @@ export function useFreeRecallSession({
   const [givenUp, setGivenUp] = useState(false);
   const [lastMatchedElementId, setLastMatchedElementId] = useState<string | undefined>(undefined);
   const [lastMatchedAnswer, setLastMatchedAnswer] = useState<string | undefined>(undefined);
+  const [ambiguousMessage, setAmbiguousMessage] = useState<string | undefined>(undefined);
 
   const correctIdSet = useMemo(() => new Set(correctIds), [correctIds]);
   const interactiveElements = useMemo(
@@ -105,7 +107,13 @@ export function useFreeRecallSession({
     if (givenUp) return;
 
     const match = matchAnswer(text, remainingRowsRef.current, answerColumn);
-    if (match) {
+    if (!match) {
+      setAmbiguousMessage(undefined);
+    } else if ('type' in match) {
+      const names = match.candidates.join(' or ');
+      setAmbiguousMessage(`Ambiguous — could be: ${names}`);
+    } else {
+      setAmbiguousMessage(undefined);
       setCorrectIds((prev) => [...prev, match.elementId]);
       setLastMatchedElementId(match.elementId);
       setLastMatchedAnswer(match.displayAnswer);
@@ -134,5 +142,6 @@ export function useFreeRecallSession({
     elementToggles,
     handleTextAnswer,
     handleGiveUp,
+    ambiguousMessage,
   };
 }

@@ -31,7 +31,7 @@ export function FreeRecallMode({
   reviewing = false,
   reviewResult,
 }: QuizModeProps) {
-  const { session, elementToggles, handleTextAnswer, handleGiveUp } = useFreeRecallSession({
+  const { session, elementToggles, handleTextAnswer, handleGiveUp, ambiguousMessage } = useFreeRecallSession({
     elements,
     dataRows,
     answerColumn: columnMappings['answer'] ?? 'answer',
@@ -98,7 +98,7 @@ export function FreeRecallMode({
 
   return (
     <div className={styles.container}>
-      <div className={styles.visualization}>
+      <div className={styles.visualization} onMouseDown={(e) => e.preventDefault()}>
         <Renderer
           elements={elements}
           elementStates={reviewElementStates}
@@ -156,7 +156,18 @@ export function FreeRecallMode({
             )}
 
             <AnimatePresence mode="wait">
-              {session.lastMatchedAnswer && (
+              {ambiguousMessage ? (
+                <motion.div
+                  key="ambiguous"
+                  className={styles.ambiguousMessage}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {ambiguousMessage}
+                </motion.div>
+              ) : session.lastMatchedAnswer ? (
                 <motion.div
                   key={session.lastMatchedElementId}
                   className={styles.lastAnswer}
@@ -167,7 +178,7 @@ export function FreeRecallMode({
                 >
                   ✓ {session.lastMatchedAnswer}
                 </motion.div>
-              )}
+              ) : null}
             </AnimatePresence>
 
             {isFinished && (

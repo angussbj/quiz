@@ -46,6 +46,12 @@ const sampleRows: ReadonlyArray<QuizDataRow> = [
   { id: 'prague', city: 'Prague', country: 'Czech Republic', city_alternates: 'Praha' },
 ];
 
+const ambiguousRows: ReadonlyArray<QuizDataRow> = [
+  { id: 'roman-empire', empire: 'Roman Empire', empire_alternates: 'Rome|Romans' },
+  { id: 'roman-republic', empire: 'Roman Republic', empire_alternates: 'Rome|Romans' },
+  { id: 'byzantine', empire: 'Byzantine Empire', empire_alternates: 'Byzantium' },
+];
+
 describe('matchAnswer', () => {
   it('matches exact answer', () => {
     const result = matchAnswer('Paris', sampleRows, 'city');
@@ -96,11 +102,45 @@ describe('matchAnswer', () => {
 
   it('returns primary answer as displayAnswer even when alternate matched', () => {
     const result = matchAnswer('Praha', sampleRows, 'city');
-    expect(result?.displayAnswer).toBe('Prague');
+    expect(result).toEqual({ elementId: 'prague', displayAnswer: 'Prague' });
   });
 
   it('handles rows without the alternates column', () => {
     const result = matchAnswer('Berlin', sampleRows, 'city');
     expect(result).toEqual({ elementId: 'berlin', displayAnswer: 'Berlin' });
+  });
+});
+
+describe('matchAnswer ambiguous cases', () => {
+  it('returns AmbiguousMatch when two rows share an alternate', () => {
+    const result = matchAnswer('Rome', ambiguousRows, 'empire');
+    expect(result).toEqual({
+      type: 'ambiguous',
+      candidates: ['Roman Empire', 'Roman Republic'],
+    });
+  });
+
+  it('returns AmbiguousMatch when alternate matches two rows case-insensitively', () => {
+    const result = matchAnswer('romans', ambiguousRows, 'empire');
+    expect(result).toEqual({
+      type: 'ambiguous',
+      candidates: ['Roman Empire', 'Roman Republic'],
+    });
+  });
+
+  it('returns unambiguous match when only one row matches', () => {
+    const result = matchAnswer('Byzantium', ambiguousRows, 'empire');
+    expect(result).toEqual({ elementId: 'byzantine', displayAnswer: 'Byzantine Empire' });
+  });
+
+  it('returns unambiguous match when exact primary answer typed despite shared alternate', () => {
+    const result = matchAnswer('Roman Empire', ambiguousRows, 'empire');
+    expect(result).toEqual({ elementId: 'roman-empire', displayAnswer: 'Roman Empire' });
+  });
+
+  it('resolves ambiguity after one candidate is removed from remaining rows', () => {
+    const remaining = ambiguousRows.filter((r) => r['id'] !== 'roman-empire');
+    const result = matchAnswer('Rome', remaining, 'empire');
+    expect(result).toEqual({ elementId: 'roman-republic', displayAnswer: 'Roman Republic' });
   });
 });
