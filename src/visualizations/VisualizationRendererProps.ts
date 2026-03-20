@@ -61,4 +61,4 @@ export interface VisualizationRendererProps {
   };
 }
 
-export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid';
+export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy';

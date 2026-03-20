@@ -4,6 +4,7 @@ import { buildMapElements } from './map/buildMapElements';
 import { buildGridElements } from './periodic-table/buildGridElements';
 import { buildTimelineElementsFromRows } from './timeline/buildTimelineElementsFromRows';
 import { buildFlagGridElements } from './flag-grid/buildFlagGridElements';
+import { buildAnatomyElements } from './anatomy/buildAnatomyElements';
 
 export function buildElements(
   visualizationType: VisualizationType,
@@ -19,5 +20,7 @@ export function buildElements(
       return buildTimelineElementsFromRows(rows, columnMappings);
     case 'flag-grid':
       return buildFlagGridElements(rows, columnMappings);
+    case 'anatomy':
+      return buildAnatomyElements(rows, columnMappings);
   }
 }
