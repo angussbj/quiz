@@ -6,8 +6,8 @@ great-oxidation,Great Oxidation Event,-2400000000,-2000000000,Microbes & Early L
 first-eukaryotes,First Eukaryotes,-2100000000,,Microbes & Early Life,Eukaryota|Nucleated Cells
 first-sexual-reproduction,First Sexual Reproduction,-1200000000,,Microbes & Early Life,Grypania spiralis
 first-multicellular,First Multicellular Life,-600000000,,Microbes & Early Life,Ediacaran Biota|Dickinsonia
-ediacaran-fauna,Ediacaran Fauna,-575000000,-541000000,Microbes & Early Life,Vendobionta|Ediacaran Period
-cambrian-explosion,Cambrian Explosion,-541000000,-485000000,Marine Invertebrates,Cambrian Fauna
+ediacaran-fauna,Ediacaran Fauna,-575000000,-538800000,Microbes & Early Life,Vendobionta|Ediacaran Period
+cambrian-explosion,Cambrian Explosion,-538800000,-485400000,Marine Invertebrates,Cambrian Fauna
 first-sponges,First Sponges,-600000000,,Marine Invertebrates,Porifera|Archaeocyatha
 first-jellyfish,First Jellyfish,-500000000,,Marine Invertebrates,Medusozoa|Scyphozoa
 first-molluscs,First Molluscs,-540000000,,Marine Invertebrates,Mollusca|Kimberella
@@ -33,15 +33,15 @@ first-insects,First Insects,-400000000,,Amphibians,Insecta|Rhyniognatha
 first-amphibians,First Amphibians,-375000000,,Amphibians,Tetrapoda|Ichthyostega|Acanthostega
 first-frogs,First Frogs,-250000000,,Amphibians,Anura|Triadobatrachus
 late-devonian-extinction,Late Devonian Extinction,-374000000,-359000000,Microbes & Early Life,Kellwasser Event|Hangenberg Event
-permian-extinction,Permian Mass Extinction,-252000000,-252000000,Microbes & Early Life,Great Dying|End-Permian Extinction
-first-reptiles,First Reptiles,-310000000,,Reptiles,Amniota|Hylonomus|Westlothiana
+permian-extinction,Permian Mass Extinction,-251900000,-251900000,Microbes & Early Life,Great Dying|End-Permian Extinction
+first-reptiles,First Reptiles,-312000000,,Reptiles,Amniota|Hylonomus|Westlothiana
 first-synapsids,First Synapsids,-306000000,,Reptiles,Synapsida|Pelycosauria|Dimetrodon
 first-therapsids,First Therapsids,-260000000,,Reptiles,Therapsida|Proto-mammals|Dicynodon
 first-turtles,First Turtles,-220000000,,Reptiles,Testudines|Odontochelys|Proganochelys
 first-lizards,First Lizards,-220000000,,Reptiles,Squamata|Megachirella
 first-crocodilians,First Crocodilians,-230000000,,Reptiles,Crocodilia|Archosauria|Protosuchus
 first-snakes,First Snakes,-167000000,,Reptiles,Serpentes|Eophis underwoodi
-triassic-extinction,Triassic-Jurassic Extinction,-201000000,-201000000,Reptiles,End-Triassic Extinction|CAMP Volcanism
+triassic-extinction,Triassic-Jurassic Extinction,-201400000,-201400000,Reptiles,End-Triassic Extinction|CAMP Volcanism
 first-dinosaurs,First Dinosaurs,-230000000,,Dinosaurs,Dinosauria|Eoraptor|Nyasasaurus
 sauropods,Sauropod Dinosaurs,-201000000,-66000000,Dinosaurs,Sauropoda|Brachiosaurus|Diplodocus|Apatosaurus
 theropods,Theropod Dinosaurs,-230000000,-66000000,Dinosaurs,Theropoda|Allosaurus|Tyrannosaurus rex|Velociraptor

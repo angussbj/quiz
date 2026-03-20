@@ -1,22 +1,22 @@
 id,era,start_year,end_year,eon,era_alternates
 hadean,Hadean,-4600000000,-4000000000,Eon,Hadean Eon
 archean,Archean,-4000000000,-2500000000,Eon,Archean Eon|Archaean
-proterozoic,Proterozoic,-2500000000,-541000000,Eon,Proterozoic Eon
-phanerozoic,Phanerozoic,-541000000,0,Eon,Phanerozoic Eon
-paleozoic,Paleozoic,-541000000,-252000000,Era,Palaeozoic|Paleozoic Era
-mesozoic,Mesozoic,-252000000,-66000000,Era,Mesozoic Era|Age of Reptiles
+proterozoic,Proterozoic,-2500000000,-538800000,Eon,Proterozoic Eon
+phanerozoic,Phanerozoic,-538800000,0,Eon,Phanerozoic Eon
+paleozoic,Paleozoic,-538800000,-251900000,Era,Palaeozoic|Paleozoic Era
+mesozoic,Mesozoic,-251900000,-66000000,Era,Mesozoic Era|Age of Reptiles
 cenozoic,Cenozoic,-66000000,0,Era,Cenozoic Era|Cainozoic|Age of Mammals
-cambrian,Cambrian,-541000000,-485000000,Paleozoic Period,
-ordovician,Ordovician,-485000000,-444000000,Paleozoic Period,
-silurian,Silurian,-444000000,-419000000,Paleozoic Period,
-devonian,Devonian,-419000000,-359000000,Paleozoic Period,Age of Fishes
-carboniferous,Carboniferous,-359000000,-299000000,Paleozoic Period,Mississippian and Pennsylvanian
-permian,Permian,-299000000,-252000000,Paleozoic Period,
-triassic,Triassic,-252000000,-201000000,Mesozoic Period,
-jurassic,Jurassic,-201000000,-145000000,Mesozoic Period,
+cambrian,Cambrian,-538800000,-485400000,Paleozoic Period,
+ordovician,Ordovician,-485400000,-443800000,Paleozoic Period,
+silurian,Silurian,-443800000,-419200000,Paleozoic Period,
+devonian,Devonian,-419200000,-358900000,Paleozoic Period,Age of Fishes
+carboniferous,Carboniferous,-358900000,-298900000,Paleozoic Period,Mississippian and Pennsylvanian
+permian,Permian,-298900000,-251900000,Paleozoic Period,
+triassic,Triassic,-251900000,-201400000,Mesozoic Period,
+jurassic,Jurassic,-201400000,-145000000,Mesozoic Period,
 cretaceous,Cretaceous,-145000000,-66000000,Mesozoic Period,
-paleogene,Paleogene,-66000000,-23000000,Cenozoic Period,Palaeogene
-neogene,Neogene,-23000000,-2600000,Cenozoic Period,
-quaternary,Quaternary,-2600000,0,Cenozoic Period,
-pleistocene,Pleistocene,-2600000,-11700,Epoch,Ice Age
+paleogene,Paleogene,-66000000,-23030000,Cenozoic Period,Palaeogene
+neogene,Neogene,-23030000,-2580000,Cenozoic Period,
+quaternary,Quaternary,-2580000,0,Cenozoic Period,
+pleistocene,Pleistocene,-2580000,-11700,Epoch,Ice Age
 holocene,Holocene,-11700,0,Epoch,
