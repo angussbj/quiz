@@ -38,6 +38,6 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - `closestPointOnPath` utility parses SVG path `d` strings and finds the closest point on the polyline, used by locate mode for distance calculation.
 - Clustering is automatically disabled for stroke-style elements (centroid clustering doesn't make sense for line features).
 - City dots and flag images are skipped for stroke-style elements.
-- River stroke width uses fixed viewBox units (0.4 visible, 2.0 hit area), matching how country borders work.
+- River stroke width uses fixed viewBox units (0.15 visible, 2.0 hit area), matching how country borders work.
 - `renderShapeElements` renders shapes in state layers (default, incorrect, missed, context, correct, highlighted) so state-colored shapes aren't obscured by neighbours.
 **Notes for other features:** The `pathRenderStyle` pattern could be reused for other line-based geographic features (e.g. mountain ranges, coastlines).
