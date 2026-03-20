@@ -52,6 +52,10 @@ export interface QuizDefinition<K extends string = string> {
   readonly rangeColumn?: string;
   /** Human-readable label for the range filter (e.g., 'Atomic number'). */
   readonly rangeLabel?: string;
+  /** Categorical column used for group filtering (e.g., 'category'). Shows chip toggles in setup. */
+  readonly groupFilterColumn?: string;
+  /** Human-readable label for the group filter section (e.g., 'Element category'). */
+  readonly groupFilterLabel?: string;
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
   readonly initialCameraPosition?: {
     readonly x: number;

@@ -22,6 +22,7 @@ export interface ActiveQuizProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly rangeColumn?: string;
+  readonly groupFilterColumn?: string;
   readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
 }
 
@@ -41,19 +42,30 @@ export function ActiveQuiz({
   backgroundPaths,
   backgroundLabels,
   rangeColumn,
+  groupFilterColumn,
   initialCameraPosition,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
-    if (!rangeColumn || !config.elementRange) {
+    const hasRangeFilter = rangeColumn && config.elementRange;
+    const hasGroupFilter = groupFilterColumn && config.selectedGroups;
+    if (!hasRangeFilter && !hasGroupFilter) {
       return { activeElements: elements, activeDataRows: dataRows, backgroundElementIds: new Set<string>() };
     }
-    const { min, max } = config.elementRange;
     const activeIds = new Set<string>();
     const bgIds = new Set<string>();
     for (const row of dataRows) {
-      const value = parseInt(row[rangeColumn] ?? '0', 10);
       const id = row['id'] ?? '';
-      if (value >= min && value <= max) {
+      let passes = true;
+      if (hasRangeFilter) {
+        const value = parseInt(row[rangeColumn] ?? '0', 10);
+        const { min, max } = config.elementRange;
+        if (value < min || value > max) passes = false;
+      }
+      if (passes && hasGroupFilter) {
+        const group = row[groupFilterColumn] ?? '';
+        if (!config.selectedGroups.has(group)) passes = false;
+      }
+      if (passes) {
         activeIds.add(id);
       } else {
         bgIds.add(id);
@@ -64,9 +76,9 @@ export function ActiveQuiz({
       activeDataRows: dataRows.filter((row) => activeIds.has(row['id'] ?? '')),
       backgroundElementIds: bgIds,
     };
-  }, [elements, dataRows, rangeColumn, config.elementRange]);
+  }, [elements, dataRows, rangeColumn, config.elementRange, groupFilterColumn, config.selectedGroups]);
 
-  const RangeAwareRenderer = useMemo(() => {
+  const FilterAwareRenderer = useMemo(() => {
     if (backgroundElementIds.size === 0) return Renderer;
 
     function WrappedRenderer(props: VisualizationRendererProps) {
@@ -105,7 +117,7 @@ export function ActiveQuiz({
         />
       );
     }
-    WrappedRenderer.displayName = 'RangeAwareRenderer';
+    WrappedRenderer.displayName = 'FilterAwareRenderer';
     return WrappedRenderer;
   }, [Renderer, elements, backgroundElementIds]);
 
@@ -166,7 +178,7 @@ export function ActiveQuiz({
           selectToggleDefinitions={selectToggleDefinitions}
           toggleValues={config.toggleValues}
           selectValues={config.selectValues}
-          Renderer={RangeAwareRenderer}
+          Renderer={FilterAwareRenderer}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           onFinish={handleFinish}

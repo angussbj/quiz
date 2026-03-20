@@ -437,6 +437,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     supportingDataPaths: [],
     rangeColumn: 'atomic_number',
     rangeLabel: 'Atomic number',
+    groupFilterColumn: 'category',
+    groupFilterLabel: 'Element category',
   },
   {
     id: 'sci-human-bones',

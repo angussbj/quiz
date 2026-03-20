@@ -1,9 +1,10 @@
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
+import { countFilteredElements } from './countFilteredElements';
 import styles from './QuizShell.module.css';
 
 export interface ElementRange {
@@ -17,6 +18,7 @@ export interface QuizConfig {
   readonly selectedMode: QuizModeType;
   readonly countdownSeconds: number | undefined;
   readonly elementRange: ElementRange | undefined;
+  readonly selectedGroups: ReadonlySet<string> | undefined;
   readonly onReconfigure: () => void;
 }
 
@@ -33,6 +35,10 @@ interface QuizShellProps {
   readonly rangeColumn?: string;
   readonly rangeLabel?: string;
   readonly rangeMax?: number;
+  readonly groupFilterColumn?: string;
+  readonly groupFilterLabel?: string;
+  readonly availableGroups?: ReadonlyArray<string>;
+  readonly dataRows?: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly children: (config: QuizConfig) => ReactNode;
 }
 
@@ -56,6 +62,10 @@ export function QuizShell({
   rangeColumn,
   rangeLabel,
   rangeMax,
+  groupFilterColumn,
+  groupFilterLabel,
+  availableGroups,
+  dataRows,
   children,
 }: QuizShellProps) {
   const [phase, setPhase] = useState<ShellPhase>('configuring');
@@ -66,7 +76,38 @@ export function QuizShell({
   );
   const [rangeMin, setRangeMin] = useState<number | undefined>(undefined);
   const [rangeMaxValue, setRangeMaxValue] = useState<number | undefined>(undefined);
+  const [selectedGroups, setSelectedGroups] = useState<ReadonlySet<string>>(
+    () => new Set(availableGroups ?? []),
+  );
   const toggleState = useToggleState(toggles, presets, selectToggles);
+
+  const handleGroupToggle = useCallback((group: string) => {
+    setSelectedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(group)) {
+        next.delete(group);
+      } else {
+        next.add(group);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleGroupSelectAll = useCallback(() => {
+    setSelectedGroups(new Set(availableGroups ?? []));
+  }, [availableGroups]);
+
+  const handleGroupDeselectAll = useCallback(() => {
+    setSelectedGroups(new Set<string>());
+  }, []);
+
+  const filteredCount = useMemo(() => {
+    if (!dataRows) return undefined;
+    return countFilteredElements(
+      dataRows, rangeColumn, rangeMin, rangeMaxValue, rangeMax,
+      groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
+    );
+  }, [dataRows, rangeColumn, rangeMin, rangeMaxValue, rangeMax, groupFilterColumn, selectedGroups]);
 
   const applyModeConstraints = useCallback((mode: QuizModeType) => {
     const constraints = modeConstraints?.[mode] ?? [];
@@ -100,6 +141,10 @@ export function QuizShell({
     setQuizKey((prev) => prev + 1);
   }, []);
 
+  // Whether group filtering is active (not all groups selected)
+  const hasGroupFilter = groupFilterColumn && availableGroups
+    && selectedGroups.size < availableGroups.length;
+
   if (phase === 'configuring') {
     return (
       <QuizSetupPanel
@@ -122,6 +167,13 @@ export function QuizShell({
         rangeMaxValue={rangeMaxValue}
         onRangeMinChange={setRangeMin}
         onRangeMaxChange={setRangeMaxValue}
+        groupFilterLabel={groupFilterColumn ? groupFilterLabel : undefined}
+        availableGroups={availableGroups}
+        selectedGroups={selectedGroups}
+        onGroupToggle={handleGroupToggle}
+        onGroupSelectAll={handleGroupSelectAll}
+        onGroupDeselectAll={handleGroupDeselectAll}
+        filteredElementCount={filteredCount}
         onStart={handleStart}
         modeConstraints={modeConstraints}
         selectToggles={selectToggles}
@@ -141,6 +193,7 @@ export function QuizShell({
     selectedMode,
     countdownSeconds: countdownMinutes !== undefined ? countdownMinutes * 60 : undefined,
     elementRange,
+    selectedGroups: hasGroupFilter ? selectedGroups : undefined,
     onReconfigure: handleReconfigure,
   };
 
