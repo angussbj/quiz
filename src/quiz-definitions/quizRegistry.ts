@@ -13,7 +13,7 @@ import type { QuizDefinition } from './QuizDefinition';
  * Individual definitions spread this and add id, title, description, and dataFilter.
  */
 const capitalsQuizBase = {
-  path: ['Geography', 'Capitals'] as const,
+  path: ['Geography'],
   visualizationType: 'map' as const,
   availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'free-recall-unordered' as const,
@@ -76,7 +76,7 @@ const capitalsQuizBase = {
  * Individual definitions spread this and add id, title, description, dataFilter, and group mapping.
  */
 const countriesQuizBase = {
-  path: ['Geography', 'Countries'] as const,
+  path: ['Geography'],
   visualizationType: 'map' as const,
   availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
   defaultMode: 'free-recall-unordered' as const,
@@ -120,7 +120,7 @@ const countriesQuizBase = {
  * Individual definitions spread this and add id, title, description, and dataFilter.
  */
 const humanBonesQuizBase = {
-  path: ['Science', 'Biology', 'Human Bones'] as const,
+  path: ['Science', 'Biology'],
   visualizationType: 'anatomy' as const,
   availableModes: ['free-recall-unordered', 'identify', 'prompted-recall'] as const,
   defaultMode: 'free-recall-unordered' as const,
@@ -171,7 +171,7 @@ const largestCitiesQuiz = {
   id: 'geo-largest-cities',
   title: 'Largest Cities',
   description: 'Name the largest cities in the world by population.',
-  path: ['Geography', 'Largest Cities'],
+  path: ['Geography'],
   availableModes: [...capitalsQuizBase.availableModes, 'free-recall-ordered'] as const,
   dataPath: '/data/cities/largest-cities.csv',
   initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
@@ -186,7 +186,7 @@ const largestCitiesQuiz = {
  * Shared configuration for all rivers quizzes.
  */
 const riversQuizBase = {
-  path: ['Geography', 'Rivers'] as const,
+  path: ['Geography'],
   visualizationType: 'map' as const,
   availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'free-recall-unordered' as const,
@@ -262,7 +262,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'geo-flags-world',
     title: 'World Flags',
     description: 'Match all countries of the world to their flags.',
-    path: ['Geography', 'Flags'],
+    path: ['Geography'],
     visualizationType: 'flag-grid',
     availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
@@ -286,7 +286,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'sci-periodic-table',
     title: 'Periodic Table',
     description: 'Name the elements of the periodic table.',
-    path: ['Science', 'Chemistry', 'Periodic Table'],
+    path: ['Science', 'Chemistry'],
     visualizationType: 'grid',
     availableModes: ['free-recall-unordered', 'prompted-recall', 'free-recall-ordered', 'identify'],
     defaultMode: 'free-recall-unordered',
@@ -322,16 +322,6 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
   },
   {
     ...humanBonesQuizBase,
-    id: 'sci-human-bones-common',
-    title: 'Human Bones (Common)',
-    description: 'Name the commonly known bones of the human skeleton.',
-    dataFilter: { column: 'common', values: ['true'] },
-    groupFilterColumn: 'region',
-    groupFilterLabel: 'Body region',
-    hideFilteredElements: true,
-  },
-  {
-    ...humanBonesQuizBase,
     id: 'sci-human-bones-all',
     title: 'Human Bones',
     description: 'Name all bones of the human skeleton.',
@@ -344,7 +334,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-emperors-roman',
     title: 'Roman Emperors',
     description: 'Name the emperors of Rome in chronological order.',
-    path: ['History', 'Ancient', 'Roman Emperors'],
+    path: ['History', 'Ancient'],
     toggles: [
       { key: 'showLabels', label: 'Emperor names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Reign dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -382,11 +372,67 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/ancient/roman-emperors.csv',
   },
   {
+    ...riversQuizBase,
+    id: 'geo-rivers-world',
+    title: 'World Rivers',
+    description: 'Name the major rivers of the world.',
+    dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
+    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+    groupFilterCameraPositions: {
+      Europe: { x: -25, y: -72, width: 77, height: 42 },
+      Asia: { x: 25, y: -70, width: 155, height: 80 },
+      Africa: { x: -25, y: -40, width: 85, height: 80 },
+      'North America': { x: -130, y: -55, width: 80, height: 50 },
+      'South America': { x: -85, y: -15, width: 55, height: 73 },
+      Oceania: { x: 100, y: -15, width: 80, height: 55 },
+    },
+  },
+
+  // ===== World War 1 =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-timeline-ww1',
+    title: 'World War I Timeline',
+    description: 'Place key events of World War I on a timeline, from the July Crisis to the Paris Peace Conference.',
+    path: ['History', 'Modern'],
+    toggles: [
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showColours', label: 'Front colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [
+          { value: 'year', label: 'Year' },
+          { value: 'month', label: 'Month' },
+          { value: 'day', label: 'Day' },
+        ],
+        defaultValue: 'month',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
+    ],
+    columnMappings: { answer: 'event', label: 'event', group: 'front' },
+    dataPath: '/data/history/modern/ww1-timeline.csv',
+    groupFilterColumn: 'front',
+    groupFilterLabel: 'Front / Theatre',
+  },
+
+  // ===== World War 2 =====
+  {
     ...timelineQuizBase,
     id: 'hist-timeline-ww2',
     title: 'World War II Timeline',
     description: 'Place key events of World War II on a timeline.',
-    path: ['History', 'Modern', 'World War II Timeline'],
+    path: ['History', 'Modern'],
     toggles: [
       { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
@@ -425,60 +471,6 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/history/modern/ww2-timeline.csv',
   },
-  {
-    ...riversQuizBase,
-    id: 'geo-rivers-world',
-    title: 'World Rivers',
-    description: 'Name the major rivers of the world.',
-    dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
-    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
-    groupFilterColumn: 'continent',
-    groupFilterLabel: 'Continent',
-    groupFilterCameraPositions: {
-      Europe: { x: -25, y: -72, width: 77, height: 42 },
-      Asia: { x: 25, y: -70, width: 155, height: 80 },
-      Africa: { x: -25, y: -40, width: 85, height: 80 },
-      'North America': { x: -130, y: -55, width: 80, height: 50 },
-      'South America': { x: -85, y: -15, width: 55, height: 73 },
-      Oceania: { x: 100, y: -15, width: 80, height: 55 },
-    },
-  },
-
-  // ===== World War I =====
-  {
-    ...timelineQuizBase,
-    id: 'hist-timeline-ww1',
-    title: 'World War I Timeline',
-    description: 'Place key events of World War I on a timeline, from the July Crisis to the Paris Peace Conference.',
-    path: ['History', 'Modern', 'World War I Timeline'],
-    toggles: [
-      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
-      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
-      { key: 'showColours', label: 'Front colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    ],
-    selectToggles: [
-      {
-        key: 'datePrecision',
-        label: 'Date precision',
-        options: [
-          { value: 'year', label: 'Year' },
-          { value: 'month', label: 'Month' },
-          { value: 'day', label: 'Day' },
-        ],
-        defaultValue: 'month',
-        group: 'display',
-        modes: ['locate'],
-      },
-    ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
-    columnMappings: { answer: 'event', label: 'event', group: 'front' },
-    dataPath: '/data/history/modern/ww1-timeline.csv',
-    groupFilterColumn: 'front',
-    groupFilterLabel: 'Front / Theatre',
-  },
 
   // ===== Geological Time =====
   {
@@ -486,7 +478,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'sci-geological-eras',
     title: 'Geological Time',
     description: 'Place geological eons, eras, and periods on a deep-time timeline.',
-    path: ['Science', 'Earth Science', 'Geological Time'],
+    path: ['Science', 'Earth Science'],
     toggles: [
       { key: 'showLabels', label: 'Period names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Period dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -518,7 +510,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-composers',
     title: 'Famous Composers',
     description: 'Place famous composers from all cultures on a timeline by their lifespans.',
-    path: ['History', 'Culture', 'Famous Composers'],
+    path: ['History', 'Culture'],
     toggles: [
       { key: 'showLabels', label: 'Composer names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -550,7 +542,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-leaders-political',
     title: 'Famous Political Leaders',
     description: 'Place famous political leaders from all cultures and eras on a timeline by their lifespans.',
-    path: ['History', 'Leaders', 'Political Leaders'],
+    path: ['History', 'Leaders'],
     toggles: [
       { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -580,7 +572,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-leaders-religious',
     title: 'Famous Religious Leaders',
     description: 'Place famous religious leaders and spiritual figures from all traditions on a timeline.',
-    path: ['History', 'Leaders', 'Religious Leaders'],
+    path: ['History', 'Leaders'],
     toggles: [
       { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -610,7 +602,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-leaders-military',
     title: 'Famous Military Leaders',
     description: 'Place famous generals, admirals, and military commanders from all cultures on a timeline.',
-    path: ['History', 'Leaders', 'Military Leaders'],
+    path: ['History', 'Leaders'],
     toggles: [
       { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -640,7 +632,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-leaders-cultural',
     title: 'Famous Cultural Figures',
     description: 'Place famous artists, writers, philosophers, and scientists from all cultures on a timeline.',
-    path: ['History', 'Leaders', 'Cultural Figures'],
+    path: ['History', 'Leaders'],
     toggles: [
       { key: 'showLabels', label: 'Figure names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -672,7 +664,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-major-inventions',
     title: 'Major Technology Inventions',
     description: 'Place the 50 most significant technology inventions in history on a timeline.',
-    path: ['History', 'Science & Technology', 'Major Inventions'],
+    path: ['History', 'Science & Technology'],
     toggles: [
       { key: 'showLabels', label: 'Invention names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Invention dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -704,7 +696,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'sci-species-evolution-major',
     title: 'Species Evolution',
     description: 'Place the major milestones of life on Earth on a deep-time timeline.',
-    path: ['Science', 'Biology', 'Species Evolution'],
+    path: ['Science', 'Biology'],
     toggles: [
       { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Timeline dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -733,8 +725,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     ...timelineQuizBase,
     id: 'sci-species-evolution-all',
     title: 'Species Evolution (Detailed)',
-    description: 'Place 100+ species and evolutionary milestones on a deep-time timeline.',
-    path: ['Science', 'Biology', 'Species Evolution (Detailed)'],
+    description: 'Place 98 species and evolutionary milestones on a deep-time timeline.',
+    path: ['Science', 'Biology'],
     toggles: [
       { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Timeline dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -766,7 +758,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-space-milestones',
     title: 'Space Exploration Milestones',
     description: 'Place key milestones in space exploration and space technology on a timeline.',
-    path: ['History', 'Science & Technology', 'Space Exploration'],
+    path: ['History', 'Science & Technology'],
     toggles: [
       { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -802,7 +794,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-major-empires',
     title: 'Major Empires',
     description: 'Place major empires from all continents and eras on a timeline.',
-    path: ['History', 'Ancient', 'Major Empires'],
+    path: ['History', 'Ancient'],
     toggles: [
       { key: 'showLabels', label: 'Empire names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Empire dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -834,7 +826,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-ancient-civilizations',
     title: 'Ancient Civilizations',
     description: 'Place ancient and classical civilizations from around the world on a timeline.',
-    path: ['History', 'Ancient', 'Ancient Civilizations'],
+    path: ['History', 'Ancient'],
     toggles: [
       { key: 'showLabels', label: 'Civilization names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Civilization dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -866,7 +858,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-art-movements',
     title: 'Art Movements',
     description: 'Place major art movements and cultural periods from around the world on a timeline.',
-    path: ['History', 'Culture', 'Art Movements'],
+    path: ['History', 'Culture'],
     toggles: [
       { key: 'showLabels', label: 'Movement names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Movement dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -898,7 +890,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-pandemics',
     title: 'Major Pandemics',
     description: 'Place major pandemics and epidemics throughout history on a timeline.',
-    path: ['History', 'Science & Technology', 'Pandemics'],
+    path: ['History', 'Science & Technology'],
     toggles: [
       { key: 'showLabels', label: 'Pandemic names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Pandemic dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
@@ -930,7 +922,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'hist-scientific-discoveries',
     title: 'Scientific Discoveries',
     description: 'Place major scientific discoveries and theories on a timeline.',
-    path: ['History', 'Science & Technology', 'Scientific Discoveries'],
+    path: ['History', 'Science & Technology'],
     toggles: [
       { key: 'showLabels', label: 'Discovery names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showDates', label: 'Discovery dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,

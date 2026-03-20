@@ -119,7 +119,7 @@ export function usePromptedRecallQuiz({
       if (!currentRow) return false;
 
       const match = matchAnswer(text, [currentRow], answerColumn);
-      if (match) {
+      if (match && 'elementId' in match) {
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
         setLastMatchedElementId(match.elementId);
@@ -141,7 +141,7 @@ export function usePromptedRecallQuiz({
       if (!currentRow) return;
 
       const match = matchAnswer(text, [currentRow], answerColumn);
-      if (match) {
+      if (match && 'elementId' in match) {
         clearFlash();
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));

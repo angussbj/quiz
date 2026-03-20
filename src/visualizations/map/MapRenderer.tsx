@@ -181,8 +181,9 @@ function renderShapeElements(
   riverHitStrokeWidth: number,
 ) {
   return elements.map((element) => {
-    if (clusteredElementIds.has(element.id)) return null;
     if (!isMapElement(element) || !element.svgPathData) return null;
+    // Stroke elements (rivers) are hidden when clustered; fill shapes (countries) render regardless
+    if (clusteredElementIds.has(element.id) && element.pathRenderStyle === 'stroke') return null;
     const state = elementStates[element.id];
     if (state === 'hidden') return null;
     if (targetState === undefined) {
