@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human Bones Debug View</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; display: flex; height: 100vh; background: #1a1a2e; color: #e0e0e0; }
+
+  #sidebar {
+    width: 320px; min-width: 320px; overflow-y: auto; padding: 12px;
+    background: #16213e; border-right: 1px solid #334;
+  }
+  #sidebar h2 { font-size: 14px; margin: 8px 0 4px; color: #7faaff; }
+  .bone-row {
+    display: flex; align-items: center; gap: 6px; padding: 3px 4px;
+    border-radius: 4px; cursor: pointer; font-size: 12px;
+  }
+  .bone-row:hover { background: #1a2744; }
+  .bone-row.active { background: #2a3a5e; }
+  .color-dot {
+    width: 14px; height: 14px; min-width: 14px; border-radius: 3px;
+    border: 1px solid #555;
+  }
+  .bone-label { flex: 1; }
+  .bone-id { color: #888; font-size: 10px; }
+
+  #svg-container {
+    flex: 1; overflow: hidden; position: relative; background: #0f0f23;
+  }
+  svg { width: 100%; height: 100%; }
+
+  #controls {
+    padding: 8px 12px; background: #1a1a2e; border-bottom: 1px solid #334;
+    display: flex; gap: 12px; align-items: center; font-size: 13px;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  }
+  #controls label { display: flex; align-items: center; gap: 4px; }
+  #controls select, #controls input { background: #16213e; color: #e0e0e0; border: 1px solid #445; padding: 2px 6px; border-radius: 3px; }
+  #controls button { background: #335; color: #ddd; border: 1px solid #556; padding: 3px 10px; border-radius: 3px; cursor: pointer; }
+  #controls button:hover { background: #446; }
+
+  .group-header {
+    font-size: 11px; font-weight: bold; color: #9ab; margin: 10px 0 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid #334; padding-bottom: 2px;
+  }
+
+  #tooltip {
+    position: absolute; background: rgba(0,0,0,0.85); color: #fff;
+    padding: 4px 8px; border-radius: 4px; font-size: 12px;
+    pointer-events: none; display: none; z-index: 20;
+  }
+
+  #search { width: 100%; padding: 4px 8px; margin-bottom: 8px; background: #1a2744; border: 1px solid #445; color: #e0e0e0; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h2>Bone Debug View</h2>
+  <input id="search" type="text" placeholder="Search bones..." />
+  <div id="bone-list"></div>
+</div>
+
+<div id="svg-container">
+  <div id="controls">
+    <label>Highlight color:
+      <select id="highlight-color">
+        <option value="#ff4444">Red</option>
+        <option value="#44ff44">Green</option>
+        <option value="#4488ff">Blue</option>
+        <option value="#ffaa00">Orange</option>
+        <option value="#ff44ff">Magenta</option>
+        <option value="#44ffff">Cyan</option>
+        <option value="#ffff44">Yellow</option>
+        <option value="#ffffff">White</option>
+      </select>
+    </label>
+    <button id="clear-all">Clear All</button>
+    <button id="highlight-group">Highlight by Group</button>
+    <label>Default opacity: <input id="default-opacity" type="range" min="0" max="100" value="30" style="width:80px" /></label>
+    <label><input id="show-labels" type="checkbox" /> Labels</label>
+    <label><input id="show-ids" type="checkbox" checked /> IDs on hover</label>
+  </div>
+  <div id="tooltip"></div>
+  <svg id="bone-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<script>
+const HIGHLIGHT_COLORS = ['#ff4444','#44ff44','#4488ff','#ffaa00','#ff44ff','#44ffff','#ffff44','#ffffff'];
+const GROUP_COLORS = {
+  'Skull': '#7799cc',
+  'Throat': '#88aacc',
+  'Spine': '#99aa77',
+  'Chest': '#aa9977',
+  'Ribcage': '#aa8877',
+  'Upper Arm': '#cc9966',
+  'Forearm': '#ccaa66',
+  'Carpals': '#bbbb66',
+  'Metacarpals': '#aacc66',
+  'Hand Phalanges': '#88cc88',
+  'Upper Leg': '#cc7799',
+  'Lower Leg': '#cc88aa',
+  'Tarsals': '#aa88cc',
+  'Metatarsals': '#9988cc',
+  'Foot Phalanges': '#8888cc',
+  'Pelvis': '#cc8888',
+};
+
+let bones = [];
+let highlighted = {}; // id -> color
+
+async function loadCSV() {
+  const resp = await fetch('data/science/biology/human-bones.csv');
+  const text = await resp.text();
+  const lines = text.split('\n').filter(l => l.trim());
+  const header = parseCSVLine(lines[0]);
+
+  for (let i = 1; i < lines.length; i++) {
+    const fields = parseCSVLine(lines[i]);
+    const row = {};
+    header.forEach((h, idx) => row[h] = fields[idx] || '');
+    bones.push(row);
+  }
+}
+
+function parseCSVLine(line) {
+  const fields = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i+1] === '"') { current += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { current += ch; }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === ',') { fields.push(current); current = ''; }
+      else { current += ch; }
+    }
+  }
+  fields.push(current);
+  return fields;
+}
+
+function renderSVG() {
+  const svg = document.getElementById('bone-svg');
+  const defaultOpacity = document.getElementById('default-opacity').value / 100;
+  const showLabels = document.getElementById('show-labels').checked;
+
+  // Compute viewBox from all paths
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  bones.forEach(b => {
+    const paths = (b.paths || '').split('|');
+    paths.forEach(d => {
+      const nums = d.match(/-?\d+(?:\.\d+)?/g);
+      if (!nums || nums.length < 2) return;
+      for (let i = 0; i < nums.length - 1; i += 2) {
+        const x = parseFloat(nums[i]), y = parseFloat(nums[i+1]);
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    });
+  });
+
+  const pad = 20;
+  svg.setAttribute('viewBox', `${minX-pad} ${minY-pad} ${maxX-minX+pad*2} ${maxY-minY+pad*2}`);
+
+  let html = '';
+
+  // Render each bone
+  bones.forEach(b => {
+    const pathsRaw = b.paths || '';
+    const svgPathData = pathsRaw.split('|').filter(Boolean).join(' ');
+    if (!svgPathData) return;
+
+    const color = highlighted[b.id] || (GROUP_COLORS[b.subregion] || '#667788');
+    const isHighlighted = !!highlighted[b.id];
+    const opacity = isHighlighted ? 0.85 : defaultOpacity;
+    const strokeWidth = isHighlighted ? 1.5 : 0.5;
+    const strokeOpacity = isHighlighted ? 1 : 0.6;
+
+    html += `<path data-id="${b.id}" data-name="${b.name}" d="${svgPathData}"
+      style="fill:${color}; fill-opacity:${opacity}; stroke:${color}; stroke-width:${strokeWidth}; stroke-opacity:${strokeOpacity}; cursor:pointer;" />`;
+  });
+
+  // Render labels for highlighted bones
+  if (showLabels) {
+    bones.forEach(b => {
+      if (!highlighted[b.id]) return;
+      const lx = b.label_x, ly = b.label_y, ax = b.anchor_x, ay = b.anchor_y;
+      if (!lx || !ly) return;
+      html += `<line x1="${ax}" y1="${ay}" x2="${lx}" y2="${ly}" stroke="#fff" stroke-width="0.5" stroke-opacity="0.6" />`;
+      html += `<circle cx="${ax}" cy="${ay}" r="1" fill="#fff" />`;
+      html += `<text x="${lx}" y="${ly}" fill="#fff" font-size="4" font-family="system-ui" dominant-baseline="central" text-anchor="${parseFloat(lx) < parseFloat(ax) ? 'end' : 'start'}" style="paint-order:stroke; stroke:#000; stroke-width:1.5;">${b.name}</text>`;
+    });
+  }
+
+  // Labels for all bones if toggled
+  if (showLabels && Object.keys(highlighted).length === 0) {
+    bones.forEach(b => {
+      const lx = b.label_x, ly = b.label_y, ax = b.anchor_x, ay = b.anchor_y;
+      if (!lx || !ly) return;
+      html += `<text x="${lx}" y="${ly}" fill="#aaa" font-size="3" font-family="system-ui" dominant-baseline="central" text-anchor="${parseFloat(lx) < parseFloat(ax) ? 'end' : 'start'}" style="paint-order:stroke; stroke:#000; stroke-width:1;">${b.name}</text>`;
+    });
+  }
+
+  svg.innerHTML = html;
+
+  // Attach hover/click events
+  svg.querySelectorAll('path[data-id]').forEach(el => {
+    el.addEventListener('click', () => toggleHighlight(el.dataset.id));
+    el.addEventListener('mouseenter', (e) => showTooltip(e, el.dataset.id, el.dataset.name));
+    el.addEventListener('mousemove', (e) => moveTooltip(e));
+    el.addEventListener('mouseleave', hideTooltip);
+  });
+}
+
+function toggleHighlight(id) {
+  const color = document.getElementById('highlight-color').value;
+  if (highlighted[id]) {
+    delete highlighted[id];
+  } else {
+    highlighted[id] = color;
+  }
+  renderSVG();
+  renderBoneList();
+}
+
+function showTooltip(e, id, name) {
+  if (!document.getElementById('show-ids').checked) return;
+  const tip = document.getElementById('tooltip');
+  const hlColor = highlighted[id];
+  tip.innerHTML = `<strong>${name}</strong><br/><span style="color:#999">${id}</span>${hlColor ? `<br/><span style="color:${hlColor}">highlighted</span>` : ''}`;
+  tip.style.display = 'block';
+  moveTooltip(e);
+}
+
+function moveTooltip(e) {
+  const tip = document.getElementById('tooltip');
+  tip.style.left = (e.clientX + 12) + 'px';
+  tip.style.top = (e.clientY + 12) + 'px';
+}
+
+function hideTooltip() {
+  document.getElementById('tooltip').style.display = 'none';
+}
+
+function renderBoneList() {
+  const list = document.getElementById('bone-list');
+  const search = document.getElementById('search').value.toLowerCase();
+
+  // Group by subregion
+  const groups = {};
+  bones.forEach(b => {
+    const group = b.subregion || 'Other';
+    if (!groups[group]) groups[group] = [];
+    groups[group].push(b);
+  });
+
+  let html = '';
+  for (const [group, items] of Object.entries(groups)) {
+    const filtered = items.filter(b =>
+      b.name.toLowerCase().includes(search) || b.id.toLowerCase().includes(search)
+    );
+    if (filtered.length === 0) continue;
+
+    html += `<div class="group-header">${group} (${filtered.length})</div>`;
+    filtered.forEach(b => {
+      const hlColor = highlighted[b.id] || 'transparent';
+      const isActive = !!highlighted[b.id];
+      html += `<div class="bone-row ${isActive ? 'active' : ''}" data-id="${b.id}">
+        <div class="color-dot" style="background:${hlColor}"></div>
+        <span class="bone-label">${b.name}</span>
+        <span class="bone-id">${b.id}</span>
+      </div>`;
+    });
+  }
+  list.innerHTML = html;
+
+  list.querySelectorAll('.bone-row').forEach(el => {
+    el.addEventListener('click', () => toggleHighlight(el.dataset.id));
+  });
+}
+
+// Pan/zoom via mouse
+function setupPanZoom() {
+  const svg = document.getElementById('bone-svg');
+  let isPanning = false, startX, startY, startVB;
+
+  svg.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const vb = svg.getAttribute('viewBox').split(' ').map(Number);
+    const rect = svg.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / rect.width;
+    const my = (e.clientY - rect.top) / rect.height;
+    const factor = e.deltaY > 0 ? 1.1 : 0.9;
+    const newW = vb[2] * factor, newH = vb[3] * factor;
+    const newX = vb[0] + (vb[2] - newW) * mx;
+    const newY = vb[1] + (vb[3] - newH) * my;
+    svg.setAttribute('viewBox', `${newX} ${newY} ${newW} ${newH}`);
+  });
+
+  svg.addEventListener('mousedown', (e) => {
+    if (e.button !== 1 && !e.shiftKey) return;
+    isPanning = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    startVB = svg.getAttribute('viewBox').split(' ').map(Number);
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isPanning) return;
+    const rect = svg.getBoundingClientRect();
+    const dx = (e.clientX - startX) / rect.width * startVB[2];
+    const dy = (e.clientY - startY) / rect.height * startVB[3];
+    svg.setAttribute('viewBox', `${startVB[0] - dx} ${startVB[1] - dy} ${startVB[2]} ${startVB[3]}`);
+  });
+
+  window.addEventListener('mouseup', () => { isPanning = false; });
+}
+
+document.getElementById('clear-all').addEventListener('click', () => {
+  highlighted = {};
+  renderSVG();
+  renderBoneList();
+});
+
+document.getElementById('highlight-group').addEventListener('click', () => {
+  // Highlight each subregion in a different color
+  const groups = [...new Set(bones.map(b => b.subregion))];
+  highlighted = {};
+  bones.forEach(b => {
+    const gi = groups.indexOf(b.subregion);
+    highlighted[b.id] = HIGHLIGHT_COLORS[gi % HIGHLIGHT_COLORS.length];
+  });
+  renderSVG();
+  renderBoneList();
+});
+
+document.getElementById('default-opacity').addEventListener('input', renderSVG);
+document.getElementById('show-labels').addEventListener('change', renderSVG);
+document.getElementById('search').addEventListener('input', renderBoneList);
+
+async function init() {
+  await loadCSV();
+  renderSVG();
+  renderBoneList();
+  setupPanZoom();
+}
+
+init();
+</script>
+</body>
+</html>

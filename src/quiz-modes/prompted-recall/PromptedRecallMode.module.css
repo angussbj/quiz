@@ -15,7 +15,8 @@
 
 .controlsArea {
   flex-shrink: 0;
-  min-height: var(--quiz-controls-height);
+  height: var(--quiz-controls-height);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
