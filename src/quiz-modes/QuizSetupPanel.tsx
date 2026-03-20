@@ -309,7 +309,7 @@ export function QuizSetupPanel({
 
         {isEmptyQuiz && (
           <p className={styles.emptyWarning}>
-            No elements match the current filters. Adjust the range or category selection above.
+            No items match the current filters. Adjust your selection above.
           </p>
         )}
 

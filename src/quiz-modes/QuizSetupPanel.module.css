@@ -199,11 +199,11 @@
 }
 
 .groupChip {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border: 1px solid var(--color-border);
+  padding: 3px var(--spacing-sm);
+  border: 1.5px dashed var(--color-border);
   border-radius: var(--radius-full);
-  background: var(--color-bg-primary);
-  color: var(--color-text-secondary);
+  background: transparent;
+  color: var(--color-text-muted);
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
   cursor: pointer;
@@ -213,17 +213,19 @@
 
 .groupChip:hover {
   border-color: var(--color-accent);
+  color: var(--color-text-secondary);
 }
 
 .groupChipSelected {
+  border-style: solid;
   border-color: var(--color-accent);
-  background: var(--color-accent);
-  color: var(--color-on-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+  font-weight: 600;
 }
 
 .groupChipSelected:hover {
-  background: var(--color-accent-hover);
-  border-color: var(--color-accent-hover);
+  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
 }
 
 .emptyWarning {
