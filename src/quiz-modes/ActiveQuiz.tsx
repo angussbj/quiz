@@ -1,6 +1,6 @@
 import { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
-import type { VisualizationRendererProps, BackgroundPath, VisualizationType } from '@/visualizations/VisualizationRendererProps';
+import type { VisualizationRendererProps, BackgroundPath, LakePath, VisualizationType } from '@/visualizations/VisualizationRendererProps';
 import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ReviewResult } from './QuizModeProps';
@@ -20,6 +20,7 @@ export interface ActiveQuizProps {
   readonly selectToggleDefinitions?: ReadonlyArray<SelectToggleDefinition>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly lakePaths?: ReadonlyArray<LakePath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly rangeColumn?: string;
   readonly groupFilterColumn?: string;
@@ -41,6 +42,7 @@ export function ActiveQuiz({
   selectToggleDefinitions,
   Renderer,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
   rangeColumn,
   groupFilterColumn,
@@ -183,6 +185,7 @@ export function ActiveQuiz({
           selectValues={config.selectValues}
           Renderer={FilterAwareRenderer}
           backgroundPaths={backgroundPaths}
+          lakePaths={lakePaths}
           backgroundLabels={backgroundLabels}
           onFinish={handleFinish}
           forceGiveUp={forceGiveUp}

@@ -1,9 +1,23 @@
+.oceanBackground {
+  fill: var(--color-lake);
+  fill-opacity: 0.15;
+  pointer-events: none;
+}
+
 .borderPath {
-  fill: var(--color-bg-tertiary);
-  fill-opacity: 0.4;
+  fill: var(--color-bg-primary);
   stroke: var(--color-border);
   stroke-width: 0.15;
   stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.lakePath {
+  fill: var(--color-lake);
+  fill-opacity: 0.3;
+  stroke: var(--color-lake);
+  stroke-width: 0.05;
+  stroke-opacity: 0.4;
   pointer-events: none;
 }
 
@@ -54,6 +68,15 @@
   fill: var(--color-text-primary);
   font-family: var(--font-family);
   font-weight: 500;
+  pointer-events: none;
+  user-select: none;
+}
+
+.riverLabel {
+  font-family: var(--font-family);
+  font-size: 1px;
+  font-weight: 500;
+  font-style: italic;
   pointer-events: none;
   user-select: none;
 }

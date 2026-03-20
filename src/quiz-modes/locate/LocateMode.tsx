@@ -18,6 +18,7 @@ export function LocateMode({
   toggleDefinitions = [],
   Renderer,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
   clustering,
   onFinish,
@@ -130,6 +131,7 @@ export function LocateMode({
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
+          lakePaths={lakePaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}

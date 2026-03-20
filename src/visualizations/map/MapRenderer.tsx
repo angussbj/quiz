@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
-import type { ElementVisualState } from '../VisualizationElement';
+import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
@@ -12,6 +12,8 @@ import styles from './MapRenderer.module.css';
 /** Default clustering for map quizzes: cluster overlapping city dots. */
 const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
   minScreenPixelDistance: 10,
+  clusterAbsorptionDistance: 25,
+  clusterMergeDistance: 40,
   countedState: 'correct',
 };
 
@@ -84,6 +86,7 @@ export function MapRenderer({
   toggles,
   elementToggles,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
   svgOverlay,
   initialCameraPosition,
@@ -92,7 +95,10 @@ export function MapRenderer({
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
   );
   const showBorders = toggles['showBorders'] !== false;
-  const effectiveClustering = clustering ?? DEFAULT_MAP_CLUSTERING;
+  // Disable default clustering for stroke-style elements since clustering
+  // by centroid doesn't make sense for line features spread across the map.
+  const hasStrokeElements = elements.some((e) => isMapElement(e) && e.pathRenderStyle === 'stroke');
+  const effectiveClustering = clustering ?? (hasStrokeElements ? undefined : DEFAULT_MAP_CLUSTERING);
 
   return (
     <ZoomPanContainer
@@ -113,11 +119,54 @@ export function MapRenderer({
         toggles={toggles}
         elementToggles={elementToggles}
         backgroundPaths={backgroundPaths}
+        lakePaths={lakePaths}
         backgroundLabels={backgroundLabels}
       />
       {svgOverlay}
     </ZoomPanContainer>
   );
+}
+
+/** Split a combined SVG path `d` string into individual subpaths (each starting with M). */
+function splitSubpaths(d: string): ReadonlyArray<string> {
+  const parts: Array<string> = [];
+  const matches = d.matchAll(/M\s/g);
+  const indices: Array<number> = [];
+  for (const m of matches) {
+    if (m.index !== undefined) indices.push(m.index);
+  }
+  for (let i = 0; i < indices.length; i++) {
+    const start = indices[i];
+    const end = i < indices.length - 1 ? indices[i + 1] : d.length;
+    const sub = d.slice(start, end).trim();
+    if (sub) parts.push(sub);
+  }
+  return parts;
+}
+
+/** Stroke width for river paths in viewBox units (matches border stroke-width). */
+const RIVER_STROKE_WIDTH = 0.15;
+
+/** Wider hit area for clicking river paths in viewBox units. */
+const RIVER_HIT_STROKE_WIDTH = 2.0;
+
+function strokeOpacity(state: ElementVisualState | undefined): number {
+  switch (state) {
+    case 'hidden':
+      return 0;
+    case 'correct':
+    case 'correct-second':
+    case 'correct-third':
+    case 'incorrect':
+    case 'missed':
+    case 'highlighted':
+      return 1;
+    case 'default':
+    case 'context':
+      return 0.8;
+    default:
+      return 0.6;
+  }
 }
 
 /** Render shape elements filtered to a specific state (or undefined for default/no-state). */
@@ -128,6 +177,8 @@ function renderShapeElements(
   clusteredElementIds: ReadonlySet<string>,
   onElementClick: ((elementId: string) => void) | undefined,
   targetState: ElementVisualState | undefined,
+  riverStrokeWidth: number,
+  riverHitStrokeWidth: number,
 ) {
   return elements.map((element) => {
     if (clusteredElementIds.has(element.id)) return null;
@@ -141,6 +192,88 @@ function renderShapeElements(
       if (state !== targetState) return null;
     }
     const color = stateColor(state) ?? groupColor(element.group, uniqueGroups);
+    const isStrokePath = element.pathRenderStyle === 'stroke';
+
+    if (isStrokePath) {
+      // Split combined path into subpaths. Z-closed subpaths (lake polygons)
+      // render as fills; open subpaths (river lines) render as strokes.
+      const subpaths = splitSubpaths(element.svgPathData);
+      const strokePaths = subpaths.filter((p) => !p.endsWith('Z'));
+      const fillPaths = subpaths.filter((p) => p.endsWith('Z'));
+      const strokeD = strokePaths.join(' ');
+      const fillD = fillPaths.join(' ');
+
+      return (
+        <g key={`shape-${element.id}`}>
+          {/* Invisible wider hit area for clicking (strokes only) */}
+          {onElementClick && strokeD && (
+            <path
+              d={strokeD}
+              style={{
+                fill: 'none',
+                stroke: 'transparent',
+                strokeWidth: riverHitStrokeWidth,
+                strokeLinecap: 'round',
+                strokeLinejoin: 'round',
+              }}
+              className={styles.interactivePath}
+              onClick={(e) => {
+                e.stopPropagation();
+                onElementClick(element.id);
+              }}
+            />
+          )}
+          {/* Filled lake polygons */}
+          {fillD && (
+            <path
+              d={fillD}
+              style={{
+                fill: color,
+                fillOpacity: strokeOpacity(state) * 0.4,
+                stroke: color,
+                strokeWidth: riverStrokeWidth * 0.7,
+                strokeOpacity: strokeOpacity(state),
+              }}
+              pointerEvents={onElementClick ? 'none' : undefined}
+              className={onElementClick ? styles.interactivePath : undefined}
+              onClick={
+                onElementClick
+                  ? (e) => {
+                      e.stopPropagation();
+                      onElementClick(element.id);
+                    }
+                  : undefined
+              }
+            />
+          )}
+          {/* Visible river strokes */}
+          {strokeD && (
+            <path
+              d={strokeD}
+              style={{
+                fill: 'none',
+                stroke: color,
+                strokeWidth: riverStrokeWidth,
+                strokeOpacity: strokeOpacity(state),
+                strokeLinecap: 'round',
+                strokeLinejoin: 'round',
+              }}
+              pointerEvents={onElementClick ? 'none' : undefined}
+              className={onElementClick ? styles.interactivePath : undefined}
+              onClick={
+                onElementClick
+                  ? (e) => {
+                      e.stopPropagation();
+                      onElementClick(element.id);
+                    }
+                  : undefined
+              }
+            />
+          )}
+        </g>
+      );
+    }
+
     return (
       <path
         key={`shape-${element.id}`}
@@ -165,6 +298,34 @@ function renderShapeElements(
   });
 }
 
+type LabelPosition = NonNullable<VisualizationElement['labelPosition']>;
+
+/** Compute SVG text positioning props for a label at a given position relative to an anchor point. */
+function computeLabelProps(
+  anchor: ViewBoxPosition,
+  position: LabelPosition | undefined,
+  offset: number,
+): { x: number; y: number; textAnchor: 'start' | 'middle' | 'end'; dominantBaseline: 'central' | 'auto' | 'hanging' } {
+  const pos = position ?? 'right';
+  const isLeft = pos === 'left' || pos === 'above-left' || pos === 'below-left';
+  const isRight = pos === 'right' || pos === 'above-right' || pos === 'below-right';
+  const isAbove = pos === 'above' || pos === 'above-left' || pos === 'above-right';
+  const isBelow = pos === 'below' || pos === 'below-left' || pos === 'below-right';
+
+  const x = anchor.x + (isRight ? offset : isLeft ? -offset : 0);
+  const y = anchor.y + (isBelow ? offset : isAbove ? -offset : 0);
+
+  const textAnchor = isLeft ? 'end' as const
+    : isRight ? 'start' as const
+    : 'middle' as const;
+
+  const dominantBaseline = isAbove ? 'auto' as const
+    : isBelow ? 'hanging' as const
+    : 'central' as const;
+
+  return { x, y, textAnchor, dominantBaseline };
+}
+
 interface MapContentProps {
   readonly elements: VisualizationRendererProps['elements'];
   readonly elementStates: VisualizationRendererProps['elementStates'];
@@ -175,6 +336,7 @@ interface MapContentProps {
   readonly toggles: Readonly<Record<string, boolean>>;
   readonly elementToggles: VisualizationRendererProps['elementToggles'];
   readonly backgroundPaths: VisualizationRendererProps['backgroundPaths'];
+  readonly lakePaths: VisualizationRendererProps['lakePaths'];
   readonly backgroundLabels: VisualizationRendererProps['backgroundLabels'];
 }
 
@@ -188,6 +350,7 @@ function MapContent({
   toggles,
   elementToggles,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
@@ -233,6 +396,14 @@ function MapContent({
         />
       )}
 
+      {/* Ocean background tint (clamped to ±90° latitude) */}
+      {toggles['showLakes'] !== false && (
+        <rect
+          x={-1e4} y={-90} width={2e4} height={180}
+          className={styles.oceanBackground}
+        />
+      )}
+
       {/* Background country borders */}
       {showBorders && backgroundPaths?.map((path) => (
         <path
@@ -242,14 +413,25 @@ function MapContent({
         />
       ))}
 
+      {/* Lake polygons */}
+      {toggles['showLakes'] !== false && lakePaths?.map((lake) => (
+        <path
+          key={lake.id}
+          d={lake.svgPathData}
+          className={styles.lakePath}
+        />
+      ))}
+
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect')}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context')}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct')}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted')}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH)}
 
       {/* Country name labels and flags (from background border data, unified overlap detection) */}
       {(toggles['showCountryNames'] || toggles['showMapFlags']) && backgroundLabels && (
@@ -261,11 +443,36 @@ function MapContent({
         />
       )}
 
-      {/* Flag images near city dots (capitals quizzes) */}
+      {/* River name labels (for stroke-style path elements like rivers) */}
+      {elements.map((element) => {
+        if (clusteredElementIds.has(element.id)) return null;
+        if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
+        const state = elementStates[element.id];
+        if (state === 'hidden') return null;
+        if (!elementToggle(elementToggles, toggles, element.id, 'showRiverNames')) return null;
+        const color = stateColor(state) ?? 'var(--color-text-primary)';
+        const anchor = element.labelAnchor ?? element.viewBoxCenter;
+        const pos = element.labelPosition;
+        const labelOffset = 0.8; // viewBox units
+        const labelProps = computeLabelProps(anchor, pos, labelOffset);
+        return (
+          <text
+            key={`river-label-${element.id}`}
+            {...labelProps}
+            className={styles.riverLabel}
+            style={{ fill: color }}
+          >
+            {element.label}
+          </text>
+        );
+      })}
+
+      {/* Flag images near city dots (capitals quizzes — not for stroke-style paths like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showMapFlags')) return null;
         if (!isMapElement(element) || !element.code) return null;
+        if (element.pathRenderStyle === 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         const flagHeight = dotRadius * 4;
@@ -283,9 +490,10 @@ function MapContent({
         );
       })}
 
-      {/* City dot markers */}
+      {/* City dot markers (rendered last = on top of flags — not for stroke-style paths like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
+        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
@@ -312,22 +520,16 @@ function MapContent({
         );
       })}
 
-      {/* City name labels (rendered on top of dots) */}
+      {/* City name labels (rendered on top of dots — not for stroke-style paths like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
+        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityNames')) return null;
-        const pos = element.labelPosition ?? 'right';
         const offset = dotRadius * 1.5;
         const fontSize = dotRadius * 2;
-        const labelProps = pos === 'left'
-          ? { x: element.viewBoxCenter.x - offset, y: element.viewBoxCenter.y, textAnchor: 'end' as const, dominantBaseline: 'central' as const }
-          : pos === 'above'
-          ? { x: element.viewBoxCenter.x, y: element.viewBoxCenter.y - offset, textAnchor: 'middle' as const, dominantBaseline: 'auto' as const }
-          : pos === 'below'
-          ? { x: element.viewBoxCenter.x, y: element.viewBoxCenter.y + offset, textAnchor: 'middle' as const, dominantBaseline: 'hanging' as const }
-          : { x: element.viewBoxCenter.x + offset, y: element.viewBoxCenter.y, textAnchor: 'start' as const, dominantBaseline: 'central' as const };
+        const labelProps = computeLabelProps(element.viewBoxCenter, element.labelPosition, offset);
         return (
           <text
             key={`city-label-${element.id}`}

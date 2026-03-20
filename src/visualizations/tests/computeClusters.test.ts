@@ -87,4 +87,61 @@ describe('computeClusters', () => {
     expect(clusters[0].elementIds).toContain('a');
     expect(clusters[0].elementIds).toContain('b');
   });
+
+  describe('multi-radius clustering', () => {
+    it('absorbs a singleton into a nearby cluster using clusterAbsorptionDistance', () => {
+      // a and b are within 10px (element-element), c is 20px from centroid of {a,b}
+      // With elementElement=10, c is too far to seed a cluster with a or b.
+      // But with clusterAbsorption=25, c gets absorbed into the {a,b} cluster.
+      const elements = [element('a', 0, 0), element('b', 8, 0), element('c', 24, 0)];
+      // Without absorption: c is 20px from centroid(a,b)=(4,0), > 10px threshold
+      const withoutAbsorption = computeClusters(elements, 10, 1);
+      expect(withoutAbsorption).toHaveLength(1);
+      expect(withoutAbsorption[0].elementIds).not.toContain('c');
+
+      // With absorption at 25px: c at distance 20 from centroid < 25 → absorbed
+      const withAbsorption = computeClusters(elements, 10, 1, 25);
+      expect(withAbsorption).toHaveLength(1);
+      expect(withAbsorption[0].elementIds).toContain('c');
+    });
+
+    it('does not absorb a singleton beyond the absorption distance', () => {
+      const elements = [element('a', 0, 0), element('b', 8, 0), element('c', 40, 0)];
+      // centroid(a,b) = (4,0), distance to c = 36 > 25
+      const clusters = computeClusters(elements, 10, 1, 25);
+      expect(clusters).toHaveLength(1);
+      expect(clusters[0].elementIds).not.toContain('c');
+    });
+
+    it('merges two clusters within clusterMergeDistance', () => {
+      // Two pairs far apart in element-element terms but close in cluster-cluster terms
+      const elements = [
+        element('a', 0, 0), element('b', 8, 0),    // cluster 1 centroid at (4, 0)
+        element('c', 40, 0), element('d', 48, 0),   // cluster 2 centroid at (44, 0)
+      ];
+      // Distance between centroids = 40, elementElement=10, absorption=15, merge=50
+      const clusters = computeClusters(elements, 10, 1, 15, 50);
+      expect(clusters).toHaveLength(1);
+      expect(clusters[0].elementIds).toHaveLength(4);
+    });
+
+    it('does not merge clusters beyond the merge distance', () => {
+      const elements = [
+        element('a', 0, 0), element('b', 8, 0),
+        element('c', 80, 0), element('d', 88, 0),
+      ];
+      // Distance between centroids = 76, > 50
+      const clusters = computeClusters(elements, 10, 1, 15, 50);
+      expect(clusters).toHaveLength(2);
+    });
+
+    it('defaults clusterAbsorptionDistance to minScreenPixelDistance', () => {
+      const elements = [element('a', 0, 0), element('b', 8, 0), element('c', 24, 0)];
+      // Without explicit absorption, uses elementElement distance (10)
+      // c is 20px from centroid, > 10 → not absorbed
+      const clusters = computeClusters(elements, 10, 1, undefined, undefined);
+      expect(clusters).toHaveLength(1);
+      expect(clusters[0].elementIds).not.toContain('c');
+    });
+  });
 });

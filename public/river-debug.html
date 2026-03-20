@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>River Debug View</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f5f5f5; }
+    #controls { position: fixed; top: 8px; left: 8px; z-index: 10; background: white;
+      padding: 8px 12px; border-radius: 6px; box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+      max-height: 95vh; overflow-y: auto; font-size: 12px; width: 220px; }
+    #controls h3 { margin-bottom: 6px; }
+    #controls select { width: 100%; margin-bottom: 8px; padding: 4px; }
+    .legend-item { display: flex; align-items: center; gap: 4px; padding: 1px 0; cursor: pointer; }
+    .legend-item:hover { background: #f0f0f0; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 2px; flex-shrink: 0; }
+    .legend-label { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    svg { width: 100vw; height: 100vh; background: #eee; }
+    #coords { position: fixed; bottom: 8px; right: 8px; z-index: 10; background: white;
+      padding: 4px 8px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      font-size: 12px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <h3>River Debug</h3>
+    <select id="region">
+      <option value="Europe">Europe</option>
+      <option value="Asia">Asia</option>
+      <option value="Africa">Africa</option>
+      <option value="North America">North America</option>
+      <option value="South America">South America</option>
+      <option value="Oceania">Oceania</option>
+      <option value="">World (scalerank ≤ 5)</option>
+    </select>
+    <div id="legend"></div>
+  </div>
+  <svg id="map" viewBox="-30 -72 80 45" preserveAspectRatio="xMidYMid meet"></svg>
+  <div id="coords">Lat: —, Lng: —</div>
+
+  <script>
+    function hslColor(i, total) {
+      const hue = (i * 360 / total) % 360;
+      const sat = 55 + (i % 3) * 15;
+      const lit = 35 + (i % 5) * 7;
+      return `hsl(${Math.round(hue)}, ${sat}%, ${lit}%)`;
+    }
+
+    function parseCsv(text) {
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = {};
+        let col = 0, pos = 0, line = lines[i];
+        while (col < headers.length && pos <= line.length) {
+          if (line[pos] === '"') {
+            let end = pos + 1;
+            while (end < line.length) {
+              if (line[end] === '"' && line[end + 1] === '"') { end += 2; continue; }
+              if (line[end] === '"') break;
+              end++;
+            }
+            row[headers[col]] = line.slice(pos + 1, end).replace(/""/g, '"');
+            pos = end + 2; // skip closing quote and comma
+          } else {
+            let end = line.indexOf(',', pos);
+            if (end === -1) end = line.length;
+            row[headers[col]] = line.slice(pos, end);
+            pos = end + 1;
+          }
+          col++;
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    async function render(region) {
+      const base = location.pathname.replace(/\/river-debug\.html$/, '');
+      const [riverText, borderText, lakeText] = await Promise.all([
+        fetch(base + '/data/rivers/world-rivers.csv').then(r => r.text()),
+        fetch(base + '/data/borders/world-borders.csv').then(r => r.text()),
+        fetch(base + '/data/rivers/world-lakes-debug.csv').then(r => r.text()),
+      ]);
+
+      let rivers = parseCsv(riverText);
+      if (region) {
+        rivers = rivers.filter(r => r.continent === region && parseInt(r.scalerank) <= 6);
+      } else {
+        rivers = rivers.filter(r => parseInt(r.scalerank) <= 5);
+      }
+
+      const svg = document.getElementById('map');
+      svg.innerHTML = '';
+
+      // Compute viewBox from river bounds
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      for (const r of rivers) {
+        const lng = parseFloat(r.longitude);
+        const lat = parseFloat(r.latitude);
+        if (isNaN(lng) || isNaN(lat)) continue;
+        const x = lng, y = -lat;
+        if (x - 10 < minX) minX = x - 10;
+        if (x + 10 > maxX) maxX = x + 10;
+        if (y - 10 < minY) minY = y - 10;
+        if (y + 10 > maxY) maxY = y + 10;
+      }
+      if (!isFinite(minX)) { minX = -180; minY = -90; maxX = 180; maxY = 90; }
+      const pad = 5;
+      svg.setAttribute('viewBox', `${minX-pad} ${minY-pad} ${maxX-minX+pad*2} ${maxY-minY+pad*2}`);
+
+      // Draw country borders first (underneath rivers)
+      const borders = parseCsv(borderText);
+      for (const b of borders) {
+        if (!b.paths) continue;
+        const segments = b.paths.split('|');
+        for (const seg of segments) {
+          const trimmed = seg.trim();
+          if (!trimmed) continue;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', trimmed);
+          path.setAttribute('fill', '#ddd');
+          path.setAttribute('stroke', '#bbb');
+          path.setAttribute('stroke-width', '0.15');
+          svg.appendChild(path);
+        }
+      }
+
+      // Draw all lake polygons (light blue, for debugging gap coverage)
+      const lakes = parseCsv(lakeText);
+      for (const lake of lakes) {
+        if (!lake.path) continue;
+        const segments = lake.path.split('|');
+        for (const seg of segments) {
+          const trimmed = seg.trim();
+          if (!trimmed) continue;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', trimmed);
+          path.setAttribute('fill', 'rgba(100,150,255,0.25)');
+          path.setAttribute('stroke', 'rgba(100,150,255,0.5)');
+          path.setAttribute('stroke-width', '0.1');
+          svg.appendChild(path);
+        }
+      }
+
+      // Draw rivers with unique colors
+      const legend = document.getElementById('legend');
+      legend.innerHTML = '';
+
+      rivers.forEach((r, i) => {
+        const color = hslColor(i, rivers.length);
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+        const segments = r.paths.split('|');
+        for (const seg of segments) {
+          const trimmed = seg.trim();
+          if (!trimmed) continue;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', trimmed);
+
+          if (trimmed.endsWith('Z')) {
+            // Lake polygon
+            path.setAttribute('fill', color);
+            path.setAttribute('fill-opacity', '0.25');
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '0.105');
+            path.setAttribute('stroke-opacity', '0.9');
+          } else {
+            // River stroke
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '0.15');
+            path.setAttribute('stroke-opacity', '0.9');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+          }
+          group.appendChild(path);
+        }
+        svg.appendChild(group);
+
+        // Legend entry
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<span class="legend-swatch" style="background:${color}"></span><span class="legend-label">${r.name}</span>`;
+        item.onclick = () => {
+          // Flash the river
+          group.style.opacity = '0.2';
+          setTimeout(() => group.style.opacity = '1', 100);
+          setTimeout(() => { group.style.opacity = '0.2'; }, 200);
+          setTimeout(() => group.style.opacity = '1', 300);
+        };
+        legend.appendChild(item);
+      });
+    }
+
+    document.getElementById('region').addEventListener('change', (e) => render(e.target.value));
+    render('Europe');
+
+    // Show lat/lng on mouse move
+    const coordsEl = document.getElementById('coords');
+    document.getElementById('map').addEventListener('mousemove', (e) => {
+      const svg = document.getElementById('map');
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const svgPt = pt.matrixTransform(ctm.inverse());
+      // SVG uses x=lng, y=-lat
+      const lat = (-svgPt.y).toFixed(2);
+      const lng = svgPt.x.toFixed(2);
+      coordsEl.textContent = `Lat: ${lat}, Lng: ${lng}`;
+    });
+  </script>
+</body>
+</html>

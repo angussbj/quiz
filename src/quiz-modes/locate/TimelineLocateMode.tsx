@@ -16,6 +16,7 @@ export function TimelineLocateMode({
   selectValues,
   Renderer,
   backgroundPaths,
+  lakePaths,
   clustering,
   onFinish,
   forceGiveUp = false,
@@ -186,6 +187,7 @@ export function TimelineLocateMode({
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
+          lakePaths={lakePaths}
           clustering={clustering}
         />
       </div>

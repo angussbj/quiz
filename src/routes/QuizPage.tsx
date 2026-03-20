@@ -5,6 +5,7 @@ import { useQuizData } from '@/quiz-definitions/useQuizData';
 import { buildElements } from '@/visualizations/buildElements';
 import { resolveRenderer } from '@/visualizations/resolveRenderer';
 import { useBackgroundPaths } from '@/visualizations/map/useBackgroundPaths';
+import { useLakePaths } from '@/visualizations/map/useLakePaths';
 import { computeBackgroundLabels } from '@/visualizations/map/computeBackgroundLabels';
 import { QuizShell } from '@/quiz-modes/QuizShell';
 import { ActiveQuiz } from '@/quiz-modes/ActiveQuiz';
@@ -32,6 +33,7 @@ export default function QuizPage() {
   const definition = quizId ? getQuizById(quizId) : undefined;
   const dataState = useQuizData(definition?.dataPath, definition?.dataFilter);
   const backgroundPaths = useBackgroundPaths(definition?.supportingDataPaths[0]);
+  const lakePaths = useLakePaths(definition?.supportingDataPaths[1]);
 
   if (!quizId) {
     return (
@@ -78,6 +80,7 @@ export default function QuizPage() {
       definition={definition}
       rows={dataState.rows}
       backgroundPaths={backgroundPaths}
+      lakePaths={lakePaths}
     />
   );
 }
@@ -86,9 +89,10 @@ interface QuizPageLoadedProps {
   readonly definition: NonNullable<ReturnType<typeof getQuizById>>;
   readonly rows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly backgroundPaths: ReturnType<typeof useBackgroundPaths>;
+  readonly lakePaths: ReturnType<typeof useLakePaths>;
 }
 
-function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedProps) {
+function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPageLoadedProps) {
   const elements = useMemo(
     () => buildElements(definition.visualizationType, rows, definition.columnMappings),
     [definition.visualizationType, rows, definition.columnMappings],
@@ -150,6 +154,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             selectToggleDefinitions={definition.selectToggles}
             Renderer={Renderer}
             backgroundPaths={backgroundPaths}
+            lakePaths={lakePaths}
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
             groupFilterColumn={definition.groupFilterColumn}
