@@ -6,6 +6,7 @@ import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ReviewResult } from './QuizModeProps';
 import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
 import type { QuizConfig } from './QuizShell';
+import { computeGroupCameraPosition } from './computeGroupCameraPosition';
 import { Timer } from './Timer';
 import { resolveMode } from './resolveMode';
 import styles from './ActiveQuiz.module.css';
@@ -26,6 +27,12 @@ export interface ActiveQuizProps {
   readonly groupFilterColumn?: string;
   readonly hideFilteredElements?: boolean;
   readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
+  readonly groupFilterCameraPositions?: Readonly<Record<string, {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  }>>;
 }
 
 /**
@@ -48,6 +55,7 @@ export function ActiveQuiz({
   groupFilterColumn,
   hideFilteredElements,
   initialCameraPosition,
+  groupFilterCameraPositions,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
     const hasRangeFilter = rangeColumn && config.elementRange;
@@ -126,6 +134,25 @@ export function ActiveQuiz({
     return WrappedRenderer;
   }, [Renderer, elements, backgroundElementIds, hideFilteredElements]);
 
+  const effectiveCameraPosition = useMemo(() => {
+    const groupCamera = computeGroupCameraPosition(
+      groupFilterCameraPositions,
+      config.selectedGroups,
+    );
+    return groupCamera ?? initialCameraPosition;
+  }, [groupFilterCameraPositions, config.selectedGroups, initialCameraPosition]);
+
+  const filteredBackgroundLabels = useMemo(() => {
+    if (!backgroundLabels || !groupFilterColumn || !config.selectedGroups) return backgroundLabels;
+    const selectedGroups = config.selectedGroups;
+    return backgroundLabels.filter((label) => {
+      const labelRegion = label.region;
+      if (!labelRegion) return false;
+      const labelRegions = labelRegion.split('|');
+      return labelRegions.some((r) => selectedGroups.has(r));
+    });
+  }, [backgroundLabels, groupFilterColumn, config.selectedGroups]);
+
   const [finishState, setFinishState] = useState<ScoreResult | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [forceGiveUp, setForceGiveUp] = useState(false);
@@ -186,12 +213,12 @@ export function ActiveQuiz({
           Renderer={FilterAwareRenderer}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
-          backgroundLabels={backgroundLabels}
+          backgroundLabels={filteredBackgroundLabels}
           onFinish={handleFinish}
           forceGiveUp={forceGiveUp}
           reviewing={isFinished}
           reviewResult={reviewResult}
-          initialCameraPosition={initialCameraPosition}
+          initialCameraPosition={effectiveCameraPosition}
         />
       </div>
     </div>

@@ -100,22 +100,8 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
   const backgroundLabels = useMemo(() => {
     if (!backgroundPaths) return undefined;
     const allLabels = computeBackgroundLabels(backgroundPaths);
-    const filter = definition.dataFilter;
-    const filters = filter ? (Array.isArray(filter) ? filter : [filter]) : [];
-    const regionFilter = filters.find((f) => f.column === 'region' || f.column === 'subregion');
-    return allLabels.filter((label) => {
-      // Only sovereign countries (sovereign matches name)
-      if (!label.sovereign || label.sovereign !== label.name) return false;
-      // Filter to quiz region/subregion if defined
-      if (regionFilter) {
-        const labelField = regionFilter.column === 'subregion' ? label.group : label.region;
-        if (!labelField) return false;
-        const labelValues = labelField.split('|');
-        return regionFilter.values.some((v: string) => labelValues.includes(v));
-      }
-      return true;
-    });
-  }, [backgroundPaths, definition.dataFilter]);
+    return allLabels.filter((label) => label.sovereign && label.sovereign === label.name);
+  }, [backgroundPaths]);
   const Renderer = resolveRenderer(definition.visualizationType);
 
   const availableGroups = useMemo(() => {
@@ -160,6 +146,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             groupFilterColumn={definition.groupFilterColumn}
             hideFilteredElements={definition.hideFilteredElements}
             initialCameraPosition={definition.initialCameraPosition}
+            groupFilterCameraPositions={definition.groupFilterCameraPositions}
           />
         )}
       </QuizShell>
