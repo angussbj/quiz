@@ -15,7 +15,7 @@ You are reviewing a feature implementation for the quiz website project. You hav
 5. Read the type contracts that the feature interacts with.
 6. Identify anything your uncertain about.
 7. Read any other files that might answer your questions.
-6. Run `npm run typecheck` and `npm test` to verify the code compiles and tests pass.
+6. Run `npm run typecheck`, `npm test`, and `npx eslint .` to verify the code compiles, tests pass, and there are no lint errors.
 
 ## What to Look For
 

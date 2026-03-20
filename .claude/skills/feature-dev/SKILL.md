@@ -25,8 +25,7 @@ Takes either:
 2. Announce: "Starting feature: **<title>**" and summarise the scope in 1–2 sentences.
 3. Enter a worktree using the `EnterWorktree` tool with a short name for the feature (e.g., `csv-loader`). This creates the worktree and branch (`worktree-<name>`), and switches the shell's working directory to it. Then run `npm install`.
 4. Start the dev server (`npm run dev`) and note the port. It will run in the background automatically. **DO NOT** add `&` to get it to run in the background.
-5. Name the conversation "<port> - <title>" (using /rename tool).
-6. Verify the setup: run `npm run typecheck` and `npm test`.
+5. Verify the setup: run `npm run typecheck`, `npm test`, and `npx eslint .`.
 
 ## Phase 2: Research and planning
 
@@ -39,7 +38,7 @@ Takes either:
 ## Phase 3: Implement
 
 1. Work in small increments. After each meaningful change:
-   - Run `npm run typecheck` and `npm test`
+   - Run `npm run typecheck`, `npm test`, and `npx eslint .`
    - Fix any issues before moving on
    - Commit with a conventional commit message
 2. Create CSS modules alongside components. Use theme CSS custom properties for all colours.
@@ -63,6 +62,7 @@ Takes either:
    ```bash
    npm run typecheck
    npm test
+   npx eslint .
    npm run build
    ```
 2. Push the branch (use `git rev-parse --abbrev-ref HEAD` if you need the branch name).

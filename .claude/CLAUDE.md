@@ -9,6 +9,7 @@ npm install
 npm run dev          # Vite dev server (default: port 5173)
 npm test             # Jest tests
 npm run typecheck    # tsc --noEmit
+npx eslint .         # ESLint
 npm run build        # Production build
 npm run storybook    # Storybook dev server
 ```
@@ -129,7 +130,7 @@ Source files are gitignored (too large). Download URLs are in each script's head
 - When moving files to reorganise a directory, keep the move isolated in its own commit:
   1. Stash work in progress: `git stash`
   2. Move the files
-  3. Run `npm test` and `npm run typecheck` and fix any issues
+  3. Run `npm test`, `npm run typecheck`, and `npx eslint .` and fix any issues
   4. Commit the move with a clear description
   5. Pop the stash: `git stash pop`
 

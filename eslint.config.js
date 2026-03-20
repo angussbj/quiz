@@ -29,6 +29,8 @@ export default defineConfig([
       'react-hooks/refs': 'off',
       'react-hooks/set-state-in-effect': 'off',
       'react-hooks/globals': 'off',
+      // Allow files to export both components and non-components (constants, hooks)
+      'react-refresh/only-export-components': 'off',
     },
   },
 ])

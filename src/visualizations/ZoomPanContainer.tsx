@@ -158,11 +158,11 @@ export function ZoomPanContainer({
         centerOnInit={!effectiveCameraPosition}
         limitToBounds={false}
         smooth
-        wheel={{ smoothStep: 0.03 }}
-        pinch={{ disabled: true }}
+        wheel={{ smoothStep: 0.06 }}
       >
         <ZoomPanInner
           viewBox={viewBox}
+
           containerSize={containerSize}
           elements={elements}
           elementStates={elementStates}
@@ -257,8 +257,7 @@ function ZoomPanInner({
     if (containerSize.width === 0) return false;
     const dx = Math.abs(currentTransform.posX - initial.posX);
     const dy = Math.abs(currentTransform.posY - initial.posY);
-    if (dx > containerSize.width * 0.5 || dy > containerSize.height * 0.5) return true;
-    return false;
+    return dx > containerSize.width * 0.5 || dy > containerSize.height * 0.5
   }, [currentTransform, containerSize]);
 
   const handleReset = useCallback(() => {
@@ -269,102 +268,6 @@ function ZoomPanInner({
       centerView(1, 300, 'easeOut');
     }
   }, [setTransform, centerView]);
-
-  // Custom pinch handling: the library's built-in pinch uses a linear ratio
-  // (newScale = distRatio * startScale) which feels sluggish when zoomed in.
-  // We override with an exponent that increases with zoom level.
-  const touchWrapperRef = useRef<HTMLDivElement>(null);
-  const setTransformRef = useRef(setTransform);
-  setTransformRef.current = setTransform;
-
-  interface PinchState {
-    lastDist: number;
-    lastMidX: number;
-    lastMidY: number;
-    lastScale: number;
-    lastPosX: number;
-    lastPosY: number;
-  }
-  const pinchStateRef = useRef<PinchState | null>(null);
-
-  useEffect(() => {
-    const el = touchWrapperRef.current;
-    if (!el) return;
-
-    function dist(a: Touch, b: Touch): number {
-      const dx = a.clientX - b.clientX;
-      const dy = a.clientY - b.clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    function mid(a: Touch, b: Touch): { x: number; y: number } {
-      return { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 };
-    }
-
-    function onTouchStart(e: TouchEvent) {
-      if (e.touches.length !== 2) {
-        pinchStateRef.current = null;
-        return;
-      }
-      const d = dist(e.touches[0], e.touches[1]);
-      const m = mid(e.touches[0], e.touches[1]);
-      const ct = currentTransformRef.current;
-      pinchStateRef.current = {
-        lastDist: d,
-        lastMidX: m.x,
-        lastMidY: m.y,
-        lastScale: ct.scale,
-        lastPosX: ct.posX,
-        lastPosY: ct.posY,
-      };
-    }
-
-    function onTouchMove(e: TouchEvent) {
-      if (e.touches.length !== 2 || !pinchStateRef.current) return;
-      e.preventDefault();
-
-      const state = pinchStateRef.current;
-      const currDist = dist(e.touches[0], e.touches[1]);
-      const currMid = mid(e.touches[0], e.touches[1]);
-      const distRatio = currDist / state.lastDist;
-
-      // Exponent increases with zoom level for more responsive deep-zoom pinching
-      const exponent = 1 + Math.log10(Math.max(1, state.lastScale)) * 0.3;
-      const rawScale = state.lastScale * Math.pow(distRatio, exponent);
-      const newScale = Math.min(MAX_CLUSTER_SCALE, Math.max(0.5, rawScale));
-
-      // Zoom around the pinch midpoint + simultaneous pan
-      const scaleRatio = newScale / state.lastScale;
-      const panX = currMid.x - state.lastMidX;
-      const panY = currMid.y - state.lastMidY;
-      const newPosX = currMid.x + scaleRatio * (state.lastPosX - state.lastMidX) + panX;
-      const newPosY = currMid.y + scaleRatio * (state.lastPosY - state.lastMidY) + panY;
-
-      setTransformRef.current(newPosX, newPosY, newScale);
-
-      pinchStateRef.current = {
-        lastDist: currDist,
-        lastMidX: currMid.x,
-        lastMidY: currMid.y,
-        lastScale: newScale,
-        lastPosX: newPosX,
-        lastPosY: newPosY,
-      };
-    }
-
-    function onTouchEnd() {
-      pinchStateRef.current = null;
-    }
-
-    el.addEventListener('touchstart', onTouchStart, { capture: true });
-    el.addEventListener('touchmove', onTouchMove, { passive: false, capture: true });
-    el.addEventListener('touchend', onTouchEnd, { capture: true });
-    return () => {
-      el.removeEventListener('touchstart', onTouchStart, { capture: true });
-      el.removeEventListener('touchmove', onTouchMove, { capture: true });
-      el.removeEventListener('touchend', onTouchEnd, { capture: true });
-    };
-  }, []);
 
   const basePixelsPerViewBoxUnit =
     containerSize.width > 0
@@ -473,33 +376,31 @@ function ZoomPanInner({
 
   return (
     <ZoomPanContext.Provider value={contextValue}>
-      <div ref={touchWrapperRef} className={styles.touchWrapper}>
-        <TransformComponent
-          wrapperClass={styles.transformWrapper}
-          contentClass={styles.transformContent}
+      <TransformComponent
+        wrapperClass={styles.transformWrapper}
+        contentClass={styles.transformContent}
+      >
+        <svg
+          className={styles.svg}
+          viewBox={viewBoxString}
+          preserveAspectRatio="xMidYMid meet"
         >
-          <svg
-            className={styles.svg}
-            viewBox={viewBoxString}
-            preserveAspectRatio="xMidYMid meet"
-          >
-            {children}
-            <AnimatePresence>
-              {clusters.map((cluster) => (
-                <ClusterBadge
-                  key={cluster.elementIds.join(',')}
-                  cluster={cluster}
-                  matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
-                  elementStates={elementStates}
-                  scale={quantisedScale}
-                  basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
-                  onClick={handleClusterClick}
-                />
-              ))}
-            </AnimatePresence>
-          </svg>
-        </TransformComponent>
-      </div>
+          {children}
+          <AnimatePresence>
+            {clusters.map((cluster) => (
+              <ClusterBadge
+                key={cluster.elementIds.join(',')}
+                cluster={cluster}
+                matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
+                elementStates={elementStates}
+                scale={quantisedScale}
+                basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
+                onClick={handleClusterClick}
+              />
+            ))}
+          </AnimatePresence>
+        </svg>
+      </TransformComponent>
       {showResetButton && (
         <button className={styles.resetButton} onClick={handleReset}>
           Reset

@@ -8,11 +8,6 @@
   border-radius: var(--radius-md);
 }
 
-.touchWrapper {
-  position: absolute;
-  inset: 0;
-}
-
 .transformWrapper {
   position: absolute !important;
   inset: 0 !important;

@@ -23,6 +23,7 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 ### 26. Periodic Table Quiz
 **Branch:** `feat/periodic-table-quiz`
 **Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element, ordered recall following the order by atomic number, prompted recall (new) where element squares are highlighted in a random order and you have to name them). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
+**Note:** Now includes element subset filtering — users can filter by atomic number range AND by element category (chip toggles). The group filter is a generic mechanism on `QuizDefinition` (`groupFilterColumn`, `groupFilterLabel`) reusable by any quiz with categorical data. Non-selected elements render in muted 'context' state.
 
 
 ### 29. Remove `targetElementId` from Renderer Props ✅
