@@ -1,0 +1,79 @@
+id,figure,start_year,end_year,continent,figure_alternates
+socrates,Socrates,-470,-399,Europe,Σωκράτης
+plato,Plato,-428,-348,Europe,Platon|Aristocles
+aristotle,Aristotle,-384,-322,Europe,Aristoteles|The Philosopher
+confucius,Confucius,-551,-479,Asia,Kongzi|Kong Qiu|Master Kong|孔子
+homer,Homer,-800,-701,Europe,Homeros
+virgil,Virgil,-70,-19,Europe,Publius Vergilius Maro|Vergil
+dante-alighieri,Dante Alighieri,1265,1321,Europe,Dante|Durante di Alighiero degli Alighieri
+william-shakespeare,William Shakespeare,1564,1616,Europe,Shakespeare|The Bard
+immanuel-kant,Immanuel Kant,1724,1804,Europe,Kant
+johann-wolfgang-von-goethe,Johann Wolfgang von Goethe,1749,1832,Europe,Goethe
+leo-tolstoy,Leo Tolstoy,1828,1910,Europe,Lev Nikolayevich Tolstoy|Лев Толстой
+fyodor-dostoevsky,Fyodor Dostoevsky,1821,1881,Europe,Dostoyevsky|Фёдор Михайлович Достоевский
+simone-de-beauvoir,Simone de Beauvoir,1908,1986,Europe,de Beauvoir
+albert-camus,Albert Camus,1913,1960,Europe,Camus
+jean-paul-sartre,Jean-Paul Sartre,1905,1980,Europe,Sartre
+miguel-de-cervantes,Miguel de Cervantes,1547,1616,Europe,Cervantes|Miguel de Cervantes Saavedra
+francois-rabelais,François Rabelais,1494,1553,Europe,Rabelais
+victor-hugo,Victor Hugo,1802,1885,Europe,Hugo
+gustave-flaubert,Gustave Flaubert,1821,1880,Europe,Flaubert
+leonardo-da-vinci,Leonardo da Vinci,1452,1519,Europe,Leonardo|da Vinci
+michelangelo,Michelangelo,1475,1564,Europe,Michelangelo Buonarroti|Michelangelo di Lodovico Buonarroti Simoni
+rembrandt,Rembrandt,1606,1669,Europe,Rembrandt van Rijn|Rembrandt Harmenszoon van Rijn
+pablo-picasso,Pablo Picasso,1881,1973,Europe,Picasso|Pablo Ruiz Picasso
+galileo-galilei,Galileo Galilei,1564,1642,Europe,Galileo
+isaac-newton,Isaac Newton,1643,1727,Europe,Newton|Sir Isaac Newton
+charles-darwin,Charles Darwin,1809,1882,Europe,Darwin
+marie-curie,Marie Curie,1867,1934,Europe,Maria Sklodowska-Curie|Madame Curie|Maria Skłodowska
+sigmund-freud,Sigmund Freud,1856,1939,Europe,Freud
+charlie-chaplin,Charlie Chaplin,1889,1977,Europe,Sir Charles Spencer Chaplin|The Tramp
+murasaki-shikibu,Murasaki Shikibu,973,1025,Asia,紫式部|Lady Murasaki
+rabindranath-tagore,Rabindranath Tagore,1861,1941,Asia,Tagore|Rabindranath|রবীন্দ্রনাথ ঠাকুর
+akira-kurosawa,Akira Kurosawa,1910,1998,Asia,黒澤 明|Kurosawa
+satyajit-ray,Satyajit Ray,1921,1992,Asia,সত্যজিৎ রায়|Ray
+hokusai,Katsushika Hokusai,1760,1849,Asia,葛飾北斎|Hokusai|Tetsuzo
+nagarjuna,Nagarjuna,150,250,Asia,Nāgārjuna|नागार्जुन
+laozi,Laozi,-601,-531,Asia,Lao Tzu|Lao-Tze|老子|Lao-Tzu
+zhuangzi,Zhuangzi,-369,-286,Asia,Chuang Tzu|莊子|Zhuang Zhou
+kālidāsa,Kalidasa,375,450,Asia,Kālidāsa|कालिदास
+cao-xueqin,Cao Xueqin,1715,1763,Asia,曹雪芹|Cao Zhan
+lu-xun,Lu Xun,1881,1936,Asia,魯迅|Zhou Shuren|Zhou Zhangshou
+yasunari-kawabata,Yasunari Kawabata,1899,1972,Asia,川端康成|Kawabata
+omar-khayyam,Omar Khayyam,1048,1131,Middle East,عمر خیام|Umar Khayyam|Omar Khayyám
+ibn-rushd,Ibn Rushd,1126,1198,Middle East,Averroes|ابن رشد|Abu al-Walid Muhammad ibn Ahmad ibn Rushd
+ibn-sina,Ibn Sina,980,1037,Middle East,Avicenna|ابن سینا|Abu Ali al-Husayn ibn Abd Allah ibn Sina
+al-biruni,al-Biruni,973,1048,Middle East,Abu Rayhan al-Biruni|البيروني|Biruni
+al-ghazali,al-Ghazali,1058,1111,Middle East,Algazel|ابو حامد محمد غزالی|The Proof of Islam
+ibn-khaldun,Ibn Khaldun,1332,1406,Africa,ابن خلدون|Abū Zayd ʻAbd ar-Raḥmān ibn Muḥammad ibn Khaldūn
+rumi,Rumi,1207,1273,Middle East,Jalal ad-Din Muhammad Rumi|Mawlana|جلال‌الدین محمد رومی|Jalaluddin Rumi
+hafez,Hafez,1315,1390,Middle East,Hafiz|خواجه شمس‌الدین محمد حافظ شیرازی|Khwāja Shams-ud-Dīn Muḥammad Ḥāfeẓ-e Shīrāzī
+al-farabi,al-Farabi,872,950,Middle East,Alpharabius|ابونصر محمد فارابی|The Second Teacher
+imhotep,Imhotep,-2650,-2600,Africa,ΙΜούθης
+timbuktu-scholars,Ahmad Baba al-Timbukti,1556,1627,Africa,Ahmad Baba|أحمد بابا التنبكتي
+chinua-achebe,Chinua Achebe,1930,2013,Africa,Albert Chinualumogu Achebe
+wole-soyinka,Wole Soyinka,1934,,Africa,Akinwande Oluwole Babatunde Soyinka
+ngugi-wa-thiongo,Ngugi wa Thiong'o,1938,,Africa,James Ngugi|James Thiong'o Ngugi
+bessie-head,Bessie Head,1937,1986,Africa,Bessie Amelia Emery
+leopold-sedar-senghor,Léopold Sédar Senghor,1906,2001,Africa,Senghor
+cheikh-anta-diop,Cheikh Anta Diop,1923,1986,Africa,Diop
+ousmane-sembene,Ousmane Sembène,1923,2007,Africa,Sembène Ousmane|Father of African Cinema
+ibn-battuta,Ibn Battuta,1304,1368,Africa,ابن بطوطة|Abu Abdullah Muhammad ibn Battuta
+sundiata-keita,Sundiata Keita,1217,1255,Africa,Sunjata|Sogolon Djata|Mari Djata
+gabriel-garcia-marquez,Gabriel García Márquez,1927,2014,South America,García Márquez|Gabo|El Gabo
+pablo-neruda,Pablo Neruda,1904,1973,South America,Neftalí Ricardo Reyes Basoalto|Neruda
+jorge-luis-borges,Jorge Luis Borges,1899,1986,South America,Borges
+frida-kahlo,Frida Kahlo,1907,1954,North America,Magdalena Carmen Frida Kahlo y Calderón
+octavio-paz,Octavio Paz,1914,1998,North America,Paz
+mario-vargas-llosa,Mario Vargas Llosa,1936,,South America,Vargas Llosa|Jorge Mario Pedro Vargas Llosa
+gilberto-freyre,Gilberto Freyre,1900,1987,South America,Gilberto de Mello Freyre
+jose-marti,José Martí,1853,1895,North America,José Julián Martí Pérez|Apostle of Cuban Independence
+sor-juana-ines-de-la-cruz,Sor Juana Inés de la Cruz,1648,1695,North America,Juana de Asbaje|Juana Ramírez de Asbaje|The Tenth Muse
+mark-twain,Mark Twain,1835,1910,North America,Samuel Langhorne Clemens|Clemens
+edgar-allan-poe,Edgar Allan Poe,1809,1849,North America,Poe
+ralph-waldo-emerson,Ralph Waldo Emerson,1803,1882,North America,Emerson|The Sage of Concord
+toni-morrison,Toni Morrison,1931,2019,North America,Chloe Anthony Wofford Morrison|Morrison
+georgia-okeeffe,Georgia O'Keeffe,1887,1986,North America,O'Keeffe|Georgia Totto O'Keeffe
+frank-lloyd-wright,Frank Lloyd Wright,1867,1959,North America,Wright|FLW
+maya-angelou,Maya Angelou,1928,2014,North America,Marguerite Annie Johnson
+james-baldwin,James Baldwin,1924,1987,North America,Baldwin

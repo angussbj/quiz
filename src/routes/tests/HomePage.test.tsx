@@ -24,9 +24,10 @@ describe('HomePage', () => {
 
   it('renders top-level categories', () => {
     renderHomePage();
-    expect(screen.getByRole('button', { name: /Geography/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Science/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /History/ })).toBeInTheDocument();
+    // Use getAllByRole since 'Science' also matches sub-categories like 'Science & Technology'
+    expect(screen.getAllByRole('button', { name: /Geography/ }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('button', { name: /Science/ }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('button', { name: /History/ }).length).toBeGreaterThan(0);
   });
 
   it('renders quiz links (tree starts expanded)', () => {
@@ -66,8 +67,8 @@ describe('HomePage', () => {
     await user.type(input, 'pe');
 
     // All categories should still be visible
-    expect(screen.getByRole('button', { name: /Geography/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Science/ })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /Geography/ }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('button', { name: /Science/ }).length).toBeGreaterThan(0);
   });
 
   it('shows empty state when search matches nothing', async () => {
