@@ -599,6 +599,18 @@ for (const raw of rawCities) {
 // Sort by rank
 rows.sort((a, b) => a.rank - b.rank);
 
+// Deduplicate IDs by appending country code where needed
+const idCounts = new Map<string, number>();
+for (const row of rows) {
+  idCounts.set(row.id, (idCounts.get(row.id) ?? 0) + 1);
+}
+for (const row of rows) {
+  if ((idCounts.get(row.id) ?? 0) > 1) {
+    const mutableRow = row as { id: string };
+    mutableRow.id = `${row.id}-${row.countryCode}`;
+  }
+}
+
 // Build CSV
 const header = 'id,city,country,country_code,latitude,longitude,population,growth_rate,rank,region,subregion,city_alternates,label_position';
 const csvRows = rows.map((r) => {

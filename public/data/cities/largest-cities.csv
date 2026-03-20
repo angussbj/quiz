@@ -28,7 +28,7 @@ chennai,Chennai,India,in,13.0878,80.2785,12623100,0.02327,26,Asia,Southern Asia,
 bogota,Bogota,Colombia,co,4.711,-74.0721,11922100,0.01071,27,Americas,South America,Bogotá,
 jakarta,Jakarta,Indonesia,id,-6.2088,106.8456,11840000,0.0177,28,Asia,South-Eastern Asia,,left
 lima,Lima,Peru,pe,-12.0432,-77.0282,11670700,0.01332,29,Americas,South America,,
-hyderabad,Hyderabad,India,in,17.384,78.4564,11608400,0.02386,30,Asia,Southern Asia,,left
+hyderabad-in,Hyderabad,India,in,17.384,78.4564,11608400,0.02386,30,Asia,Southern Asia,,left
 bangkok,Bangkok,Thailand,th,13.754,100.5014,11543900,0.01336,31,Asia,South-Eastern Asia,,left
 paris,Paris,France,fr,48.8534,2.3486,11418300,0.0063,32,Europe,Western Europe,,
 luanda,Luanda,Angola,ao,-8.8368,13.2343,10421300,0.03923,33,Africa,Middle Africa,,left
@@ -256,7 +256,7 @@ daqing,Daqing,China,cn,46.324,124.5598,2123650,0.01831,254,Asia,Eastern Asia,,le
 lianyungang,Lianyungang,China,cn,34.5966,119.2216,2121860,0.01973,255,Asia,Eastern Asia,,left
 benin-city,Benin City,Nigeria,ng,6.3382,5.6258,2120460,0.03708,256,Africa,Western Africa,,left
 yancheng-jiangsu,Yancheng Jiangsu,China,cn,33.3477,120.1631,2109830,0.01765,257,Asia,Eastern Asia,,left
-hyderabad,Hyderabad,Pakistan,pk,25.3924,68.3737,2107790,0.02383,258,Asia,Southern Asia,,left
+hyderabad-pk,Hyderabad,Pakistan,pk,25.3924,68.3737,2107790,0.02383,258,Asia,Southern Asia,,
 panama-city,Panama City,Panama,pa,8.9936,-79.5197,2093270,0.01885,259,Americas,Central America,,
 semarang,Semarang,Indonesia,id,-6.9931,110.4208,2091480,0.01904,260,Asia,South-Eastern Asia,,left
 davao-city,Davao City,Philippines,ph,7.2542,125.1214,2077050,0.02117,261,Asia,South-Eastern Asia,,
@@ -266,7 +266,7 @@ can-tho,Can Tho,Vietnam,vn,10.0333,105.7833,2071270,0.03177,264,Asia,South-Easte
 almaty,Almaty,Kazakhstan,kz,43.2567,76.9286,2068030,0.01273,265,Asia,Central Asia,,
 matola,Matola,Mozambique,mz,-25.9622,32.4589,2060790,0.03836,266,Africa,Eastern Africa,,left
 rabat,Rabat,Morocco,ma,34.0133,-6.8325,2054190,0.01644,267,Africa,Northern Africa,,left
-valencia,Valencia,Venezuela,ve,10.162,-68.0076,2054030,0.01144,268,Americas,South America,,left
+valencia-ve,Valencia,Venezuela,ve,10.162,-68.0076,2054030,0.01144,268,Americas,South America,,left
 hiroshima,Hiroshima,Japan,jp,34.4,132.45,2053290,-0.00238,269,Asia,Eastern Asia,,left
 quito,Quito,Ecuador,ec,-0.2298,-78.5249,2048670,0.01557,270,Americas,South America,,
 la-paz,La Paz,Bolivia,bo,-16.5,-68.15,2030730,0.0167,271,Americas,South America,,left
@@ -373,7 +373,7 @@ gwangju,Gwangju,South Korea,kr,35.1547,126.9156,1540890,0.00271,371,Asia,Eastern
 yekaterinburg,Yekaterinburg,Russia,ru,56.8519,60.6122,1540000,0.00195,372,Europe,Eastern Europe,,left
 taizhou-jiangsu,Taizhou Jiangsu,China,cn,32.4906,119.9148,1533860,0.01803,373,Asia,Eastern Asia,,left
 weihai,Weihai,China,cn,37.5121,122.1153,1529560,0.02014,374,Asia,Eastern Asia,,
-san-jose,San Jose,Costa Rica,cr,9.9281,-84.0907,1522380,0.01314,375,Americas,Central America,,
+san-jose-cr,San Jose,Costa Rica,cr,9.9281,-84.0907,1522380,0.01314,375,Americas,Central America,,
 uyo,Uyo,Nigeria,ng,5.0513,7.9335,1520020,0.04324,376,Africa,Western Africa,,left
 mwanza,Mwanza,Tanzania,tz,-2.5167,32.9,1518810,0.04938,377,Africa,Eastern Africa,,
 liuyang,Liuyang,China,cn,28.2179,113.7002,1516590,0.02724,378,Asia,Eastern Asia,,left
@@ -628,7 +628,7 @@ arequipa,Arequipa,Peru,pe,-16.3989,-71.535,996218,0.01271,626,Americas,South Ame
 bahawalpur,Bahawalpur,Pakistan,pk,29.3978,71.6752,995494,0.0262,627,Asia,Southern Asia,,left
 veracruz,Veracruz,Mexico,mx,19.181,-96.1429,994102,0.01328,628,Americas,North America,,left
 volgograd,Volgograd,Russia,ru,48.7,44.4833,991693,-0.00058,629,Europe,Eastern Europe,,
-san-jose,San Jose,United States,us,37.3394,-121.895,991209,-0.0031,630,Americas,North America,,
+san-jose-us,San Jose,United States,us,37.3394,-121.895,991209,-0.0031,630,Americas,North America,,
 cucuta,Cucuta,Colombia,co,7.8939,-72.5078,990634,0.00911,631,Americas,South America,,
 bengbu,Bengbu,China,cn,32.9176,117.3826,990361,0.01556,632,Asia,Eastern Asia,,left
 villahermosa,Villahermosa,Mexico,mx,17.9869,-92.9303,986249,0.01427,633,Americas,North America,,
@@ -734,7 +734,7 @@ gaza,Gaza,Palestine,ps,31.5017,34.4674,846506,0.02805,732,Asia,Western Asia,,lef
 danyang,Danyang,China,cn,32.011,119.6013,846219,0.02043,733,Asia,Eastern Asia,,left
 xalapa,Xalapa,Mexico,mx,19.5438,-96.9102,846129,0.01384,734,Americas,North America,,left
 ar-rayyan,Ar-Rayyan,Qatar,qa,25.2919,51.4244,846071,0.01729,735,Asia,Western Asia,,left
-valencia,Valencia,Spain,es,39.4698,-0.3774,843071,0.00204,736,Europe,Southern Europe,,left
+valencia-es,Valencia,Spain,es,39.4698,-0.3774,843071,0.00204,736,Europe,Southern Europe,,
 amravati,Amravati,India,in,20.9333,77.75,842613,0.02139,737,Asia,Southern Asia,,left
 newcastle-upon-tyne,Newcastle upon Tyne,United Kingdom,gb,55,-1.6667,839947,0.00684,738,Europe,Northern Europe,,
 saratov,Saratov,Russia,ru,51.5406,46.0086,837212,-0.00013,739,Europe,Eastern Europe,,

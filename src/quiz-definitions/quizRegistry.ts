@@ -120,7 +120,66 @@ const timelineQuizBase = {
   supportingDataPaths: [] as const,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'path' | 'toggles' | 'presets' | 'columnMappings' | 'dataPath'>;
 
+/**
+ * Configuration for the largest cities by population quiz.
+ * Single quiz with range filtering (top N) and region chip filters.
+ */
+const largestCitiesQuiz = {
+  id: 'geo-largest-cities',
+  title: 'Largest Cities',
+  description: 'Name the largest cities in the world by population.',
+  path: ['Geography', 'Largest Cities'],
+  visualizationType: 'map' as const,
+  availableModes: ['free-recall-unordered', 'free-recall-ordered', 'prompted-recall', 'identify', 'locate'] as const,
+  defaultMode: 'free-recall-unordered' as const,
+  toggles: [
+    { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+  ],
+  presets: [
+    {
+      name: 'easy',
+      label: 'Easy',
+      values: { showBorders: true, showCityDots: true, showCityNames: true, showCountryNames: true, showMapFlags: true },
+    },
+    {
+      name: 'medium',
+      label: 'Medium',
+      values: { showBorders: true, showCityDots: true, showCityNames: false, showCountryNames: false, showMapFlags: false },
+    },
+    {
+      name: 'hard',
+      label: 'Hard',
+      values: { showBorders: false, showCityDots: false, showCityNames: false, showCountryNames: false, showMapFlags: false },
+    },
+  ],
+  columnMappings: {
+    answer: 'city',
+    label: 'city',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    group: 'country',
+    code: 'country_code',
+  },
+  dataPath: '/data/cities/largest-cities.csv',
+  supportingDataPaths: ['/data/borders/world-borders.csv'],
+  initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
+  rangeColumn: 'rank',
+  rangeLabel: 'Top cities',
+  groupFilterColumn: 'region',
+  groupFilterLabel: 'Region',
+  modeConstraints: {
+    identify: [
+      { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
+    ],
+  },
+} satisfies QuizDefinition;
+
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
+  largestCitiesQuiz,
   {
     ...capitalsQuizBase,
     id: 'geo-capitals-europe',
