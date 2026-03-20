@@ -126,7 +126,8 @@ export function TogglePanel({
               .filter((st) => st.group === group)
               .map((selectToggle) => {
                 const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
-                return (
+                const selectTooltip = tooltips?.[selectToggle.key];
+                const selectRow = (
                   <div key={selectToggle.key} className={styles.selectRow}>
                     <span className={styles.selectLabel}>{selectToggle.label}</span>
                     <SegmentedControl
@@ -137,6 +138,10 @@ export function TogglePanel({
                     />
                   </div>
                 );
+                if (selectTooltip) {
+                  return <Tooltip key={selectToggle.key} text={selectTooltip}>{selectRow}</Tooltip>;
+                }
+                return selectRow;
               })}
           </div>
         </section>
@@ -146,19 +151,23 @@ export function TogglePanel({
         .filter((st) => !groups.some((g) => g.group === st.group))
         .map((selectToggle) => {
           const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
+          const selectTooltip = tooltips?.[selectToggle.key];
+          const selectRow = (
+            <div className={styles.selectRow}>
+              <span className={styles.selectLabel}>{selectToggle.label}</span>
+              <SegmentedControl
+                options={selectToggle.options}
+                value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
+                onChange={(value) => onSelectChange?.(selectToggle.key, value)}
+                preventOff={cannotDisable}
+              />
+            </div>
+          );
           return (
             <section key={selectToggle.key} className={styles.section}>
               <h2 className={styles.sectionTitle}>{formatGroupLabel(selectToggle.group)}</h2>
               <div className={styles.toggleList}>
-                <div className={styles.selectRow}>
-                  <span className={styles.selectLabel}>{selectToggle.label}</span>
-                  <SegmentedControl
-                    options={selectToggle.options}
-                    value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
-                    onChange={(value) => onSelectChange?.(selectToggle.key, value)}
-                    preventOff={cannotDisable}
-                  />
-                </div>
+                {selectTooltip ? <Tooltip text={selectTooltip}>{selectRow}</Tooltip> : selectRow}
               </div>
             </section>
           );
