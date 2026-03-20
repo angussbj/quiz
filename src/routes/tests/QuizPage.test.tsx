@@ -35,7 +35,7 @@ describe('QuizPage', () => {
 
   it('shows loading state initially', () => {
     globalThis.fetch = jest.fn().mockReturnValue(new Promise(() => {}));
-    renderQuizPage('geo-capitals-europe');
+    renderQuizPage('geo-capitals-world');
     expect(screen.getByText(/Loading/)).toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe('QuizPage', () => {
       statusText: 'Not Found',
     });
 
-    renderQuizPage('geo-capitals-europe');
+    renderQuizPage('geo-capitals-world');
 
     await waitFor(() => {
       expect(screen.getByText(/Failed to fetch quiz data/)).toBeInTheDocument();
@@ -58,10 +58,10 @@ describe('QuizPage', () => {
       mockCsvResponse('id,city,country,latitude,longitude,region\nparis,Paris,France,48.8566,2.3522,Europe'),
     );
 
-    renderQuizPage('geo-capitals-europe');
+    renderQuizPage('geo-capitals-world');
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'European Capitals' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'World Capitals' })).toBeInTheDocument();
     });
     expect(screen.getByRole('button', { name: 'Start Quiz' })).toBeInTheDocument();
   });
@@ -72,7 +72,7 @@ describe('QuizPage', () => {
       mockCsvResponse('id,city,country,latitude,longitude,region\nparis,Paris,France,48.8566,2.3522,Europe'),
     );
 
-    renderQuizPage('geo-capitals-europe');
+    renderQuizPage('geo-capitals-world');
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Start Quiz' })).toBeInTheDocument();
@@ -80,7 +80,7 @@ describe('QuizPage', () => {
 
     await user.click(screen.getByRole('button', { name: 'Start Quiz' }));
 
-    expect(screen.queryByRole('heading', { name: 'European Capitals' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'World Capitals' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reconfigure' })).toBeInTheDocument();
   });
 });

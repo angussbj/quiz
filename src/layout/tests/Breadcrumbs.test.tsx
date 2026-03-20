@@ -17,15 +17,15 @@ describe('Breadcrumbs', () => {
   });
 
   it('renders quiz breadcrumbs with path segments', () => {
-    renderBreadcrumbs('/geo-capitals-europe');
+    renderBreadcrumbs('/geo-capitals-world');
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Geography')).toBeInTheDocument();
     expect(screen.getByText('Capitals')).toBeInTheDocument();
-    expect(screen.getByText('European Capitals')).toBeInTheDocument();
+    expect(screen.getByText('World Capitals')).toBeInTheDocument();
   });
 
   it('makes intermediate segments clickable links', () => {
-    renderBreadcrumbs('/geo-capitals-europe');
+    renderBreadcrumbs('/geo-capitals-world');
     const homeLink = screen.getByText('Home');
     expect(homeLink.closest('a')).toHaveAttribute('href', '/');
 
@@ -37,8 +37,8 @@ describe('Breadcrumbs', () => {
   });
 
   it('marks the last segment as current page', () => {
-    renderBreadcrumbs('/geo-capitals-europe');
-    const current = screen.getByText('European Capitals');
+    renderBreadcrumbs('/geo-capitals-world');
+    const current = screen.getByText('World Capitals');
     expect(current).toHaveAttribute('aria-current', 'page');
   });
 

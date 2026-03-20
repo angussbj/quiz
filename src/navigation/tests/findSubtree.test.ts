@@ -10,14 +10,13 @@ const tree: NavigationNode = {
         {
           label: 'Capitals',
           children: [
-            { label: 'European Capitals', children: [], quizId: 'geo-capitals-europe' },
-            { label: 'Asian Capitals', children: [], quizId: 'geo-capitals-asia' },
+            { label: 'World Capitals', children: [], quizId: 'geo-capitals-world' },
           ],
         },
         {
           label: 'Countries',
           children: [
-            { label: 'European Countries', children: [], quizId: 'geo-countries-europe' },
+            { label: 'World Countries', children: [], quizId: 'geo-countries-world' },
           ],
         },
       ],
@@ -44,7 +43,7 @@ describe('findSubtree', () => {
   it('finds a nested category', () => {
     const result = findSubtree(tree, ['geography', 'capitals']);
     expect(result?.label).toBe('Capitals');
-    expect(result?.children).toHaveLength(2);
+    expect(result?.children).toHaveLength(1);
   });
 
   it('is case-insensitive', () => {

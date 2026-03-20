@@ -149,70 +149,6 @@ const humanBonesQuizBase = {
   supportingDataPaths: [] as const,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
-const humanBonesQuizzes: ReadonlyArray<QuizDefinition> = [
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-common',
-    title: 'Human Bones (Common)',
-    description: 'Name the commonly known bones of the human skeleton.',
-    dataFilter: { column: 'common', values: ['true'] },
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-all',
-    title: 'Human Bones (All)',
-    description: 'Name all bones of the human skeleton, including ribs and lesser-known bones.',
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-head',
-    title: 'Head Bones',
-    description: 'Name the bones of the head and skull.',
-    dataFilter: { column: 'region', values: ['Head'] },
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-torso',
-    title: 'Torso Bones',
-    description: 'Name the bones of the torso: spine, sternum, pelvis, and shoulder girdle.',
-    dataFilter: { column: 'region', values: ['Torso'] },
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-ribcage',
-    title: 'Rib Cage',
-    description: 'Identify all 12 pairs of ribs.',
-    dataFilter: { column: 'subregion', values: ['Rib Cage'] },
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-arm',
-    title: 'Arm Bones',
-    description: 'Name the bones of the arm: humerus, radius, and ulna.',
-    dataFilter: { column: 'region', values: ['Arm'] },
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-hand',
-    title: 'Hand Bones',
-    description: 'Name the bone groups of the hand: carpals, metacarpals, and phalanges.',
-    dataFilter: { column: 'region', values: ['Hand'] },
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-leg',
-    title: 'Leg Bones',
-    description: 'Name the bones of the leg: femur, patella, tibia, and fibula.',
-    dataFilter: { column: 'region', values: ['Leg'] },
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-foot',
-    title: 'Foot Bones',
-    description: 'Name the bone groups of the foot: tarsals, metatarsals, and phalanges.',
-    dataFilter: { column: 'region', values: ['Foot'] },
-  },
-];
 
 /**
  * Shared configuration for all timeline quizzes.
@@ -283,199 +219,25 @@ const riversQuizBase = {
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/medium-lakes.csv'],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
-function buildRiversQuizzes(): ReadonlyArray<QuizDefinition> {
-  const continents: ReadonlyArray<{
-    readonly id: string;
-    readonly title: string;
-    readonly description: string;
-    readonly filterValues: ReadonlyArray<string>;
-    readonly initialCameraPosition?: QuizDefinition['initialCameraPosition'];
-  }> = [
-    {
-      id: 'geo-rivers-europe',
-      title: 'European Rivers',
-      description: 'Name the major rivers of Europe.',
-      filterValues: ['Europe'],
-    },
-    {
-      id: 'geo-rivers-asia',
-      title: 'Asian Rivers',
-      description: 'Name the major rivers of Asia.',
-      filterValues: ['Asia'],
-    },
-    {
-      id: 'geo-rivers-africa',
-      title: 'African Rivers',
-      description: 'Name the major rivers of Africa.',
-      filterValues: ['Africa'],
-    },
-    {
-      id: 'geo-rivers-north-america',
-      title: 'North American Rivers',
-      description: 'Name the major rivers of North America.',
-      filterValues: ['North America'],
-      initialCameraPosition: { x: -130, y: -55, width: 80, height: 50 },
-    },
-    {
-      id: 'geo-rivers-south-america',
-      title: 'South American Rivers',
-      description: 'Name the major rivers of South America.',
-      filterValues: ['South America'],
-      initialCameraPosition: { x: -85, y: -15, width: 55, height: 73 },
-    },
-    {
-      id: 'geo-rivers-oceania',
-      title: 'Oceanian Rivers',
-      description: 'Name the major rivers of Oceania.',
-      filterValues: ['Oceania'],
-    },
-  ];
-
-  const quizzes: Array<QuizDefinition> = continents.map((c) => ({
-    ...riversQuizBase,
-    id: c.id,
-    title: c.title,
-    description: c.description,
-    dataFilter: [
-      { column: 'continent', values: c.filterValues },
-      { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
-    ],
-    ...(c.initialCameraPosition ? { initialCameraPosition: c.initialCameraPosition } : {}),
-  }));
-
-  // World quiz — all continents, scalerank <= 5
-  quizzes.push({
-    ...riversQuizBase,
-    id: 'geo-rivers-world',
-    title: 'World Rivers',
-    description: 'Name the major rivers of the world.',
-    dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5'] },
-    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
-  });
-
-  return quizzes;
-}
 
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
   largestCitiesQuiz,
   {
     ...capitalsQuizBase,
-    id: 'geo-capitals-europe',
-    title: 'European Capitals',
-    description: 'Name the capital cities of European countries.',
-    dataFilter: { column: 'region', values: ['Europe'] },
-  },
-  {
-    ...capitalsQuizBase,
-    id: 'geo-capitals-asia',
-    title: 'Asian Capitals',
-    description: 'Name the capital cities of Asian countries.',
-    dataFilter: { column: 'region', values: ['Asia'] },
-  },
-  {
-    ...capitalsQuizBase,
-    id: 'geo-capitals-africa',
-    title: 'African Capitals',
-    description: 'Name the capital cities of African countries.',
-    dataFilter: { column: 'region', values: ['Africa'] },
-  },
-  {
-    ...capitalsQuizBase,
-    id: 'geo-capitals-north-america',
-    title: 'North American Capitals',
-    description: 'Name the capital cities of North America, Central America, and the Caribbean.',
-    dataFilter: { column: 'subregion', values: ['North America', 'Central America', 'Caribbean'] },
-    initialCameraPosition: { x: -120, y: -40, width: 72, height: 43 },
-  },
-  {
-    ...capitalsQuizBase,
-    id: 'geo-capitals-south-america',
-    title: 'South American Capitals',
-    description: 'Name the capital cities of South American countries.',
-    dataFilter: { column: 'subregion', values: ['South America'] },
-    initialCameraPosition: { x: -85, y: -15, width: 55, height: 73 },
-  },
-  {
-    ...capitalsQuizBase,
-    id: 'geo-capitals-oceania',
-    title: 'Oceanian Capitals',
-    description: 'Name the capital cities of Oceanian countries.',
-    dataFilter: { column: 'region', values: ['Oceania'] },
-  },
-  {
-    ...capitalsQuizBase,
     id: 'geo-capitals-world',
     title: 'World Capitals',
-    description: 'Name all 197 capital cities of the world.',
+    description: 'Name the capital cities of the world.',
     initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
-  },
-  {
-    ...countriesQuizBase,
-    id: 'geo-countries-europe',
-    title: 'European Countries',
-    description: 'Identify the countries of Europe on a map.',
-    dataFilter: [
-      { column: 'is_sovereign', values: ['true'] },
-      { column: 'region', values: ['Europe'] },
-    ],
-    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
-  },
-  {
-    ...countriesQuizBase,
-    id: 'geo-countries-asia',
-    title: 'Asian Countries',
-    description: 'Identify the countries of Asia on a map.',
-    dataFilter: [
-      { column: 'is_sovereign', values: ['true'] },
-      { column: 'region', values: ['Asia'] },
-    ],
-    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
-  },
-  {
-    ...countriesQuizBase,
-    id: 'geo-countries-africa',
-    title: 'African Countries',
-    description: 'Identify the countries of Africa on a map.',
-    dataFilter: [
-      { column: 'is_sovereign', values: ['true'] },
-      { column: 'region', values: ['Africa'] },
-    ],
-    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
-  },
-  {
-    ...countriesQuizBase,
-    id: 'geo-countries-north-america',
-    title: 'North American Countries',
-    description: 'Identify the countries of North America, Central America, and the Caribbean.',
-    dataFilter: [
-      { column: 'is_sovereign', values: ['true'] },
-      { column: 'group', values: ['North America', 'Central America', 'Caribbean'] },
-    ],
-    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
-    initialCameraPosition: { x: -130, y: -50, width: 72, height: 43 },
-  },
-  {
-    ...countriesQuizBase,
-    id: 'geo-countries-south-america',
-    title: 'South American Countries',
-    description: 'Identify the countries of South America on a map.',
-    dataFilter: [
-      { column: 'is_sovereign', values: ['true'] },
-      { column: 'group', values: ['South America'] },
-    ],
-    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
-    initialCameraPosition: { x: -85, y: -15, width: 55, height: 73 },
-  },
-  {
-    ...countriesQuizBase,
-    id: 'geo-countries-oceania',
-    title: 'Oceanian Countries',
-    description: 'Identify the countries of Oceania on a map.',
-    dataFilter: [
-      { column: 'is_sovereign', values: ['true'] },
-      { column: 'region', values: ['Oceania'] },
-    ],
-    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+    groupFilterCameraPositions: {
+      Europe: { x: -25, y: -72, width: 77, height: 42 },
+      Asia: { x: 25, y: -70, width: 155, height: 80 },
+      Africa: { x: -25, y: -40, width: 85, height: 80 },
+      'North America': { x: -130, y: -55, width: 95, height: 50 },
+      'South America': { x: -85, y: -15, width: 55, height: 73 },
+      Oceania: { x: 100, y: -15, width: 80, height: 55 },
+    },
   },
   {
     ...countriesQuizBase,
@@ -483,140 +245,18 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     title: 'World Countries',
     description: 'Identify all sovereign countries of the world on a map.',
     dataFilter: { column: 'is_sovereign', values: ['true'] },
-    columnMappings: { ...countriesQuizBase.columnMappings, group: 'region' },
+    columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
     initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
-  },
-  {
-    id: 'geo-flags-europe',
-    title: 'European Flags',
-    description: 'Match European countries to their flags.',
-    path: ['Geography', 'Flags'],
-    visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
-    defaultMode: 'multiple-choice',
-    toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-    ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      flag: 'country_code',
-      group: 'subregion',
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+    groupFilterCameraPositions: {
+      Europe: { x: -25, y: -72, width: 77, height: 42 },
+      Asia: { x: 25, y: -70, width: 155, height: 80 },
+      Africa: { x: -25, y: -40, width: 85, height: 80 },
+      'North America': { x: -130, y: -55, width: 95, height: 50 },
+      'South America': { x: -85, y: -15, width: 55, height: 73 },
+      Oceania: { x: 100, y: -15, width: 80, height: 55 },
     },
-    dataPath: '/data/capitals/world-capitals.csv',
-    dataFilter: { column: 'region', values: ['Europe'] },
-    supportingDataPaths: [],
-  },
-  {
-    id: 'geo-flags-asia',
-    title: 'Asian Flags',
-    description: 'Match Asian countries to their flags.',
-    path: ['Geography', 'Flags'],
-    visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
-    defaultMode: 'multiple-choice',
-    toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-    ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      flag: 'country_code',
-      group: 'subregion',
-    },
-    dataPath: '/data/capitals/world-capitals.csv',
-    dataFilter: { column: 'region', values: ['Asia'] },
-    supportingDataPaths: [],
-  },
-  {
-    id: 'geo-flags-africa',
-    title: 'African Flags',
-    description: 'Match African countries to their flags.',
-    path: ['Geography', 'Flags'],
-    visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
-    defaultMode: 'multiple-choice',
-    toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-    ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      flag: 'country_code',
-      group: 'subregion',
-    },
-    dataPath: '/data/capitals/world-capitals.csv',
-    dataFilter: { column: 'region', values: ['Africa'] },
-    supportingDataPaths: [],
-  },
-  {
-    id: 'geo-flags-north-america',
-    title: 'North American Flags',
-    description: 'Match countries of North America, Central America, and the Caribbean to their flags.',
-    path: ['Geography', 'Flags'],
-    visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
-    defaultMode: 'multiple-choice',
-    toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-    ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      flag: 'country_code',
-      group: 'subregion',
-    },
-    dataPath: '/data/capitals/world-capitals.csv',
-    dataFilter: { column: 'subregion', values: ['North America', 'Central America', 'Caribbean'] },
-    supportingDataPaths: [],
-  },
-  {
-    id: 'geo-flags-south-america',
-    title: 'South American Flags',
-    description: 'Match South American countries to their flags.',
-    path: ['Geography', 'Flags'],
-    visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
-    defaultMode: 'multiple-choice',
-    toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-    ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      flag: 'country_code',
-      group: 'subregion',
-    },
-    dataPath: '/data/capitals/world-capitals.csv',
-    dataFilter: { column: 'subregion', values: ['South America'] },
-    supportingDataPaths: [],
-  },
-  {
-    id: 'geo-flags-oceania',
-    title: 'Oceania Flags',
-    description: 'Match Oceanian countries to their flags.',
-    path: ['Geography', 'Flags'],
-    visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
-    defaultMode: 'multiple-choice',
-    toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
-    ],
-    presets: [],
-    columnMappings: {
-      answer: 'country',
-      label: 'country',
-      flag: 'country_code',
-      group: 'subregion',
-    },
-    dataPath: '/data/capitals/world-capitals.csv',
-    dataFilter: { column: 'region', values: ['Oceania'] },
-    supportingDataPaths: [],
   },
   {
     id: 'geo-flags-world',
@@ -638,6 +278,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/capitals/world-capitals.csv',
     supportingDataPaths: [],
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+    hideFilteredElements: true,
   },
   {
     id: 'sci-periodic-table',
@@ -677,7 +320,25 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     groupFilterColumn: 'category',
     groupFilterLabel: 'Element category',
   },
-  ...humanBonesQuizzes,
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-common',
+    title: 'Human Bones (Common)',
+    description: 'Name the commonly known bones of the human skeleton.',
+    dataFilter: { column: 'common', values: ['true'] },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Body region',
+    hideFilteredElements: true,
+  },
+  {
+    ...humanBonesQuizBase,
+    id: 'sci-human-bones-all',
+    title: 'Human Bones',
+    description: 'Name all bones of the human skeleton.',
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Body region',
+    hideFilteredElements: true,
+  },
   {
     ...timelineQuizBase,
     id: 'hist-emperors-roman',
@@ -764,7 +425,24 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/history/modern/ww2-timeline.csv',
   },
-  ...buildRiversQuizzes(),
+  {
+    ...riversQuizBase,
+    id: 'geo-rivers-world',
+    title: 'World Rivers',
+    description: 'Name the major rivers of the world.',
+    dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
+    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+    groupFilterCameraPositions: {
+      Europe: { x: -25, y: -72, width: 77, height: 42 },
+      Asia: { x: 25, y: -70, width: 155, height: 80 },
+      Africa: { x: -25, y: -40, width: 85, height: 80 },
+      'North America': { x: -130, y: -55, width: 80, height: 50 },
+      'South America': { x: -85, y: -15, width: 55, height: 73 },
+      Oceania: { x: 100, y: -15, width: 80, height: 55 },
+    },
+  },
 
   // ===== World War I =====
   {

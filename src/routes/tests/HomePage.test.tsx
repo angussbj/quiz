@@ -32,8 +32,8 @@ describe('HomePage', () => {
 
   it('renders quiz links (tree starts expanded)', () => {
     renderHomePage();
-    const europeLinks = screen.getAllByRole('link', { name: /European/ });
-    expect(europeLinks.length).toBeGreaterThanOrEqual(3); // Capitals, Countries, Flags
+    const worldLinks = screen.getAllByRole('link', { name: /World/ });
+    expect(worldLinks.length).toBeGreaterThanOrEqual(4); // Capitals, Countries, Flags, Rivers
   });
 
   it('sets aria-expanded=false on collapsed categories', async () => {
@@ -55,7 +55,7 @@ describe('HomePage', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('link', { name: /Periodic Table/ })).toBeInTheDocument();
-      expect(screen.queryByRole('link', { name: /European Flags/ })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: /World Rivers/ })).not.toBeInTheDocument();
     });
   });
 

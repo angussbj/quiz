@@ -3,9 +3,9 @@ import { quizRegistry } from '../quizRegistry';
 
 describe('getQuizById', () => {
   it('returns a quiz definition for a valid ID', () => {
-    const quiz = getQuizById('geo-capitals-europe');
+    const quiz = getQuizById('geo-capitals-world');
     expect(quiz).toBeDefined();
-    expect(quiz!.title).toBe('European Capitals');
+    expect(quiz?.title).toBe('World Capitals');
   });
 
   it('returns undefined for an unknown ID', () => {
