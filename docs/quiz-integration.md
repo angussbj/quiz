@@ -84,3 +84,29 @@ Renderers gate hover/click effects on the presence of the `onElementClick` prop 
 - **Americas subregion split:** North America quiz filters by `subregion` values `['North America', 'Central America', 'Caribbean']` (23 countries); South America filters by `['South America']` (12 countries). Uses `subregion` not `region` (which is just `'Americas'` for all).
 - **World vs continent grouping:** World quizzes set `columnMappings.group = 'region'` for continent-level colour coding. Continent quizzes set `columnMappings.group = 'group'` (subregion) for finer colour coding.
 - **BackgroundPath labels:** `BackgroundPath` has optional `label` and `labelCenter` fields. Non-quiz territory shapes (e.g. dependent territories in a countries quiz) use these to display name labels when the `showCountryNames` toggle is on.
+
+## Quiz Definition Base Objects
+
+Quiz definitions that share the same visualization type, toggles, and UI structure should extend a shared base object via spread. This prevents toggle/preset/constraint drift between related quizzes.
+
+**Existing base objects:**
+- `capitalsQuizBase` — map quizzes for city-based data (capitals, largest cities). Includes city dots, city names, country names, flags, prompt toggles, presets, and `atLeastOne` constraints.
+- `countriesQuizBase` — map quizzes for country-based data (countries by continent). Simpler toggles (no city dots/names, no prompt toggles).
+- `timelineQuizBase` — timeline quizzes for historical events. Minimal base; toggles/presets/columnMappings are defined per quiz.
+
+**When adding a new city-based map quiz** (e.g. cities by GDP, Olympic host cities):
+1. Spread `capitalsQuizBase` and override only what differs (id, title, description, path, dataPath, modes, camera position, filters).
+2. **Do not redeclare** toggles, selectToggles, presets, columnMappings, or modeConstraints unless the new quiz genuinely needs different values.
+3. If the CSV uses different column names, rename the columns to match the existing convention (`city`, `country`, `country_code`, `latitude`, `longitude`, `region`, `label_position`, `city_alternates`).
+4. Add quiz-specific fields like `rangeColumn`, `groupFilterColumn`, `hideFilteredElements` as overrides.
+
+**CSV column naming convention for city-based quizzes:**
+| Column | Description |
+|--------|-------------|
+| `city` | Display name of the city (used as answer and label) |
+| `country` | Country name (used for grouping and prompt text) |
+| `country_code` | ISO 3166-1 alpha-2 code (used for flag lookup) |
+| `latitude`, `longitude` | Coordinates |
+| `region`, `subregion` | Geographic region for filtering |
+| `city_alternates` | Pipe-separated alternate spellings |
+| `label_position` | Label placement: `left`, `right`, `above`, `below` |

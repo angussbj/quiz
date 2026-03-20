@@ -56,6 +56,8 @@ export interface QuizDefinition<K extends string = string> {
   readonly groupFilterColumn?: string;
   /** Human-readable label for the group filter section (e.g., 'Element category'). */
   readonly groupFilterLabel?: string;
+  /** When true, elements excluded by range/group filters are hidden entirely instead of shown as context. */
+  readonly hideFilteredElements?: boolean;
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
   readonly initialCameraPosition?: {
     readonly x: number;

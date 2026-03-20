@@ -80,6 +80,7 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "Bash(unzip:*)",
       "Bash(tr '|' '\\\\n')",
       "Bash(while read:*)",
       "Bash(do echo:*)",

@@ -2,6 +2,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
+import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
 import { countFilteredElements } from './countFilteredElements';
@@ -145,6 +146,14 @@ export function QuizShell({
   const hasGroupFilter = groupFilterColumn && availableGroups
     && selectedGroups.size < availableGroups.length;
 
+  // Apply constraint resolution so forced values (e.g. from atLeastOne) are included in quiz config
+  const effectiveToggleValues = useMemo(() => {
+    const activeConstraints = modeConstraints?.[selectedMode] ?? [];
+    const result = resolveToggleConstraints(activeConstraints, toggleState.values, toggleState.selectValues);
+    if (Object.keys(result.forcedValues).length === 0) return toggleState.values;
+    return { ...toggleState.values, ...result.forcedValues };
+  }, [modeConstraints, selectedMode, toggleState.values, toggleState.selectValues]);
+
   if (phase === 'configuring') {
     return (
       <QuizSetupPanel
@@ -188,7 +197,7 @@ export function QuizShell({
     : undefined;
 
   const config: QuizConfig = {
-    toggleValues: toggleState.values,
+    toggleValues: effectiveToggleValues,
     selectValues: toggleState.selectValues,
     selectedMode,
     countdownSeconds: countdownMinutes !== undefined ? countdownMinutes * 60 : undefined,
@@ -203,7 +212,7 @@ export function QuizShell({
         className={styles.reconfigureButton}
         onClick={handleReconfigure}
       >
-        Reconfigure
+        <span aria-hidden="true">‹</span> Reconfigure
       </button>
       <div key={quizKey} className={styles.quizContent}>
         {children(config)}

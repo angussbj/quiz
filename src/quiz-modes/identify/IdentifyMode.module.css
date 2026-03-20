@@ -46,8 +46,7 @@
   gap: var(--spacing-sm);
 }
 
-.skipButton,
-.giveUpButton {
+.skipButton {
   padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -63,9 +62,19 @@
   color: var(--color-text-primary);
 }
 
-.giveUpButton:hover {
+.giveUpButton {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-incorrect);
+  border-radius: var(--radius-sm);
   background: var(--color-incorrect-bg);
   color: var(--color-incorrect);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.giveUpButton:hover {
+  opacity: 0.85;
 }
 
 .visualizationArea {

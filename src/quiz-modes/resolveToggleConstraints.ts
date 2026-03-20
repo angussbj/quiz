@@ -9,9 +9,18 @@ export interface ConstraintResult {
   readonly reasons: Readonly<Record<string, string>>;
 }
 
+/**
+ * Resolve toggle constraints for the current mode.
+ *
+ * @param constraints - Constraints for the current mode
+ * @param currentValues - Current boolean toggle values
+ * @param selectValues - Current select toggle values (optional). For atLeastOne
+ *   constraints, a select toggle counts as enabled if its value is not 'off'.
+ */
 export function resolveToggleConstraints(
   constraints: ReadonlyArray<ToggleConstraint>,
   currentValues: Readonly<Record<string, boolean>>,
+  selectValues?: Readonly<Record<string, string>>,
 ): ConstraintResult {
   const forcedValues: Record<string, boolean> = {};
   const preventDisable = new Set<string>();
@@ -22,7 +31,11 @@ export function resolveToggleConstraints(
       forcedValues[constraint.key] = constraint.forcedValue;
       reasons[constraint.key] = constraint.reason;
     } else if (constraint.type === 'atLeastOne') {
-      const enabledKeys = constraint.keys.filter((k) => currentValues[k]);
+      const enabledKeys = constraint.keys.filter((k) => {
+        if (k in currentValues) return currentValues[k];
+        if (selectValues && k in selectValues) return selectValues[k] !== 'off';
+        return false;
+      });
       if (enabledKeys.length === 0) {
         // None enabled — force the first key on
         forcedValues[constraint.keys[0]] = true;

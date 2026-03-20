@@ -26,6 +26,15 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Note:** Now includes element subset filtering — users can filter by atomic number range AND by element category (chip toggles). The group filter is a generic mechanism on `QuizDefinition` (`groupFilterColumn`, `groupFilterLabel`) reusable by any quiz with categorical data. Non-selected elements render in muted 'context' state.
 
 
+### 28. Largest Cities by Population Quiz — DONE
+**Branch:** `worktree-cities-quiz`
+**Scope:** Quiz for 834 largest cities worldwide by 2026 population. Data pipeline from raw CSV enriched with GeoNames coordinates. Supports free recall (unordered + ordered), prompted recall, identify, and locate modes. Range filter (top N cities), region chip filters (Asia, Africa, Americas, Europe, Oceania). Prompt toggles for country names and flags in identify/prompted-recall with `atLeastOne` constraints. Label positions computed by bidirectional collision heuristic. `hideFilteredElements` option hides non-matching cities from map. Growth rate column preserved for future color coding.
+**Notes:**
+- Uses same `supportingDataPaths` (world-borders.csv) as capitals quizzes
+- `computeCityLabelPositions.ts` script supports `--regions` flag for selective reprocessing
+- CSV columns: `rank,city,city_ascii,latitude,longitude,country,country_code,region,pop2026,growth_rate,label_position,alternates`
+- Give Up button styled red across all modes; Reconfigure button enlarged with left chevron (applies globally, not just to this quiz)
+
 ### 29. Remove `targetElementId` from Renderer Props ✅
 **Branch:** `refactor/remove-target-element-id`
 **Done.** Removed `targetElementId` from `VisualizationRendererProps` and all renderers. Identify mode now sets `'highlighted'` state for the current prompt target via `elementStates`. All target-based styling removed from MapRenderer, FlagGridRenderer, PeriodicTableRenderer.
