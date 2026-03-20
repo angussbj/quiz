@@ -110,8 +110,7 @@ export function useFreeRecallSession({
     if (!match) {
       setAmbiguousMessage(undefined);
     } else if ('type' in match) {
-      const names = match.candidates.join(' or ');
-      setAmbiguousMessage(`Ambiguous — could be: ${names}`);
+      setAmbiguousMessage('Multiple answers could be described that way — try being more specific.');
     } else {
       setAmbiguousMessage(undefined);
       setCorrectIds((prev) => [...prev, match.elementId]);
