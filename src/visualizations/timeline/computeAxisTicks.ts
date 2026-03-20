@@ -15,7 +15,8 @@ export interface AxisTick {
 function formatGeologicalYear(year: number, unitDivisor: number, unitSuffix: string): string {
   const absVal = Math.abs(year) / unitDivisor;
   const formatted = Number.isInteger(absVal) ? `${absVal}` : absVal.toPrecision(2);
-  return year < 0 ? `${formatted} ${unitSuffix}` : `${year}`;
+  if (year === 0) return '0';
+  return `${formatted} ${unitSuffix}`;
 }
 
 /**
