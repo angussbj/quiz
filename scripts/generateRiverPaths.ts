@@ -274,8 +274,6 @@ const LAKE_MATCH_THRESHOLD = 0.5;
  *  Lakes with scalerank > this get a connecting line instead. */
 const LARGE_LAKE_SCALERANK = 6;
 
-/** Maximum gap to bridge with a connecting line (degrees). */
-const MAX_LINE_BRIDGE_GAP = 3.0;
 
 /**
  * Find a lake that bridges a gap between two river endpoints.
@@ -530,8 +528,6 @@ interface RiverRow {
 
 const rivers: Array<RiverRow> = [];
 let totalLakePolygons = 0;
-let totalLineConnections = 0;
-let totalGapsSkipped = 0;
 
 for (const [groupKey, features] of byGroupKey) {
   const primaryFeature = features.reduce((best, f) =>
@@ -582,16 +578,6 @@ for (const [groupKey, features] of byGroupKey) {
             usedLakes.add(gap.lake);
             totalLakePolygons++;
           }
-        } else if (geoDist(gap.from, gap.to) <= MAX_LINE_BRIDGE_GAP) {
-          // Small lake or no lake: connect with a line
-          const fx = roundCoord(gap.from[0]);
-          const fy = roundCoord(-gap.from[1]);
-          const tx = roundCoord(gap.to[0]);
-          const ty = roundCoord(-gap.to[1]);
-          allPaths.push(`M ${fx} ${fy} L ${tx} ${ty}`);
-          totalLineConnections++;
-        } else {
-          totalGapsSkipped++;
         }
       }
     }
@@ -628,8 +614,6 @@ rivers.sort((a, b) => a.scalerank - b.scalerank || a.name.localeCompare(b.name))
 
 console.log(`\nGap filling stats:`);
 console.log(`  Lake polygons included: ${totalLakePolygons}`);
-console.log(`  Line connections: ${totalLineConnections}`);
-console.log(`  Gaps skipped (too large): ${totalGapsSkipped}`);
 
 console.log(`\nRivers by continent:`);
 const byCont = new Map<string, number>();
