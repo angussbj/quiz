@@ -1,12 +1,17 @@
 /**
  * Computes initial label_position values for a city CSV file.
  *
- * Heuristic: for each city A, if any city B's dot falls in the approximate
- * area where A's right-side label would render, flip A to 'left'.
+ * Heuristic: for each city A, check collisions on both the right and left
+ * sides. Pick the side with less overlap. When a neighbour's dot is in the
+ * collision zone, also consider whether its label extends toward or away from
+ * A — a label pointing toward A is worse than one pointing away.
  *
- * Usage: npx tsx scripts/computeCityLabelPositions.ts [csv-path]
+ * Usage: npx tsx scripts/computeCityLabelPositions.ts [csv-path] [--regions=Asia,Oceania]
  *
  * If no path is given, defaults to public/data/capitals/world-capitals.csv.
+ * If --regions is given, only cities in those regions are reprocessed (others
+ * are left untouched). Cities marked 'above' or 'below' are always preserved.
+ *
  * Writes the updated CSV back in place with updated `label_position` column.
  */
 
@@ -15,9 +20,18 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CSV_PATH = process.argv[2]
-  ? resolve(process.argv[2])
-  : resolve(__dirname, '../public/data/capitals/world-capitals.csv');
+
+// Parse args
+let csvPath = resolve(__dirname, '../public/data/capitals/world-capitals.csv');
+let regionFilter: Set<string> | undefined;
+
+for (const arg of process.argv.slice(2)) {
+  if (arg.startsWith('--regions=')) {
+    regionFilter = new Set(arg.slice('--regions='.length).split(',').map((s) => s.trim()));
+  } else {
+    csvPath = resolve(arg);
+  }
+}
 
 interface City {
   id: string;
@@ -27,14 +41,90 @@ interface City {
   /** equirectangular y = -latitude */
   y: number;
   rowIndex: number;
+  region: string;
+  /** Current label position ('' = right, 'left', 'above', 'below') */
+  currentPosition: string;
 }
 
 function parseCsv(text: string): string[][] {
   return text.trim().split('\n').map((line) => line.split(','));
 }
 
+// Collision tuning constants (in degree-space, tuned for regional zoom levels)
+const GAP = 0.5;           // gap between dot edge and label start
+const CHAR_WIDTH = 0.45;   // approximate width per character
+const HALF_HEIGHT = 0.8;   // half the label height
+const DOT_RADIUS = 0.4;    // approximate dot radius for collision target
+
+interface CollisionScore {
+  /** Number of dots that collide with the label zone */
+  dotCollisions: number;
+  /** Sum of "badness" — closer collisions and labels pointing toward are worse */
+  totalPenalty: number;
+}
+
+/**
+ * Compute a collision score for placing city A's label on a given side.
+ * Checks all other cities' dots against the label zone, and also considers
+ * whether the neighbour's label extends toward A (making the overlap worse).
+ */
+function computeCollisionScore(
+  a: City,
+  side: 'left' | 'right',
+  allCities: ReadonlyArray<City>,
+  positionMap: ReadonlyMap<string, string>,
+): CollisionScore {
+  const labelWidth = a.label.length * CHAR_WIDTH;
+
+  // Label zone bounds
+  let labelLeft: number;
+  let labelRight: number;
+  if (side === 'right') {
+    labelLeft = a.x + GAP;
+    labelRight = a.x + GAP + labelWidth;
+  } else {
+    labelRight = a.x - GAP;
+    labelLeft = a.x - GAP - labelWidth;
+  }
+  const labelTop = a.y - HALF_HEIGHT;
+  const labelBottom = a.y + HALF_HEIGHT;
+
+  let dotCollisions = 0;
+  let totalPenalty = 0;
+
+  for (const b of allCities) {
+    if (a.id === b.id) continue;
+
+    // Check if B's dot overlaps A's label zone
+    const dotOverlapsX = b.x + DOT_RADIUS >= labelLeft && b.x - DOT_RADIUS <= labelRight;
+    const dotOverlapsY = b.y + DOT_RADIUS >= labelTop && b.y - DOT_RADIUS <= labelBottom;
+
+    if (!dotOverlapsX || !dotOverlapsY) continue;
+
+    dotCollisions++;
+
+    // Base penalty: inverse of horizontal distance (closer = worse)
+    const hDist = Math.abs(b.x - a.x);
+    const basePenalty = 1 / (hDist + 0.1);
+
+    // Check if B's label extends toward A — that makes the overlap worse
+    const bPos = positionMap.get(b.id) ?? '';
+    const bSide = bPos === 'left' ? 'left' : 'right'; // above/below treated as right
+    const bLabelPointsTowardA =
+      (side === 'right' && bSide === 'left' && b.x > a.x) ||
+      (side === 'left' && bSide === 'right' && b.x < a.x);
+
+    // A label pointing toward means the text overlap is much worse
+    const directionMultiplier = bLabelPointsTowardA ? 2.0 : 1.0;
+
+    totalPenalty += basePenalty * directionMultiplier;
+  }
+
+  return { dotCollisions, totalPenalty };
+}
+
 function main() {
-  const raw = readFileSync(CSV_PATH, 'utf8');
+  const raw = readFileSync(csvPath, 'utf8');
   const rows = parseCsv(raw);
   const header = rows[0];
 
@@ -52,6 +142,7 @@ function main() {
   const lngCol = header.indexOf('longitude');
   const idCol = header.indexOf('id');
   const cityCol = header.indexOf('city');
+  const regionCol = header.indexOf('region');
 
   // Build city list
   const cities: City[] = [];
@@ -65,80 +156,81 @@ function main() {
       x: lng,
       y: -lat,
       rowIndex: i,
+      region: regionCol >= 0 ? row[regionCol] : '',
+      currentPosition: row[posCol] ?? '',
     });
   }
 
-  // For each city, compute whether its right-side label would collide with
-  // another city's dot. If so, flip to 'left'.
-  //
-  // The label extends to the right from the dot. Approximate the collision
-  // zone in degree-space:
-  //   - horizontal: [dot.x + gap, dot.x + gap + labelWidth]
-  //   - vertical: [dot.y - halfHeight, dot.y + halfHeight]
-  //
-  // These are tuned for regional quiz zoom levels where labels are large
-  // relative to city spacing.
-  const GAP = 0.5;           // gap between dot edge and label start (degrees)
-  const CHAR_WIDTH = 0.45;   // approximate width per character (degrees)
-  const HALF_HEIGHT = 0.8;   // half the label height (degrees)
-  const DOT_RADIUS = 0.4;    // approximate dot radius for collision target
-
-  const positions: Map<string, 'left'> = new Map();
-
-  for (const a of cities) {
-    // Skip cities that already have a manual position (above/below)
-    const existing = rows[a.rowIndex][posCol];
-    if (existing === 'above' || existing === 'below') continue;
-
-    // Check if any city B's dot falls in A's right-label zone
-    const labelLeft = a.x + GAP;
-    const labelRight = a.x + GAP + a.label.length * CHAR_WIDTH;
-    const labelTop = a.y - HALF_HEIGHT;
-    const labelBottom = a.y + HALF_HEIGHT;
-
-    let collides = false;
-    for (const b of cities) {
-      if (a.id === b.id) continue;
-      // B's dot occupies [b.x - DOT_RADIUS, b.x + DOT_RADIUS] x [b.y - DOT_RADIUS, b.y + DOT_RADIUS]
-      if (b.x + DOT_RADIUS >= labelLeft && b.x - DOT_RADIUS <= labelRight &&
-          b.y + DOT_RADIUS >= labelTop && b.y - DOT_RADIUS <= labelBottom) {
-        collides = true;
-        break;
-      }
-    }
-
-    if (collides) {
-      positions.set(a.id, 'left');
-    }
-  }
-
-  // Apply positions to CSV rows — only set 'left' for auto-detected,
-  // clear back to empty (right) for cities that no longer collide
-  let flipped = 0;
+  // Build a mutable position map (used for neighbour label direction checks)
+  const positionMap = new Map<string, string>();
   for (const city of cities) {
-    const existing = rows[city.rowIndex][posCol];
-    if (existing === 'above' || existing === 'below') continue; // preserve manual
+    positionMap.set(city.id, city.currentPosition);
+  }
 
-    if (positions.has(city.id)) {
-      if (existing !== 'left') flipped++;
-      rows[city.rowIndex][posCol] = 'left';
+  // Determine which cities to process
+  const citiesToProcess = cities.filter((c) => {
+    // Never touch above/below
+    if (c.currentPosition === 'above' || c.currentPosition === 'below') return false;
+    // Filter by region if specified
+    if (regionFilter && !regionFilter.has(c.region)) return false;
+    return true;
+  });
+
+  if (regionFilter) {
+    console.log(`Processing ${citiesToProcess.length} cities in regions: ${[...regionFilter].join(', ')}`);
+    console.log(`Skipping ${cities.length - citiesToProcess.length} cities (other regions + above/below)\n`);
+  }
+
+  // Two-pass approach: first pass with current positions, then update and refine
+  const newPositions = new Map<string, 'left' | ''>();
+
+  for (const a of citiesToProcess) {
+    const rightScore = computeCollisionScore(a, 'right', cities, positionMap);
+    const leftScore = computeCollisionScore(a, 'left', cities, positionMap);
+
+    // Pick the side with fewer collisions; break ties with total penalty
+    let bestSide: 'left' | '';
+    if (rightScore.dotCollisions === 0 && leftScore.dotCollisions === 0) {
+      bestSide = ''; // default to right when no collisions
+    } else if (rightScore.dotCollisions !== leftScore.dotCollisions) {
+      bestSide = rightScore.dotCollisions <= leftScore.dotCollisions ? '' : 'left';
     } else {
-      rows[city.rowIndex][posCol] = '';
+      bestSide = rightScore.totalPenalty <= leftScore.totalPenalty ? '' : 'left';
+    }
+
+    newPositions.set(a.id, bestSide);
+    // Update the position map so subsequent cities see the new position
+    positionMap.set(a.id, bestSide);
+  }
+
+  // Apply positions to CSV rows
+  let flippedToLeft = 0;
+  let flippedToRight = 0;
+  const flippedCities: Array<{ label: string; id: string; from: string; to: string }> = [];
+
+  for (const city of citiesToProcess) {
+    const newPos = newPositions.get(city.id) ?? '';
+    const oldPos = rows[city.rowIndex][posCol];
+    rows[city.rowIndex][posCol] = newPos;
+
+    if (oldPos !== newPos) {
+      const fromLabel = oldPos === 'left' ? 'left' : 'right';
+      const toLabel = newPos === 'left' ? 'left' : 'right';
+      flippedCities.push({ label: city.label, id: city.id, from: fromLabel, to: toLabel });
+      if (newPos === 'left') flippedToLeft++;
+      else flippedToRight++;
     }
   }
 
-  console.log(`Flipped ${flipped} cities to 'left':`);
-  for (const [id] of positions) {
-    const city = cities.find((c) => c.id === id);
-    if (city) {
-      console.log(`  ${city.label} (${id})`);
-    }
+  console.log(`Changes: ${flippedToLeft} → left, ${flippedToRight} → right`);
+  for (const { label, id, from, to } of flippedCities) {
+    console.log(`  ${label} (${id}): ${from} → ${to}`);
   }
 
   // Write back
   const output = rows.map((row) => row.join(',')).join('\n') + '\n';
-  writeFileSync(CSV_PATH, output, 'utf8');
-  console.log(`\nUpdated ${CSV_PATH}`);
+  writeFileSync(csvPath, output, 'utf8');
+  console.log(`\nUpdated ${csvPath}`);
 }
 
 main();
