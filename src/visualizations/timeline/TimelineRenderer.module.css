@@ -149,29 +149,36 @@
 }
 
 /* ---- Visual states ---- */
+/* Status is shown via outline so category colours remain visible beneath. */
 
 .barCorrect {
-  background-color: var(--color-correct) !important;
+  outline: 3px solid var(--color-correct) !important;
+  outline-offset: 1px;
 }
 
 .barCorrectSecond {
-  background-color: var(--color-correct-second) !important;
+  outline: 3px solid var(--color-correct-second) !important;
+  outline-offset: 1px;
 }
 
 .barCorrectThird {
-  background-color: var(--color-correct-third) !important;
+  outline: 3px solid var(--color-correct-third) !important;
+  outline-offset: 1px;
 }
 
 .barIncorrect {
-  background-color: var(--color-incorrect) !important;
+  outline: 3px solid var(--color-incorrect) !important;
+  outline-offset: 1px;
 }
 
 .barMissed {
-  background-color: var(--color-missed) !important;
+  outline: 3px solid var(--color-missed) !important;
+  outline-offset: 1px;
 }
 
 .barHighlighted {
-  background-color: var(--color-highlight) !important;
+  outline: 3px solid var(--color-highlight) !important;
+  outline-offset: 1px;
 }
 
 .barHidden {

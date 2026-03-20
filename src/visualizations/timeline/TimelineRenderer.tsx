@@ -335,14 +335,11 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                 const state = elementStates[element.id];
                 const stateClass = getStateClass(state);
                 const showColours = elementToggle(elementToggles, toggles, element.id, 'showColours');
-                // States that provide their own background via CSS class — pass '' so Framer Motion
-                // clears its cached inline backgroundColor, allowing the CSS !important rule to apply.
-                const stateOwnsBackground =
-                  state === 'correct' || state === 'correct-second' || state === 'correct-third' ||
-                  state === 'incorrect' || state === 'missed' || state === 'highlighted';
-                const bgColor = stateOwnsBackground
-                  ? ''
-                  : (showColours ? (categoryColorMap[element.category] ?? 'var(--color-accent)') : 'var(--color-accent)');
+                // When category colours are on, status is shown via CSS outline (preserving the category fill).
+                // When category colours are off, all bars are the same neutral colour, so status must use background.
+                const bgColor = showColours
+                  ? (categoryColorMap[element.category] ?? 'var(--color-accent)')
+                  : (getStatusColor(state) ?? 'var(--color-accent)');
                 const barOpacity = showBar ? 1 : 0.15;
 
                 const showInsideLabel = showLabel && layout.pixelWidth >= 60;
@@ -412,6 +409,18 @@ function getStateClass(state: string | undefined): string | undefined {
     case 'highlighted': return styles.barHighlighted;
     case 'hidden': return styles.barHidden;
     case 'context': return styles.barContext;
+    default: return undefined;
+  }
+}
+
+function getStatusColor(state: string | undefined): string | undefined {
+  switch (state) {
+    case 'correct': return 'var(--color-correct)';
+    case 'correct-second': return 'var(--color-correct-second)';
+    case 'correct-third': return 'var(--color-correct-third)';
+    case 'incorrect': return 'var(--color-incorrect)';
+    case 'missed': return 'var(--color-missed)';
+    case 'highlighted': return 'var(--color-highlight)';
     default: return undefined;
   }
 }
