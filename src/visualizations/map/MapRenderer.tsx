@@ -394,10 +394,10 @@ function MapContent({
         />
       )}
 
-      {/* Ocean background tint */}
+      {/* Ocean background tint (clamped to ±90° latitude) */}
       {toggles['showLakes'] !== false && (
         <rect
-          x={-1e4} y={-1e4} width={2e4} height={2e4}
+          x={-1e4} y={-90} width={2e4} height={180}
           className={styles.oceanBackground}
         />
       )}

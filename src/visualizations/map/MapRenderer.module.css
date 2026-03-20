@@ -5,8 +5,7 @@
 }
 
 .borderPath {
-  fill: var(--color-bg-tertiary);
-  fill-opacity: 0.4;
+  fill: var(--color-bg-primary);
   stroke: var(--color-border);
   stroke-width: 0.15;
   stroke-linejoin: round;
