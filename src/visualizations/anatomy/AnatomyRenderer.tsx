@@ -201,7 +201,7 @@ function AnatomyContent({
 
   const showLabels = toggles['showLabels'] ?? false;
   const showGroupColors = toggles['showGroupColors'] ?? false;
-  const labelSize = 5 / (scale * basePixelsPerViewBoxUnit) * 10;
+  const labelSize = 5 / (scale * basePixelsPerViewBoxUnit) * 6;
 
   return (
     <g onClick={handleBackgroundClick}>
@@ -223,29 +223,63 @@ function AnatomyContent({
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-third', showGroupColors)}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'highlighted', showGroupColors)}
 
-      {/* Bone name labels */}
+      {/* Bone name labels with leader lines */}
       {showLabels && elements.map((element) => {
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
+        if (!isAnatomyElement(element)) return null;
+        const lp = element.labelPosition;
+        if (!lp) return null;
+        const isLeft = lp.labelX < lp.anchorX;
+        const leaderLabelSize = labelSize * 0.4;
+        const dotRadius = leaderLabelSize * 0.18;
+        const lineWidth = leaderLabelSize * 0.06;
         return (
-          <text
-            key={`label-${element.id}`}
-            x={element.viewBoxCenter.x}
-            y={element.viewBoxCenter.y}
-            textAnchor="middle"
-            dominantBaseline="central"
-            style={{
-              fontSize: `${labelSize}px`,
-              fill: 'var(--color-text-primary)',
-              paintOrder: 'stroke',
-              stroke: 'var(--color-bg-primary)',
-              strokeWidth: labelSize * 0.3,
-              pointerEvents: 'none',
-              fontFamily: 'var(--font-family-sans)',
-            }}
-          >
-            {element.label}
-          </text>
+          <g key={`label-${element.id}`} style={{ pointerEvents: 'none' }}>
+            {/* Leader line */}
+            <line
+              x1={lp.anchorX}
+              y1={lp.anchorY}
+              x2={lp.labelX}
+              y2={lp.labelY}
+              style={{
+                stroke: 'var(--color-text-secondary)',
+                strokeWidth: lineWidth,
+                strokeOpacity: 0.7,
+              }}
+            />
+            {/* Dot on bone */}
+            <circle
+              cx={lp.anchorX}
+              cy={lp.anchorY}
+              r={dotRadius}
+              style={{ fill: 'var(--color-text-secondary)' }}
+            />
+            {/* Dot at label end */}
+            <circle
+              cx={lp.labelX}
+              cy={lp.labelY}
+              r={dotRadius}
+              style={{ fill: 'var(--color-text-secondary)' }}
+            />
+            {/* Label text */}
+            <text
+              x={lp.labelX + (isLeft ? -leaderLabelSize * 0.2 : leaderLabelSize * 0.2)}
+              y={lp.labelY}
+              textAnchor={isLeft ? 'end' : 'start'}
+              dominantBaseline="central"
+              style={{
+                fontSize: `${leaderLabelSize}px`,
+                fill: 'var(--color-text-primary)',
+                paintOrder: 'stroke',
+                stroke: 'var(--color-bg-primary)',
+                strokeWidth: leaderLabelSize * 0.2,
+                fontFamily: 'var(--font-family-sans)',
+              }}
+            >
+              {element.label}
+            </text>
+          </g>
         );
       })}
 
