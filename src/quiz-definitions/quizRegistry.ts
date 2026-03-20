@@ -23,6 +23,7 @@ const capitalsQuizBase = {
     { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify'] } as const,
   ],
   selectToggles: [
@@ -58,7 +59,7 @@ const capitalsQuizBase = {
     code: 'country_code',
   },
   dataPath: '/data/capitals/world-capitals.csv',
-  supportingDataPaths: ['/data/borders/world-borders.csv'],
+  supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
   modeConstraints: {
     identify: [
       { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
@@ -80,6 +81,7 @@ const countriesQuizBase = {
     { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
     { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
+    { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
   presets: [
     {
@@ -106,7 +108,7 @@ const countriesQuizBase = {
     group: 'group',
   },
   dataPath: '/data/borders/world-borders.csv',
-  supportingDataPaths: ['/data/borders/world-borders.csv'],
+  supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
@@ -131,6 +133,7 @@ const riversQuizBase = {
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
   presets: [
     {
@@ -153,7 +156,7 @@ const riversQuizBase = {
     pathRenderStyle: 'stroke',
   },
   dataPath: '/data/rivers/world-rivers.csv',
-  supportingDataPaths: ['/data/borders/world-borders.csv'],
+  supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/medium-lakes.csv'],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 function buildRiversQuizzes(): ReadonlyArray<QuizDefinition> {
