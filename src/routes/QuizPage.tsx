@@ -10,6 +10,23 @@ import { QuizShell } from '@/quiz-modes/QuizShell';
 import { ActiveQuiz } from '@/quiz-modes/ActiveQuiz';
 import styles from './QuizPage.module.css';
 
+/** Extract unique values from a column, preserving first-seen order. */
+function uniqueColumnValues(
+  rows: ReadonlyArray<Readonly<Record<string, string>>>,
+  column: string,
+): ReadonlyArray<string> {
+  const seen = new Set<string>();
+  const result: Array<string> = [];
+  for (const row of rows) {
+    const value = row[column] ?? '';
+    if (value && !seen.has(value)) {
+      seen.add(value);
+      result.push(value);
+    }
+  }
+  return result;
+}
+
 export default function QuizPage() {
   const { '*': quizId } = useParams();
   const definition = quizId ? getQuizById(quizId) : undefined;
@@ -97,6 +114,11 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
   }, [backgroundPaths, definition.dataFilter]);
   const Renderer = resolveRenderer(definition.visualizationType);
 
+  const availableGroups = useMemo(() => {
+    if (!definition.groupFilterColumn) return undefined;
+    return uniqueColumnValues(rows, definition.groupFilterColumn);
+  }, [rows, definition.groupFilterColumn]);
+
   return (
     <div className={styles.page}>
       <QuizShell
@@ -112,6 +134,10 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
         rangeColumn={definition.rangeColumn}
         rangeLabel={definition.rangeLabel}
         rangeMax={definition.rangeColumn ? rows.length : undefined}
+        groupFilterColumn={definition.groupFilterColumn}
+        groupFilterLabel={definition.groupFilterLabel}
+        availableGroups={availableGroups}
+        dataRows={rows}
       >
         {(config) => (
           <ActiveQuiz
@@ -126,6 +152,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths }: QuizPageLoadedPro
             backgroundPaths={backgroundPaths}
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
+            groupFilterColumn={definition.groupFilterColumn}
             initialCameraPosition={definition.initialCameraPosition}
           />
         )}

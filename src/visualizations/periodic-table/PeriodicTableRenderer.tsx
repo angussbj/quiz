@@ -43,7 +43,7 @@ function stateToFill(state: ElementVisualState, groupColorIndex: number | undefi
     case 'highlighted':
       return 'var(--color-highlight-bg)';
     case 'context':
-      return groupColor ?? 'var(--color-surface-raised)';
+      return 'var(--color-bg-tertiary)';
     case 'hidden':
     default:
       return groupColor ?? 'var(--color-bg-tertiary)';
@@ -85,7 +85,7 @@ function stateToTextFill(state: ElementVisualState, groupColorIndex: number | un
     case 'highlighted':
       return 'var(--color-text-primary)';
     case 'context':
-      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-text-primary)';
+      return 'var(--color-text-muted)';
     case 'hidden':
     default:
       return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-text-muted)';

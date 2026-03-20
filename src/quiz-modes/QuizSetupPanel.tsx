@@ -5,6 +5,7 @@ import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './T
 import type { ToggleConstraint } from './ToggleConstraint';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { TogglePanel } from './TogglePanel';
+import { formatGroupLabel } from './formatGroupLabel';
 import styles from './QuizSetupPanel.module.css';
 
 const MODE_LABELS: Readonly<Record<QuizModeType, string>> = {
@@ -36,6 +37,13 @@ export interface QuizSetupPanelProps {
   readonly rangeMaxValue?: number;
   readonly onRangeMinChange?: (value: number | undefined) => void;
   readonly onRangeMaxChange?: (value: number | undefined) => void;
+  readonly groupFilterLabel?: string;
+  readonly availableGroups?: ReadonlyArray<string>;
+  readonly selectedGroups?: ReadonlySet<string>;
+  readonly onGroupToggle?: (group: string) => void;
+  readonly onGroupSelectAll?: () => void;
+  readonly onGroupDeselectAll?: () => void;
+  readonly filteredElementCount?: number;
   readonly onStart: () => void;
   readonly modeConstraints?: Readonly<Record<string, ReadonlyArray<ToggleConstraint>>>;
   readonly selectToggles?: ReadonlyArray<SelectToggleDefinition>;
@@ -63,6 +71,13 @@ export function QuizSetupPanel({
   rangeMaxValue,
   onRangeMinChange,
   onRangeMaxChange,
+  groupFilterLabel,
+  availableGroups,
+  selectedGroups,
+  onGroupToggle,
+  onGroupSelectAll,
+  onGroupDeselectAll,
+  filteredElementCount,
   onStart,
   modeConstraints,
   selectToggles,
@@ -96,6 +111,11 @@ export function QuizSetupPanel({
     }
     return keys;
   }, [constraintResult]);
+
+  const allGroupsSelected = availableGroups && selectedGroups
+    && selectedGroups.size === availableGroups.length;
+  const noGroupsSelected = selectedGroups && selectedGroups.size === 0;
+  const isEmptyQuiz = filteredElementCount === 0;
 
   return (
     <div className={styles.container}>
@@ -226,6 +246,50 @@ export function QuizSetupPanel({
           </section>
         )}
 
+        {groupFilterLabel && availableGroups && onGroupToggle && (
+          <section className={styles.section}>
+            <span className={styles.sectionTitle}>
+              {groupFilterLabel}
+            </span>
+            <div className={styles.groupChipsBulkActions}>
+              {!allGroupsSelected && onGroupSelectAll && (
+                <button
+                  type="button"
+                  className={styles.bulkActionButton}
+                  onClick={onGroupSelectAll}
+                >
+                  Select all
+                </button>
+              )}
+              {!noGroupsSelected && onGroupDeselectAll && (
+                <button
+                  type="button"
+                  className={styles.bulkActionButton}
+                  onClick={onGroupDeselectAll}
+                >
+                  Deselect all
+                </button>
+              )}
+            </div>
+            <div className={styles.groupChips} role="group" aria-label={groupFilterLabel}>
+              {availableGroups.map((group) => {
+                const selected = selectedGroups?.has(group) ?? false;
+                return (
+                  <button
+                    key={group}
+                    type="button"
+                    className={`${styles.groupChip} ${selected ? styles.groupChipSelected : ''}`}
+                    onClick={() => onGroupToggle(group)}
+                    aria-pressed={selected}
+                  >
+                    {formatGroupLabel(group)}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {toggles.length > 0 && (
           <TogglePanel
             toggles={toggles}
@@ -243,11 +307,18 @@ export function QuizSetupPanel({
           />
         )}
 
+        {isEmptyQuiz && (
+          <p className={styles.emptyWarning}>
+            No items match the current filters. Adjust your selection above.
+          </p>
+        )}
+
         <motion.button
           className={styles.startButton}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={onStart}
+          disabled={isEmptyQuiz}
         >
           Start Quiz
         </motion.button>
