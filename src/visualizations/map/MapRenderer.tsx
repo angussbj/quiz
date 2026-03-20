@@ -12,6 +12,8 @@ import styles from './MapRenderer.module.css';
 /** Default clustering for map quizzes: cluster overlapping city dots. */
 const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
   minScreenPixelDistance: 10,
+  clusterAbsorptionDistance: 25,
+  clusterMergeDistance: 40,
   countedState: 'correct',
 };
 

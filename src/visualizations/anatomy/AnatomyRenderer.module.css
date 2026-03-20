@@ -1,0 +1,12 @@
+.interactivePath {
+  cursor: pointer;
+  transition: fill-opacity 0.15s ease;
+}
+
+.interactivePath:hover {
+  fill-opacity: 0.5 !important;
+}
+
+.bonePath {
+  pointer-events: none;
+}

@@ -4,17 +4,17 @@ Contract between quiz modes (producers) and renderers (consumers).
 
 ## State Table
 
-| State | Colour | Labels | Interactive | Description |
-|---|---|---|---|---|
-| `default` | Muted/neutral | Per toggle | Yes | Visible, not yet answered |
-| `hidden` | Invisible | No | No | Toggle-driven hiding or progressive reveal |
-| `highlighted` | Accent | Per toggle | Yes | Current prompt target (prompted/ordered recall) |
-| `correct` | Green | Yes | No | Correct, 1st attempt |
-| `correct-second` | Yellow | Yes | No | Correct, 2nd attempt |
-| `correct-third` | Amber | Yes | No | Correct, 3rd attempt |
-| `incorrect` | Red | Yes | No | Actively wrong — tried and failed |
-| `missed` | Dark red | Yes | No | Passively unanswered — skipped or gave up |
-| `context` | Neutral | Yes | No | Non-interactive reference for spatial/structural context |
+| State | Colour | Labels                  | Interactive | Description |
+|---|---|-------------------------|---|---|
+| `default` | Muted/neutral | Per toggle (default no) | Yes | Visible, not yet answered |
+| `hidden` | Invisible | No                      | No | Toggle-driven hiding or progressive reveal |
+| `highlighted` | Accent | Per toggle (default no) | Yes | Current prompt target (prompted/ordered recall) |
+| `correct` | Green | Yes                     | No | Correct, 1st attempt |
+| `correct-second` | Yellow | Yes                     | No | Correct, 2nd attempt |
+| `correct-third` | Amber | Yes                     | No | Correct, 3rd attempt |
+| `incorrect` | Red | Yes                     | No | Actively wrong — tried and failed |
+| `missed` | Dark red | Yes                     | No | Passively unanswered — skipped or gave up |
+| `context` | Neutral | Yes                     | No | Non-interactive reference for spatial/structural context |
 
 ## Per-Mode Usage
 

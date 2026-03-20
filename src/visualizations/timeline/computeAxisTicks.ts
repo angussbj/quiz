@@ -9,8 +9,21 @@ export interface AxisTick {
 }
 
 /**
- * Standard intervals for axis ticks, ordered from largest to smallest.
+ * Format a year value using geological notation (Ga = gigayears, Ma = megayears, ka = kiloyears).
+ * Used for deep-time tick levels where raw year numbers would be unreadable.
+ */
+function formatGeologicalYear(year: number, unitDivisor: number, unitSuffix: string): string {
+  if (year === 0) return '0';
+  const absVal = Math.abs(year) / unitDivisor;
+  const formatted = Number.isInteger(absVal) ? `${absVal}` : absVal.toPrecision(2);
+  return `${formatted} ${unitSuffix}`;
+}
+
+/**
+ * Standard intervals for axis ticks, ordered from largest to smallest (coarsest first).
  * Each entry defines the interval in years, and how to format major/minor labels.
+ * The coarsest levels handle geological time (billions/millions of years);
+ * the finest handle historical time (years/months).
  */
 const TICK_LEVELS: ReadonlyArray<{
   readonly majorInterval: number;
@@ -20,6 +33,55 @@ const TICK_LEVELS: ReadonlyArray<{
   /** Approximate minimum screen pixels between minor ticks for this level to activate */
   readonly minPixelsPerMinorTick: number;
 }> = [
+  // Geological: billion-year scale (Hadean, Archean, Proterozoic eons)
+  {
+    majorInterval: 1_000_000_000,
+    minorInterval: 100_000_000,
+    formatMajor: (y) => formatGeologicalYear(y, 1_000_000_000, 'Ga'),
+    formatMinor: (y) => formatGeologicalYear(y, 1_000_000_000, 'Ga'),
+    minPixelsPerMinorTick: 40,
+  },
+  // Geological: hundred-million-year scale (Phanerozoic eons, eras)
+  {
+    majorInterval: 100_000_000,
+    minorInterval: 10_000_000,
+    formatMajor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
+    formatMinor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
+    minPixelsPerMinorTick: 40,
+  },
+  // Geological: ten-million-year scale (geological periods)
+  {
+    majorInterval: 10_000_000,
+    minorInterval: 1_000_000,
+    formatMajor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
+    formatMinor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
+    minPixelsPerMinorTick: 40,
+  },
+  // Deep time: million-year scale (evolution, early hominids)
+  {
+    majorInterval: 1_000_000,
+    minorInterval: 100_000,
+    formatMajor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
+    formatMinor: (y) => formatGeologicalYear(y, 1_000_000, 'Ma'),
+    minPixelsPerMinorTick: 40,
+  },
+  // Prehistoric: hundred-thousand-year scale (Ice Ages, early humans)
+  {
+    majorInterval: 100_000,
+    minorInterval: 10_000,
+    formatMajor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k BCE` : `${y}`,
+    formatMinor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k` : `${y}`,
+    minPixelsPerMinorTick: 40,
+  },
+  // Prehistoric: ten-thousand-year scale (early civilizations, stone age)
+  {
+    majorInterval: 10_000,
+    minorInterval: 1_000,
+    formatMajor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k BCE` : `${y}`,
+    formatMinor: (y) => y < 0 ? `${Math.abs(y) / 1_000}k` : `${y}`,
+    minPixelsPerMinorTick: 40,
+  },
+  // Historical: thousand-year scale (ancient history)
   {
     majorInterval: 1000,
     minorInterval: 100,
@@ -82,7 +144,8 @@ export function computeAxisTicks(
 
   const ticks: AxisTick[] = [];
 
-  // Generate minor ticks
+  // Generate minor ticks (cap at 300 to prevent runaway generation at extreme zoom levels)
+  const MAX_TICKS = 300;
   const minorStart = Math.floor(startYear / bestLevel.minorInterval) * bestLevel.minorInterval;
   for (
     let t = minorStart;
@@ -90,6 +153,7 @@ export function computeAxisTicks(
     t += bestLevel.minorInterval
   ) {
     if (t < startYear - bestLevel.minorInterval) continue;
+    if (ticks.length >= MAX_TICKS) break;
 
     const isMajor = Math.abs(t % bestLevel.majorInterval) < bestLevel.minorInterval * 0.01;
     ticks.push({

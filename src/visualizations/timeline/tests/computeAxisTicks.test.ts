@@ -48,4 +48,30 @@ describe('computeAxisTicks', () => {
     // Major ticks should be at millennium boundaries
     expect(majorTicks.some((t) => t.fractionalYear === 1000)).toBe(true);
   });
+
+  it('uses million-year ticks for geological ranges', () => {
+    // Species evolution: 4 billion years in 1000px
+    const ticks = computeAxisTicks(-4_000_000_000, 0, 1000);
+    expect(ticks.length).toBeGreaterThan(0);
+    expect(ticks.length).toBeLessThanOrEqual(300);
+    // Should be using geological intervals (major ticks >> 1000 years apart)
+    const majorTicks = ticks.filter((t) => t.isMajor);
+    const spacing = majorTicks.length >= 2 ? majorTicks[1].fractionalYear - majorTicks[0].fractionalYear : Infinity;
+    expect(Math.abs(spacing)).toBeGreaterThan(1_000_000);
+  });
+
+  it('labels geological ticks with Ga or Ma notation', () => {
+    const ticks = computeAxisTicks(-4_600_000_000, 0, 1000);
+    expect(ticks.length).toBeGreaterThan(0);
+    expect(ticks.length).toBeLessThanOrEqual(300);
+    const majorTicks = ticks.filter((t) => t.isMajor);
+    // Labels should use geological notation (Ga or Ma), not raw year numbers
+    expect(majorTicks.some((t) => t.label.includes('Ga') || t.label.includes('Ma'))).toBe(true);
+  });
+
+  it('caps tick count at 300 regardless of range', () => {
+    // Deliberately pathological: tiny range with fine ticks forced
+    const ticks = computeAxisTicks(-1_000_000_000_000, 0, 1);
+    expect(ticks.length).toBeLessThanOrEqual(300);
+  });
 });
