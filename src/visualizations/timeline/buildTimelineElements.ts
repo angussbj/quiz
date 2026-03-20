@@ -45,9 +45,7 @@ export function buildTimelineElements(
 ): ReadonlyArray<TimelineElement> {
   if (inputs.length === 0) return [];
 
-  const trackAssignments = assignTracks(inputs);
-
-  // Compute X extent
+  // Compute X extent first (needed for visual gap calculation)
   let minFractional = Infinity;
   let maxFractional = -Infinity;
   for (const input of inputs) {
@@ -59,6 +57,19 @@ export function buildTimelineElements(
     maxFractional = Math.max(maxFractional, end);
   }
   const totalXExtent = (maxFractional - minFractional) * UNITS_PER_YEAR;
+
+  // At full zoom-out, bars have a minimum pixel width (≈8px) that can cause
+  // visual overlap even when events don't overlap in time. Spreading such
+  // events across separate tracks (which compress well at ≈16px each) produces
+  // a shorter layout than stacking them as sub-layers within one track (≈22px each).
+  const ESTIMATED_CONTAINER_PX = 1000;
+  const VISUAL_MIN_BAR_PX = 8;
+  const totalYears = maxFractional - minFractional;
+  const minimumGapYears = totalYears > 0
+    ? totalYears * VISUAL_MIN_BAR_PX / ESTIMATED_CONTAINER_PX
+    : 0;
+
+  const trackAssignments = assignTracks(inputs, minimumGapYears);
 
   // Count tracks
   const trackCount = Math.max(1, ...Object.values(trackAssignments).map((t) => t + 1));

@@ -275,19 +275,28 @@ function ZoomPanInner({
       ? Math.min(containerSize.width / viewBox.width, containerSize.height / viewBox.height)
       : 1;
 
-  const screenPixelsPerViewBoxUnit = basePixelsPerViewBoxUnit * quantisedScale;
+  // Debounce scale changes for cluster computation so smooth zoom animations
+  // don't trigger expensive recalculations on every quantised step.
+  const CLUSTER_DEBOUNCE_MS = 50;
+  const [clusterScale, setClusterScale] = useState(quantisedScale);
+  useEffect(() => {
+    const timer = setTimeout(() => setClusterScale(quantisedScale), CLUSTER_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [quantisedScale]);
+
+  const clusterScreenPixelsPerViewBoxUnit = basePixelsPerViewBoxUnit * clusterScale;
 
   const clusters = useMemo(() => {
     if (!clustering) return [];
-    if (clustering.disableAboveScale !== undefined && quantisedScale >= clustering.disableAboveScale) return [];
+    if (clustering.disableAboveScale !== undefined && clusterScale >= clustering.disableAboveScale) return [];
     return computeClusters(
       elements,
       clustering.minScreenPixelDistance,
-      screenPixelsPerViewBoxUnit,
+      clusterScreenPixelsPerViewBoxUnit,
       clustering.clusterAbsorptionDistance,
       clustering.clusterMergeDistance,
     );
-  }, [elements, clustering, quantisedScale, screenPixelsPerViewBoxUnit]);
+  }, [elements, clustering, clusterScale, clusterScreenPixelsPerViewBoxUnit]);
 
   const clusteredElementIds = useMemo(() => {
     const ids = new Set<string>();

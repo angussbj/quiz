@@ -20,7 +20,6 @@ describe('Breadcrumbs', () => {
     renderBreadcrumbs('/geo-capitals-world');
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Geography')).toBeInTheDocument();
-    expect(screen.getByText('Capitals')).toBeInTheDocument();
     expect(screen.getByText('World Capitals')).toBeInTheDocument();
   });
 
@@ -31,9 +30,6 @@ describe('Breadcrumbs', () => {
 
     const geographyLink = screen.getByText('Geography');
     expect(geographyLink.closest('a')).toHaveAttribute('href', '/geography');
-
-    const capitalsLink = screen.getByText('Capitals');
-    expect(capitalsLink.closest('a')).toHaveAttribute('href', '/geography/capitals');
   });
 
   it('marks the last segment as current page', () => {
@@ -43,10 +39,9 @@ describe('Breadcrumbs', () => {
   });
 
   it('renders category breadcrumbs', () => {
-    renderBreadcrumbs('/geography/capitals');
+    renderBreadcrumbs('/geography');
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Geography')).toBeInTheDocument();
-    expect(screen.getByText('Capitals')).toBeInTheDocument();
   });
 
   it('renders category breadcrumbs for unknown single-segment paths', () => {

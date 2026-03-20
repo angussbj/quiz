@@ -60,9 +60,9 @@ export function TogglePanel({
   selectValues = {},
   onSelectChange,
 }: TogglePanelProps) {
-  const filteredToggles = selectedMode
-    ? toggles.filter((t) => !t.modes || t.modes.includes(selectedMode))
-    : toggles;
+  const filteredToggles = toggles
+    .filter((t) => !t.revealsAnswer)
+    .filter((t) => !selectedMode || !t.modes || t.modes.includes(selectedMode));
   const filteredSelectToggles = selectedMode
     ? selectToggles.filter((t) => !t.modes || t.modes.includes(selectedMode))
     : selectToggles;

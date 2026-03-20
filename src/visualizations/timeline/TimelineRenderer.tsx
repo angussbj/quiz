@@ -22,7 +22,7 @@ const BAR_HEIGHT = 28;
 const TRACK_GAP = 6;
 
 /** Vertical offset per sub-layer when bars overlap within a track (px). */
-const LAYER_OFFSET = 22;
+const LAYER_OFFSET = 24;
 
 /** Maximum number of tracks before vertical compression kicks in. */
 const COMPRESS_THRESHOLD = 12;
@@ -60,7 +60,10 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       max = Math.max(max, el.viewBoxBounds.maxX);
     }
     if (!isFinite(min)) return { minX: 0, maxX: 100 };
-    const padding = UNITS_PER_YEAR * 0.5;
+    const extent = max - min;
+    // Use proportional padding (1%) so bars with minimum pixel width
+    // don't extend beyond the viewport at full zoom-out.
+    const padding = Math.max(UNITS_PER_YEAR * 0.5, extent * 0.01);
     return { minX: min - padding, maxX: max + padding };
   }, [timelineElements]);
 
@@ -294,8 +297,27 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   }, [onPositionClick, panOffset, zoom, minX]);
 
   const tooltipTextRef = useRef('');
+  const hoveredElementRef = useRef<TimelineElement | null>(null);
+  const lastMousePosRef = useRef({ x: 0, y: 0 });
+
+  // Re-evaluate tooltip when toggles change (e.g. wrong-click reveals a label while hovering).
+  useEffect(() => {
+    const element = hoveredElementRef.current;
+    if (!element) return;
+    if (elementToggle(elementToggles, toggles, element.id, 'showLabels')) {
+      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
+      tooltipTextRef.current = text;
+      setTooltip({ x: lastMousePosRef.current.x, y: lastMousePosRef.current.y, text });
+    } else {
+      tooltipTextRef.current = '';
+      setTooltip(null);
+    }
+  }, [elementToggles, toggles]);
+
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
+      hoveredElementRef.current = element;
+      lastMousePosRef.current = { x: event.clientX, y: event.clientY };
       if (!elementToggle(elementToggles, toggles, element.id, 'showLabels')) {
         tooltipTextRef.current = '';
         setTooltip(null);
@@ -308,10 +330,15 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     [elementToggles, toggles],
   );
   const handleBarMouseMove = useCallback((event: React.MouseEvent) => {
+    lastMousePosRef.current = { x: event.clientX, y: event.clientY };
     if (!tooltipTextRef.current) return;
     setTooltip({ x: event.clientX, y: event.clientY, text: tooltipTextRef.current });
   }, []);
-  const handleBarMouseLeave = useCallback(() => setTooltip(null), []);
+  const handleBarMouseLeave = useCallback(() => {
+    hoveredElementRef.current = null;
+    tooltipTextRef.current = '';
+    setTooltip(null);
+  }, []);
 
   return (
     <>

@@ -25,6 +25,8 @@ export interface ToggleDefinition {
   readonly promptField?: PromptFieldConfig;
   /** If set, this toggle only appears in the setup panel for these modes. Omit to show for all modes. */
   readonly modes?: ReadonlyArray<string>;
+  /** When true, this toggle reveals quiz answer text. Hidden from the setup UI to prevent spoilers. */
+  readonly revealsAnswer?: boolean;
 }
 
 export interface TogglePreset {

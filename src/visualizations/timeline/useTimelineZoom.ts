@@ -71,10 +71,11 @@ export function useTimelineZoom({
   const dragStartX = useRef(0);
   const dragStartPanOffset = useRef(0);
 
-  const clampPanOffset = useCallback((offset: number) => {
+  const clampPanOffset = useCallback((offset: number, overrideTimelineWidth?: number) => {
+    const tlWidth = overrideTimelineWidth ?? timelineWidthRef.current;
     const buffer = containerWidthRef.current / 3;
     return Math.max(
-      containerWidthRef.current - timelineWidthRef.current - buffer,
+      containerWidthRef.current - tlWidth - buffer,
       Math.min(buffer, offset),
     );
   }, []);
@@ -119,13 +120,14 @@ export function useTimelineZoom({
       const maxZoom = minZoom * 100;
       const clampedZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
       const newPanOffset = mouseX - timelineX * (clampedZoom / zoom);
+      const newTimelineWidth = totalViewBoxWidth * clampedZoom;
 
       return {
-        panOffset: clampPanOffset(newPanOffset),
+        panOffset: clampPanOffset(newPanOffset, newTimelineWidth),
         zoom: clampedZoom,
       };
     });
-  }, [minZoom, clampPanOffset]);
+  }, [minZoom, clampPanOffset, totalViewBoxWidth]);
 
   // Attach wheel listener with { passive: false }
   useEffect(() => {

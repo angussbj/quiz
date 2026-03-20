@@ -20,8 +20,8 @@ const capitalsQuizBase = {
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' } as const,
-    { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
-    { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
+    { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify', 'prompted-recall'] } as const,
@@ -33,23 +33,7 @@ const capitalsQuizBase = {
       { value: 'on', label: 'On' },
     ] },
   ],
-  presets: [
-    {
-      name: 'easy',
-      label: 'Easy',
-      values: { showBorders: true, showCityDots: true, showCityNames: true, showCountryNames: true, showMapFlags: true, showPromptCountryNames: true },
-    },
-    {
-      name: 'medium',
-      label: 'Medium',
-      values: { showBorders: true, showCityDots: true, showCityNames: false, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false },
-    },
-    {
-      name: 'hard',
-      label: 'Hard',
-      values: { showBorders: false, showCityDots: false, showCityNames: false, showCountryNames: false, showMapFlags: false, showPromptCountryNames: false },
-    },
-  ],
+  presets: [],
   columnMappings: {
     answer: 'city',
     label: 'city',
@@ -83,27 +67,11 @@ const countriesQuizBase = {
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
-    { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
-  presets: [
-    {
-      name: 'easy',
-      label: 'Easy',
-      values: { showBorders: true, showCityDots: false, showCountryNames: true, showMapFlags: true },
-    },
-    {
-      name: 'medium',
-      label: 'Medium',
-      values: { showBorders: true, showCityDots: false, showCountryNames: false, showMapFlags: false },
-    },
-    {
-      name: 'hard',
-      label: 'Hard',
-      values: { showBorders: false, showCityDots: false, showCountryNames: false, showMapFlags: false },
-    },
-  ],
+  presets: [],
   columnMappings: {
     answer: 'name',
     label: 'name',
@@ -125,21 +93,10 @@ const humanBonesQuizBase = {
   availableModes: ['free-recall-unordered', 'identify', 'prompted-recall'] as const,
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
-    { key: 'showLabels', label: 'Bone names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showLabels', label: 'Bone names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showGroupColors', label: 'Region colors', defaultValue: false, group: 'display' } as const,
   ],
-  presets: [
-    {
-      name: 'easy',
-      label: 'Easy',
-      values: { showLabels: true, showGroupColors: true },
-    },
-    {
-      name: 'hard',
-      label: 'Hard',
-      values: { showLabels: false, showGroupColors: false },
-    },
-  ],
+  presets: [],
   columnMappings: {
     answer: 'name',
     label: 'name',
@@ -192,21 +149,10 @@ const riversQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+    { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
-  presets: [
-    {
-      name: 'easy',
-      label: 'Easy',
-      values: { showBorders: true, showRiverNames: true },
-    },
-    {
-      name: 'hard',
-      label: 'Hard',
-      values: { showBorders: false, showRiverNames: false },
-    },
-  ],
+  presets: [],
   columnMappings: {
     answer: 'name',
     label: 'name',
@@ -267,7 +213,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
-      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true },
     ],
     presets: [],
     columnMappings: {
@@ -293,21 +239,10 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     toggles: [
       { key: 'showSymbols', label: 'Element symbols', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showAtomicNumbers', label: 'Atomic numbers', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
-      { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true },
       { key: 'showGroups', label: 'Category colours', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
     ],
-    presets: [
-      {
-        name: 'easy',
-        label: 'Easy',
-        values: { showSymbols: true, showAtomicNumbers: true, showNames: false, showGroups: true },
-      },
-      {
-        name: 'hard',
-        label: 'Hard',
-        values: { showSymbols: false, showAtomicNumbers: false, showNames: false, showGroups: false },
-      },
-    ],
+    presets: [],
     columnMappings: {
       answer: 'name',
       label: 'name',
@@ -336,7 +271,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the emperors of Rome in chronological order.',
     path: ['History', 'Ancient'],
     toggles: [
-      { key: 'showLabels', label: 'Emperor names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Emperor names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Reign dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     ],
     selectToggles: [
@@ -353,18 +288,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      {
-        name: 'easy',
-        label: 'Easy',
-        values: { showLabels: true, showDates: true },
-      },
-      {
-        name: 'hard',
-        label: 'Hard',
-        values: { showLabels: false, showDates: false },
-      },
-    ],
+    presets: [],
     columnMappings: {
       answer: 'emperor',
       label: 'emperor',
@@ -398,7 +322,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place key events of World War I on a timeline, from the July Crisis to the Paris Peace Conference.',
     path: ['History', 'Modern'],
     toggles: [
-      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Front colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -416,10 +340,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'event', label: 'event', group: 'front' },
     dataPath: '/data/history/modern/ww1-timeline.csv',
     groupFilterColumn: 'front',
@@ -434,7 +355,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place key events of World War II on a timeline.',
     path: ['History', 'Modern'],
     toggles: [
-      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true },
       { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showColours', label: 'Theatre colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' },
     ],
@@ -452,18 +373,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      {
-        name: 'easy',
-        label: 'Easy',
-        values: { showLabels: true, showDates: true, showColours: true },
-      },
-      {
-        name: 'hard',
-        label: 'Hard',
-        values: { showLabels: false, showDates: false, showColours: false },
-      },
-    ],
+    presets: [],
     columnMappings: {
       answer: 'event',
       label: 'event',
@@ -480,7 +390,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place geological eons, eras, and periods on a deep-time timeline.',
     path: ['Science', 'Earth Science'],
     toggles: [
-      { key: 'showLabels', label: 'Period names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Period names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Period dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Period type colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -494,10 +404,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'era', label: 'era', group: 'eon' },
     dataPath: '/data/history/ancient/geological-eras.csv',
     groupFilterColumn: 'eon',
@@ -512,7 +419,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place famous composers from all cultures on a timeline by their lifespans.',
     path: ['History', 'Culture'],
     toggles: [
-      { key: 'showLabels', label: 'Composer names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Composer names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -526,10 +433,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'composer', label: 'composer', group: 'continent' },
     dataPath: '/data/history/music/composers.csv',
     groupFilterColumn: 'continent',
@@ -544,7 +448,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place famous political leaders from all cultures and eras on a timeline by their lifespans.',
     path: ['History', 'Leaders'],
     toggles: [
-      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -558,10 +462,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'leader', label: 'leader', group: 'continent' },
     dataPath: '/data/history/leaders/political-leaders.csv',
     groupFilterColumn: 'continent',
@@ -574,7 +475,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place famous religious leaders and spiritual figures from all traditions on a timeline.',
     path: ['History', 'Leaders'],
     toggles: [
-      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -588,10 +489,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'leader', label: 'leader', group: 'continent' },
     dataPath: '/data/history/leaders/religious-leaders.csv',
     groupFilterColumn: 'continent',
@@ -604,7 +502,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place famous generals, admirals, and military commanders from all cultures on a timeline.',
     path: ['History', 'Leaders'],
     toggles: [
-      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -618,10 +516,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'leader', label: 'leader', group: 'continent' },
     dataPath: '/data/history/leaders/military-leaders.csv',
     groupFilterColumn: 'continent',
@@ -634,7 +529,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place famous artists, writers, philosophers, and scientists from all cultures on a timeline.',
     path: ['History', 'Leaders'],
     toggles: [
-      { key: 'showLabels', label: 'Figure names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Figure names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -648,10 +543,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'figure', label: 'figure', group: 'continent' },
     dataPath: '/data/history/leaders/cultural-leaders.csv',
     groupFilterColumn: 'continent',
@@ -666,7 +558,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place the 50 most significant technology inventions in history on a timeline.',
     path: ['History', 'Science & Technology'],
     toggles: [
-      { key: 'showLabels', label: 'Invention names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Invention names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Invention dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -680,10 +572,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'invention', label: 'invention', group: 'category' },
     dataPath: '/data/history/technology/major-inventions.csv',
     groupFilterColumn: 'category',
@@ -698,7 +587,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place the major milestones of life on Earth on a deep-time timeline.',
     path: ['Science', 'Biology'],
     toggles: [
-      { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Timeline dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Group colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -712,10 +601,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'species', label: 'species', group: 'group' },
     dataPath: '/data/history/science/species-evolution-major.csv',
     groupFilterColumn: 'group',
@@ -728,7 +614,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place 98 species and evolutionary milestones on a deep-time timeline.',
     path: ['Science', 'Biology'],
     toggles: [
-      { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Timeline dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Group colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -742,10 +628,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'species', label: 'species', group: 'group' },
     dataPath: '/data/history/science/species-evolution-all.csv',
     groupFilterColumn: 'group',
@@ -760,7 +643,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place key milestones in space exploration and space technology on a timeline.',
     path: ['History', 'Science & Technology'],
     toggles: [
-      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -778,10 +661,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'event', label: 'event', group: 'category' },
     dataPath: '/data/history/space/space-milestones.csv',
     groupFilterColumn: 'category',
@@ -796,7 +676,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place major empires from all continents and eras on a timeline.',
     path: ['History', 'Ancient'],
     toggles: [
-      { key: 'showLabels', label: 'Empire names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Empire names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Empire dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -810,10 +690,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'empire', label: 'empire', group: 'continent' },
     dataPath: '/data/history/ancient/major-empires.csv',
     groupFilterColumn: 'continent',
@@ -828,7 +705,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place ancient and classical civilizations from around the world on a timeline.',
     path: ['History', 'Ancient'],
     toggles: [
-      { key: 'showLabels', label: 'Civilization names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Civilization names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Civilization dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -842,10 +719,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'civilization', label: 'civilization', group: 'continent' },
     dataPath: '/data/history/ancient/ancient-civilizations.csv',
     groupFilterColumn: 'continent',
@@ -860,7 +734,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place major art movements and cultural periods from around the world on a timeline.',
     path: ['History', 'Culture'],
     toggles: [
-      { key: 'showLabels', label: 'Movement names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Movement names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Movement dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -874,10 +748,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'movement', label: 'movement', group: 'category' },
     dataPath: '/data/history/culture/art-movements.csv',
     groupFilterColumn: 'category',
@@ -892,7 +763,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place major pandemics and epidemics throughout history on a timeline.',
     path: ['History', 'Science & Technology'],
     toggles: [
-      { key: 'showLabels', label: 'Pandemic names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Pandemic names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Pandemic dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -906,10 +777,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'pandemic', label: 'pandemic', group: 'category' },
     dataPath: '/data/history/science/pandemics.csv',
     groupFilterColumn: 'category',
@@ -924,7 +792,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Place major scientific discoveries and theories on a timeline.',
     path: ['History', 'Science & Technology'],
     toggles: [
-      { key: 'showLabels', label: 'Discovery names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showLabels', label: 'Discovery names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
       { key: 'showDates', label: 'Discovery dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
       { key: 'showFieldColours', label: 'Field colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     ],
@@ -942,10 +810,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         modes: ['locate'],
       },
     ],
-    presets: [
-      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showFieldColours: true } },
-      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showFieldColours: false } },
-    ],
+    presets: [],
     columnMappings: { answer: 'discovery', label: 'discovery', group: 'field' },
     dataPath: '/data/history/science/scientific-discoveries.csv',
     groupFilterColumn: 'field',

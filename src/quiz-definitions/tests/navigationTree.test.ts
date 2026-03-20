@@ -16,9 +16,9 @@ describe('navigationTree', () => {
     const geo = navigationTree.children.find((c) => c.label === 'Geography');
     expect(geo).toBeDefined();
     const subLabels = geo!.children.map((c) => c.label);
-    expect(subLabels).toContain('Capitals');
-    expect(subLabels).toContain('Countries');
-    expect(subLabels).toContain('Flags');
+    expect(subLabels).toContain('World Capitals');
+    expect(subLabels).toContain('World Countries');
+    expect(subLabels).toContain('World Flags');
   });
 
   it('leaf nodes have quizId set', () => {
