@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import type { VisualizationRendererProps, BackgroundPath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
+import type { VisualizationRendererProps, BackgroundPath, LakePath, ClusteringConfig } from '@/visualizations/VisualizationRendererProps';
 import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
@@ -29,6 +29,7 @@ export interface QuizModeProps {
   readonly selectValues?: Readonly<Record<string, string>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
+  readonly lakePaths?: ReadonlyArray<LakePath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly clustering?: ClusteringConfig;
   readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];

@@ -22,6 +22,7 @@ export function FreeRecallMode({
   toggleValues,
   Renderer,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
   clustering,
   initialCameraPosition,
@@ -104,6 +105,7 @@ export function FreeRecallMode({
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
+          lakePaths={lakePaths}
           backgroundLabels={backgroundLabels}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}

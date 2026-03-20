@@ -20,6 +20,7 @@ export function OrderedRecallMode({
   toggleValues = {},
   Renderer,
   backgroundPaths,
+  lakePaths,
   clustering,
   onFinish,
   forceGiveUp = false,
@@ -116,6 +117,7 @@ export function OrderedRecallMode({
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
+          lakePaths={lakePaths}
           clustering={clustering}
         />
       </div>

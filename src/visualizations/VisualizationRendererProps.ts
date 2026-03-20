@@ -23,6 +23,12 @@ export interface ClusteringConfig {
   readonly countedState: ElementVisualState;
 }
 
+/** A lake polygon rendered as background decoration on a map. */
+export interface LakePath {
+  readonly id: string;
+  readonly svgPathData: string;
+}
+
 /** Decorative SVG path rendered behind interactive elements (e.g., country borders on a map). */
 export interface BackgroundPath {
   readonly id: string;
