@@ -544,4 +544,520 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/history/modern/ww2-timeline.csv',
   },
+
+  // ===== World War I =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-timeline-ww1',
+    title: 'World War I Timeline',
+    description: 'Place key events of World War I on a timeline, from the July Crisis to the Paris Peace Conference.',
+    path: ['History', 'Modern', 'World War I Timeline'],
+    toggles: [
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showFrontColours', label: 'Front colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [
+          { value: 'year', label: 'Year' },
+          { value: 'month', label: 'Month' },
+          { value: 'day', label: 'Day' },
+        ],
+        defaultValue: 'month',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showFrontColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showFrontColours: false } },
+    ],
+    columnMappings: { answer: 'event', label: 'event', group: 'front' },
+    dataPath: '/data/history/modern/ww1-timeline.csv',
+    groupFilterColumn: 'front',
+    groupFilterLabel: 'Front / Theatre',
+  },
+
+  // ===== Geological Time =====
+  {
+    ...timelineQuizBase,
+    id: 'sci-geological-eras',
+    title: 'Geological Time',
+    description: 'Place geological eons, eras, and periods on a deep-time timeline.',
+    path: ['Science', 'Earth Science', 'Geological Time'],
+    toggles: [
+      { key: 'showLabels', label: 'Period names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Period dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showEonColours', label: 'Period type colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showEonColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showEonColours: false } },
+    ],
+    columnMappings: { answer: 'era', label: 'era', group: 'eon' },
+    dataPath: '/data/history/ancient/geological-eras.csv',
+    groupFilterColumn: 'eon',
+    groupFilterLabel: 'Period type',
+  },
+
+  // ===== Famous Composers =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-composers',
+    title: 'Famous Composers',
+    description: 'Place famous composers from all cultures on a timeline by their lifespans.',
+    path: ['History', 'Culture', 'Famous Composers'],
+    toggles: [
+      { key: 'showLabels', label: 'Composer names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showContinentColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showContinentColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showContinentColours: false } },
+    ],
+    columnMappings: { answer: 'composer', label: 'composer', group: 'continent' },
+    dataPath: '/data/history/music/composers.csv',
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+  },
+
+  // ===== Leaders (Political, Religious, Military, Cultural) =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-leaders-political',
+    title: 'Famous Political Leaders',
+    description: 'Place famous political leaders from all cultures and eras on a timeline by their lifespans.',
+    path: ['History', 'Leaders', 'Political Leaders'],
+    toggles: [
+      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showContinentColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showContinentColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showContinentColours: false } },
+    ],
+    columnMappings: { answer: 'leader', label: 'leader', group: 'continent' },
+    dataPath: '/data/history/leaders/political-leaders.csv',
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+  },
+  {
+    ...timelineQuizBase,
+    id: 'hist-leaders-religious',
+    title: 'Famous Religious Leaders',
+    description: 'Place famous religious leaders and spiritual figures from all traditions on a timeline.',
+    path: ['History', 'Leaders', 'Religious Leaders'],
+    toggles: [
+      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showContinentColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showContinentColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showContinentColours: false } },
+    ],
+    columnMappings: { answer: 'leader', label: 'leader', group: 'continent' },
+    dataPath: '/data/history/leaders/religious-leaders.csv',
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+  },
+  {
+    ...timelineQuizBase,
+    id: 'hist-leaders-military',
+    title: 'Famous Military Leaders',
+    description: 'Place famous generals, admirals, and military commanders from all cultures on a timeline.',
+    path: ['History', 'Leaders', 'Military Leaders'],
+    toggles: [
+      { key: 'showLabels', label: 'Leader names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showContinentColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showContinentColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showContinentColours: false } },
+    ],
+    columnMappings: { answer: 'leader', label: 'leader', group: 'continent' },
+    dataPath: '/data/history/leaders/military-leaders.csv',
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+  },
+  {
+    ...timelineQuizBase,
+    id: 'hist-leaders-cultural',
+    title: 'Famous Cultural Figures',
+    description: 'Place famous artists, writers, philosophers, and scientists from all cultures on a timeline.',
+    path: ['History', 'Leaders', 'Cultural Figures'],
+    toggles: [
+      { key: 'showLabels', label: 'Figure names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Life dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showContinentColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showContinentColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showContinentColours: false } },
+    ],
+    columnMappings: { answer: 'figure', label: 'figure', group: 'continent' },
+    dataPath: '/data/history/leaders/cultural-leaders.csv',
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+  },
+
+  // ===== Technology Inventions =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-major-inventions',
+    title: 'Major Technology Inventions',
+    description: 'Place the 50 most significant technology inventions in history on a timeline.',
+    path: ['History', 'Science & Technology', 'Major Inventions'],
+    toggles: [
+      { key: 'showLabels', label: 'Invention names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Invention dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showCategoryColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showCategoryColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showCategoryColours: false } },
+    ],
+    columnMappings: { answer: 'invention', label: 'invention', group: 'category' },
+    dataPath: '/data/history/technology/major-inventions.csv',
+    groupFilterColumn: 'category',
+    groupFilterLabel: 'Category',
+  },
+
+  // ===== Species Evolution =====
+  {
+    ...timelineQuizBase,
+    id: 'sci-species-evolution-major',
+    title: 'Species Evolution',
+    description: 'Place the major milestones of life on Earth on a deep-time timeline.',
+    path: ['Science', 'Biology', 'Species Evolution'],
+    toggles: [
+      { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Timeline dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showGroupColours', label: 'Group colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showGroupColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showGroupColours: false } },
+    ],
+    columnMappings: { answer: 'species', label: 'species', group: 'group' },
+    dataPath: '/data/history/science/species-evolution-major.csv',
+    groupFilterColumn: 'group',
+    groupFilterLabel: 'Life group',
+  },
+  {
+    ...timelineQuizBase,
+    id: 'sci-species-evolution-all',
+    title: 'Species Evolution (Detailed)',
+    description: 'Place 100+ species and evolutionary milestones on a deep-time timeline.',
+    path: ['Science', 'Biology', 'Species Evolution (Detailed)'],
+    toggles: [
+      { key: 'showLabels', label: 'Species names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Timeline dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showGroupColours', label: 'Group colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showGroupColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showGroupColours: false } },
+    ],
+    columnMappings: { answer: 'species', label: 'species', group: 'group' },
+    dataPath: '/data/history/science/species-evolution-all.csv',
+    groupFilterColumn: 'group',
+    groupFilterLabel: 'Life group',
+  },
+
+  // ===== Space Exploration =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-space-milestones',
+    title: 'Space Exploration Milestones',
+    description: 'Place key milestones in space exploration and space technology on a timeline.',
+    path: ['History', 'Science & Technology', 'Space Exploration'],
+    toggles: [
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showCategoryColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [
+          { value: 'year', label: 'Year' },
+          { value: 'month', label: 'Month' },
+          { value: 'day', label: 'Day' },
+        ],
+        defaultValue: 'month',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showCategoryColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showCategoryColours: false } },
+    ],
+    columnMappings: { answer: 'event', label: 'event', group: 'category' },
+    dataPath: '/data/history/space/space-milestones.csv',
+    groupFilterColumn: 'category',
+    groupFilterLabel: 'Mission type',
+  },
+
+  // ===== My Suggestions: Major Empires =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-major-empires',
+    title: 'Major Empires',
+    description: 'Place major empires from all continents and eras on a timeline.',
+    path: ['History', 'Ancient', 'Major Empires'],
+    toggles: [
+      { key: 'showLabels', label: 'Empire names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Empire dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showContinentColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showContinentColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showContinentColours: false } },
+    ],
+    columnMappings: { answer: 'empire', label: 'empire', group: 'continent' },
+    dataPath: '/data/history/ancient/major-empires.csv',
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+  },
+
+  // ===== My Suggestions: Ancient Civilizations =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-ancient-civilizations',
+    title: 'Ancient Civilizations',
+    description: 'Place ancient and classical civilizations from around the world on a timeline.',
+    path: ['History', 'Ancient', 'Ancient Civilizations'],
+    toggles: [
+      { key: 'showLabels', label: 'Civilization names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Civilization dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showContinentColours', label: 'Continent colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showContinentColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showContinentColours: false } },
+    ],
+    columnMappings: { answer: 'civilization', label: 'civilization', group: 'continent' },
+    dataPath: '/data/history/ancient/ancient-civilizations.csv',
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+  },
+
+  // ===== My Suggestions: Art Movements =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-art-movements',
+    title: 'Art Movements',
+    description: 'Place major art movements and cultural periods from around the world on a timeline.',
+    path: ['History', 'Culture', 'Art Movements'],
+    toggles: [
+      { key: 'showLabels', label: 'Movement names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Movement dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showCategoryColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showCategoryColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showCategoryColours: false } },
+    ],
+    columnMappings: { answer: 'movement', label: 'movement', group: 'category' },
+    dataPath: '/data/history/culture/art-movements.csv',
+    groupFilterColumn: 'category',
+    groupFilterLabel: 'Art form',
+  },
+
+  // ===== My Suggestions: Pandemics =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-pandemics',
+    title: 'Major Pandemics',
+    description: 'Place major pandemics and epidemics throughout history on a timeline.',
+    path: ['History', 'Science & Technology', 'Pandemics'],
+    toggles: [
+      { key: 'showLabels', label: 'Pandemic names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Pandemic dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showCategoryColours', label: 'Category colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showCategoryColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showCategoryColours: false } },
+    ],
+    columnMappings: { answer: 'pandemic', label: 'pandemic', group: 'category' },
+    dataPath: '/data/history/science/pandemics.csv',
+    groupFilterColumn: 'category',
+    groupFilterLabel: 'Disease type',
+  },
+
+  // ===== My Suggestions: Scientific Discoveries =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-scientific-discoveries',
+    title: 'Scientific Discoveries',
+    description: 'Place major scientific discoveries and theories on a timeline.',
+    path: ['History', 'Science & Technology', 'Scientific Discoveries'],
+    toggles: [
+      { key: 'showLabels', label: 'Discovery names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showDates', label: 'Discovery dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showFieldColours', label: 'Field colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [
+          { value: 'year', label: 'Year' },
+          { value: 'month', label: 'Month' },
+          { value: 'day', label: 'Day' },
+        ],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+    ],
+    presets: [
+      { name: 'easy', label: 'Easy', values: { showLabels: true, showDates: true, showFieldColours: true } },
+      { name: 'hard', label: 'Hard', values: { showLabels: false, showDates: false, showFieldColours: false } },
+    ],
+    columnMappings: { answer: 'discovery', label: 'discovery', group: 'field' },
+    dataPath: '/data/history/science/scientific-discoveries.csv',
+    groupFilterColumn: 'field',
+    groupFilterLabel: 'Scientific field',
+  },
 ];

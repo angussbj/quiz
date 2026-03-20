@@ -1,0 +1,99 @@
+id,species,start_year,end_year,group,species_alternates
+first-life,First Life,-3800000000,,Microbes & Early Life,Prokaryotes|First Bacteria|LUCA
+first-archaea,First Archaea,-3800000000,,Microbes & Early Life,Archaebacteria|Archaea Domain
+first-photosynthesis,First Photosynthesis,-3500000000,,Microbes & Early Life,Cyanobacteria|Blue-green Algae
+great-oxidation,Great Oxidation Event,-2400000000,-2000000000,Microbes & Early Life,Oxygen Catastrophe|Oxygen Revolution
+first-eukaryotes,First Eukaryotes,-2100000000,,Microbes & Early Life,Eukaryota|Nucleated Cells
+first-sexual-reproduction,First Sexual Reproduction,-1200000000,,Microbes & Early Life,Grypania spiralis
+first-multicellular,First Multicellular Life,-600000000,,Microbes & Early Life,Ediacaran Biota|Dickinsonia
+ediacaran-fauna,Ediacaran Fauna,-575000000,-541000000,Microbes & Early Life,Vendobionta|Ediacaran Period
+cambrian-explosion,Cambrian Explosion,-541000000,-485000000,Marine Invertebrates,Cambrian Fauna
+first-sponges,First Sponges,-600000000,,Marine Invertebrates,Porifera|Archaeocyatha
+first-jellyfish,First Jellyfish,-500000000,,Marine Invertebrates,Medusozoa|Scyphozoa
+first-molluscs,First Molluscs,-540000000,,Marine Invertebrates,Mollusca|Kimberella
+first-trilobites,First Trilobites,-521000000,-252000000,Marine Invertebrates,Trilobita
+first-echinoderms,First Echinoderms,-480000000,,Marine Invertebrates,Echinodermata|Sea Stars|Sea Urchins
+first-cephalopods,First Cephalopods,-500000000,,Marine Invertebrates,Cephalopoda|Nautiloids
+first-coral-reefs,First Coral Reefs,-500000000,,Marine Invertebrates,Anthozoa|Rugosa|Tabulate Coral
+jawless-fish,First Jawless Fish,-530000000,,Fish,Agnatha|Myllokunmingia|Haikouichthys
+first-sharks,First Sharks,-450000000,,Fish,Chondrichthyes|Cladoselache|Doliodus
+jawed-fish,First Jawed Fish,-430000000,,Fish,Gnathostomata|Placoderms|Acanthodians
+lobe-finned-fish,First Lobe-finned Fish,-425000000,,Fish,Sarcopterygii|Coelacanth|Rhipidistia
+ray-finned-fish,First Ray-finned Fish,-420000000,,Fish,Actinopterygii|Cheirolepis
+tiktaalik,Tiktaalik,-375000000,-359000000,Fish,Tiktaalik roseae|Fish with Limbs|Elpistostegalia
+first-land-plants,First Land Plants,-470000000,,Plants,Embryophyta|Liverworts|Mosses|Bryophytes
+first-vascular-plants,First Vascular Plants,-430000000,,Plants,Tracheophyta|Cooksonia
+first-ferns,First Ferns,-360000000,,Plants,Pteridophyta|Filicophyta
+first-seed-plants,First Seed Plants,-360000000,,Plants,Spermatophyta|Pteridosperms|Seed Ferns
+first-conifers,First Conifers,-300000000,,Plants,Coniferophyta|Cordaitales
+first-cycads,First Cycads,-280000000,,Plants,Cycadophyta
+first-flowering-plants,First Flowering Plants,-130000000,,Plants,Angiosperms|Archaefructus|Amborella
+first-grasses,First Grasses,-70000000,,Plants,Poaceae|Gramineae
+first-insects,First Insects,-400000000,,Amphibians,Insecta|Rhyniognatha
+first-amphibians,First Amphibians,-375000000,,Amphibians,Tetrapoda|Ichthyostega|Acanthostega
+first-frogs,First Frogs,-250000000,,Amphibians,Anura|Triadobatrachus
+late-devonian-extinction,Late Devonian Extinction,-374000000,-359000000,Microbes & Early Life,Kellwasser Event|Hangenberg Event
+permian-extinction,Permian Mass Extinction,-252000000,-252000000,Microbes & Early Life,Great Dying|End-Permian Extinction
+first-reptiles,First Reptiles,-310000000,,Reptiles,Amniota|Hylonomus|Westlothiana
+first-synapsids,First Synapsids,-306000000,,Reptiles,Synapsida|Pelycosauria|Dimetrodon
+first-therapsids,First Therapsids,-260000000,,Reptiles,Therapsida|Proto-mammals|Dicynodon
+first-turtles,First Turtles,-220000000,,Reptiles,Testudines|Odontochelys|Proganochelys
+first-lizards,First Lizards,-220000000,,Reptiles,Squamata|Megachirella
+first-crocodilians,First Crocodilians,-230000000,,Reptiles,Crocodilia|Archosauria|Protosuchus
+first-snakes,First Snakes,-167000000,,Reptiles,Serpentes|Eophis underwoodi
+triassic-extinction,Triassic-Jurassic Extinction,-201000000,-201000000,Reptiles,End-Triassic Extinction|CAMP Volcanism
+first-dinosaurs,First Dinosaurs,-230000000,,Dinosaurs,Dinosauria|Eoraptor|Nyasasaurus
+sauropods,Sauropod Dinosaurs,-201000000,-66000000,Dinosaurs,Sauropoda|Brachiosaurus|Diplodocus|Apatosaurus
+theropods,Theropod Dinosaurs,-230000000,-66000000,Dinosaurs,Theropoda|Allosaurus|Tyrannosaurus rex|Velociraptor
+ornithischians,Ornithischian Dinosaurs,-230000000,-66000000,Dinosaurs,Ornithischia|Triceratops|Stegosaurus|Iguanodon
+pterosaurs,Pterosaurs,-228000000,-66000000,Dinosaurs,Pterosauria|Flying Reptiles|Pterodactylus|Quetzalcoatlus
+plesiosaurs,Plesiosaurs,-201000000,-66000000,Dinosaurs,Plesiosauria|Marine Reptiles|Plesiosaurus|Mosasaurus
+ichthyosaurs,Ichthyosaurs,-250000000,-90000000,Dinosaurs,Ichthyosauria|Sea Dragons|Ophthalmosaurus
+first-birds,First Birds,-150000000,,Birds,Avialae|Archaeopteryx
+early-birds,Early True Birds,-130000000,,Birds,Enantiornithes|Confuciusornis
+modern-birds,Modern Birds (Neornithes),-80000000,,Birds,Neornithes|Neoaves
+kpg-extinction,K-Pg Mass Extinction,-66000000,-66000000,Dinosaurs,Cretaceous-Paleogene Extinction|Chicxulub Impact|Asteroid Impact
+first-mammals,First Mammals,-225000000,,Early Mammals,Mammalia|Adelobasileus|Morganucodon
+first-monotremes,First Monotremes,-185000000,,Early Mammals,Monotremata|Platypus Ancestors|Teinolophos
+first-marsupials,First Marsupials,-125000000,,Early Mammals,Marsupialia|Sinodelphys
+first-placentals,First Placental Mammals,-100000000,,Early Mammals,Eutheria|Placentalia|Eomaia
+multituberculates,Multituberculates,-170000000,-34000000,Early Mammals,Multituberculata|Taeniolabis
+first-primates,First Primates,-55000000,,Primates & Humans,Primates|Plesiadapis|Euprimates|Altiatlasius
+first-prosimians,First Prosimians,-55000000,,Primates & Humans,Prosimii|Lemurs|Tarsiers|Adapiformes
+first-old-world-monkeys,First Old World Monkeys,-25000000,,Primates & Humans,Cercopithecidae|Victoriapithecus
+first-new-world-monkeys,First New World Monkeys,-35000000,,Primates & Humans,Platyrrhini|Capuchins|Marmosets
+first-apes,First Apes,-25000000,,Primates & Humans,Hominoidea|Proconsul
+first-great-apes,First Great Apes,-15000000,,Primates & Humans,Hominidae|Dryopithecus|Sivapithecus
+gibbon-divergence,Gibbons (Hylobatidae),-18000000,,Primates & Humans,Hylobatidae|Lesser Apes
+orangutan-divergence,Orangutans,-12000000,,Primates & Humans,Pongo|Asian Great Apes
+gorilla-divergence,Gorillas,-8000000,,Primates & Humans,Gorilla|African Great Apes
+chimp-divergence,Chimpanzees,-6000000,,Primates & Humans,Pan troglodytes|Common Chimpanzee
+sahelanthropus,Sahelanthropus tchadensis,-7000000,-6000000,Primates & Humans,Toumai|Earliest Hominin
+ardipithecus,Ardipithecus,-5800000,-4400000,Primates & Humans,Ardipithecus ramidus|Ardi
+australopithecus,Australopithecus,-4000000,-2000000,Primates & Humans,Australopithecus afarensis|Lucy|Southern Ape
+paranthropus,Paranthropus,-2700000,-1200000,Primates & Humans,Robust Australopithecines|Paranthropus boisei|Nutcracker Man
+homo-habilis,Homo habilis,-2500000,-1400000,Primates & Humans,Handy Man|Early Homo
+homo-erectus,Homo erectus,-1900000,-110000,Primates & Humans,Upright Man|Pithecanthropus|Java Man|Peking Man
+homo-heidelbergensis,Homo heidelbergensis,-700000,-200000,Primates & Humans,Heidelberg Man|Archaic Homo sapiens
+homo-neanderthalensis,Homo neanderthalensis,-400000,-40000,Primates & Humans,Neanderthals|Neanderthal Man
+homo-denisova,Denisovans,-300000,-50000,Primates & Humans,Denisova hominins|Denisova Cave People
+homo-sapiens,Homo sapiens,-300000,,Primates & Humans,Modern Humans|Anatomically Modern Humans
+homo-floresiensis,Homo floresiensis,-100000,-50000,Primates & Humans,Hobbit|Flores Man
+out-of-africa,Humans Out of Africa,-70000,,Primates & Humans,Out of Africa II|Behavioural Modernity
+first-whales,First Whales,-50000000,,Other Mammals,Cetacea|Pakicetus
+first-horses,First Horses,-55000000,,Other Mammals,Equidae|Eohippus|Hyracotherium
+first-elephants,First Elephants,-55000000,,Other Mammals,Proboscidea|Eritherium|Numidotherium
+first-bats,First Bats,-52000000,,Other Mammals,Chiroptera|Onychonycteris|Icaronycteris
+first-rodents,First Rodents,-56000000,,Other Mammals,Rodentia|Paramys
+first-carnivores,First Carnivores,-42000000,,Other Mammals,Carnivora|Miacidae|Miacis
+first-ungulates,First Ungulates,-55000000,,Other Mammals,Artiodactyla|Perissodactyla|Condylarthra
+first-cats,First Cats,-25000000,,Other Mammals,Felidae|Proailurus|Pseudaelurus
+sabre-tooth-cats,Sabre-toothed Cats,-35000000,-10000,Other Mammals,Machairodontinae|Smilodon|Thylacosmilus
+first-dogs,First Dogs (Canidae),-40000000,,Other Mammals,Canidae|Hesperocyon
+first-bears,First Bears,-20000000,,Other Mammals,Ursidae|Ursavus
+woolly-mammoth,Woolly Mammoth,-400000,-4000,Other Mammals,Mammuthus primigenius|Pleistocene Elephant
+woolly-rhinoceros,Woolly Rhinoceros,-350000,-10000,Other Mammals,Coelodonta antiquitatis|Ice Age Rhino
+giant-ground-sloth,Giant Ground Sloth,-5000000,-10000,Other Mammals,Megatherium|Eremotherium|Megalonyx
+domesticated-dogs,Domesticated Dogs,-15000,,Other Mammals,Canis lupus familiaris|Domestic Dog
+domesticated-horses,Domesticated Horses,-5500,,Other Mammals,Equus caballus|Domestic Horse
+quaternary-extinction,Quaternary Megafauna Extinction,-50000,-10000,Other Mammals,Pleistocene Extinction|Ice Age Extinctions

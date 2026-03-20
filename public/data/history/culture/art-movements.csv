@@ -1,0 +1,56 @@
+id,movement,start_year,end_year,category,movement_alternates
+greek-classical,Greek Classical Period,-480,-323,Visual Art,Classical Antiquity|Classical Greek Art
+hellenistic-art,Hellenistic Art,-323,-31,Visual Art,Hellenistic Period
+roman-art,Roman Art,-509,476,Visual Art,Roman Imperial Art|Art of Ancient Rome
+mauryan-art,Mauryan Art,-322,-185,Visual Art,Mauryan Empire Art|Early Indian Art
+gupta-sculpture,Gupta Sculpture,320,550,Visual Art,Gupta Period Art|Classical Indian Art
+byzantine-art,Byzantine Art,330,1453,Visual Art,Byzantine Period|Eastern Roman Art
+tang-dynasty-art,Tang Dynasty Art,618,907,Visual Art,Tang Golden Age|Tang Dynasty Culture
+islamic-golden-age,Islamic Golden Age,750,1258,Visual Art,Abbasid Art|Islamic Classical Period
+carolingian-art,Carolingian Art,750,900,Visual Art,Carolingian Renaissance
+heian-culture,Heian Period Culture,794,1185,Performing Arts,Heian Japan|Japanese Classical Culture
+song-landscape-painting,Song Dynasty Landscape Painting,960,1279,Visual Art,Song Dynasty Art|Shan Shui Painting
+romanesque,Romanesque Art,1000,1150,Architecture,Romanesque Architecture|Romanesque Style
+medieval-islamic-architecture,Medieval Islamic Architecture,1000,1500,Architecture,Islamic Architecture|Moorish Architecture
+gothic,Gothic Art,1150,1400,Architecture,Gothic Architecture|Gothic Style
+indian-temple-sculpture,Indian Temple Sculpture,400,1000,Visual Art,Hindu Temple Art|Dravidian Architecture
+aztec-art,Aztec Art,1300,1521,Visual Art,Mexica Art|Pre-Columbian Art
+italian-renaissance,Italian Renaissance,1400,1600,Visual Art,Renaissance|Rinascimento
+northern-renaissance,Northern Renaissance,1430,1580,Visual Art,Flemish Renaissance|German Renaissance
+high-renaissance,High Renaissance,1490,1527,Visual Art,
+renaissance-polyphony,Renaissance Polyphony,1400,1600,Music,Renaissance Music|Franco-Flemish School
+elizabethan-theatre,Elizabethan Theatre,1558,1642,Performing Arts,English Renaissance Theatre|Shakespearean Theatre
+mannerism,Mannerism,1520,1600,Visual Art,Late Renaissance|Maniera
+baroque,Baroque,1600,1750,Visual Art,Baroque Art|Baroque Style
+baroque-music,Baroque Music,1600,1750,Music,
+mughal-painting,Mughal Painting,1600,1857,Visual Art,Mughal Miniature|Indo-Persian Painting
+edo-period-culture,Edo Period Culture,1603,1868,Performing Arts,Ukiyo-e|Kabuki|Japanese Woodblock Prints
+classicism,Classicism,1620,1800,Visual Art,French Classicism|Academic Classicism
+rococo,Rococo,1720,1780,Visual Art,Late Baroque|Rococo Style
+classical-music,Classical Period Music,1750,1820,Music,Viennese Classicism|Classical Era Music
+neoclassicism,Neoclassicism,1760,1850,Visual Art,Neoclassical Art|Neo-Classicism
+romanticism,Romanticism,1800,1850,Visual Art,Romantic Movement|Romantic Art
+romantic-music,Romantic Music,1820,1900,Music,Romantic Era Music|Romanticism in Music
+realism,Realism,1840,1880,Visual Art,Realist Movement|Social Realism
+pre-raphaelite,Pre-Raphaelite Brotherhood,1848,1880,Visual Art,Pre-Raphaelitism|PRB
+impressionism,Impressionism,1865,1900,Visual Art,French Impressionism
+art-nouveau,Art Nouveau,1890,1910,Visual Art,Jugendstil|Modernisme|New Art
+post-impressionism,Post-Impressionism,1886,1910,Visual Art,
+symbolism,Symbolism,1886,1910,Visual Art,Symbolist Movement
+expressionism,Expressionism,1905,1930,Visual Art,German Expressionism|Die Brucke|Der Blaue Reiter
+fauvism,Fauvism,1905,1910,Visual Art,Les Fauves
+cubism,Cubism,1907,1935,Visual Art,Analytic Cubism|Synthetic Cubism
+futurism,Futurism,1909,1944,Visual Art,Italian Futurism
+constructivism,Constructivism,1913,1940,Visual Art,Russian Constructivism|Soviet Constructivism
+dada,Dada,1916,1923,Visual Art,Dadaism
+bauhaus,Bauhaus,1919,1933,Visual Art,Bauhaus School
+surrealism,Surrealism,1920,1950,Visual Art,Surrealist Movement
+latin-american-muralism,Latin American Muralism,1920,1960,Visual Art,Mexican Muralism|Los Tres Grandes
+jazz-age,Jazz Age,1920,1940,Music,Jazz Era|Harlem Renaissance Music
+abstract-expressionism,Abstract Expressionism,1940,1965,Visual Art,New York School|Action Painting|Color Field
+pop-art,Pop Art,1955,1975,Visual Art,Popular Art
+minimalism,Minimalism,1960,1980,Visual Art,Minimal Art
+postmodernism,Postmodernism,1970,2000,Visual Art,Postmodern Art|Po-Mo
+hip-hop-culture,Hip-Hop Culture,1973,,Performing Arts,Hip-Hop|Rap Culture|B-boy Culture
+street-art,Street Art,1980,,Visual Art,Graffiti Art|Urban Art|Mural Art
+digital-art,Digital Art,1990,,Multimedia & Modern,Computer Art|New Media Art|Net Art
