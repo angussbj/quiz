@@ -56,6 +56,14 @@ export interface QuizDefinition<K extends string = string> {
   readonly groupFilterColumn?: string;
   /** Human-readable label for the group filter section (e.g., 'Element category'). */
   readonly groupFilterLabel?: string;
+  /** Per-group camera positions for chip-filtered quizzes. When a subset of chips are selected,
+   *  the camera zooms to the bounding box of selected groups' positions. */
+  readonly groupFilterCameraPositions?: Readonly<Record<string, {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  }>>;
   /** When true, elements excluded by range/group filters are hidden entirely instead of shown as context. */
   readonly hideFilteredElements?: boolean;
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
