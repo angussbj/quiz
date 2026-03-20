@@ -71,6 +71,8 @@ export function QuizShell({
 }: QuizShellProps) {
   const [phase, setPhase] = useState<ShellPhase>('configuring');
   const [quizKey, setQuizKey] = useState(0);
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
   const [selectedMode, setSelectedMode] = useState<QuizModeType>(defaultMode);
   const [countdownMinutes, setCountdownMinutes] = useState<number | undefined>(
     defaultCountdownSeconds !== undefined ? Math.ceil(defaultCountdownSeconds / 60) : undefined,
@@ -133,13 +135,27 @@ export function QuizShell({
     applyModeConstraints(newMode);
   }, [applyModeConstraints]);
 
+  // Push a history entry when starting so the browser back button returns to setup.
   const handleStart = useCallback(() => {
+    history.pushState({}, '');
     setPhase('active');
   }, []);
 
+  // Reconfigure/Try Again pops the history entry pushed by handleStart.
+  // The popstate listener below handles the actual state reset.
   const handleReconfigure = useCallback(() => {
-    setPhase('configuring');
-    setQuizKey((prev) => prev + 1);
+    history.back();
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (phaseRef.current === 'active') {
+        setPhase('configuring');
+        setQuizKey((prev) => prev + 1);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   // Whether group filtering is active (not all groups selected)
