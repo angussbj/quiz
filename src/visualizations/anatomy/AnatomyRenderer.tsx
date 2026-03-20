@@ -136,7 +136,7 @@ export function AnatomyRenderer({
   targetElementId,
   toggles,
   svgOverlay,
-  initialViewBox,
+  initialCameraPosition,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -146,7 +146,7 @@ export function AnatomyRenderer({
     <ZoomPanContainer
       elements={elements}
       elementStates={elementStates}
-      initialViewBox={initialViewBox}
+      initialCameraPosition={initialCameraPosition}
     >
       <AnatomyContent
         elements={elements}

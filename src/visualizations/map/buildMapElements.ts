@@ -1,14 +1,17 @@
-import type { VisualizationElement } from '../VisualizationElement';
 import type { MapElement } from './MapElement';
 import { projectGeo, wrapPathCoordinates } from './projectGeo';
 
 const DOT_RADIUS = 0.3;
 
-const VALID_LABEL_POSITIONS = new Set(['left', 'right', 'above', 'below']);
+type DirectionalLabelPosition = 'left' | 'right' | 'above' | 'below';
 
-function parseLabelPosition(raw: string | undefined): VisualizationElement['labelPosition'] {
-  if (raw && VALID_LABEL_POSITIONS.has(raw)) {
-    return raw as VisualizationElement['labelPosition'];
+function isDirectionalLabelPosition(raw: string): raw is DirectionalLabelPosition {
+  return raw === 'left' || raw === 'right' || raw === 'above' || raw === 'below';
+}
+
+function parseLabelPosition(raw: string | undefined): DirectionalLabelPosition | undefined {
+  if (raw && isDirectionalLabelPosition(raw)) {
+    return raw;
   }
   return undefined;
 }

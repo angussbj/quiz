@@ -1,16 +1,6 @@
-import type { VisualizationElement } from '../VisualizationElement';
+import type { VisualizationElement, LeaderLineLabelPosition } from '../VisualizationElement';
 
-/** Pre-computed label position for leader-line labels */
-export interface AnatomyLabelPosition {
-  /** X position of the label text (on the margin) */
-  readonly labelX: number;
-  /** Y position of the label text */
-  readonly labelY: number;
-  /** X position of the anchor point on the bone */
-  readonly anchorX: number;
-  /** Y position of the anchor point on the bone */
-  readonly anchorY: number;
-}
+export type AnatomyLabelPosition = LeaderLineLabelPosition;
 
 /** Anatomy element with SVG path data for a bone shape */
 export interface AnatomyElement extends VisualizationElement {
