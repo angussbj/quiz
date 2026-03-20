@@ -179,7 +179,7 @@ export function TimelineLocateMode({
         )}
       </div>
 
-      <div className={styles.visualization}>
+      <div className={styles.visualization} onMouseDown={(e) => e.preventDefault()}>
         <Renderer
           elements={elements}
           elementStates={reviewElementStates}

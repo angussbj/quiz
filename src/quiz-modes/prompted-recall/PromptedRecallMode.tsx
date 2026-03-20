@@ -135,7 +135,7 @@ export function PromptedRecallMode({
 
   return (
     <div className={styles.container}>
-      <div className={styles.visualizationArea}>
+      <div className={styles.visualizationArea} onMouseDown={(e) => e.preventDefault()}>
         <Renderer
           elements={elements}
           elementStates={reviewElementStates}

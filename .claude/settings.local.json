@@ -87,7 +87,17 @@
       "Bash(echo \"$path\")",
       "Bash(mv:*)",
       "Bash(lsof -iTCP:5174 -sTCP:LISTEN -P)",
-      "Bash(lsof -iTCP -sTCP:LISTEN -P)"
+      "Bash(lsof -iTCP -sTCP:LISTEN -P)",
+      "mcp__plugin_playwright_playwright__browser_install",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__fill",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__press_key",
+      "Bash(tr '|' '\\\\n')",
+      "Bash(while read:*)",
+      "Bash(do echo:*)",
+      "Bash(echo \"$path\")",
+      "Bash(mv:*)",
+      "Bash(unzip:*)"
     ]
   }
 }
