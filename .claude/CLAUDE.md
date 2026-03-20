@@ -56,9 +56,10 @@ Toggles (show/hide flags, show/hide borders, etc.) are approximately independent
 
 Quiz data uses shared CSVs filtered by region rather than per-region files:
 - `public/data/capitals/world-capitals.csv` — 197 world capitals with `region` and `subregion` columns
+- `public/data/cities/largest-cities.csv` — 834 largest cities with population, growth rate, region data
 - `public/data/borders/world-borders.csv` — 233 countries with equirectangular SVG border paths
 
-When multiple quiz definitions share the same structure (e.g. all capitals quizzes), extract a shared base object and spread it per definition. See `capitalsQuizBase` in `quizRegistry.ts` for the pattern.
+When multiple quiz definitions share the same structure (e.g. all capitals quizzes), extract a shared base object and spread it per definition. See `capitalsQuizBase` in `quizRegistry.ts` for the pattern. **New city-based map quizzes must extend `capitalsQuizBase`** — do not redeclare toggles, presets, column mappings, or constraints. See `docs/quiz-integration.md` § "Quiz Definition Base Objects" for the full convention and CSV column naming standard.
 
 `QuizDefinition.dataFilter` filters rows at load time: `{ column: 'region', values: ['Europe'] }`. Multiple values act as OR. Array of filters uses AND logic. Adding a new region quiz requires only a new registry entry — no new data files.
 
@@ -70,6 +71,8 @@ Border CSV format: `id,name,region,group,paths,latitude,longitude,name_alternate
 
 Scripts in `scripts/` regenerate the data CSVs from source datasets:
 - `generateWorldCapitals.ts` — from mledoze/countries + dr5hn/cities
+- `generateLargestCities.ts` — from raw population CSV + GeoNames coordinates
+- `computeCityLabelPositions.ts` — bidirectional collision heuristic for city label placement (supports `--regions` flag for selective reprocessing)
 - `generateBorderPaths.ts` — from Natural Earth GeoJSON (equirectangular projection, Douglas-Peucker simplification)
 - `enrichBordersWithCountryData.mjs` — adds `latitude`, `longitude`, `name_alternates`, `is_sovereign` columns to `world-borders.csv` (sovereign countries get coordinates from capitals CSV; territories get centroid coordinates from SVG bounding boxes)
 
