@@ -13,9 +13,9 @@ export interface AxisTick {
  * Used for deep-time tick levels where raw year numbers would be unreadable.
  */
 function formatGeologicalYear(year: number, unitDivisor: number, unitSuffix: string): string {
+  if (year === 0) return '0';
   const absVal = Math.abs(year) / unitDivisor;
   const formatted = Number.isInteger(absVal) ? `${absVal}` : absVal.toPrecision(2);
-  if (year === 0) return '0';
   return `${formatted} ${unitSuffix}`;
 }
 
