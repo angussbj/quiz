@@ -72,7 +72,8 @@
     }
 
     async function render(region) {
-      const riverText = await fetch('/data/rivers/world-rivers.csv').then(r => r.text());
+      const base = location.pathname.replace(/\/river-debug\.html$/, '');
+      const riverText = await fetch(base + '/data/rivers/world-rivers.csv').then(r => r.text());
 
       let rivers = parseCsv(riverText);
       if (region) {
