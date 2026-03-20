@@ -84,6 +84,7 @@ export function MapRenderer({
   toggles,
   elementToggles,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
   svgOverlay,
   initialCameraPosition,
@@ -116,6 +117,7 @@ export function MapRenderer({
         toggles={toggles}
         elementToggles={elementToggles}
         backgroundPaths={backgroundPaths}
+        lakePaths={lakePaths}
         backgroundLabels={backgroundLabels}
       />
       {svgOverlay}
@@ -332,6 +334,7 @@ interface MapContentProps {
   readonly toggles: Readonly<Record<string, boolean>>;
   readonly elementToggles: VisualizationRendererProps['elementToggles'];
   readonly backgroundPaths: VisualizationRendererProps['backgroundPaths'];
+  readonly lakePaths: VisualizationRendererProps['lakePaths'];
   readonly backgroundLabels: VisualizationRendererProps['backgroundLabels'];
 }
 
@@ -345,6 +348,7 @@ function MapContent({
   toggles,
   elementToggles,
   backgroundPaths,
+  lakePaths,
   backgroundLabels,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
@@ -390,12 +394,29 @@ function MapContent({
         />
       )}
 
+      {/* Ocean background tint */}
+      {toggles['showLakes'] !== false && (
+        <rect
+          x={-1e4} y={-1e4} width={2e4} height={2e4}
+          className={styles.oceanBackground}
+        />
+      )}
+
       {/* Background country borders */}
       {showBorders && backgroundPaths?.map((path) => (
         <path
           key={path.id}
           d={path.svgPathData}
           className={styles.borderPath}
+        />
+      ))}
+
+      {/* Lake polygons */}
+      {toggles['showLakes'] !== false && lakePaths?.map((lake) => (
+        <path
+          key={lake.id}
+          d={lake.svgPathData}
+          className={styles.lakePath}
         />
       ))}
 
