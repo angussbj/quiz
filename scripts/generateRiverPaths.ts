@@ -193,6 +193,52 @@ function segmentsCentroid(segments: ReadonlyArray<RiverSegment>): { lat: number;
   return { lat: count > 0 ? sumLat / count : 0, lng: count > 0 ? sumLng / count : 0 };
 }
 
+/**
+ * Find the geographic point at parameter t (0-1) along the chained segments.
+ * Uses approximate arc-length parameterisation based on coordinate distances.
+ */
+function pointAlongSegments(
+  segments: ReadonlyArray<RiverSegment>,
+  t: number,
+): { lat: number; lng: number } {
+  // Collect all coordinates in chain order
+  const allCoords: Array<Coord> = [];
+  for (const seg of segments) {
+    for (const c of seg.coords) {
+      allCoords.push(c);
+    }
+  }
+  if (allCoords.length === 0) return { lat: 0, lng: 0 };
+  if (allCoords.length === 1) return { lat: allCoords[0][1], lng: allCoords[0][0] };
+
+  // Compute cumulative distances
+  const distances: Array<number> = [0];
+  for (let i = 1; i < allCoords.length; i++) {
+    const dlng = allCoords[i][0] - allCoords[i - 1][0];
+    const dlat = allCoords[i][1] - allCoords[i - 1][1];
+    distances.push(distances[i - 1] + Math.sqrt(dlng * dlng + dlat * dlat));
+  }
+
+  const totalLength = distances[distances.length - 1];
+  if (totalLength === 0) return { lat: allCoords[0][1], lng: allCoords[0][0] };
+
+  const targetDist = t * totalLength;
+
+  // Find the segment containing the target distance
+  for (let i = 1; i < distances.length; i++) {
+    if (distances[i] >= targetDist) {
+      const segLength = distances[i] - distances[i - 1];
+      const frac = segLength > 0 ? (targetDist - distances[i - 1]) / segLength : 0;
+      const lng = allCoords[i - 1][0] + frac * (allCoords[i][0] - allCoords[i - 1][0]);
+      const lat = allCoords[i - 1][1] + frac * (allCoords[i][1] - allCoords[i - 1][1]);
+      return { lat, lng };
+    }
+  }
+
+  const last = allCoords[allCoords.length - 1];
+  return { lat: last[1], lng: last[0] };
+}
+
 // ------------------------------------------------------------------
 // Lake loading
 // ------------------------------------------------------------------
@@ -268,46 +314,69 @@ function distToRing(point: Coord, ring: ReadonlyArray<Coord>): number {
 }
 
 /** Maximum gap distance (degrees) for matching river endpoints to lake boundaries. */
-const LAKE_MATCH_THRESHOLD = 0.5;
+const LAKE_MATCH_THRESHOLD = 0.8;
 
 /** Scalerank threshold: lakes with scalerank <= this get polygon rendering.
  *  Lakes with scalerank > this get a connecting line instead. */
-const LARGE_LAKE_SCALERANK = 6;
 
 
 /**
- * Find a lake that bridges a gap between two river endpoints.
- * Returns the lake if found, or undefined.
+ * Find lakes that bridge a gap between two river endpoints.
+ * First tries to find a single lake near both endpoints.
+ * If none found, checks if each endpoint is near a different lake and returns both.
  */
-function findBridgingLake(
+function findBridgingLakes(
   endPoint: Coord,
   startPoint: Coord,
   lakes: ReadonlyArray<LakePolygon>,
-): LakePolygon | undefined {
-  let bestLake: LakePolygon | undefined;
-  let bestDist = Infinity;
+): ReadonlyArray<LakePolygon> {
+  let bestSingleLake: LakePolygon | undefined;
+  let bestSingleDist = Infinity;
+  let bestEndLake: LakePolygon | undefined;
+  let bestEndDist = Infinity;
+  let bestStartLake: LakePolygon | undefined;
+  let bestStartDist = Infinity;
+
+  const t = LAKE_MATCH_THRESHOLD;
 
   for (const lake of lakes) {
-    // Quick bounding box check with threshold expansion
-    const t = LAKE_MATCH_THRESHOLD;
-    if (endPoint[0] < lake.minLng - t || endPoint[0] > lake.maxLng + t) continue;
-    if (endPoint[1] < lake.minLat - t || endPoint[1] > lake.maxLat + t) continue;
-    if (startPoint[0] < lake.minLng - t || startPoint[0] > lake.maxLng + t) continue;
-    if (startPoint[1] < lake.minLat - t || startPoint[1] > lake.maxLat + t) continue;
+    // Check endpoint near this lake
+    const endInBB = endPoint[0] >= lake.minLng - t && endPoint[0] <= lake.maxLng + t
+      && endPoint[1] >= lake.minLat - t && endPoint[1] <= lake.maxLat + t;
+    const startInBB = startPoint[0] >= lake.minLng - t && startPoint[0] <= lake.maxLng + t
+      && startPoint[1] >= lake.minLat - t && startPoint[1] <= lake.maxLat + t;
 
-    const distEnd = distToRing(endPoint, lake.ring);
-    const distStart = distToRing(startPoint, lake.ring);
+    if (!endInBB && !startInBB) continue;
 
-    if (distEnd < LAKE_MATCH_THRESHOLD && distStart < LAKE_MATCH_THRESHOLD) {
+    const distEnd = endInBB ? distToRing(endPoint, lake.ring) : Infinity;
+    const distStart = startInBB ? distToRing(startPoint, lake.ring) : Infinity;
+
+    // Single lake bridging both endpoints
+    if (distEnd < t && distStart < t) {
       const totalDist = distEnd + distStart;
-      if (totalDist < bestDist) {
-        bestDist = totalDist;
-        bestLake = lake;
+      if (totalDist < bestSingleDist) {
+        bestSingleDist = totalDist;
+        bestSingleLake = lake;
       }
+    }
+
+    // Track best lake for each endpoint individually
+    if (distEnd < t && distEnd < bestEndDist) {
+      bestEndDist = distEnd;
+      bestEndLake = lake;
+    }
+    if (distStart < t && distStart < bestStartDist) {
+      bestStartDist = distStart;
+      bestStartLake = lake;
     }
   }
 
-  return bestLake;
+  if (bestSingleLake) return [bestSingleLake];
+  // Two different lakes each near one endpoint
+  const result: Array<LakePolygon> = [];
+  if (bestEndLake) result.push(bestEndLake);
+  if (bestStartLake && bestStartLake !== bestEndLake) result.push(bestStartLake);
+  return result;
 }
 
 // ------------------------------------------------------------------
@@ -324,7 +393,7 @@ interface ChainedResult {
   readonly gaps: ReadonlyArray<{
     readonly from: Coord; // end of previous segment
     readonly to: Coord;   // start of next segment
-    readonly lake: LakePolygon | undefined;
+    readonly lakes: ReadonlyArray<LakePolygon>;
   }>;
 }
 
@@ -385,15 +454,15 @@ function chainSegments(
   });
 
   // Identify gaps and find bridging lakes
-  const gaps: Array<{ from: Coord; to: Coord; lake: LakePolygon | undefined }> = [];
+  const gaps: Array<{ from: Coord; to: Coord; lakes: ReadonlyArray<LakePolygon> }> = [];
   for (let i = 0; i < orderedSegments.length - 1; i++) {
     const from = orderedSegments[i].end;
     const to = orderedSegments[i + 1].start;
     const dist = geoDist(from, to);
 
     if (dist > 0.01) { // gap threshold ~1km
-      const lake = findBridgingLake(from, to, lakes);
-      gaps.push({ from, to, lake });
+      const bridgingLakes = findBridgingLakes(from, to, lakes);
+      gaps.push({ from, to, lakes: bridgingLakes });
     }
   }
 
@@ -512,6 +581,117 @@ for (const feature of riverFeatures) {
   }
 }
 
+// Second pass: merge groups that share the same English name and have
+// geographically connectable segments. This handles rivers split across
+// multiple rivernums (e.g. Rhein/Rhine with rivernums 105, 140, 150).
+const MERGE_ENDPOINT_THRESHOLD = 2.0; // degrees — generous threshold for merging
+
+/** Collect all name variants for a group of features (lowercased). */
+function getAllNames(features: ReadonlyArray<GeoJsonFeature>): Set<string> {
+  const names = new Set<string>();
+  for (const f of features) {
+    const name = f.properties['name'] as string | null;
+    const nameEn = f.properties['name_en'] as string | null;
+    const nameAlt = f.properties['name_alt'] as string | null;
+    if (name) names.add(name.toLowerCase());
+    if (nameEn) names.add(nameEn.toLowerCase());
+    if (nameAlt) {
+      for (const alt of nameAlt.split(/[;,|]/)) {
+        const trimmed = alt.trim();
+        if (trimmed) names.add(trimmed.toLowerCase());
+      }
+    }
+  }
+  return names;
+}
+
+function getEnglishName(features: ReadonlyArray<GeoJsonFeature>): string {
+  for (const f of features) {
+    const nameEn = f.properties['name_en'] as string | null;
+    if (nameEn) return nameEn.toLowerCase();
+  }
+  return ((features[0].properties['name'] as string) ?? '').toLowerCase();
+}
+
+function getEndpoints(features: ReadonlyArray<GeoJsonFeature>): ReadonlyArray<Coord> {
+  const endpoints: Array<Coord> = [];
+  for (const f of features) {
+    const segs = extractSegments(f.geometry);
+    for (const seg of segs) {
+      endpoints.push(seg.start, seg.end);
+    }
+  }
+  return endpoints;
+}
+
+function groupsAreConnectable(
+  aFeatures: ReadonlyArray<GeoJsonFeature>,
+  bFeatures: ReadonlyArray<GeoJsonFeature>,
+): boolean {
+  const aEndpoints = getEndpoints(aFeatures);
+  const bEndpoints = getEndpoints(bFeatures);
+  for (const a of aEndpoints) {
+    for (const b of bEndpoints) {
+      if (geoDist(a, b) < MERGE_ENDPOINT_THRESHOLD) return true;
+    }
+  }
+  return false;
+}
+
+/** Check if two name sets are similar enough to consider merging. */
+function namesAreSimilar(aNamesSet: Set<string>, bNamesSet: Set<string>): boolean {
+  // Direct overlap in name variants
+  for (const n of aNamesSet) {
+    if (bNamesSet.has(n)) return true;
+  }
+  // Check if any pair shares a common prefix of 3+ chars (handles Rhein/Rhine, etc.)
+  for (const a of aNamesSet) {
+    for (const b of bNamesSet) {
+      const minLen = Math.min(a.length, b.length);
+      const prefixLen = Math.min(3, minLen);
+      if (prefixLen >= 3 && a.slice(0, prefixLen) === b.slice(0, prefixLen)) return true;
+    }
+  }
+  return false;
+}
+
+// Build list of all group keys with their name sets
+const groupNames = new Map<string, Set<string>>();
+for (const [key, features] of byGroupKey) {
+  groupNames.set(key, getAllNames(features));
+}
+
+// Try to merge groups that have similar names AND connectable endpoints
+let mergeCount = 0;
+const allKeys = [...byGroupKey.keys()];
+
+for (let i = 0; i < allKeys.length; i++) {
+  const aKey = allKeys[i];
+  if (!byGroupKey.has(aKey)) continue;
+  const aNames = groupNames.get(aKey);
+  if (!aNames) continue;
+
+  for (let j = i + 1; j < allKeys.length; j++) {
+    const bKey = allKeys[j];
+    if (!byGroupKey.has(bKey)) continue;
+    const bNames = groupNames.get(bKey);
+    if (!bNames) continue;
+
+    if (namesAreSimilar(aNames, bNames)) {
+      const aFeatures = byGroupKey.get(aKey);
+      const bFeatures = byGroupKey.get(bKey);
+      if (aFeatures && bFeatures && groupsAreConnectable(aFeatures, bFeatures)) {
+        aFeatures.push(...bFeatures);
+        byGroupKey.delete(bKey);
+        // Update name set for merged group
+        for (const n of bNames) aNames.add(n);
+        mergeCount++;
+      }
+    }
+  }
+}
+
+console.log(`Merged ${mergeCount} duplicate river groups`);
 console.log(`Unique river groups: ${byGroupKey.size}`);
 
 // Process each river group
@@ -524,6 +704,8 @@ interface RiverRow {
   paths: string;
   latitude: number;
   longitude: number;
+  label_t: string;       // 0-1, position along river for label (empty = 0.5)
+  label_position: string; // left, right, above, below, etc. (empty = default)
 }
 
 const rivers: Array<RiverRow> = [];
@@ -570,12 +752,12 @@ for (const [groupKey, features] of byGroupKey) {
       );
 
       if (gap) {
-        if (gap.lake && gap.lake.scalerank <= LARGE_LAKE_SCALERANK && !usedLakes.has(gap.lake)) {
-          // Large lake: include polygon path
-          const lakePath = polygonToPath(gap.lake.ring, LAKE_EPSILON);
+        for (const lake of gap.lakes) {
+          if (usedLakes.has(lake)) continue;
+          const lakePath = polygonToPath(lake.ring, LAKE_EPSILON);
           if (lakePath) {
             allPaths.push(lakePath);
-            usedLakes.add(gap.lake);
+            usedLakes.add(lake);
             totalLakePolygons++;
           }
         }
@@ -585,8 +767,8 @@ for (const [groupKey, features] of byGroupKey) {
 
   if (allPaths.length === 0) continue;
 
-  const centroid = segmentsCentroid(segments);
-  const continent = assignContinent(centroid.lat, centroid.lng);
+  const midpoint = pointAlongSegments(segments, 0.5);
+  const continent = assignContinent(midpoint.lat, midpoint.lng);
 
   const id = name
     .toLowerCase()
@@ -595,7 +777,17 @@ for (const [groupKey, features] of byGroupKey) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-  const nameAlternates = buildAlternates(primaryFeature, name);
+  // Collect alternates from ALL features in the group (important for merged groups)
+  const altSet = new Set<string>();
+  for (const feature of features) {
+    const alts = buildAlternates(feature, name);
+    if (alts) {
+      for (const alt of alts.split('|')) {
+        if (alt) altSet.add(alt);
+      }
+    }
+  }
+  const nameAlternates = [...altSet].join('|');
 
   rivers.push({
     id: `${id}-${groupKey}`,
@@ -604,8 +796,10 @@ for (const [groupKey, features] of byGroupKey) {
     continent,
     scalerank: minScalerank,
     paths: allPaths.join('|'),
-    latitude: Math.round(centroid.lat * 100) / 100,
-    longitude: Math.round(centroid.lng * 100) / 100,
+    latitude: Math.round(midpoint.lat * 100) / 100,
+    longitude: Math.round(midpoint.lng * 100) / 100,
+    label_t: '',
+    label_position: '',
   });
 }
 
@@ -638,7 +832,7 @@ if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true });
 }
 
-const header = 'id,name,name_alternates,continent,scalerank,paths,latitude,longitude';
+const header = 'id,name,name_alternates,continent,scalerank,paths,latitude,longitude,label_t,label_position';
 const csvRows = rivers.map((r) =>
   [
     r.id,
@@ -649,6 +843,8 @@ const csvRows = rivers.map((r) =>
     r.paths,
     String(r.latitude),
     String(r.longitude),
+    r.label_t,
+    r.label_position,
   ]
     .map(escapeCsvField)
     .join(','),

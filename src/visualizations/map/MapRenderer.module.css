@@ -58,6 +58,15 @@
   user-select: none;
 }
 
+.riverLabel {
+  font-family: var(--font-family);
+  font-size: 1px;
+  font-weight: 500;
+  font-style: italic;
+  pointer-events: none;
+  user-select: none;
+}
+
 .backgroundLabel {
   fill: var(--color-text-secondary);
   font-family: var(--font-family);

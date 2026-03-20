@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
-import type { ElementVisualState } from '../VisualizationElement';
+import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
@@ -140,8 +140,8 @@ function splitSubpaths(d: string): ReadonlyArray<string> {
   return parts;
 }
 
-/** Stroke width for river paths in viewBox units (same approach as border stroke-width). */
-const RIVER_STROKE_WIDTH = 0.4;
+/** Stroke width for river paths in viewBox units (matches border stroke-width). */
+const RIVER_STROKE_WIDTH = 0.15;
 
 /** Wider hit area for clicking river paths in viewBox units. */
 const RIVER_HIT_STROKE_WIDTH = 2.0;
@@ -227,8 +227,8 @@ function renderShapeElements(
                 fill: color,
                 fillOpacity: strokeOpacity(state) * 0.4,
                 stroke: color,
-                strokeWidth: riverStrokeWidth * 0.5,
-                strokeOpacity: strokeOpacity(state) * 0.6,
+                strokeWidth: riverStrokeWidth * 0.7,
+                strokeOpacity: strokeOpacity(state),
               }}
               pointerEvents={onElementClick ? 'none' : undefined}
               className={onElementClick ? styles.interactivePath : undefined}
@@ -292,6 +292,34 @@ function renderShapeElements(
       />
     );
   });
+}
+
+type LabelPosition = NonNullable<VisualizationElement['labelPosition']>;
+
+/** Compute SVG text positioning props for a label at a given position relative to an anchor point. */
+function computeLabelProps(
+  anchor: ViewBoxPosition,
+  position: LabelPosition | undefined,
+  offset: number,
+): { x: number; y: number; textAnchor: 'start' | 'middle' | 'end'; dominantBaseline: 'central' | 'auto' | 'hanging' } {
+  const pos = position ?? 'right';
+  const isLeft = pos === 'left' || pos === 'above-left' || pos === 'below-left';
+  const isRight = pos === 'right' || pos === 'above-right' || pos === 'below-right';
+  const isAbove = pos === 'above' || pos === 'above-left' || pos === 'above-right';
+  const isBelow = pos === 'below' || pos === 'below-left' || pos === 'below-right';
+
+  const x = anchor.x + (isRight ? offset : isLeft ? -offset : 0);
+  const y = anchor.y + (isBelow ? offset : isAbove ? -offset : 0);
+
+  const textAnchor = isLeft ? 'end' as const
+    : isRight ? 'start' as const
+    : 'middle' as const;
+
+  const dominantBaseline = isAbove ? 'auto' as const
+    : isBelow ? 'hanging' as const
+    : 'central' as const;
+
+  return { x, y, textAnchor, dominantBaseline };
 }
 
 interface MapContentProps {
@@ -392,6 +420,30 @@ function MapContent({
         />
       )}
 
+      {/* River name labels (for stroke-style path elements like rivers) */}
+      {elements.map((element) => {
+        if (clusteredElementIds.has(element.id)) return null;
+        if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
+        const state = elementStates[element.id];
+        if (state === 'hidden') return null;
+        if (!elementToggle(elementToggles, toggles, element.id, 'showRiverNames')) return null;
+        const color = stateColor(state) ?? 'var(--color-text-primary)';
+        const anchor = element.labelAnchor ?? element.viewBoxCenter;
+        const pos = element.labelPosition;
+        const labelOffset = 0.8; // viewBox units
+        const labelProps = computeLabelProps(anchor, pos, labelOffset);
+        return (
+          <text
+            key={`river-label-${element.id}`}
+            {...labelProps}
+            className={styles.riverLabel}
+            style={{ fill: color }}
+          >
+            {element.label}
+          </text>
+        );
+      })}
+
       {/* Flag images near city dots (capitals quizzes — not for stroke-style paths like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
@@ -445,22 +497,16 @@ function MapContent({
         );
       })}
 
-      {/* City name labels (rendered on top of dots) */}
+      {/* City name labels (rendered on top of dots — not for stroke-style paths like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
+        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityNames')) return null;
-        const pos = element.labelPosition ?? 'right';
         const offset = dotRadius * 1.5;
         const fontSize = dotRadius * 2;
-        const labelProps = pos === 'left'
-          ? { x: element.viewBoxCenter.x - offset, y: element.viewBoxCenter.y, textAnchor: 'end' as const, dominantBaseline: 'central' as const }
-          : pos === 'above'
-          ? { x: element.viewBoxCenter.x, y: element.viewBoxCenter.y - offset, textAnchor: 'middle' as const, dominantBaseline: 'auto' as const }
-          : pos === 'below'
-          ? { x: element.viewBoxCenter.x, y: element.viewBoxCenter.y + offset, textAnchor: 'middle' as const, dominantBaseline: 'hanging' as const }
-          : { x: element.viewBoxCenter.x + offset, y: element.viewBoxCenter.y, textAnchor: 'start' as const, dominantBaseline: 'central' as const };
+        const labelProps = computeLabelProps(element.viewBoxCenter, element.labelPosition, offset);
         return (
           <text
             key={`city-label-${element.id}`}

@@ -130,17 +130,18 @@ const riversQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
   ],
   presets: [
     {
       name: 'easy',
       label: 'Easy',
-      values: { showBorders: true },
+      values: { showBorders: true, showRiverNames: true },
     },
     {
       name: 'hard',
       label: 'Hard',
-      values: { showBorders: false },
+      values: { showBorders: false, showRiverNames: false },
     },
   ],
   columnMappings: {
@@ -161,7 +162,7 @@ function buildRiversQuizzes(): ReadonlyArray<QuizDefinition> {
     readonly title: string;
     readonly description: string;
     readonly filterValues: ReadonlyArray<string>;
-    readonly initialViewBox?: QuizDefinition['initialViewBox'];
+    readonly initialCameraPosition?: QuizDefinition['initialCameraPosition'];
   }> = [
     {
       id: 'geo-rivers-europe',
@@ -186,14 +187,14 @@ function buildRiversQuizzes(): ReadonlyArray<QuizDefinition> {
       title: 'North American Rivers',
       description: 'Name the major rivers of North America.',
       filterValues: ['North America'],
-      initialViewBox: { x: -130, y: -55, width: 80, height: 50 },
+      initialCameraPosition: { x: -130, y: -55, width: 80, height: 50 },
     },
     {
       id: 'geo-rivers-south-america',
       title: 'South American Rivers',
       description: 'Name the major rivers of South America.',
       filterValues: ['South America'],
-      initialViewBox: { x: -85, y: -15, width: 55, height: 73 },
+      initialCameraPosition: { x: -85, y: -15, width: 55, height: 73 },
     },
     {
       id: 'geo-rivers-oceania',
@@ -212,7 +213,7 @@ function buildRiversQuizzes(): ReadonlyArray<QuizDefinition> {
       { column: 'continent', values: c.filterValues },
       { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
     ],
-    ...(c.initialViewBox ? { initialViewBox: c.initialViewBox } : {}),
+    ...(c.initialCameraPosition ? { initialCameraPosition: c.initialCameraPosition } : {}),
   }));
 
   // World quiz — all continents, scalerank <= 5
@@ -222,7 +223,7 @@ function buildRiversQuizzes(): ReadonlyArray<QuizDefinition> {
     title: 'World Rivers',
     description: 'Name the major rivers of the world.',
     dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5'] },
-    initialViewBox: { x: -169, y: -70, width: 360, height: 130 },
+    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
   });
 
   return quizzes;

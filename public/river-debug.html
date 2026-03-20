@@ -15,6 +15,9 @@
     .legend-swatch { width: 14px; height: 14px; border-radius: 2px; flex-shrink: 0; }
     .legend-label { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     svg { width: 100vw; height: 100vh; background: #eee; }
+    #coords { position: fixed; bottom: 8px; right: 8px; z-index: 10; background: white;
+      padding: 4px 8px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      font-size: 12px; font-family: monospace; }
   </style>
 </head>
 <body>
@@ -32,6 +35,7 @@
     <div id="legend"></div>
   </div>
   <svg id="map" viewBox="-30 -72 80 45" preserveAspectRatio="xMidYMid meet"></svg>
+  <div id="coords">Lat: —, Lng: —</div>
 
   <script>
     function hslColor(i, total) {
@@ -73,9 +77,10 @@
 
     async function render(region) {
       const base = location.pathname.replace(/\/river-debug\.html$/, '');
-      const [riverText, borderText] = await Promise.all([
+      const [riverText, borderText, lakeText] = await Promise.all([
         fetch(base + '/data/rivers/world-rivers.csv').then(r => r.text()),
         fetch(base + '/data/borders/world-borders.csv').then(r => r.text()),
+        fetch(base + '/data/rivers/world-lakes-debug.csv').then(r => r.text()),
       ]);
 
       let rivers = parseCsv(riverText);
@@ -121,11 +126,26 @@
         }
       }
 
+      // Draw all lake polygons (light blue, for debugging gap coverage)
+      const lakes = parseCsv(lakeText);
+      for (const lake of lakes) {
+        if (!lake.path) continue;
+        const segments = lake.path.split('|');
+        for (const seg of segments) {
+          const trimmed = seg.trim();
+          if (!trimmed) continue;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', trimmed);
+          path.setAttribute('fill', 'rgba(100,150,255,0.25)');
+          path.setAttribute('stroke', 'rgba(100,150,255,0.5)');
+          path.setAttribute('stroke-width', '0.1');
+          svg.appendChild(path);
+        }
+      }
+
       // Draw rivers with unique colors
       const legend = document.getElementById('legend');
       legend.innerHTML = '';
-
-      const STROKE_WIDTH = 0.4;
 
       rivers.forEach((r, i) => {
         const color = hslColor(i, rivers.length);
@@ -143,13 +163,13 @@
             path.setAttribute('fill', color);
             path.setAttribute('fill-opacity', '0.25');
             path.setAttribute('stroke', color);
-            path.setAttribute('stroke-width', String(STROKE_WIDTH * 0.5));
-            path.setAttribute('stroke-opacity', '0.5');
+            path.setAttribute('stroke-width', '0.105');
+            path.setAttribute('stroke-opacity', '0.9');
           } else {
             // River stroke
             path.setAttribute('fill', 'none');
             path.setAttribute('stroke', color);
-            path.setAttribute('stroke-width', String(STROKE_WIDTH));
+            path.setAttribute('stroke-width', '0.15');
             path.setAttribute('stroke-opacity', '0.9');
             path.setAttribute('stroke-linecap', 'round');
             path.setAttribute('stroke-linejoin', 'round');
@@ -175,6 +195,22 @@
 
     document.getElementById('region').addEventListener('change', (e) => render(e.target.value));
     render('Europe');
+
+    // Show lat/lng on mouse move
+    const coordsEl = document.getElementById('coords');
+    document.getElementById('map').addEventListener('mousemove', (e) => {
+      const svg = document.getElementById('map');
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const svgPt = pt.matrixTransform(ctm.inverse());
+      // SVG uses x=lng, y=-lat
+      const lat = (-svgPt.y).toFixed(2);
+      const lng = svgPt.x.toFixed(2);
+      coordsEl.textContent = `Lat: ${lat}, Lng: ${lng}`;
+    });
   </script>
 </body>
 </html>
