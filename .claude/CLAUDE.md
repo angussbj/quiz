@@ -112,6 +112,7 @@ Source files are gitignored (too large). Download URLs are in each script's head
 - Quiz modes receive `QuizModeProps`
 - Animations: use Framer Motion (`motion` from `framer-motion`)
 - Zoom/pan: use only through `ZoomPanContainer` wrapper (wraps `react-zoom-pan-pinch`)
+- **Controls area must be fixed height**: Quiz mode control areas use `height: var(--quiz-controls-height)` with `overflow: hidden` — never `min-height`. Any change in controls height causes the visualization above to re-render at a different size, triggering unwanted camera movements. Content that doesn't fit is clipped.
 
 ### Testing
 - Heavy unit tests: scoring, data parsing, toggle state, hooks
