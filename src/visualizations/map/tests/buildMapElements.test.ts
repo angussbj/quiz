@@ -42,7 +42,7 @@ describe('buildMapElements', () => {
     expect(elements[0].svgPathData).toBe('');
   });
 
-  it('uses code column if present, falls back to id', () => {
+  it('uses code column if present, returns empty string when absent', () => {
     const rowWithCode = makeRow({ latitude: '0', longitude: '0', code: 'FR' });
     const rowWithoutCode: QuizDataRow = { id: 'france', latitude: '0', longitude: '0' };
 
@@ -50,7 +50,7 @@ describe('buildMapElements', () => {
     expect(withCode[0].code).toBe('FR');
 
     const withoutCode = buildMapElements([rowWithoutCode], {});
-    expect(withoutCode[0].code).toBe('france');
+    expect(withoutCode[0].code).toBe('');
   });
 
   it('returns empty array for empty input', () => {

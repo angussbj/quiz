@@ -56,12 +56,19 @@ const TARGET_COUNTRIES: ReadonlyArray<TargetCountry> = [
     iso2: 'IN',
     slug: 'india',
     label: 'India',
+    regionOverrides: {
+      'Andaman and Nicobar': 'South',
+      'Ladakh': 'North',
+    },
   },
   {
     iso2: 'CN',
     slug: 'china',
     label: 'China',
     excludeNames: ['Paracel Islands'],
+    regionOverrides: {
+      'Fujian': 'East China',
+    },
   },
   {
     iso2: 'BR',
@@ -212,6 +219,12 @@ const TARGET_COUNTRIES: ReadonlyArray<TargetCountry> = [
     preferEnglishNames: true,
     /** Strip " Prefecture" suffix from name_en; keep original as alternate */
     nameSuffix: ' Prefecture',
+    regionOverrides: {
+      'Nagasaki': 'Kyushu',
+      'Saga': 'Kyushu',
+      'Nagasaki Prefecture': 'Kyushu',
+      'Saga Prefecture': 'Kyushu',
+    },
   },
   {
     iso2: 'NG',

@@ -183,7 +183,7 @@ export function buildMapElements(
       group: groupColumn ? row[groupColumn] : undefined,
       labelPosition: parseLabelPosition(row['label_position']),
       svgPathData,
-      code: row[codeColumn] ?? id,
+      code: row[codeColumn] ?? '',
       pathRenderStyle: pathStyle,
       labelAnchor,
       tributaryOf,
