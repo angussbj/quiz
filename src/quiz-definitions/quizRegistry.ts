@@ -197,7 +197,7 @@ const subdivisionsQuizBase = {
     longitude: 'longitude',
     group: 'region',
   },
-  supportingDataPaths: [] as ReadonlyArray<string>,
+  supportingDataPaths: ['/data/borders/world-borders.csv'],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'dataPath'>;
 
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
