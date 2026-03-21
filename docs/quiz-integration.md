@@ -78,11 +78,10 @@ Renderers gate hover/click effects on the presence of the `onElementClick` prop 
 ## Quiz Data Conventions
 
 - `QuizModeProps.dataRows` uses `Record<string, string>[]` (not `QuizDataRow`) to match `useQuizData` return type without casting.
-- Geography quiz paths are 2-deep: `['Geography', 'Capitals']` not `['Geography', 'Capitals', 'Europe']`. The region is in the quiz title.
-- Quiz IDs follow the pattern `geo-{type}-{region}` (e.g., `geo-capitals-europe`).
+- Geography quiz paths are 2-deep: `['Geography', 'Capitals']`. Quiz IDs follow the pattern `geo-{type}-{scope}` (e.g., `geo-capitals-world`).
 - CSV data is fetched from `public/data/` paths.
-- **Americas subregion split:** North America quiz filters by `subregion` values `['North America', 'Central America', 'Caribbean']` (23 countries); South America filters by `['South America']` (12 countries). Uses `subregion` not `region` (which is just `'Americas'` for all).
-- **World vs continent grouping:** World quizzes set `columnMappings.group = 'region'` for continent-level colour coding. Continent quizzes set `columnMappings.group = 'group'` (subregion) for finer colour coding.
+- **Americas chip split:** The Americas region is split into two chips — North America (filters by `subregion` values `['North America', 'Central America', 'Caribbean']`) and South America (filters by `['South America']`). Uses `subregion` not `region` (which is just `'Americas'` for all).
+- **Group coloring:** World quizzes set `columnMappings.group = 'region'` for continent-level colour coding.
 - **BackgroundPath labels:** `BackgroundPath` has optional `label` and `labelCenter` fields. Non-quiz territory shapes (e.g. dependent territories in a countries quiz) use these to display name labels when the `showCountryNames` toggle is on.
 
 ## Quiz Definition Base Objects
@@ -91,7 +90,7 @@ Quiz definitions that share the same visualization type, toggles, and UI structu
 
 **Existing base objects:**
 - `capitalsQuizBase` — map quizzes for city-based data (capitals, largest cities). Includes city dots, city names, country names, flags, prompt toggles, presets, and `atLeastOne` constraints.
-- `countriesQuizBase` — map quizzes for country-based data (countries by continent). Simpler toggles (no city dots/names, no prompt toggles).
+- `countriesQuizBase` — map quizzes for country shape data (world countries quiz). Simpler toggles than capitals: no city dots/names, no prompt toggles.
 - `timelineQuizBase` — timeline quizzes for historical events. Minimal base; toggles/presets/columnMappings are defined per quiz.
 
 **When adding a new city-based map quiz** (e.g. cities by GDP, Olympic host cities):

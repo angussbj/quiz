@@ -3,6 +3,7 @@ import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
+import { elementToggle } from '../elementToggle';
 import { isAnatomyElement } from './AnatomyElement';
 import styles from './AnatomyRenderer.module.css';
 
@@ -135,6 +136,7 @@ export function AnatomyRenderer({
   onPositionClick,
   targetElementId,
   toggles,
+  elementToggles,
   svgOverlay,
   initialCameraPosition,
   putInView,
@@ -158,6 +160,7 @@ export function AnatomyRenderer({
         targetElementId={targetElementId}
         uniqueGroups={uniqueGroups}
         toggles={toggles}
+        elementToggles={elementToggles}
       />
       {svgOverlay}
     </ZoomPanContainer>
@@ -172,6 +175,7 @@ interface AnatomyContentProps {
   readonly targetElementId?: string;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly toggles: Readonly<Record<string, boolean>>;
+  readonly elementToggles: VisualizationRendererProps['elementToggles'];
 }
 
 function AnatomyContent({
@@ -182,6 +186,7 @@ function AnatomyContent({
   targetElementId,
   uniqueGroups,
   toggles,
+  elementToggles,
 }: AnatomyContentProps) {
   const { scale, basePixelsPerViewBoxUnit } = useZoomPan();
 
@@ -201,7 +206,6 @@ function AnatomyContent({
     [onPositionClick],
   );
 
-  const showLabels = toggles['showLabels'] ?? false;
   const showGroupColors = toggles['showGroupColors'] ?? false;
   const labelSize = 5 / (scale * basePixelsPerViewBoxUnit) * 6;
 
@@ -226,7 +230,8 @@ function AnatomyContent({
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'highlighted', showGroupColors)}
 
       {/* Bone name labels with leader lines */}
-      {showLabels && elements.map((element) => {
+      {elements.map((element) => {
+        if (!elementToggle(elementToggles, toggles, element.id, 'showLabels')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         if (!isAnatomyElement(element)) return null;

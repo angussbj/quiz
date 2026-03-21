@@ -27,6 +27,8 @@ export interface ActiveQuizProps {
   readonly groupFilterColumn?: string;
   readonly hideFilteredElements?: boolean;
   readonly tributaryColumn?: string;
+  readonly distributaryColumn?: string;
+  readonly segmentColumn?: string;
   readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
   readonly groupFilterCameraPositions?: Readonly<Record<string, {
     readonly x: number;
@@ -56,6 +58,8 @@ export function ActiveQuiz({
   groupFilterColumn,
   hideFilteredElements,
   tributaryColumn,
+  distributaryColumn,
+  segmentColumn,
   initialCameraPosition,
   groupFilterCameraPositions,
 }: ActiveQuizProps) {
@@ -64,11 +68,21 @@ export function ActiveQuiz({
     const hasGroupFilter = groupFilterColumn && config.selectedGroups;
     // Exclude tributaries when 'includeTributaries' toggle is explicitly off
     const hasTributaryFilter = tributaryColumn && config.toggleValues['includeTributaries'] === false;
-    if (!hasRangeFilter && !hasGroupFilter && !hasTributaryFilter) {
+    // Exclude distributaries when 'includeDistributaries' toggle is explicitly off
+    const hasDistributaryFilter = distributaryColumn && config.toggleValues['includeDistributaries'] === false;
+    // When 'includeSegmentNames' is off, segments are excluded from the quiz and their
+    // names are added as alternates for the canonical river row.
+    const hasSegmentFilter = segmentColumn && config.toggleValues['includeSegmentNames'] === false;
+
+    if (!hasRangeFilter && !hasGroupFilter && !hasTributaryFilter && !hasDistributaryFilter && !hasSegmentFilter) {
       return { activeElements: elements, activeDataRows: dataRows, backgroundElementIds: new Set<string>() };
     }
+
     const activeIds = new Set<string>();
     const bgIds = new Set<string>();
+    // Maps canonical answer value → extra alternate names collected from segment rows
+    const segmentAltsByCanonical: Record<string, Array<string>> = {};
+
     for (const row of dataRows) {
       const id = row['id'] ?? '';
       let passes = true;
@@ -85,18 +99,60 @@ export function ActiveQuiz({
         // Rows with a non-empty tributary_of value are tributaries — exclude from quiz
         if (row[tributaryColumn]) passes = false;
       }
+      if (passes && hasDistributaryFilter) {
+        if (row[distributaryColumn]) passes = false;
+      }
+      if (passes && hasSegmentFilter) {
+        const canonical = row[segmentColumn];
+        if (canonical) {
+          passes = false;
+          // Collect this segment's name and alternates for the canonical row
+          const answerColumn = columnMappings['answer'] ?? 'name';
+          const segmentName = row[answerColumn] ?? '';
+          if (segmentName) {
+            segmentAltsByCanonical[canonical] ??= [];
+            segmentAltsByCanonical[canonical].push(segmentName);
+          }
+          const altsColumn = `${answerColumn}_alternates`;
+          const alts = row[altsColumn];
+          if (alts) {
+            segmentAltsByCanonical[canonical] ??= [];
+            for (const alt of alts.split('|').map((s) => s.trim()).filter(Boolean)) {
+              segmentAltsByCanonical[canonical].push(alt);
+            }
+          }
+        }
+      }
       if (passes) {
         activeIds.add(id);
       } else {
         bgIds.add(id);
       }
     }
+
+    const activeElementsFiltered = elements.filter((el) => activeIds.has(el.id));
+
+    // Augment canonical rows with segment alternate names so that typing a segment
+    // name matches the canonical quiz item.
+    const answerColumn = columnMappings['answer'] ?? 'name';
+    const altsColumn = `${answerColumn}_alternates`;
+    const activeDataRowsAugmented = dataRows
+      .filter((row) => activeIds.has(row['id'] ?? ''))
+      .map((row) => {
+        const canonicalName = row[answerColumn] ?? '';
+        const extraAlts = segmentAltsByCanonical[canonicalName];
+        if (!extraAlts?.length) return row;
+        const existing = row[altsColumn] ?? '';
+        const merged = [existing, ...extraAlts].filter(Boolean).join('|');
+        return { ...row, [altsColumn]: merged };
+      });
+
     return {
-      activeElements: elements.filter((el) => activeIds.has(el.id)),
-      activeDataRows: dataRows.filter((row) => activeIds.has(row['id'] ?? '')),
+      activeElements: activeElementsFiltered,
+      activeDataRows: activeDataRowsAugmented,
       backgroundElementIds: bgIds,
     };
-  }, [elements, dataRows, rangeColumn, config.elementRange, groupFilterColumn, config.selectedGroups, tributaryColumn, config.toggleValues]);
+  }, [elements, dataRows, columnMappings, rangeColumn, config.elementRange, groupFilterColumn, config.selectedGroups, tributaryColumn, distributaryColumn, segmentColumn, config.toggleValues]);
 
   const FilterAwareRenderer = useMemo(() => {
     if (backgroundElementIds.size === 0) return Renderer;

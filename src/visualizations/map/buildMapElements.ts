@@ -78,8 +78,9 @@ export function buildMapElements(
     const center = projectGeo({ latitude: lat, longitude: lng });
     const svgPathData = (row['paths'] ?? '').split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' ');
 
-    // For stroke-style paths (rivers), compute bounds from the actual path data
-    const bounds = pathStyle === 'stroke' && svgPathData
+    // For elements with SVG path data, compute bounds from the actual path.
+    // For point elements (city dots), use a small dot radius around the center.
+    const bounds = svgPathData
       ? computePathBounds(svgPathData)
       : {
           minX: center.x - DOT_RADIUS,
@@ -97,6 +98,8 @@ export function buildMapElements(
 
     const id = row['id'] ?? '';
     const tributaryOf = row['tributary_of'] || undefined;
+    const distributaryOf = row['distributary_of'] || undefined;
+    const segmentOf = row['segment_of'] || undefined;
     return {
       id,
       label: row[labelColumn] ?? id,
@@ -111,6 +114,8 @@ export function buildMapElements(
       pathRenderStyle: pathStyle,
       labelAnchor,
       tributaryOf,
+      distributaryOf,
+      segmentOf,
     };
   });
 }

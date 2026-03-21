@@ -198,11 +198,19 @@ function renderShapeElements(
     }
     const isStrokePath = element.pathRenderStyle === 'stroke';
 
-    // When 'includeTributaries' is off, tributaries inherit their parent river's visual state
-    // so they appear as a visual extension of the parent rather than as standalone quiz elements.
-    const parentState = isStrokePath && element.tributaryOf && !toggles['includeTributaries']
-      ? nameToState[element.tributaryOf]
-      : undefined;
+    // Tributaries, distributaries, and segment aliases inherit their parent/canonical river's
+    // visual state so they appear as a visual extension rather than standalone quiz elements.
+    let proxyParentName: string | undefined;
+    if (isStrokePath) {
+      if (element.tributaryOf && !toggles['includeTributaries']) {
+        proxyParentName = element.tributaryOf;
+      } else if (element.distributaryOf && !toggles['includeDistributaries']) {
+        proxyParentName = element.distributaryOf;
+      } else if (element.segmentOf && !toggles['includeSegmentNames']) {
+        proxyParentName = element.segmentOf;
+      }
+    }
+    const parentState = proxyParentName !== undefined ? nameToState[proxyParentName] : undefined;
     const effectiveState = parentState !== undefined ? parentState : state;
     const isTributaryProxy = parentState !== undefined;
 
@@ -479,8 +487,10 @@ function MapContent({
         if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
-        // Skip label for tributaries rendered as parent-colour proxies (not quiz items)
+        // Skip label for tributaries/distributaries/segments rendered as proxies (not quiz items)
         if (element.tributaryOf && !toggles['includeTributaries']) return null;
+        if (element.distributaryOf && !toggles['includeDistributaries']) return null;
+        if (element.segmentOf && !toggles['includeSegmentNames']) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showRiverNames')) return null;
         const color = stateColor(state) ?? 'var(--color-text-primary)';
         const anchor = element.labelAnchor ?? element.viewBoxCenter;

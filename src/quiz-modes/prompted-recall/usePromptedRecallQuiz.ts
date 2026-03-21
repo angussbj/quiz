@@ -87,6 +87,8 @@ export function usePromptedRecallQuiz({
         states[el.id] = 'missed';
       } else if (el.id === currentElementId) {
         states[el.id] = 'highlighted';
+      } else {
+        states[el.id] = 'default';
       }
     }
     return states;

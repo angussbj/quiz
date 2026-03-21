@@ -13,6 +13,12 @@ export interface MapElement extends VisualizationElement {
   readonly labelAnchor?: ViewBoxPosition;
   /** Name of the direct parent river (e.g. 'Mississippi' for 'Ohio'). Undefined for top-level rivers. */
   readonly tributaryOf?: string;
+  /** Name of the parent river this distributary branches from (e.g. 'Nile' for 'Rosetta Branch'). */
+  readonly distributaryOf?: string;
+  /** Canonical river name when this element is a named section of a larger river
+   *  (e.g. 'Tigris' for 'Dicle'). When the 'includeSegmentNames' toggle is off,
+   *  all segments are answered together with the canonical. */
+  readonly segmentOf?: string;
 }
 
 export function isMapElement(element: VisualizationElement): element is MapElement {

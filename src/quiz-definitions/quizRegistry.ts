@@ -62,7 +62,7 @@ const capitalsQuizBase = {
 const countriesQuizBase = {
   path: ['Geography'],
   visualizationType: 'map' as const,
-  availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
@@ -153,6 +153,8 @@ const riversQuizBase = {
     { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'includeTributaries', label: 'Include tributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'includeDistributaries', label: 'Include distributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'includeSegmentNames', label: 'Include segment names', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
   ],
   presets: [],
   columnMappings: {
@@ -166,6 +168,8 @@ const riversQuizBase = {
   dataPath: '/data/rivers/world-rivers.csv',
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/medium-lakes.csv'],
   tributaryColumn: 'tributary_of',
+  distributaryColumn: 'distributary_of',
+  segmentColumn: 'segment_of',
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 

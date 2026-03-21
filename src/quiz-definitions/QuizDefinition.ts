@@ -70,6 +70,14 @@ export interface QuizDefinition<K extends string = string> {
    *  When the 'includeTributaries' toggle is false, rows with a non-empty value in this
    *  column are excluded from the quiz and rendered as visual context (parent river colour). */
   readonly tributaryColumn?: string;
+  /** Column in the data CSV that stores the parent river name for distributary rivers.
+   *  When the 'includeDistributaries' toggle is false, these are excluded and rendered
+   *  with the parent river's colour. */
+  readonly distributaryColumn?: string;
+  /** Column in the data CSV that stores the canonical river name for named-section rivers.
+   *  When the 'includeSegmentNames' toggle is false, all segments are answered together —
+   *  typing any segment name marks the canonical and all its segments correct. */
+  readonly segmentColumn?: string;
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
   readonly initialCameraPosition?: {
     readonly x: number;

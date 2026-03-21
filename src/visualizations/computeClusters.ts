@@ -4,6 +4,12 @@ import type { ElementCluster } from './VisualizationRendererProps';
 interface ClusterableElement {
   readonly id: string;
   readonly viewBoxCenter: ViewBoxPosition;
+  readonly viewBoxBounds?: {
+    readonly minX: number;
+    readonly minY: number;
+    readonly maxX: number;
+    readonly maxY: number;
+  };
 }
 
 function viewBoxDistance(a: ViewBoxPosition, b: ViewBoxPosition): number {
@@ -59,7 +65,15 @@ export function computeClusters(
   const ecViewBox = (elementClusterDistance ?? elementElementDistance) / screenPixelsPerViewBoxUnit;
   const ccViewBox = (clusterClusterDistance ?? elementClusterDistance ?? elementElementDistance) / screenPixelsPerViewBoxUnit;
 
-  const remaining = [...elements];
+  // Exclude elements whose bounding box is larger than the element-element distance.
+  // A country whose entire shape fits within the cluster radius can become a badge;
+  // one that doesn't is clearly visible and should render normally.
+  const remaining = elements.filter((el) => {
+    if (!el.viewBoxBounds) return true;
+    const dx = el.viewBoxBounds.maxX - el.viewBoxBounds.minX;
+    const dy = el.viewBoxBounds.maxY - el.viewBoxBounds.minY;
+    return Math.sqrt(dx * dx + dy * dy) < eeViewBox;
+  });
   const clusters: MutableCluster[] = [];
 
   // Track how many elements we've scanned without forming a cluster.

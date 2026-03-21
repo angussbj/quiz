@@ -6,6 +6,10 @@
  *   discharge_rank   — rank by discharge (1 = highest); for rivers with multiple
  *                      path segments, only the lowest-scalerank segment is ranked.
  *   tributary_of     — name of the direct parent river (blank if top-level)
+ *   distributary_of  — name of the parent river this distributary branches from
+ *                      (e.g. delta channels, bifurcations)
+ *   segment_of       — canonical river name when this row is a named section of a
+ *                      larger river (e.g. Dicle is a Turkish-name section of Tigris)
  *   length_km        — estimated length of this row's path in km
  *   total_length_km  — river's own length + all direct tributary lengths, recursively;
  *                      only set on the lowest-scalerank row per river name
@@ -213,7 +217,7 @@ const TRIBUTARY_OF = {
   // ── Nile system ─────────────────────────────────────────────────────────
   'Abay':       'Nile',
   'Kagera':     'Nile',
-  'Albert Nile': 'Nile',
+  // Albert Nile is a named section of the Nile, not a true tributary → see SEGMENT_OF
 
   // ── Yangtze system ──────────────────────────────────────────────────────
   'Tongtian':   'Yangtze',
@@ -308,6 +312,55 @@ const TRIBUTARY_OF = {
 
   // ── Saskatchewan ────────────────────────────────────────────────────────
   'North Saskatchewan': 'Saskatchewan',
+
+  // ── Amazon system (additional) ───────────────────────────────────────────
+  'Japurá':     'Amazonas',  // same river as Caquetá; Brazilian name section
+  'Tapajós':    'Amazonas',
+
+  // ── Zambezi system ──────────────────────────────────────────────────────
+  'Kafue':      'Zambezi',
+  'Shire':      'Zambezi',
+
+  // ── Amur system ─────────────────────────────────────────────────────────
+  'Sungari':    'Amur',
+
+  // ── Mackenzie system (additional) ────────────────────────────────────────
+  'Liard':      'Mackenzie',
+};
+
+// Distributaries: branches that flow FROM a river (e.g. delta channels).
+// When 'includeDistributaries' toggle is off, these render with the parent's colour.
+const DISTRIBUTARY_OF = {
+  // ── Nile delta ───────────────────────────────────────────────────────────
+  'Damietta Branch': 'Nile',
+  'Rosetta Branch':  'Nile',
+
+  // ── Lena delta ───────────────────────────────────────────────────────────
+  'Bykovskaya Protoka': 'Lena',
+};
+
+// Segment names: different names for sections of the same physical river.
+// The value is the CANONICAL name (the most downstream / internationally recognised
+// section, determined geometrically as the segment whose terminal endpoint is closest
+// to the river's outlet). When 'includeSegmentNames' toggle is off, all segments are
+// answered together — typing any segment name (or the canonical name) marks all of
+// them correct simultaneously.
+const SEGMENT_OF = {
+  // ── Tigris: Dicle is the Turkish name for the upper section ──────────────
+  'Dicle':       'Tigris',
+
+  // ── Dnieper: Dnepre is an alternate-name section in the CSV ─────────────
+  'Dnepre':      'Dnieper',
+
+  // ── Tagus: Tajo is the Spanish name for the upstream section ─────────────
+  'Tajo':        'Tagus',
+
+  // ── Japurá/Caquetá: same river — Caquetá in Colombia, Japurá in Brazil ──
+  // Japurá is more downstream (enters Amazon), so Japurá is canonical.
+  'Caquetá':     'Japurá',
+
+  // ── Nile: Albert Nile is the section flowing from Lake Albert northward ──
+  'Albert Nile': 'Nile',
 };
 
 // ── CSV helpers ──────────────────────────────────────────────────────────────
@@ -429,7 +482,7 @@ const text = readFileSync(RIVERS_PATH, 'utf8');
 const { cols, rows } = parseCSV(text);
 
 // Strip any existing enrichment columns before re-adding
-const ENRICHED_COLS = ['discharge_m3s', 'discharge_rank', 'tributary_of', 'length_km', 'total_length_km'];
+const ENRICHED_COLS = ['discharge_m3s', 'discharge_rank', 'tributary_of', 'distributary_of', 'segment_of', 'length_km', 'total_length_km'];
 const baseCols = cols.filter((c) => !ENRICHED_COLS.includes(c));
 for (const row of rows) {
   for (const col of ENRICHED_COLS) delete row[col];
@@ -464,10 +517,12 @@ for (const row of rows) {
   if (!row.discharge_rank) row.discharge_rank = '';
 }
 
-// ── Tributary relationships ───────────────────────────────────────────────────
+// ── Tributary / distributary / segment relationships ──────────────────────────
 
 for (const row of rows) {
   row.tributary_of = TRIBUTARY_OF[row.name] ?? '';
+  row.distributary_of = DISTRIBUTARY_OF[row.name] ?? '';
+  row.segment_of = SEGMENT_OF[row.name] ?? '';
 }
 
 // ── Length ───────────────────────────────────────────────────────────────────
@@ -523,7 +578,7 @@ for (const row of rows) {
 
 // ── Write CSV ────────────────────────────────────────────────────────────────
 
-const newCols = [...baseCols, 'discharge_m3s', 'discharge_rank', 'tributary_of', 'length_km', 'total_length_km'];
+const newCols = [...baseCols, 'discharge_m3s', 'discharge_rank', 'tributary_of', 'distributary_of', 'segment_of', 'length_km', 'total_length_km'];
 writeFileSync(RIVERS_PATH, toCSV(newCols, rows));
 
 // ── Report ───────────────────────────────────────────────────────────────────
