@@ -187,7 +187,6 @@ const subdivisionsQuizBase = {
   defaultMode: 'identify' as const,
   toggles: [
     { key: 'showBorders', label: 'Borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
     { key: 'showCountryNames', label: 'Subdivision names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
   ],
   presets: [],
