@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
+import { STATUS_COLORS } from '../elementStateColors';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
@@ -36,26 +37,6 @@ function groupColor(group: string | undefined, groups: ReadonlyArray<string>): s
   return GROUP_COLORS[index >= 0 ? index % GROUP_COLORS.length : 0];
 }
 
-function stateColor(state: ElementVisualState | undefined): string | undefined {
-  switch (state) {
-    case 'correct':
-      return 'var(--color-correct)';
-    case 'correct-second':
-      return 'var(--color-correct-second)';
-    case 'correct-third':
-      return 'var(--color-correct-third)';
-    case 'incorrect':
-      return 'var(--color-incorrect)';
-    case 'missed':
-      return 'var(--color-missed)';
-    case 'highlighted':
-      return 'var(--color-highlight)';
-    case 'default':
-      return 'var(--color-text-muted)';
-    default:
-      return undefined;
-  }
-}
 
 function stateFillOpacity(state: ElementVisualState | undefined): number {
   switch (state) {
@@ -183,6 +164,7 @@ function renderShapeElements(
   riverHitStrokeWidth: number,
   toggles: Readonly<Record<string, boolean>>,
   nameToState: Readonly<Record<string, ElementVisualState | undefined>>,
+  showRegionColors: boolean,
 ) {
   return elements.map((element) => {
     if (!isMapElement(element) || !element.svgPathData) return null;
@@ -191,8 +173,8 @@ function renderShapeElements(
     const state = elementStates[element.id];
     if (state === 'hidden') return null;
     if (targetState === undefined) {
-      // Default layer: only elements with no state color
-      if (stateColor(state) !== undefined) return null;
+      // Default layer: only elements with no state assigned
+      if (state !== undefined) return null;
     } else {
       if (state !== targetState) return null;
     }
@@ -214,8 +196,12 @@ function renderShapeElements(
     const effectiveState = parentState !== undefined ? parentState : state;
     const isTributaryProxy = parentState !== undefined;
 
+    if (effectiveState === 'hidden') return null;
+
     // Rivers use a neutral water color instead of region-based group colors
-    const color = stateColor(effectiveState) ?? (isStrokePath ? 'var(--color-lake)' : groupColor(element.group, uniqueGroups));
+    const color = effectiveState !== undefined
+      ? STATUS_COLORS[effectiveState].main
+      : (isStrokePath ? 'var(--color-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--color-bg-primary)'));
     const effectiveRiverStrokeWidth = isStrokePath && effectiveState === 'highlighted' ? riverStrokeWidth * 2.5 : riverStrokeWidth;
 
     if (isStrokePath) {
@@ -381,6 +367,7 @@ function MapContent({
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
 
+  const showRegionColors = toggles['showRegionColors'] === true;
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
   // Maps river name → element state, used to resolve tributary proxy colors.
@@ -463,13 +450,13 @@ function MapContent({
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
 
       {/* Country name labels and flags (from background border data, unified overlap detection) */}
       {(toggles['showCountryNames'] || toggles['showMapFlags']) && backgroundLabels && (
@@ -492,7 +479,7 @@ function MapContent({
         if (element.distributaryOf && !toggles['includeDistributaries']) return null;
         if (element.segmentOf && !toggles['includeSegmentNames']) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showRiverNames')) return null;
-        const color = stateColor(state) ?? 'var(--color-text-primary)';
+        const color = state !== undefined ? STATUS_COLORS[state].main : 'var(--color-text-primary)';
         const anchor = element.labelAnchor ?? element.viewBoxCenter;
         const pos = element.labelPosition;
         const labelOffset = 0.8; // viewBox units
@@ -539,7 +526,7 @@ function MapContent({
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
-        const color = stateColor(state) ?? 'var(--color-city-dot)';
+        const color = state !== undefined ? STATUS_COLORS[state].main : 'var(--color-city-dot)';
         return (
           <circle
             key={`dot-${element.id}`}

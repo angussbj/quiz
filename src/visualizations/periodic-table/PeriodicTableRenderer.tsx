@@ -6,6 +6,7 @@ import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import type { ElementVisualState } from '../VisualizationElement';
+import { STATUS_COLORS } from '../elementStateColors';
 import { gridElementToVisualizationElement } from './gridElementToVisualizationElement';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 
@@ -28,68 +29,25 @@ function stateToFill(state: ElementVisualState, groupColorIndex: number | undefi
   const groupColor = showGroups && groupColorIndex !== undefined
     ? `var(--color-group-${groupColorIndex + 1})`
     : undefined;
-
-  switch (state) {
-    case 'correct':
-      return groupColor ?? 'var(--color-correct-bg)';
-    case 'correct-second':
-      return groupColor ?? 'var(--color-correct-second-bg)';
-    case 'correct-third':
-      return groupColor ?? 'var(--color-correct-third-bg)';
-    case 'incorrect':
-      return 'var(--color-incorrect-bg)';
-    case 'missed':
-      return 'var(--color-missed-bg)';
-    case 'highlighted':
-      return 'var(--color-highlight-bg)';
-    case 'context':
-      return 'var(--color-bg-tertiary)';
-    case 'hidden':
-    default:
-      return groupColor ?? 'var(--color-bg-tertiary)';
+  if (state === 'hidden') return groupColor ?? STATUS_COLORS['default'].background;
+  if (groupColor !== undefined && (state === 'correct' || state === 'correct-second' || state === 'correct-third' || state === 'default')) {
+    return groupColor;
   }
+  return STATUS_COLORS[state].background;
 }
 
 function stateToStroke(state: ElementVisualState): string {
-  switch (state) {
-    case 'correct':
-      return 'var(--color-correct)';
-    case 'correct-second':
-      return 'var(--color-correct-second)';
-    case 'correct-third':
-      return 'var(--color-correct-third)';
-    case 'incorrect':
-      return 'var(--color-incorrect)';
-    case 'missed':
-      return 'var(--color-missed)';
-    case 'highlighted':
-      return 'var(--color-highlight)';
-    default:
-      return 'var(--color-border)';
-  }
+  if (state === 'hidden') return STATUS_COLORS['default'].main;
+  return STATUS_COLORS[state].main;
 }
 
 function stateToTextFill(state: ElementVisualState, groupColorIndex: number | undefined, showGroups: boolean): string {
   const hasGroupColor = showGroups && groupColorIndex !== undefined;
-  switch (state) {
-    case 'correct':
-      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-correct)';
-    case 'correct-second':
-      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-correct-second)';
-    case 'correct-third':
-      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-correct-third)';
-    case 'incorrect':
-      return 'var(--color-incorrect)';
-    case 'missed':
-      return 'var(--color-missed)';
-    case 'highlighted':
-      return 'var(--color-text-primary)';
-    case 'context':
-      return 'var(--color-text-muted)';
-    case 'hidden':
-    default:
-      return hasGroupColor ? 'var(--color-on-accent)' : 'var(--color-text-muted)';
+  if (state === 'hidden') return hasGroupColor ? 'var(--color-on-accent)' : STATUS_COLORS['default'].text;
+  if (hasGroupColor && (state === 'correct' || state === 'correct-second' || state === 'correct-third')) {
+    return 'var(--color-on-accent)';
   }
+  return STATUS_COLORS[state].text;
 }
 
 function isThickStroke(state: ElementVisualState): boolean {

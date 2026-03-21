@@ -60,7 +60,7 @@ describe('useLocateQuiz', () => {
     expect(result.current.totalTargets).toBe(2);
   });
 
-  it('interactive elements start hidden, non-interactive start revealed', () => {
+  it('interactive elements start hidden, non-interactive start context', () => {
     const mixedElements = [paris, makeNonInteractiveElement('border'), london];
     const { result } = renderHook(() => useLocateQuiz(mixedElements));
 

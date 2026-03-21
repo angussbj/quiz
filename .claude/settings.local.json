@@ -98,7 +98,8 @@
       "Bash(echo \"$path\")",
       "Bash(mv:*)",
       "Bash(unzip:*)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "mcp__plugin_playwright_playwright__browser_network_requests"
     ]
   }
 }

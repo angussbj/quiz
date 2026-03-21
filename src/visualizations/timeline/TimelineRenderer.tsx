@@ -6,6 +6,7 @@ import { elementToggle } from '../elementToggle';
 import type { TimelineElement } from './TimelineElement';
 import { isTimelineElement } from './TimelineElement';
 import { buildCategoryColorMap } from './categoryColors';
+import { STATUS_COLORS } from '../elementStateColors';
 import { computeAxisTicks } from './computeAxisTicks';
 import { formatTimestampRange, timestampToFractionalYear } from './TimelineTimestamp';
 import { UNITS_PER_YEAR } from './buildTimelineElements';
@@ -428,7 +429,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                 // When category colours are off, all bars are the same neutral colour, so status must use background.
                 const bgColor = showColours
                   ? (categoryColorMap[element.category] ?? 'var(--color-accent)')
-                  : (getStatusColor(state) ?? 'var(--color-accent)');
+                  : (state !== undefined && state !== 'hidden' ? STATUS_COLORS[state].main : 'var(--color-accent)');
                 const barOpacity = showBar ? 1 : 0.15;
 
                 const showInsideLabel = showLabel && layout.pixelWidth >= 60;
@@ -502,14 +503,3 @@ function getStateClass(state: string | undefined): string | undefined {
   }
 }
 
-function getStatusColor(state: string | undefined): string | undefined {
-  switch (state) {
-    case 'correct': return 'var(--color-correct)';
-    case 'correct-second': return 'var(--color-correct-second)';
-    case 'correct-third': return 'var(--color-correct-third)';
-    case 'incorrect': return 'var(--color-incorrect)';
-    case 'missed': return 'var(--color-missed)';
-    case 'highlighted': return 'var(--color-highlight)';
-    default: return undefined;
-  }
-}

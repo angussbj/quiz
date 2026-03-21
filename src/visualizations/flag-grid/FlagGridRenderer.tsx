@@ -7,6 +7,7 @@ import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { CursorTooltip } from '../CursorTooltip';
 import type { ElementVisualState } from '../VisualizationElement';
+import { STATUS_COLORS } from '../elementStateColors';
 import { flagGridElementToVisualizationElement } from './flagGridElementToVisualizationElement';
 import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y } from './flagGridLayout';
 import cellStyles from './FlagGridRenderer.module.css';
@@ -28,49 +29,6 @@ interface FlagCellProps {
   readonly onLabelMouseLeave: () => void;
 }
 
-function stateToStroke(state: ElementVisualState): string {
-  switch (state) {
-    case 'correct':
-      return 'var(--color-correct)';
-    case 'correct-second':
-      return 'var(--color-correct-second)';
-    case 'correct-third':
-      return 'var(--color-correct-third)';
-    case 'incorrect':
-      return 'var(--color-incorrect)';
-    case 'missed':
-      return 'var(--color-missed)';
-    case 'highlighted':
-      return 'var(--color-highlight)';
-    case 'context':
-      return 'var(--color-context)';
-    default:
-      return 'var(--color-border)';
-  }
-}
-
-function stateToFill(state: ElementVisualState): string {
-  switch (state) {
-    case 'correct':
-      return 'var(--color-correct-bg)';
-    case 'correct-second':
-      return 'var(--color-correct-second-bg)';
-    case 'correct-third':
-      return 'var(--color-correct-third-bg)';
-    case 'incorrect':
-      return 'var(--color-incorrect-bg)';
-    case 'missed':
-      return 'var(--color-missed-bg)';
-    case 'highlighted':
-      return 'var(--color-highlight-bg)';
-    case 'context':
-      return 'var(--color-context-bg)';
-    case 'hidden':
-      return 'transparent';
-    default:
-      return 'var(--color-bg-tertiary)';
-  }
-}
 
 function isAnswered(state: ElementVisualState): boolean {
   return state === 'context' || state === 'correct' || state === 'correct-second'
@@ -88,8 +46,8 @@ function FlagCell({
 }: FlagCellProps) {
   const x = element.column * FLAG_CELL_STEP_X;
   const y = element.row * FLAG_CELL_STEP_Y;
-  const fill = stateToFill(state);
-  const stroke = stateToStroke(state);
+  const fill = state === 'hidden' ? 'transparent' : STATUS_COLORS[state].background;
+  const stroke = state === 'hidden' ? 'var(--color-border)' : STATUS_COLORS[state].main;
   const nameVisible = isAnswered(state) || showCountryName;
 
   const handleLabelMouseEnter = useCallback(
@@ -219,6 +177,7 @@ export function FlagGridRenderer(props: VisualizationRendererProps) {
       clustering={props.clustering}
       onClusterClick={props.onClusterClick}
       putInView={props.putInView}
+      putInViewOnlyWhenOffScreen
     >
       <FlagGrid {...props} />
       {props.svgOverlay}

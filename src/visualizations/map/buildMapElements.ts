@@ -63,25 +63,98 @@ function pointAlongStrokePaths(svgPathData: string, t: number): { x: number; y: 
   return coords[coords.length - 1];
 }
 
+/**
+ * Merge territory rows into their sovereign parent rows by appending paths.
+ * Territories are identified by a non-empty `sovereign_parent` column whose value
+ * matches the `name` column of another row. Territory rows are removed from the
+ * output; their paths are pipe-appended to the parent's `paths` column.
+ *
+ * If the parent row is not present (e.g. filtered out by region), the territory
+ * row is kept as-is (it won't merge into nothing).
+ */
+function mergeTerritoryRows(
+  rows: ReadonlyArray<Readonly<Record<string, string>>>,
+): ReadonlyArray<Readonly<Record<string, string>>> {
+  // Quick check: if no sovereign_parent column exists, return rows unchanged
+  if (rows.length === 0 || !('sovereign_parent' in rows[0])) return rows;
+
+  const parentNameToIndex = new Map<string, number>();
+  const mergedRows: Array<Record<string, string>> = [];
+
+  // First pass: index sovereign (parent) rows
+  for (const row of rows) {
+    const index = mergedRows.length;
+    mergedRows.push({ ...row });
+    if (!row['sovereign_parent']) {
+      parentNameToIndex.set(row['name'], index);
+    }
+  }
+
+  // Second pass: merge territory paths into parents and mark for removal.
+  // Territories whose parent is not in the row set are also removed (orphan
+  // territories like Antarctica/Western Sahara shouldn't become quiz elements).
+  const indicesToRemove = new Set<number>();
+  for (let i = 0; i < mergedRows.length; i++) {
+    const parentName = mergedRows[i]['sovereign_parent'];
+    if (!parentName) continue;
+    const parentIndex = parentNameToIndex.get(parentName);
+    if (parentIndex !== undefined) {
+      // Preserve the parent's original paths for bounds computation (camera framing).
+      // This prevents far-flung territories from expanding the parent's viewBoxBounds.
+      if (!mergedRows[parentIndex]['primary_paths']) {
+        mergedRows[parentIndex]['primary_paths'] = mergedRows[parentIndex]['paths'] ?? '';
+      }
+      const territoryPaths = mergedRows[i]['paths'] ?? '';
+      if (territoryPaths.trim()) {
+        const parentPaths = mergedRows[parentIndex]['paths'] ?? '';
+        mergedRows[parentIndex]['paths'] = parentPaths
+          ? `${parentPaths}|${territoryPaths}`
+          : territoryPaths;
+      }
+    }
+    // Remove all territory rows — either merged into parent or orphaned
+    indicesToRemove.add(i);
+  }
+
+  // Also remove non-sovereign rows without a sovereign_parent (e.g. Antarctica,
+  // Western Sahara) — these have is_sovereign !== 'true' and empty sovereign_parent.
+  for (let i = 0; i < mergedRows.length; i++) {
+    if (indicesToRemove.has(i)) continue;
+    if (mergedRows[i]['is_sovereign'] !== 'true' && 'sovereign_parent' in mergedRows[i]) {
+      indicesToRemove.add(i);
+    }
+  }
+
+  if (indicesToRemove.size === 0) return rows;
+  return mergedRows.filter((_, i) => !indicesToRemove.has(i));
+}
+
 export function buildMapElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
 ): ReadonlyArray<MapElement> {
+  const mergedRows = mergeTerritoryRows(rows);
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
   const codeColumn = columnMappings['code'] ?? 'code';
   const pathStyle = columnMappings['pathRenderStyle'] as 'fill' | 'stroke' | undefined;
 
-  return rows.map((row) => {
+  return mergedRows.map((row) => {
     const lat = parseFloat(row['latitude'] ?? '0');
     const lng = parseFloat(row['longitude'] ?? '0');
     const center = projectGeo({ latitude: lat, longitude: lng });
     const svgPathData = (row['paths'] ?? '').split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' ');
 
+    // Use primary_paths (pre-merge sovereign paths) for bounds if available, so
+    // far-flung territories don't expand viewBoxBounds and affect camera framing.
+    const boundsPathData = row['primary_paths']
+      ? (row['primary_paths']).split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' ')
+      : svgPathData;
+
     // For elements with SVG path data, compute bounds from the actual path.
     // For point elements (city dots), use a small dot radius around the center.
-    const bounds = svgPathData
-      ? computePathBounds(svgPathData)
+    const bounds = boundsPathData
+      ? computePathBounds(boundsPathData)
       : {
           minX: center.x - DOT_RADIUS,
           minY: center.y - DOT_RADIUS,

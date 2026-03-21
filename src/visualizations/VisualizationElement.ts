@@ -27,8 +27,7 @@ export type ElementVisualState =
   | 'correct-second'
   | 'correct-third'
   | 'incorrect'
-  | 'missed'
-  | 'revealed';
+  | 'missed';
 
 /**
  * Base element in a visualization.

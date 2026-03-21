@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
+import { STATUS_COLORS } from '../elementStateColors';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
@@ -38,28 +39,6 @@ function elementColor(elementIndex: number): string {
   return ELEMENT_COLORS[elementIndex % ELEMENT_COLORS.length];
 }
 
-function stateColor(state: ElementVisualState | undefined): string | undefined {
-  switch (state) {
-    case 'correct':
-      return 'var(--color-correct)';
-    case 'correct-second':
-      return 'var(--color-correct-second)';
-    case 'correct-third':
-      return 'var(--color-correct-third)';
-    case 'incorrect':
-      return 'var(--color-incorrect)';
-    case 'missed':
-      return 'var(--color-missed)';
-    case 'highlighted':
-      return 'var(--color-highlight)';
-    case 'default':
-      return 'var(--color-text-muted)';
-    case 'revealed':
-      return 'var(--color-text-muted)';
-    default:
-      return undefined;
-  }
-}
 
 function stateFillOpacity(state: ElementVisualState | undefined): number {
   switch (state) {
@@ -73,7 +52,6 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
     case 'highlighted':
       return 0.6;
     case 'default':
-    case 'revealed':
       return 0.55;
     default:
       return 0.5;
@@ -94,7 +72,7 @@ function renderBoneElements(
     const state = elementStates[element.id];
     if (state === 'hidden') return null;
     if (targetState === undefined) {
-      if (stateColor(state) !== undefined) return null;
+      if (state !== undefined) return null;
     } else {
       if (state !== targetState) return null;
     }
@@ -102,7 +80,7 @@ function renderBoneElements(
     const elementIndex = elements.indexOf(element);
     const color = usePerElementColor
       ? elementColor(elementIndex)
-      : (stateColor(state) ?? groupColor(element.group, uniqueGroups));
+      : (state !== undefined ? STATUS_COLORS[state].main : groupColor(element.group, uniqueGroups));
     const opacity = usePerElementColor ? 0.75 : stateFillOpacity(state);
     return (
       <path
@@ -223,7 +201,6 @@ function AnatomyContent({
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'default', showGroupColors)}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'missed', showGroupColors)}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'incorrect', showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'revealed', showGroupColors)}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct', showGroupColors)}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-second', showGroupColors)}
       {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-third', showGroupColors)}

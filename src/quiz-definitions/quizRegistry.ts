@@ -19,6 +19,7 @@ const capitalsQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showRegionColors', label: 'Region colors', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showCityDots', label: 'City dots', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' } as const,
     { key: 'showCityNames', label: 'City names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
@@ -66,6 +67,7 @@ const countriesQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showRegionColors', label: 'Region colors', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
     { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
@@ -197,7 +199,6 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'geo-countries-world',
     title: 'World Countries',
     description: 'Identify all sovereign countries of the world on a map.',
-    dataFilter: { column: 'is_sovereign', values: ['true'] },
     columnMappings: { ...countriesQuizBase.columnMappings, group: 'group' },
     initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
     groupFilterColumn: 'region',

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { ElementCluster } from './VisualizationRendererProps';
 import type { ElementVisualState } from './VisualizationElement';
+import { STATUS_COLORS } from './elementStateColors';
 import styles from './ClusterBadge.module.css';
 
 interface ClusterBadgeProps {
@@ -21,13 +22,6 @@ const STROKE_FRACTION = 0.12;
 /** Base character count (e.g. "0/3") for max font size. Font shrinks proportionally. */
 const BASE_CHAR_COUNT = 3;
 
-const STATE_COLORS: Readonly<Record<string, string>> = {
-  correct: 'var(--color-correct)',
-  incorrect: 'var(--color-incorrect)',
-  missed: 'var(--color-missed)',
-  highlighted: 'var(--color-highlight)',
-  default: 'var(--color-text-muted)',
-};
 
 /**
  * Compute the aggregate visual state for a cluster from its elements' states.
@@ -82,7 +76,7 @@ export function ClusterBadge({
   const strokeWidth = viewBoxRadius * STROKE_FRACTION;
 
   const state = clusterState(cluster.elementIds, elementStates);
-  const fillColor = STATE_COLORS[state] ?? 'var(--color-text-muted)';
+  const fillColor = state !== 'hidden' ? STATUS_COLORS[state].main : STATUS_COLORS['default'].main;
 
   return (
     <g transform={`translate(${x}, ${y})`}>
