@@ -39,4 +39,14 @@ describe('countFilteredElements', () => {
   it('uses rangeMaxFallback when rangeMax is undefined', () => {
     expect(countFilteredElements(ROWS, 'atomic_number', 1, undefined, 3, undefined, undefined)).toBe(3);
   });
+
+  it('matches pipe-separated group values against selected groups', () => {
+    const rows = [
+      { id: 'a', region: 'Europe' },
+      { id: 'b', region: 'Asia' },
+      { id: 'c', region: 'Europe|Asia' },
+    ];
+    const groups = new Set(['Europe']);
+    expect(countFilteredElements(rows, undefined, undefined, undefined, undefined, 'region', groups)).toBe(2);
+  });
 });

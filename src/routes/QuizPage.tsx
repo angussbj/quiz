@@ -11,7 +11,10 @@ import { QuizShell } from '@/quiz-modes/QuizShell';
 import { ActiveQuiz } from '@/quiz-modes/ActiveQuiz';
 import styles from './QuizPage.module.css';
 
-/** Extract unique values from a column, preserving first-seen order. */
+/**
+ * Extract unique values from a column, preserving first-seen order.
+ * Cells with pipe-separated values (e.g. "Europe|Asia") contribute each segment as a separate value.
+ */
 function uniqueColumnValues(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   column: string,
@@ -19,10 +22,13 @@ function uniqueColumnValues(
   const seen = new Set<string>();
   const result: Array<string> = [];
   for (const row of rows) {
-    const value = row[column] ?? '';
-    if (value && !seen.has(value)) {
-      seen.add(value);
-      result.push(value);
+    const cell = row[column] ?? '';
+    for (const segment of cell.split('|')) {
+      const value = segment.trim();
+      if (value && !seen.has(value)) {
+        seen.add(value);
+        result.push(value);
+      }
     }
   }
   return result;
@@ -106,8 +112,12 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
 
   const availableGroups = useMemo(() => {
     if (!definition.groupFilterColumn) return undefined;
-    return uniqueColumnValues(rows, definition.groupFilterColumn);
-  }, [rows, definition.groupFilterColumn]);
+    // Filter to rows that have a corresponding quiz element — e.g. territory rows that get
+    // merged or removed by buildElements should not contribute chips.
+    const elementIds = new Set(elements.map((el) => el.id));
+    const elementRows = rows.filter((row) => elementIds.has(row['id'] ?? ''));
+    return uniqueColumnValues(elementRows, definition.groupFilterColumn);
+  }, [rows, elements, definition.groupFilterColumn]);
 
   return (
     <div className={styles.page}>

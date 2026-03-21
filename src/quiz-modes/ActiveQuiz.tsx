@@ -93,7 +93,7 @@ export function ActiveQuiz({
       }
       if (passes && hasGroupFilter) {
         const group = row[groupFilterColumn] ?? '';
-        if (!config.selectedGroups.has(group)) passes = false;
+        if (!group.split('|').some((segment) => config.selectedGroups.has(segment.trim()))) passes = false;
       }
       if (passes && hasTributaryFilter) {
         // Rows with a non-empty tributary_of value are tributaries — exclude from quiz

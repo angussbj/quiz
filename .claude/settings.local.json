@@ -99,7 +99,8 @@
       "Bash(mv:*)",
       "Bash(unzip:*)",
       "Bash(lsof:*)",
-      "mcp__plugin_playwright_playwright__browser_network_requests"
+      "mcp__plugin_playwright_playwright__browser_network_requests",
+      "Bash(npx playwright:*)"
     ]
   }
 }

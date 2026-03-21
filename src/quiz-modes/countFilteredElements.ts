@@ -21,7 +21,7 @@ export function countFilteredElements(
     }
     if (groupFilterColumn && selectedGroups) {
       const group = row[groupFilterColumn] ?? '';
-      if (!selectedGroups.has(group)) continue;
+      if (!group.split('|').some((segment) => selectedGroups.has(segment.trim()))) continue;
     }
     count++;
   }

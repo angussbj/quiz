@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test('corner elements stay in viewport after answering hydrogen', async ({ page }) => {
-  await page.goto('/sci-periodic-table');
+  await page.goto('/quiz/sci-periodic-table');
+  await page.getByRole('button', { name: 'Start Quiz' }).click();
   await page.getByPlaceholder('Type an answer…').waitFor();
 
   const hydrogen = page.locator('[data-element-id="hydrogen"]');
