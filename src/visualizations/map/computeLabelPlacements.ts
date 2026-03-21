@@ -7,7 +7,28 @@ const MAX_VIEWBOX_FONT_SIZE = 1.2;
 
 /** Area-based font scaling: labels scale between these factors of the base font size. */
 const AREA_SCALE_MIN = 0.65;
-const AREA_SCALE_MAX = 3;
+const AREA_SCALE_MAX = 5;
+
+/**
+ * Fixed sqrt-area bounds for font scaling, derived from world-borders.csv sovereign countries.
+ * Hardcoded so label sizes are stable regardless of which subset of labels is currently visible.
+ * Min: Vatican City (area ≈ 0.000035). Max: Australia (area ≈ 696) — countries larger than
+ * Australia (Russia, Canada, USA, China, Brazil) all get max scale.
+ */
+const SQRT_AREA_MIN = 0.006;
+const SQRT_AREA_MAX = 26.4;
+
+/**
+ * Name-length font scaling: short names get slightly bigger, long names slightly smaller.
+ * Applied on top of area-based scaling. Range is multiplicative.
+ */
+const NAME_LENGTH_SCALE_MIN = 0.75;
+const NAME_LENGTH_SCALE_MAX = 1.15;
+const NAME_SHORT_THRESHOLD = 5;
+const NAME_LONG_THRESHOLD = 18;
+
+/** Maximum characters per line before wrapping. */
+const MAX_CHARS_PER_LINE = 12;
 
 const FLAG_HEIGHT_FACTOR = 1.4;
 const MAX_DISTANCE_FACTOR = 1.2;
@@ -23,6 +44,7 @@ export interface PlacedLabel {
   readonly height: number;
   readonly x: number;
   readonly y: number;
+  readonly lines: ReadonlyArray<string>;
 }
 
 interface LabelDimensions {
@@ -34,6 +56,7 @@ interface LabelDimensions {
   readonly gapSize: number;
   readonly width: number;
   readonly height: number;
+  readonly lines: ReadonlyArray<string>;
 }
 
 type Rect = { x: number; y: number; w: number; h: number };
@@ -171,20 +194,51 @@ function buildSpiralCandidates(
   return candidates.map((c) => [c.x, c.y]);
 }
 
+/** Split a name into multiple lines, breaking at spaces, respecting MAX_CHARS_PER_LINE. */
+function splitNameIntoLines(name: string): ReadonlyArray<string> {
+  if (name.length <= MAX_CHARS_PER_LINE) return [name];
+  const words = name.split(' ');
+  const lines: string[] = [];
+  let current = '';
+  for (const word of words) {
+    if (current && (current.length + 1 + word.length) > MAX_CHARS_PER_LINE) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = current ? `${current} ${word}` : word;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+/** Compute a name-length scaling factor: short names get bigger, long names get smaller. */
+function nameLengthScale(name: string): number {
+  if (name.length <= NAME_SHORT_THRESHOLD) return NAME_LENGTH_SCALE_MAX;
+  if (name.length >= NAME_LONG_THRESHOLD) return NAME_LENGTH_SCALE_MIN;
+  const t = (name.length - NAME_SHORT_THRESHOLD) / (NAME_LONG_THRESHOLD - NAME_SHORT_THRESHOLD);
+  return NAME_LENGTH_SCALE_MAX + t * (NAME_LENGTH_SCALE_MIN - NAME_LENGTH_SCALE_MAX);
+}
+
 function computeDimensions(
   label: BackgroundLabel, fontSize: number, showNames: boolean, showFlags: boolean,
 ): LabelDimensions {
-  const flagHeight = fontSize * FLAG_HEIGHT_FACTOR;
+  const nameScale = nameLengthScale(label.name);
+  const scaledFontSize = fontSize * nameScale;
+  const lines = showNames ? splitNameIntoLines(label.name) : [];
+  const flagHeight = scaledFontSize * FLAG_HEIGHT_FACTOR;
   const flagWidth = flagHeight * 4 / 3;
   const hasFlag = showFlags && !!label.code;
-  const textWidthEstimate = showNames ? label.name.length * fontSize * 0.6 : 0;
+  const longestLine = lines.reduce((max, line) => Math.max(max, line.length), 0);
+  const textWidthEstimate = showNames ? longestLine * scaledFontSize * 0.6 : 0;
   const contentWidth = Math.max(textWidthEstimate, hasFlag ? flagWidth : 0);
-  const width = showNames || hasFlag ? Math.max(contentWidth, fontSize * 3) : 0;
-  const textHeight = showNames ? fontSize * 1.5 : 0;
-  const gapSize = (hasFlag && showNames) ? fontSize * 0.3 : 0;
+  const width = showNames || hasFlag ? Math.max(contentWidth, scaledFontSize * 3) : 0;
+  const lineHeight = scaledFontSize * 1.3;
+  const textHeight = showNames ? lineHeight * lines.length : 0;
+  const gapSize = (hasFlag && showNames) ? scaledFontSize * 0.3 : 0;
   const flagPartHeight = hasFlag ? flagHeight : 0;
   const height = flagPartHeight + gapSize + textHeight;
-  return { fontSize, flagHeight, flagWidth, hasFlag, textHeight, gapSize, width, height };
+  return { fontSize: scaledFontSize, flagHeight, flagWidth, hasFlag, textHeight, gapSize, width, height, lines };
 }
 
 /**
@@ -239,12 +293,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
 
   const sorted = [...labels].sort((a, b) => b.area - a.area);
 
-  // Compute log-area range for scaling font size per label.
-  // Using log scale so a few giant countries don't compress everyone else.
-  const logAreas = sorted.filter((l) => l.area > 0).map((l) => Math.log(l.area));
-  const minLogArea = logAreas.length > 0 ? Math.min(...logAreas) : 0;
-  const maxLogArea = logAreas.length > 0 ? Math.max(...logAreas) : 0;
-  const logAreaRange = maxLogArea - minLogArea;
+  const sqrtAreaRange = SQRT_AREA_MAX - SQRT_AREA_MIN;
 
   const dotAvoidRadius = Math.max(0.1, 0.35 / scale);
   const placed: Rect[] = [];
@@ -260,9 +309,9 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     const sqrtArea = Math.sqrt(label.area);
     const countryRadius = sqrtArea * 0.6;
 
-    // Scale font size by country area (log scale, clamped).
-    const areaScaleFactor = label.area > 0 && logAreaRange > 0
-      ? AREA_SCALE_MIN + (AREA_SCALE_MAX - AREA_SCALE_MIN) * ((Math.log(label.area) - minLogArea) / logAreaRange)
+    // Scale font size by country area (sqrt scale, clamped to fixed bounds).
+    const areaScaleFactor = label.area > 0
+      ? Math.min(AREA_SCALE_MAX, Math.max(AREA_SCALE_MIN, AREA_SCALE_MIN + (AREA_SCALE_MAX - AREA_SCALE_MIN) * ((Math.sqrt(label.area) - SQRT_AREA_MIN) / sqrtAreaRange)))
       : 1;
     const areaBaseFontSize = baseFontSize * areaScaleFactor;
 

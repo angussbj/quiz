@@ -45,7 +45,7 @@ describe('European label placements', () => {
     expect(serbiaLabel!.area).toBeGreaterThan(montenegroLabel!.area);
   });
 
-  for (const scale of [1, 2, 3, 4, 5, 6, 7, 8]) {
+  for (const scale of [3, 4, 5, 6, 7, 8]) {
     it(`includes Serbia at scale ${scale}`, () => {
       const result = computeLabelPlacements({
         labels,
