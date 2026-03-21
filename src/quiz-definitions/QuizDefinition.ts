@@ -78,6 +78,13 @@ export interface QuizDefinition<K extends string = string> {
    *  When the 'includeSegmentNames' toggle is false, all segments are answered together —
    *  typing any segment name marks the canonical and all its segments correct. */
   readonly segmentColumn?: string;
+  /**
+   * How locate mode measures distance from the click to the target element.
+   * - `'centroid'` (default): distance to the element's geographic center point.
+   * - `'polygon-boundary'`: zero distance for clicks inside the element's polygon;
+   *   distance to the nearest border point for clicks outside. Use for country/region quizzes.
+   */
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
   readonly initialCameraPosition?: {
     readonly x: number;

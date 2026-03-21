@@ -3,7 +3,7 @@ import type { VisualizationElement } from '@/visualizations/VisualizationElement
 import type { MapElement } from '@/visualizations/map/MapElement';
 import { useLocateQuiz } from '../useLocateQuiz';
 
-function makeMapElement(id: string, lat: number, lng: number): MapElement {
+function makeMapElement(id: string, lat: number, lng: number, svgPathData = ''): MapElement {
   return {
     id,
     label: `City ${id}`,
@@ -11,7 +11,7 @@ function makeMapElement(id: string, lat: number, lng: number): MapElement {
     viewBoxBounds: { minX: lng - 0.5, minY: -lat - 0.5, maxX: lng + 0.5, maxY: -lat + 0.5 },
     interactive: true,
     geoCoordinates: { latitude: lat, longitude: lng },
-    svgPathData: '',
+    svgPathData,
     code: id,
   };
 }
@@ -235,6 +235,83 @@ describe('useLocateQuiz', () => {
     expect(result.current.totalTargets).toBe(0);
     expect(result.current.isFinished).toBe(true);
     expect(result.current.currentTarget).toBeUndefined();
+  });
+
+  describe('polygon-boundary mode', () => {
+    // A square polygon centered at lng=5, lat=5 (viewBox: x=5, y=-5), size 10x10
+    // viewBox coords: (0,−10) to (10,0) → lat from 0 to 10, lng from 0 to 10
+    const squarePath = 'M 0 -10 L 10 -10 L 10 0 L 0 0 Z';
+    const squareElement = makeMapElement('square', 5, 5, squarePath);
+    const elements = [squareElement];
+
+    it('returns distance=0 for a click inside the polygon', () => {
+      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+
+      act(() => {
+        // Click inside the polygon (lng=5, lat=5 → viewBox x=5, y=-5)
+        result.current.handlePositionClick({ x: 5, y: -5 });
+      });
+
+      expect(result.current.distances[0]).toBe(0);
+    });
+
+    it('marks inside click as correct', () => {
+      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+
+      act(() => {
+        result.current.handlePositionClick({ x: 5, y: -5 });
+      });
+
+      expect(result.current.elementStates[squareElement.id]).toBe('correct');
+      expect(result.current.correctCount).toBe(1);
+    });
+
+    it('sets feedbackTargetPosition = clickPosition for an inside click', () => {
+      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+      const clickPos = { x: 5, y: -5 };
+
+      act(() => {
+        result.current.handlePositionClick(clickPos);
+      });
+
+      expect(result.current.feedbackItems[0].targetPosition).toEqual(clickPos);
+    });
+
+    it('returns positive distance for a click outside the polygon', () => {
+      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+
+      act(() => {
+        // Click far outside: lng=50, lat=5 → viewBox x=50, y=-5
+        result.current.handlePositionClick({ x: 50, y: -5 });
+      });
+
+      expect(result.current.distances[0]).toBeGreaterThan(0);
+    });
+
+    it('sets feedbackTargetPosition to the closest border point for an outside click', () => {
+      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+
+      act(() => {
+        // Click to the right: viewBox x=50, y=-5. Closest border: right edge x=10, y=-5
+        result.current.handlePositionClick({ x: 50, y: -5 });
+      });
+
+      const targetPos = result.current.feedbackItems[0].targetPosition;
+      expect(targetPos.x).toBeCloseTo(10);
+      expect(targetPos.y).toBeCloseTo(-5);
+    });
+
+    it('falls back to centroid behavior when locateDistanceMode is not set', () => {
+      const { result } = renderHook(() => useLocateQuiz(elements));
+
+      act(() => {
+        // Click inside the polygon — without polygon mode, uses centroid distance
+        result.current.handlePositionClick({ x: 9, y: -9 });
+      });
+
+      // Distance should be non-zero (to the centroid at lat=5, lng=5)
+      expect(result.current.distances[0]).toBeGreaterThan(0);
+    });
   });
 
   it('multiple feedback items can exist simultaneously', () => {

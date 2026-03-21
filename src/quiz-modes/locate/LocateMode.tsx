@@ -26,8 +26,9 @@ export function LocateMode({
   reviewing = false,
   reviewResult,
   initialCameraPosition,
+  locateDistanceMode,
 }: QuizModeProps) {
-  const quiz = useLocateQuiz(elements);
+  const quiz = useLocateQuiz(elements, locateDistanceMode);
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;

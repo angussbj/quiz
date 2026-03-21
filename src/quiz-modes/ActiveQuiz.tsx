@@ -36,6 +36,7 @@ export interface ActiveQuizProps {
     readonly width: number;
     readonly height: number;
   }>>;
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
 }
 
 /**
@@ -62,6 +63,7 @@ export function ActiveQuiz({
   segmentColumn,
   initialCameraPosition,
   groupFilterCameraPositions,
+  locateDistanceMode,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
     const hasRangeFilter = rangeColumn && config.elementRange;
@@ -283,6 +285,7 @@ export function ActiveQuiz({
           reviewing={isFinished}
           reviewResult={reviewResult}
           initialCameraPosition={effectiveCameraPosition}
+          locateDistanceMode={locateDistanceMode}
         />
       </div>
     </div>
