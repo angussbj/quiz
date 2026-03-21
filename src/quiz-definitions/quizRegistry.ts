@@ -175,6 +175,32 @@ const riversQuizBase = {
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 
+/**
+ * Shared configuration for all country subdivision quizzes (states, provinces, etc.).
+ * Each definition overrides id, title, description, dataPath, supportingDataPaths,
+ * initialCameraPosition, and groupFilterColumn/Label.
+ */
+const subdivisionsQuizBase = {
+  path: ['Geography', 'Subdivisions'],
+  visualizationType: 'map' as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
+  defaultMode: 'identify' as const,
+  toggles: [
+    { key: 'showBorders', label: 'Borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
+    { key: 'showCountryNames', label: 'Subdivision names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
+  ],
+  presets: [],
+  columnMappings: {
+    answer: 'name',
+    label: 'name',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    group: 'region',
+  },
+  supportingDataPaths: [] as ReadonlyArray<string>,
+} satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'dataPath'>;
+
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
   largestCitiesQuiz,
   {
@@ -825,5 +851,97 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/science/scientific-discoveries.csv',
     groupFilterColumn: 'field',
     groupFilterLabel: 'Scientific field',
+  },
+
+  // ===== Country Subdivisions =====
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-us',
+    title: 'US States',
+    description: 'Name all 50 US states and the District of Columbia.',
+    dataPath: '/data/subdivisions/united-states.csv',
+    initialCameraPosition: { x: -125, y: -50, width: 60, height: 30 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-india',
+    title: 'Indian States',
+    description: 'Name the states and union territories of India.',
+    dataPath: '/data/subdivisions/india.csv',
+    initialCameraPosition: { x: 68, y: -37, width: 30, height: 30 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-china',
+    title: 'Chinese Provinces',
+    description: 'Name the provinces, autonomous regions, and municipalities of China.',
+    dataPath: '/data/subdivisions/china.csv',
+    initialCameraPosition: { x: 73, y: -53, width: 62, height: 37 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-brazil',
+    title: 'Brazilian States',
+    description: 'Name the 26 states and federal district of Brazil.',
+    dataPath: '/data/subdivisions/brazil.csv',
+    initialCameraPosition: { x: -74, y: 6, width: 40, height: 40 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-russia',
+    title: 'Russian Subjects',
+    description: 'Name the federal subjects of Russia.',
+    dataPath: '/data/subdivisions/russia.csv',
+    initialCameraPosition: { x: 25, y: -72, width: 155, height: 40 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Federal district',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-mexico',
+    title: 'Mexican States',
+    description: 'Name the 31 states and federal district of Mexico.',
+    dataPath: '/data/subdivisions/mexico.csv',
+    initialCameraPosition: { x: -118, y: -32, width: 35, height: 20 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-indonesia',
+    title: 'Indonesian Provinces',
+    description: 'Name the provinces of Indonesia.',
+    dataPath: '/data/subdivisions/indonesia.csv',
+    initialCameraPosition: { x: 95, y: 11, width: 50, height: 25 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Island group',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-japan',
+    title: 'Japanese Prefectures',
+    description: 'Name the 47 prefectures of Japan.',
+    dataPath: '/data/subdivisions/japan.csv',
+    initialCameraPosition: { x: 128, y: -45, width: 20, height: 20 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Region',
+  },
+  {
+    ...subdivisionsQuizBase,
+    id: 'geo-subdivisions-nigeria',
+    title: 'Nigerian States',
+    description: 'Name the 36 states and federal capital territory of Nigeria.',
+    dataPath: '/data/subdivisions/nigeria.csv',
+    initialCameraPosition: { x: 3, y: -4, width: 15, height: 12 },
+    groupFilterColumn: 'region',
+    groupFilterLabel: 'Geopolitical zone',
   },
 ];
