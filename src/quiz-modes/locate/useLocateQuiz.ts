@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import type { VisualizationElement, ViewBoxPosition, ElementVisualState } from '@/visualizations/VisualizationElement';
 import { isMapElement } from '@/visualizations/map/MapElement';
 import { closestPointOnPath } from '@/visualizations/map/closestPointOnPath';
+import { computePolygonDistance } from '@/visualizations/map/polygonDistance';
 import { calculateGreatCircleDistance } from '@/scoring/calculateGreatCircleDistance';
 import { calculateLocateAnswerScore, isLocateAnswerCorrect } from '@/scoring/calculateLocateAnswerScore';
 import { shuffle } from '@/utilities/shuffle';
@@ -30,6 +31,7 @@ export interface LocateQuizActions {
 
 export function useLocateQuiz(
   elements: ReadonlyArray<VisualizationElement>,
+  locateDistanceMode?: 'centroid' | 'polygon-boundary',
 ): LocateQuizState & LocateQuizActions {
   const [targetOrder] = useState<ReadonlyArray<string>>(() =>
     shuffle(elements.filter((e) => e.interactive).map((e) => e.id)),
@@ -88,42 +90,81 @@ export function useLocateQuiz(
     feedbackTimersRef.current.set(feedbackId, timer);
   }, []);
 
-  const computeDistance = useCallback(
-    (clickPosition: ViewBoxPosition, targetElement: VisualizationElement): number => {
+  /**
+   * Compute the distance from a click to a target element, and the feedback target position
+   * (the point to draw the "correct location" marker at).
+   *
+   * For polygon-boundary mode (countries/regions):
+   * - Inside the polygon: distance = 0, feedback target = click position.
+   * - Outside: distance = great-circle to nearest border point, feedback target = that border point.
+   *
+   * For centroid mode (cities, default):
+   * - Distance = great-circle to element's geographic center.
+   * - Feedback target = element's viewBox center.
+   */
+  const computeDistanceAndTarget = useCallback(
+    (clickPosition: ViewBoxPosition, targetElement: VisualizationElement): {
+      readonly distanceKm: number;
+      readonly feedbackTargetPosition: ViewBoxPosition;
+    } => {
       if (isMapElement(targetElement)) {
         const clickLat = -clickPosition.y;
         const clickLng = clickPosition.x;
 
-        // For stroke-style paths (rivers), find the closest point on the path
+        // Polygon-boundary mode: zero distance inside, border distance outside
+        if (locateDistanceMode === 'polygon-boundary' && targetElement.svgPathData &&
+            targetElement.pathRenderStyle !== 'stroke') {
+          const { borderPoint, isInside } = computePolygonDistance(clickPosition, targetElement.svgPathData);
+          if (isInside) {
+            return { distanceKm: 0, feedbackTargetPosition: clickPosition };
+          }
+          const borderLat = -borderPoint.y;
+          const borderLng = borderPoint.x;
+          return {
+            distanceKm: calculateGreatCircleDistance(clickLat, clickLng, borderLat, borderLng),
+            feedbackTargetPosition: borderPoint,
+          };
+        }
+
+        // Stroke-style paths (rivers): closest point on path
         if (targetElement.pathRenderStyle === 'stroke' && targetElement.svgPathData) {
           const closest = closestPointOnPath(clickPosition, targetElement.svgPathData);
           if (closest) {
             const closestLat = -closest.y;
             const closestLng = closest.x;
-            return calculateGreatCircleDistance(clickLat, clickLng, closestLat, closestLng);
+            return {
+              distanceKm: calculateGreatCircleDistance(clickLat, clickLng, closestLat, closestLng),
+              feedbackTargetPosition: closest,
+            };
           }
         }
 
-        return calculateGreatCircleDistance(
-          clickLat,
-          clickLng,
-          targetElement.geoCoordinates.latitude,
-          targetElement.geoCoordinates.longitude,
-        );
+        return {
+          distanceKm: calculateGreatCircleDistance(
+            clickLat,
+            clickLng,
+            targetElement.geoCoordinates.latitude,
+            targetElement.geoCoordinates.longitude,
+          ),
+          feedbackTargetPosition: targetElement.viewBoxCenter,
+        };
       }
       // Fallback for non-map elements: viewBox distance (not meaningful for scoring)
       const dx = clickPosition.x - targetElement.viewBoxCenter.x;
       const dy = clickPosition.y - targetElement.viewBoxCenter.y;
-      return Math.sqrt(dx * dx + dy * dy);
+      return {
+        distanceKm: Math.sqrt(dx * dx + dy * dy),
+        feedbackTargetPosition: targetElement.viewBoxCenter,
+      };
     },
-    [],
+    [locateDistanceMode],
   );
 
   const handlePositionClick = useCallback(
     (position: ViewBoxPosition) => {
       if (isFinished || !currentTarget) return;
 
-      const distanceKm = computeDistance(position, currentTarget);
+      const { distanceKm, feedbackTargetPosition } = computeDistanceAndTarget(position, currentTarget);
       const score = calculateLocateAnswerScore(distanceKm);
       const isCorrect = isLocateAnswerCorrect(distanceKm);
 
@@ -132,7 +173,7 @@ export function useLocateQuiz(
         id: feedbackId,
         elementId: currentTarget.id,
         clickPosition: position,
-        targetPosition: currentTarget.viewBoxCenter,
+        targetPosition: feedbackTargetPosition,
         distanceKm,
         score,
         createdAt: Date.now(),
@@ -149,7 +190,7 @@ export function useLocateQuiz(
 
       setCurrentTargetIndex((prev) => prev + 1);
     },
-    [isFinished, currentTarget, currentTargetIndex, computeDistance, scheduleFeedbackRemoval],
+    [isFinished, currentTarget, currentTargetIndex, computeDistanceAndTarget, scheduleFeedbackRemoval],
   );
 
   const handleSkip = useCallback(() => {

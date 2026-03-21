@@ -37,4 +37,6 @@ export interface QuizModeProps {
   readonly forceGiveUp?: boolean;
   readonly reviewing?: boolean;
   readonly reviewResult?: ReviewResult;
+  /** How locate mode measures distance. See QuizDefinition.locateDistanceMode. */
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
 }

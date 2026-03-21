@@ -36,6 +36,7 @@ export interface ActiveQuizProps {
     readonly width: number;
     readonly height: number;
   }>>;
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
 }
 
 /**
@@ -62,6 +63,7 @@ export function ActiveQuiz({
   segmentColumn,
   initialCameraPosition,
   groupFilterCameraPositions,
+  locateDistanceMode,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
     const hasRangeFilter = rangeColumn && config.elementRange;
@@ -91,9 +93,10 @@ export function ActiveQuiz({
         const { min, max } = config.elementRange;
         if (value < min || value > max) passes = false;
       }
-      if (passes && hasGroupFilter) {
+      if (passes && hasGroupFilter && config.selectedGroups) {
         const group = row[groupFilterColumn] ?? '';
-        if (!group.split('|').some((segment) => config.selectedGroups.has(segment.trim()))) passes = false;
+        const selectedGroups = config.selectedGroups;
+        if (!group.split('|').some((segment) => selectedGroups.has(segment.trim()))) passes = false;
       }
       if (passes && hasTributaryFilter) {
         // Rows with a non-empty tributary_of value are tributaries — exclude from quiz
@@ -283,6 +286,7 @@ export function ActiveQuiz({
           reviewing={isFinished}
           reviewResult={reviewResult}
           initialCameraPosition={effectiveCameraPosition}
+          locateDistanceMode={locateDistanceMode}
         />
       </div>
     </div>

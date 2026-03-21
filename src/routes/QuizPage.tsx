@@ -160,6 +160,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             segmentColumn={definition.segmentColumn}
             initialCameraPosition={definition.initialCameraPosition}
             groupFilterCameraPositions={definition.groupFilterCameraPositions}
+            locateDistanceMode={definition.locateDistanceMode}
           />
         )}
       </QuizShell>
