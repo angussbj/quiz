@@ -258,6 +258,7 @@ export function PeriodicTableRenderer(props: VisualizationRendererProps) {
       clustering={props.clustering}
       onClusterClick={props.onClusterClick}
       putInView={props.putInView}
+      putInViewOnlyWhenOffScreen
     >
       <PeriodicTableGrid {...props} />
       {props.svgOverlay}

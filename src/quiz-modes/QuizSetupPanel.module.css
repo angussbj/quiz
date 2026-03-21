@@ -206,6 +206,7 @@
   color: var(--color-text-muted);
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
+  font-weight: 600;
   cursor: pointer;
   transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
   user-select: none;
@@ -221,7 +222,6 @@
   border-color: var(--color-accent);
   background: color-mix(in srgb, var(--color-accent) 12%, transparent);
   color: var(--color-accent);
-  font-weight: 600;
 }
 
 .groupChipSelected:hover {

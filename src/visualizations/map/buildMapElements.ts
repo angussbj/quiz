@@ -99,11 +99,6 @@ function mergeTerritoryRows(
     if (!parentName) continue;
     const parentIndex = parentNameToIndex.get(parentName);
     if (parentIndex !== undefined) {
-      // Preserve the parent's original paths for bounds computation (camera framing).
-      // This prevents far-flung territories from expanding the parent's viewBoxBounds.
-      if (!mergedRows[parentIndex]['primary_paths']) {
-        mergedRows[parentIndex]['primary_paths'] = mergedRows[parentIndex]['paths'] ?? '';
-      }
       const territoryPaths = mergedRows[i]['paths'] ?? '';
       if (territoryPaths.trim()) {
         const parentPaths = mergedRows[parentIndex]['paths'] ?? '';
@@ -145,16 +140,12 @@ export function buildMapElements(
     const center = projectGeo({ latitude: lat, longitude: lng });
     const svgPathData = (row['paths'] ?? '').split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' ');
 
-    // Use primary_paths (pre-merge sovereign paths) for bounds if available, so
-    // far-flung territories don't expand viewBoxBounds and affect camera framing.
-    const boundsPathData = row['primary_paths']
-      ? (row['primary_paths']).split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' ')
-      : svgPathData;
-
-    // For elements with SVG path data, compute bounds from the actual path.
-    // For point elements (city dots), use a small dot radius around the center.
-    const bounds = boundsPathData
-      ? computePathBounds(boundsPathData)
+    // For elements with SVG path data, compute bounds from the largest path
+    // segment only. This prevents far-flung territories (or secondary landmasses
+    // like Alaska/Hawaii) from expanding viewBoxBounds and causing the camera
+    // to zoom out too far during putInView.
+    const bounds = svgPathData
+      ? computeLargestPathBounds(svgPathData)
       : {
           minX: center.x - DOT_RADIUS,
           minY: center.y - DOT_RADIUS,
@@ -193,13 +184,15 @@ export function buildMapElements(
   });
 }
 
-/** Extract bounding box from SVG path coordinates. */
-function computePathBounds(svgPathData: string): {
+type Bounds = {
   readonly minX: number;
   readonly minY: number;
   readonly maxX: number;
   readonly maxY: number;
-} {
+};
+
+/** Extract bounding box from SVG path coordinates. */
+function computePathBounds(svgPathData: string): Bounds {
   const numbers = svgPathData.match(/-?\d+(?:\.\d+)?/g);
   if (!numbers || numbers.length < 2) {
     return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
@@ -220,4 +213,32 @@ function computePathBounds(svgPathData: string): {
   }
 
   return { minX, minY, maxX, maxY };
+}
+
+function boundsArea(b: Bounds): number {
+  return (b.maxX - b.minX) * (b.maxY - b.minY);
+}
+
+/**
+ * Find the bounding box of the largest individual subpath (by area) in a
+ * combined SVG path string. Each subpath starts with 'M'. This focuses
+ * camera framing on the main landmass rather than distant islands/territories.
+ */
+function computeLargestPathBounds(svgPathData: string): Bounds {
+  const subpaths = svgPathData.split(/(?=M\s)/).filter((s) => s.trim());
+  if (subpaths.length <= 1) return computePathBounds(svgPathData);
+
+  let largestBounds = computePathBounds(subpaths[0]);
+  let largestArea = boundsArea(largestBounds);
+
+  for (let i = 1; i < subpaths.length; i++) {
+    const b = computePathBounds(subpaths[i]);
+    const a = boundsArea(b);
+    if (a > largestArea) {
+      largestBounds = b;
+      largestArea = a;
+    }
+  }
+
+  return largestBounds;
 }
