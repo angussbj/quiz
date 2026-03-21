@@ -8,6 +8,7 @@ import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { isMapElement } from './MapElement';
 import { MapCountryLabels } from './MapCountryLabels';
+import { shouldShowLabel } from '../shouldShowLabel';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -50,6 +51,7 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
     case 'highlighted':
       return 0.3;
     case 'default':
+      return 0.6;
     case 'context':
       return 0.4;
     default:
@@ -286,6 +288,17 @@ function renderShapeElements(
       );
     }
 
+    // Context fill shapes render like background borders — non-interactive, muted
+    if (effectiveState === 'context') {
+      return (
+        <path
+          key={`shape-${element.id}`}
+          d={element.svgPathData}
+          className={styles.borderPath}
+        />
+      );
+    }
+
     return (
       <path
         key={`shape-${element.id}`}
@@ -369,6 +382,17 @@ function MapContent({
 
   const showRegionColors = toggles['showRegionColors'] === true;
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
+
+  // Map from element label (country name) → element state, for MapCountryLabels.
+  const elementNameToState = useMemo(() => {
+    const map: Record<string, ElementVisualState | undefined> = {};
+    for (const el of elements) {
+      if (isMapElement(el) && el.svgPathData && el.pathRenderStyle !== 'stroke') {
+        map[el.label] = elementStates[el.id];
+      }
+    }
+    return map;
+  }, [elements, elementStates]);
 
   // Maps river name → element state, used to resolve tributary proxy colors.
   // Keyed by element label (river name); first match wins when multiple rows share a name.
@@ -459,12 +483,13 @@ function MapContent({
       {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
 
       {/* Country name labels and flags (from background border data, unified overlap detection) */}
-      {(toggles['showCountryNames'] || toggles['showMapFlags']) && backgroundLabels && (
+      {backgroundLabels && (
         <MapCountryLabels
           labels={backgroundLabels}
           showNames={toggles['showCountryNames'] ?? false}
           showFlags={toggles['showMapFlags'] ?? false}
           avoidPoints={visibleDotPositions}
+          elementNameToState={elementNameToState}
         />
       )}
 
@@ -473,13 +498,12 @@ function MapContent({
         if (clusteredElementIds.has(element.id)) return null;
         if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
-        if (state === 'hidden') return null;
         // Skip label for tributaries/distributaries/segments rendered as proxies (not quiz items)
         if (element.tributaryOf && !toggles['includeTributaries']) return null;
         if (element.distributaryOf && !toggles['includeDistributaries']) return null;
         if (element.segmentOf && !toggles['includeSegmentNames']) return null;
-        if (!elementToggle(elementToggles, toggles, element.id, 'showRiverNames')) return null;
-        const color = state !== undefined ? STATUS_COLORS[state].main : 'var(--color-text-primary)';
+        if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showRiverNames'))) return null;
+        const color = state !== undefined && state !== 'hidden' ? STATUS_COLORS[state].main : 'var(--color-text-primary)';
         const anchor = element.labelAnchor ?? element.viewBoxCenter;
         const pos = element.labelPosition;
         const labelOffset = 0.8; // viewBox units
@@ -563,8 +587,7 @@ function MapContent({
         // Shape elements (countries) use MapCountryLabels, not element labels
         if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
-        if (state === 'hidden') return null;
-        if (!elementToggle(elementToggles, toggles, element.id, 'showCityNames')) return null;
+        if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showCityNames'))) return null;
         const offset = dotRadius * 1.5;
         const fontSize = dotRadius * 2;
         const labelProps = computeLabelProps(element.viewBoxCenter, element.labelPosition, offset);

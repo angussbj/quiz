@@ -25,10 +25,8 @@ interface ZoomPanContainerProps {
   readonly initialCameraPosition?: ViewBox;
   /** Background paths used to expand the viewBox so panning reveals all content. */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
-  /** Element IDs to bring into view when this array reference changes. Zooms out if needed; never zooms in. */
+  /** Element IDs to bring into view when this array reference changes. Only pans if the target is off-screen; never zooms in. */
   readonly putInView?: ReadonlyArray<string>;
-  /** If true, only pan/zoom when the target element is not already visible. */
-  readonly putInViewOnlyWhenOffScreen?: boolean;
 }
 
 interface ContainerSize {
@@ -108,7 +106,6 @@ export function ZoomPanContainer({
   initialCameraPosition,
   backgroundPaths,
   putInView,
-  putInViewOnlyWhenOffScreen,
 }: ZoomPanContainerProps) {
   const viewBox = useMemo(
     () => computeViewBox(elements, backgroundPaths),
@@ -178,7 +175,6 @@ export function ZoomPanContainer({
           initialCameraPosition={effectiveCameraPosition}
           initialScale={initialCamera?.scale ?? 1}
           putInView={putInView}
-          putInViewOnlyWhenOffScreen={putInViewOnlyWhenOffScreen}
         >
           {children}
         </ZoomPanInner>
@@ -198,7 +194,6 @@ interface ZoomPanInnerProps {
   readonly initialCameraPosition?: ViewBox;
   readonly initialScale: number;
   readonly putInView?: ReadonlyArray<string>;
-  readonly putInViewOnlyWhenOffScreen?: boolean;
 }
 
 function ZoomPanInner({
@@ -212,7 +207,6 @@ function ZoomPanInner({
   initialCameraPosition,
   initialScale,
   putInView,
-  putInViewOnlyWhenOffScreen,
 }: ZoomPanInnerProps) {
   const { setTransform, centerView } = useControls();
   const scaleRef = useRef(initialScale);
@@ -389,7 +383,7 @@ function ZoomPanInner({
   );
 
   // Bring specified elements into view when putInView changes.
-  // Zooms out if needed to fit; zooms in if needed to reach MIN_VISIBLE_PX. One-shot.
+  // No-ops if the target is already visible. Zooms out if needed to fit. One-shot.
   const putInViewLatestRef = useRef({ elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform });
   putInViewLatestRef.current = { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform };
 
@@ -413,20 +407,17 @@ function ZoomPanInner({
     const bboxWidth = maxX - minX;
     const bboxHeight = maxY - minY;
 
-    if (putInViewOnlyWhenOffScreen) {
-      const { posX, posY, scale } = currentTransformRef.current;
-      const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
-      const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
-      const ox = (containerSize.width - svgPixelWidth) / 2;
-      const oy = (containerSize.height - svgPixelHeight) / 2;
-      // Convert screen edges to viewBox coordinates
-      const visMinX = ((0 - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
-      const visMaxX = ((containerSize.width - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
-      const visMinY = ((0 - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
-      const visMaxY = ((containerSize.height - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
-      const isVisible = minX <= visMaxX && maxX >= visMinX && minY <= visMaxY && maxY >= visMinY;
-      if (isVisible) return;
-    }
+    const { posX, posY, scale } = currentTransformRef.current;
+    const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
+    const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
+    const ox = (containerSize.width - svgPixelWidth) / 2;
+    const oy = (containerSize.height - svgPixelHeight) / 2;
+    // Convert screen edges to viewBox coordinates
+    const visMinX = ((0 - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
+    const visMaxX = ((containerSize.width - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
+    const visMinY = ((0 - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
+    const visMaxY = ((containerSize.height - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
+    if (minX <= visMaxX && maxX >= visMinX && minY <= visMaxY && maxY >= visMinY) return;
 
     // Scale to zoom OUT if bbox is larger than the screen (same as handleClusterClick).
     const ZOOM_PADDING = 0.7;
@@ -453,12 +444,8 @@ function ZoomPanInner({
       Math.max(Math.min(fitScale, scaleRef.current), minVisibleScale),
     );
 
-    const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
-    const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
-    const offsetX = (containerSize.width - svgPixelWidth) / 2;
-    const offsetY = (containerSize.height - svgPixelHeight) / 2;
-    const contentX = offsetX + (cx - viewBox.x) * basePixelsPerViewBoxUnit;
-    const contentY = offsetY + (cy - viewBox.y) * basePixelsPerViewBoxUnit;
+    const contentX = ox + (cx - viewBox.x) * basePixelsPerViewBoxUnit;
+    const contentY = oy + (cy - viewBox.y) * basePixelsPerViewBoxUnit;
 
     setTransform(
       containerSize.width / 2 - contentX * finalScale,
@@ -467,7 +454,7 @@ function ZoomPanInner({
       400,
       'easeOut',
     );
-  }, [putInView, putInViewOnlyWhenOffScreen]); // reference equality — callers control when this fires
+  }, [putInView]); // reference equality — callers control when this fires
 
   const contextValue = useMemo(
     () => ({

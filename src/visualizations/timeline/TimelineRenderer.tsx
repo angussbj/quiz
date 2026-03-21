@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CursorTooltip } from '../CursorTooltip';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import { elementToggle } from '../elementToggle';
+import { shouldShowLabel } from '../shouldShowLabel';
 import type { TimelineElement } from './TimelineElement';
 import { isTimelineElement } from './TimelineElement';
 import { buildCategoryColorMap } from './categoryColors';
@@ -325,7 +326,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   useEffect(() => {
     const element = hoveredElementRef.current;
     if (!element) return;
-    if (elementToggle(elementToggles, toggles, element.id, 'showLabels')) {
+    if (shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'))) {
       const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
       tooltipTextRef.current = text;
       setTooltip({ x: lastMousePosRef.current.x, y: lastMousePosRef.current.y, text });
@@ -333,13 +334,13 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       tooltipTextRef.current = '';
       setTooltip(null);
     }
-  }, [elementToggles, toggles]);
+  }, [elementToggles, toggles, elementStates]);
 
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
       hoveredElementRef.current = element;
       lastMousePosRef.current = { x: event.clientX, y: event.clientY };
-      if (!elementToggle(elementToggles, toggles, element.id, 'showLabels')) {
+      if (!shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'))) {
         tooltipTextRef.current = '';
         setTooltip(null);
         return;
@@ -348,7 +349,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       tooltipTextRef.current = text;
       setTooltip({ x: event.clientX, y: event.clientY, text });
     },
-    [elementToggles, toggles],
+    [elementToggles, toggles, elementStates],
   );
   const handleBarMouseMove = useCallback((event: React.MouseEvent) => {
     lastMousePosRef.current = { x: event.clientX, y: event.clientY };
@@ -418,9 +419,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                 const layout = barLayouts.get(element.id);
                 if (!layout) return null;
 
-                const isHidden = elementStates[element.id] === 'hidden';
                 const showBar = elementToggle(elementToggles, toggles, element.id, 'showBars');
-                const showLabel = isHidden ? false : elementToggle(elementToggles, toggles, element.id, 'showLabels');
+                const showLabel = shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'));
 
                 const state = elementStates[element.id];
                 const stateClass = getStateClass(state);

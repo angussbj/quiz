@@ -58,7 +58,7 @@ function isThickStroke(state: ElementVisualState): boolean {
 /** Whether the element has been answered — text should always show regardless of toggles. */
 function isAnswered(state: ElementVisualState): boolean {
   return state === 'context' || state === 'correct' || state === 'correct-second'
-    || state === 'correct-third' || state === 'missed';
+    || state === 'correct-third' || state === 'incorrect' || state === 'missed';
 }
 
 function GridCell({
@@ -258,7 +258,6 @@ export function PeriodicTableRenderer(props: VisualizationRendererProps) {
       clustering={props.clustering}
       onClusterClick={props.onClusterClick}
       putInView={props.putInView}
-      putInViewOnlyWhenOffScreen
     >
       <PeriodicTableGrid {...props} />
       {props.svgOverlay}

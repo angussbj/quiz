@@ -5,6 +5,10 @@ const BASE_FONT_SIZE = 0.8;
 const MIN_VIEWBOX_FONT_SIZE = 0.3;
 const MAX_VIEWBOX_FONT_SIZE = 1.2;
 
+/** Area-based font scaling: labels scale between these factors of the base font size. */
+const AREA_SCALE_MIN = 0.65;
+const AREA_SCALE_MAX = 3;
+
 const FLAG_HEIGHT_FACTOR = 1.4;
 const MAX_DISTANCE_FACTOR = 1.2;
 const REDUCED_SIZE_FACTORS = [1, 2 / 3, 1 / 2];
@@ -235,6 +239,13 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
 
   const sorted = [...labels].sort((a, b) => b.area - a.area);
 
+  // Compute log-area range for scaling font size per label.
+  // Using log scale so a few giant countries don't compress everyone else.
+  const logAreas = sorted.filter((l) => l.area > 0).map((l) => Math.log(l.area));
+  const minLogArea = logAreas.length > 0 ? Math.min(...logAreas) : 0;
+  const maxLogArea = logAreas.length > 0 ? Math.max(...logAreas) : 0;
+  const logAreaRange = maxLogArea - minLogArea;
+
   const dotAvoidRadius = Math.max(0.1, 0.35 / scale);
   const placed: Rect[] = [];
   for (const point of avoidPoints) {
@@ -249,6 +260,12 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     const sqrtArea = Math.sqrt(label.area);
     const countryRadius = sqrtArea * 0.6;
 
+    // Scale font size by country area (log scale, clamped).
+    const areaScaleFactor = label.area > 0 && logAreaRange > 0
+      ? AREA_SCALE_MIN + (AREA_SCALE_MAX - AREA_SCALE_MIN) * ((Math.log(label.area) - minLogArea) / logAreaRange)
+      : 1;
+    const areaBaseFontSize = baseFontSize * areaScaleFactor;
+
     const centersToTry = orderCentersForPlacement(label.centers, avoidPoints);
 
     let didPlace = false;
@@ -258,7 +275,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     const maxDriftFromCountry = isHighZoom ? countryRadius * 2 : undefined;
 
     for (const sizeFactor of sizesToTry) {
-      const fontSize = baseFontSize * sizeFactor;
+      const fontSize = areaBaseFontSize * sizeFactor;
       const dims = computeDimensions(label, fontSize, showNames, showFlags);
       if (dims.width === 0) continue;
 
@@ -304,7 +321,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
     }
 
     if (!didPlace && isHighZoom) {
-      const fontSize = baseFontSize * REDUCED_SIZE_FACTORS[REDUCED_SIZE_FACTORS.length - 1];
+      const fontSize = areaBaseFontSize * REDUCED_SIZE_FACTORS[REDUCED_SIZE_FACTORS.length - 1];
       const dims = computeDimensions(label, fontSize, showNames, showFlags);
       const bestCenter = centersToTry[0] ?? label.center;
       if (dims.width > 0) {

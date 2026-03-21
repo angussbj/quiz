@@ -5,6 +5,7 @@ import { STATUS_COLORS } from '../elementStateColors';
 import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
+import { shouldShowLabel } from '../shouldShowLabel';
 import { isAnatomyElement } from './AnatomyElement';
 import styles from './AnatomyRenderer.module.css';
 
@@ -208,9 +209,8 @@ function AnatomyContent({
 
       {/* Bone name labels with leader lines */}
       {elements.map((element) => {
-        if (!elementToggle(elementToggles, toggles, element.id, 'showLabels')) return null;
         const state = elementStates[element.id];
-        if (state === 'hidden') return null;
+        if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showLabels'))) return null;
         if (!isAnatomyElement(element)) return null;
         const lp = element.labelPosition;
         if (!lp) return null;
