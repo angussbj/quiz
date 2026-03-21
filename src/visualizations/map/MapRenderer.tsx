@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
@@ -167,6 +167,7 @@ function renderShapeElements(
   toggles: Readonly<Record<string, boolean>>,
   nameToState: Readonly<Record<string, ElementVisualState | undefined>>,
   showRegionColors: boolean,
+  isDrag: (e: React.MouseEvent) => boolean,
 ) {
   return elements.map((element) => {
     if (!isMapElement(element) || !element.svgPathData) return null;
@@ -232,6 +233,7 @@ function renderShapeElements(
               }}
               className={styles.interactivePath}
               onClick={(e) => {
+                if (isDrag(e)) return;
                 e.stopPropagation();
                 handleClick(element.id);
               }}
@@ -253,6 +255,7 @@ function renderShapeElements(
               onClick={
                 handleClick
                   ? (e) => {
+                      if (isDrag(e)) return;
                       e.stopPropagation();
                       handleClick(element.id);
                     }
@@ -277,6 +280,7 @@ function renderShapeElements(
               onClick={
                 handleClick
                   ? (e) => {
+                      if (isDrag(e)) return;
                       e.stopPropagation();
                       handleClick(element.id);
                     }
@@ -313,6 +317,7 @@ function renderShapeElements(
         onClick={
           onElementClick
             ? (e) => {
+                if (isDrag(e)) return;
                 e.stopPropagation();
                 onElementClick(element.id);
               }
@@ -351,6 +356,31 @@ function computeLabelProps(
   return { x, y, textAnchor, dominantBaseline };
 }
 
+/** Threshold in screen pixels above which a pointerdown→click sequence is treated as a drag. */
+const DRAG_THRESHOLD_PX = 5;
+
+/**
+ * Tracks whether the last pointer gesture was a drag (pan) rather than a tap/click.
+ * Returns an `onPointerDown` handler to attach to the SVG and an `isDrag` predicate
+ * to call inside onClick handlers to suppress false-positive clicks after panning.
+ */
+function useDragDetector() {
+  const downRef = useRef<{ x: number; y: number } | null>(null);
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    downRef.current = { x: e.clientX, y: e.clientY };
+  }, []);
+
+  const isDrag = useCallback((e: React.MouseEvent): boolean => {
+    if (!downRef.current) return false;
+    const dx = e.clientX - downRef.current.x;
+    const dy = e.clientY - downRef.current.y;
+    return Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD_PX;
+  }, []);
+
+  return { onPointerDown, isDrag };
+}
+
 interface MapContentProps {
   readonly elements: VisualizationRendererProps['elements'];
   readonly elementStates: VisualizationRendererProps['elementStates'];
@@ -379,6 +409,7 @@ function MapContent({
   backgroundLabels,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
+  const { onPointerDown, isDrag } = useDragDetector();
 
   const showRegionColors = toggles['showRegionColors'] === true;
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
@@ -420,6 +451,7 @@ function MapContent({
   const handleBackgroundClick = useCallback(
     (event: React.MouseEvent<SVGGElement>) => {
       if (!onPositionClick) return;
+      if (isDrag(event)) return;
       const svg = (event.currentTarget as SVGElement).ownerSVGElement;
       if (!svg) return;
       const point = svg.createSVGPoint();
@@ -430,11 +462,11 @@ function MapContent({
       const svgPoint = point.matrixTransform(ctm.inverse());
       onPositionClick({ x: svgPoint.x, y: svgPoint.y });
     },
-    [onPositionClick],
+    [onPositionClick, isDrag],
   );
 
   return (
-    <g onClick={handleBackgroundClick}>
+    <g onPointerDown={onPointerDown} onClick={handleBackgroundClick}>
       {/* Invisible rect to catch clicks on empty SVG space.
           Without this, clicks on areas with no visible children
           don't trigger the <g>'s onClick handler. */}
@@ -474,13 +506,13 @@ function MapContent({
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
 
       {/* Country name labels and flags (from background border data, unified overlap detection) */}
       {backgroundLabels && (
@@ -571,6 +603,7 @@ function MapContent({
             onClick={
               onElementClick
                 ? (e) => {
+                    if (isDrag(e)) return;
                     e.stopPropagation();
                     onElementClick(element.id);
                   }
