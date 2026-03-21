@@ -7,7 +7,7 @@
 .borderPath {
   fill: var(--color-bg-primary);
   stroke: var(--color-border);
-  stroke-width: 0.15;
+  stroke-width: 0.075;
   stroke-linejoin: round;
   pointer-events: none;
 }
