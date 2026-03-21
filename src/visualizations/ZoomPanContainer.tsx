@@ -417,13 +417,13 @@ function ZoomPanInner({
     const visMaxX = ((containerSize.width - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
     const visMinY = ((0 - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
     const visMaxY = ((containerSize.height - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
-    const isOnScreen = minX <= visMaxX && maxX >= visMinX && minY <= visMaxY && maxY >= visMinY;
+    const isFullyOnScreen = minX >= visMinX && maxX <= visMaxX && minY >= visMinY && maxY <= visMaxY;
 
     // Even if on-screen, don't bail out if the element is too small to see.
     const MIN_VISIBLE_PX = 8;
     const bboxDiagonal = Math.sqrt(bboxWidth * bboxWidth + bboxHeight * bboxHeight);
     const screenDiagonal = bboxDiagonal * basePixelsPerViewBoxUnit * scale;
-    if (isOnScreen && screenDiagonal >= MIN_VISIBLE_PX) return;
+    if (isFullyOnScreen && screenDiagonal >= MIN_VISIBLE_PX) return;
 
     // Scale to zoom OUT if bbox is larger than the screen (same as handleClusterClick).
     const ZOOM_PADDING = 0.7;

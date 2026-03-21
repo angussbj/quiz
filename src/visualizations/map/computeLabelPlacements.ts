@@ -112,6 +112,7 @@ function tryPlace(
       label, fontSize: dims.fontSize, flagHeight: dims.flagHeight,
       gapSize: dims.gapSize, width: dims.width, height: dims.height,
       x: cx - dims.width / 2, y: cy - dims.height / 2,
+      lines: dims.lines,
     });
     return true;
   }
@@ -378,6 +379,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
           label, fontSize: dims.fontSize, flagHeight: dims.flagHeight,
           gapSize: dims.gapSize, width: dims.width, height: dims.height,
           x: bestCenter.x - dims.width / 2, y: bestCenter.y - dims.height / 2,
+          lines: dims.lines,
         });
       }
     }

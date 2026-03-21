@@ -119,6 +119,7 @@ const timelineQuizBase = {
   availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
   defaultMode: 'identify' as const,
   supportingDataPaths: [] as const,
+  hideFilteredElements: true,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'path' | 'toggles' | 'presets' | 'columnMappings' | 'dataPath'>;
 
 /**

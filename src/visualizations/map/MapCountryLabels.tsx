@@ -64,7 +64,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
 
   return (
     <g className="country-labels" pointerEvents="none">
-      {visibleItems.map(({ label, fontSize, flagHeight, gapSize, width, x, y }) => {
+      {visibleItems.map(({ label, fontSize, flagHeight, gapSize, width, x, y, lines }) => {
         const state = elementNameToState?.[label.name];
         const isAnswered = state === 'correct' || state === 'correct-second'
           || state === 'correct-third' || state === 'incorrect'
@@ -76,6 +76,10 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
         const textColor = isAnswered
           ? STATUS_COLORS[state].main
           : 'var(--color-text-secondary)';
+        const lineHeight = fontSize * 1.3;
+
+        let textBaseY = y;
+        if (labelShowFlag) textBaseY += flagHeight + gapSize;
 
         return (
           <g key={`country-label-${label.id}`}>
@@ -91,11 +95,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
             {labelShowName && (
               <text
                 x={cx}
-                y={(() => {
-                  let textY = y;
-                  if (labelShowFlag) textY += flagHeight + gapSize;
-                  return textY + fontSize * 0.85;
-                })()}
+                y={textBaseY + fontSize * 0.85}
                 textAnchor="middle"
                 fontSize={fontSize}
                 fontWeight={500}
@@ -109,7 +109,11 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                   strokeLinejoin: 'round',
                 }}
               >
-                {label.name}
+                {lines.length <= 1 ? label.name : lines.map((line, i) => (
+                  <tspan key={i} x={cx} dy={i === 0 ? 0 : lineHeight}>
+                    {line}
+                  </tspan>
+                ))}
               </text>
             )}
           </g>
