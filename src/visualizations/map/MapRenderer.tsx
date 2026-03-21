@@ -294,7 +294,7 @@ function renderShapeElements(
           fill: color,
           fillOpacity: stateFillOpacity(state),
           stroke: color,
-          strokeWidth: 0.15,
+          strokeWidth: 0.075,
         }}
         className={onElementClick ? styles.interactivePath : styles.borderPath}
         onClick={
@@ -519,10 +519,17 @@ function MapContent({
         );
       })}
 
-      {/* City dot markers (rendered last = on top of flags — not for stroke-style paths like rivers) */}
+      {/* City dot markers (rendered last = on top of flags — not for stroke-style paths like rivers or large fill polygons) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
+        // Skip dots for fill-style polygon elements unless the polygon is tiny
+        if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') {
+          const { minX, minY, maxX, maxY } = element.viewBoxBounds;
+          const dx = maxX - minX;
+          const dy = maxY - minY;
+          if (dx > 1.5 || dy > 1.5) return null;
+        }
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
