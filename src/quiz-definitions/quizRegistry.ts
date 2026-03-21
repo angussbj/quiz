@@ -199,6 +199,7 @@ const subdivisionsQuizBase = {
     group: 'region',
   },
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
+  locateDistanceMode: 'polygon-boundary' as const,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'dataPath'>;
 
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
