@@ -105,7 +105,7 @@ export function QuizShell({
     if (key === dynamicGroupingKey && onGroupByChange) {
       onGroupByChange(value);
     }
-  }, [toggleState, dynamicGroupingKey, onGroupByChange]);
+  }, [toggleState.setSelect, dynamicGroupingKey, onGroupByChange]);
 
   const handleGroupToggle = useCallback((group: string) => {
     setSelectedGroups((prev) => {
