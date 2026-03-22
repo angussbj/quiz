@@ -271,9 +271,9 @@ interface BoneLabelsProps {
 }
 
 /** Should this element's label be visible given its state and the label mode?
- *  Respects element-states.md: answered states always show, default/highlighted
- *  only show when label mode permits (and even then only on hover for 'hover' mode),
- *  hidden never shows. This prevents labels from giving away answers. */
+ *  Labels only appear for answered/resolved states — never for default/highlighted/hidden
+ *  (those would reveal answers). The label mode controls noise reduction among the
+ *  already-answered labels: 'on' shows all, 'hover' shows only the hovered one, 'off' hides all. */
 function shouldShowBoneLabel(
   state: ElementVisualState | undefined,
   labelMode: 'off' | 'hover' | 'on',
@@ -281,16 +281,14 @@ function shouldShowBoneLabel(
   hoveredElementId: string | null,
 ): boolean {
   if (labelMode === 'off') return false;
-  // Hidden elements never get labels
-  if (state === 'hidden') return false;
-  // Answered/resolved states: always show label (the answer is known)
-  if (state === 'correct' || state === 'correct-second' || state === 'correct-third' ||
-      state === 'incorrect' || state === 'missed' || state === 'context') {
-    return true;
+  // Only answered/resolved states can show labels
+  if (state !== 'correct' && state !== 'correct-second' && state !== 'correct-third' &&
+      state !== 'incorrect' && state !== 'missed' && state !== 'context') {
+    return false;
   }
-  // default / highlighted: only on hover (never bulk-reveal unanswered labels)
-  if (id === hoveredElementId) return true;
-  return false;
+  if (labelMode === 'on') return true;
+  // 'hover': only show the hovered bone's label
+  return id === hoveredElementId;
 }
 
 function BoneLabels({ centers, yMin, yMax, hoveredElementId, labelMode }: BoneLabelsProps) {
