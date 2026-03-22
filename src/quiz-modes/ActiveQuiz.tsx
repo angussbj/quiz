@@ -7,6 +7,7 @@ import type { ReviewResult } from './QuizModeProps';
 import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
 import type { QuizConfig } from './QuizShell';
 import { computeGroupCameraPosition } from './computeGroupCameraPosition';
+import { normalizeText } from './free-recall/matchAnswer';
 import { Timer } from './Timer';
 import { resolveMode } from './resolveMode';
 import styles from './ActiveQuiz.module.css';
@@ -79,77 +80,103 @@ export function ActiveQuiz({
     // names are added as alternates for the canonical river row.
     const hasSegmentFilter = segmentColumn && config.toggleValues['includeSegmentNames'] === false;
 
-    if (!hasRangeFilter && !hasGroupFilter && !hasTributaryFilter && !hasDistributaryFilter && !hasSegmentFilter) {
-      return { activeElements: elements, activeDataRows: dataRows, backgroundElementIds: new Set<string>() };
-    }
+    const hasAnyFilter = hasRangeFilter || hasGroupFilter || hasTributaryFilter || hasDistributaryFilter || hasSegmentFilter;
 
-    const activeIds = new Set<string>();
+    let activeElementsFiltered: ReadonlyArray<VisualizationElement>;
+    let activeRowIds: ReadonlySet<string>;
     const bgIds = new Set<string>();
     // Maps canonical answer value → extra alternate names collected from segment rows
     const segmentAltsByCanonical: Record<string, Array<string>> = {};
 
-    for (const row of dataRows) {
-      const id = row['id'] ?? '';
-      let passes = true;
-      if (hasRangeFilter) {
-        const value = parseInt(row[rangeColumn] ?? '0', 10);
-        const { min, max } = config.elementRange;
-        if (value < min || value > max) passes = false;
-      }
-      if (passes && hasGroupFilter && config.selectedGroups) {
-        const group = row[groupFilterColumn] ?? '';
-        const selectedGroups = config.selectedGroups;
-        if (!group.split('|').some((segment) => selectedGroups.has(segment.trim()))) passes = false;
-      }
-      if (passes && hasTributaryFilter) {
-        // Rows with a non-empty tributary_of value are tributaries — exclude from quiz
-        if (row[tributaryColumn]) passes = false;
-      }
-      if (passes && hasDistributaryFilter) {
-        if (row[distributaryColumn]) passes = false;
-      }
-      if (passes && hasSegmentFilter) {
-        const canonical = row[segmentColumn];
-        if (canonical) {
-          passes = false;
-          // Collect this segment's name and alternates for the canonical row
-          const answerColumn = columnMappings['answer'] ?? 'name';
-          const segmentName = row[answerColumn] ?? '';
-          if (segmentName) {
-            segmentAltsByCanonical[canonical] ??= [];
-            segmentAltsByCanonical[canonical].push(segmentName);
-          }
-          const altsColumn = `${answerColumn}_alternates`;
-          const alts = row[altsColumn];
-          if (alts) {
-            segmentAltsByCanonical[canonical] ??= [];
-            for (const alt of alts.split('|').map((s) => s.trim()).filter(Boolean)) {
-              segmentAltsByCanonical[canonical].push(alt);
+    if (!hasAnyFilter) {
+      activeElementsFiltered = elements;
+      activeRowIds = new Set(dataRows.map((row) => row['id'] ?? ''));
+    } else {
+      const activeIds = new Set<string>();
+
+      for (const row of dataRows) {
+        const id = row['id'] ?? '';
+        let passes = true;
+        if (hasRangeFilter) {
+          const value = parseInt(row[rangeColumn] ?? '0', 10);
+          const { min, max } = config.elementRange;
+          if (value < min || value > max) passes = false;
+        }
+        if (passes && hasGroupFilter && config.selectedGroups) {
+          const group = row[groupFilterColumn] ?? '';
+          const selectedGroups = config.selectedGroups;
+          if (!group.split('|').some((segment) => selectedGroups.has(segment.trim()))) passes = false;
+        }
+        if (passes && hasTributaryFilter) {
+          // Rows with a non-empty tributary_of value are tributaries — exclude from quiz
+          if (row[tributaryColumn]) passes = false;
+        }
+        if (passes && hasDistributaryFilter) {
+          if (row[distributaryColumn]) passes = false;
+        }
+        if (passes && hasSegmentFilter) {
+          const canonical = row[segmentColumn];
+          if (canonical) {
+            passes = false;
+            // Collect this segment's name and alternates for the canonical row
+            const answerColumn = columnMappings['answer'] ?? 'name';
+            const segmentName = row[answerColumn] ?? '';
+            if (segmentName) {
+              segmentAltsByCanonical[canonical] ??= [];
+              segmentAltsByCanonical[canonical].push(segmentName);
+            }
+            const altsColumn = `${answerColumn}_alternates`;
+            const alts = row[altsColumn];
+            if (alts) {
+              segmentAltsByCanonical[canonical] ??= [];
+              for (const alt of alts.split('|').map((s) => s.trim()).filter(Boolean)) {
+                segmentAltsByCanonical[canonical].push(alt);
+              }
             }
           }
         }
+        if (passes) {
+          activeIds.add(id);
+        } else {
+          bgIds.add(id);
+        }
       }
-      if (passes) {
-        activeIds.add(id);
-      } else {
-        bgIds.add(id);
-      }
+
+      activeElementsFiltered = elements.filter((el) => activeIds.has(el.id));
+      activeRowIds = activeIds;
     }
 
-    const activeElementsFiltered = elements.filter((el) => activeIds.has(el.id));
-
-    // Augment canonical rows with segment alternate names so that typing a segment
-    // name matches the canonical quiz item.
+    // Augment data rows with element label alternates so grouped elements
+    // (bilateral merge, numbered merge) can be matched by their merged label.
+    // E.g. bilateral merge: row name "Femur (right)" → element label "Femur".
     const answerColumn = columnMappings['answer'] ?? 'name';
     const altsColumn = `${answerColumn}_alternates`;
+
+    const elementLabelById = new Map<string, string>();
+    for (const el of activeElementsFiltered) {
+      elementLabelById.set(el.id, el.label);
+    }
+
     const activeDataRowsAugmented = dataRows
-      .filter((row) => activeIds.has(row['id'] ?? ''))
+      .filter((row) => activeRowIds.has(row['id'] ?? ''))
       .map((row) => {
+        const rowId = row['id'] ?? '';
         const canonicalName = row[answerColumn] ?? '';
+        const parts: Array<string> = [];
+
+        // Segment alternates
         const extraAlts = segmentAltsByCanonical[canonicalName];
-        if (!extraAlts?.length) return row;
+        if (extraAlts?.length) parts.push(...extraAlts);
+
+        // Element label as alternate (for grouped elements whose label differs from row name)
+        const elLabel = elementLabelById.get(rowId);
+        if (elLabel && normalizeText(elLabel) !== normalizeText(canonicalName)) {
+          parts.push(elLabel);
+        }
+
+        if (parts.length === 0) return row;
         const existing = row[altsColumn] ?? '';
-        const merged = [existing, ...extraAlts].filter(Boolean).join('|');
+        const merged = [existing, ...parts].filter(Boolean).join('|');
         return { ...row, [altsColumn]: merged };
       });
 

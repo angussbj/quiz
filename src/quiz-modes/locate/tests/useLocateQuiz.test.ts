@@ -245,7 +245,7 @@ describe('useLocateQuiz', () => {
     const elements = [squareElement];
 
     it('returns distance=0 for a click inside the polygon', () => {
-      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+      const { result } = renderHook(() => useLocateQuiz(elements, { locateDistanceMode: 'polygon-boundary' }));
 
       act(() => {
         // Click inside the polygon (lng=5, lat=5 → viewBox x=5, y=-5)
@@ -256,7 +256,7 @@ describe('useLocateQuiz', () => {
     });
 
     it('marks inside click as correct', () => {
-      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+      const { result } = renderHook(() => useLocateQuiz(elements, { locateDistanceMode: 'polygon-boundary' }));
 
       act(() => {
         result.current.handlePositionClick({ x: 5, y: -5 });
@@ -267,7 +267,7 @@ describe('useLocateQuiz', () => {
     });
 
     it('sets feedbackTargetPosition = clickPosition for an inside click', () => {
-      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+      const { result } = renderHook(() => useLocateQuiz(elements, { locateDistanceMode: 'polygon-boundary' }));
       const clickPos = { x: 5, y: -5 };
 
       act(() => {
@@ -278,7 +278,7 @@ describe('useLocateQuiz', () => {
     });
 
     it('returns positive distance for a click outside the polygon', () => {
-      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+      const { result } = renderHook(() => useLocateQuiz(elements, { locateDistanceMode: 'polygon-boundary' }));
 
       act(() => {
         // Click far outside: lng=50, lat=5 → viewBox x=50, y=-5
@@ -289,7 +289,7 @@ describe('useLocateQuiz', () => {
     });
 
     it('sets feedbackTargetPosition to the closest border point for an outside click', () => {
-      const { result } = renderHook(() => useLocateQuiz(elements, 'polygon-boundary'));
+      const { result } = renderHook(() => useLocateQuiz(elements, { locateDistanceMode: 'polygon-boundary' }));
 
       act(() => {
         // Click to the right: viewBox x=50, y=-5. Closest border: right edge x=10, y=-5

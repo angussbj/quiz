@@ -383,7 +383,7 @@ function SkeletonMeshes({
     const handBones = ['1st metacarpal bone.r', '5th metacarpal bone.r', 'Capitate.r', 'Distal phalanx of 3d finger.r'];
     const footBones = ['Calcaneus.r', 'Talus.r', 'First metatarsal bone.r', 'Fifth metatarsal bone.r'];
 
-    const fullBodyFront = frontView(fullSymBox, 1);
+    const fullBodyFront = frontView(fullSymBox, 1.2);
     const fullBodyFrontRaised = {
       position: fullBodyFront.position.clone().add(new THREE.Vector3(0, 0.15, 0)),
       target: fullBodyFront.target.clone(),
@@ -658,6 +658,7 @@ export function Anatomy3DRenderer({
   onElementClick,
 }: VisualizationRendererProps) {
   const [views, setViews] = useState<Record<string, CameraView>>({});
+  const [modelReady, setModelReady] = useState(false);
   const [animTarget, setAnimTarget] = useState<CameraView | null>(null);
   const [labelMode, setLabelMode] = useState<'off' | 'hover' | 'on'>('hover');
 
@@ -672,6 +673,7 @@ export function Anatomy3DRenderer({
   const handleModelReady = useCallback(
     (_yMin: number, _yMax: number, _centers: Map<string, MeshCenter>, modelViews: Record<string, CameraView>) => {
       setViews(modelViews);
+      setModelReady(true);
     },
     [],
   );
@@ -686,6 +688,8 @@ export function Anatomy3DRenderer({
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
       const presetKey = HOTKEY_MAP[e.key.toLowerCase()];
       if (presetKey) goToPreset(presetKey);
     };
@@ -727,6 +731,7 @@ export function Anatomy3DRenderer({
 
       <Canvas
         className={styles.canvas}
+        style={modelReady ? undefined : { visibility: 'hidden' }}
         camera={{ position: [0, 0, 3], fov: FOV_DEG }}
         gl={{ antialias: true }}
       >

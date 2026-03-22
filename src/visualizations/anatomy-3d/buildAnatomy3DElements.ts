@@ -20,7 +20,7 @@ export function buildAnatomy3DElements(
     groupNumbered: true,
     showTeeth: false,
     showCostalCart: false,
-    showSesamoids: false,
+    showSesamoids: true,
     showSkull: true,
     showTorso: true,
     showLimbs: true,

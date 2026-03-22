@@ -316,7 +316,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { key: 'showFeet',   label: 'Feet',   defaultValue: true,  group: 'regions', hiddenBehavior: 'never' } as const,
       { key: 'showTeeth',      label: 'Teeth',           defaultValue: false, group: 'types', hiddenBehavior: 'never' } as const,
       { key: 'showCostalCart', label: 'Costal cartilage', defaultValue: false, group: 'types', hiddenBehavior: 'never' } as const,
-      { key: 'showSesamoids',  label: 'Sesamoids',       defaultValue: false, group: 'types', hiddenBehavior: 'never' } as const,
+      { key: 'showSesamoids',  label: 'Sesamoids',       defaultValue: true, group: 'types', hiddenBehavior: 'never' } as const,
       { key: 'groupBilateral', label: 'Group left/right', defaultValue: true,  group: 'grouping', hiddenBehavior: 'never' } as const,
       { key: 'groupNumbered',  label: 'Group numbered',  defaultValue: true,  group: 'grouping', hiddenBehavior: 'never' } as const,
     ],

@@ -53,7 +53,7 @@ export function buildBone3DElements(
   const groupNumbered  = toggles['groupNumbered']  !== false; // default true
   const showTeeth      = toggles['showTeeth']      === true;  // default false
   const showCostalCart = toggles['showCostalCart'] === true;  // default false
-  const showSesamoids  = toggles['showSesamoids']  === true;  // default false
+  const showSesamoids  = toggles['showSesamoids']  !== false; // default true
 
   const showSkull  = toggles['showSkull']  !== false; // default true
   const showTorso  = toggles['showTorso']  !== false; // default true

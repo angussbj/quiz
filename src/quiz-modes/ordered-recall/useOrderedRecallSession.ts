@@ -60,6 +60,11 @@ export function useOrderedRecallSession({
     return map;
   }, [dataRows]);
 
+  const elementLabelById = useMemo(
+    () => new Map(elements.map((el) => [el.id, el.label])),
+    [elements],
+  );
+
   const [promptIndex, setPromptIndex] = useState(0);
   const [correctIds, setCorrectIds] = useState<ReadonlySet<string>>(new Set());
   const [skippedIds, setSkippedIds] = useState<ReadonlySet<string>>(new Set());
@@ -125,13 +130,13 @@ export function useOrderedRecallSession({
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
         setLastMatchedElementId(match.elementId);
-        setLastMatchedAnswer(match.displayAnswer);
+        setLastMatchedAnswer(elementLabelById.get(match.elementId) ?? match.displayAnswer);
         advancePrompt();
         return true;
       }
       return false;
     },
-    [isFinished, currentElementId, dataRowsById, answerColumn, clearFlash, advancePrompt],
+    [isFinished, currentElementId, dataRowsById, answerColumn, elementLabelById, clearFlash, advancePrompt],
   );
 
   const handleSubmit = useCallback(
@@ -148,7 +153,7 @@ export function useOrderedRecallSession({
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
         setLastMatchedElementId(match.elementId);
-        setLastMatchedAnswer(match.displayAnswer);
+        setLastMatchedAnswer(elementLabelById.get(match.elementId) ?? match.displayAnswer);
         advancePrompt();
         return;
       }
@@ -164,7 +169,7 @@ export function useOrderedRecallSession({
         setFlashIncorrect(false);
       }, 600);
     },
-    [isFinished, currentElementId, dataRowsById, answerColumn, clearFlash, advancePrompt],
+    [isFinished, currentElementId, dataRowsById, answerColumn, elementLabelById, clearFlash, advancePrompt],
   );
 
   const handleSkip = useCallback(() => {

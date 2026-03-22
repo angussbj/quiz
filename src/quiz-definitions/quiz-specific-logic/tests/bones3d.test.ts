@@ -125,14 +125,14 @@ describe('buildBone3DElements', () => {
       expect(buildBone3DElements(rows, { showCostalCart: true })).toHaveLength(1);
     });
 
-    it('excludes sesamoids by default', () => {
+    it('includes sesamoids by default', () => {
       const rows = [makeRow({ bone_type: 'sesamoid', bilateral_partner: '' })];
-      expect(buildBone3DElements(rows, {})).toHaveLength(0);
+      expect(buildBone3DElements(rows, {})).toHaveLength(1);
     });
 
-    it('includes sesamoids when showSesamoids=true', () => {
+    it('excludes sesamoids when showSesamoids=false', () => {
       const rows = [makeRow({ bone_type: 'sesamoid', bilateral_partner: '' })];
-      expect(buildBone3DElements(rows, { showSesamoids: true })).toHaveLength(1);
+      expect(buildBone3DElements(rows, { showSesamoids: false })).toHaveLength(0);
     });
   });
 

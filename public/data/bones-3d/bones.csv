@@ -1,253 +1,253 @@
-id,name,mesh_name,x,y,z,side,direct_mesh,region,bone_type,bilateral_partner,group_representative
-frontal-bone,Frontal bone,Frontal bone,0.00,164.87,5.38,midline,true,skull,bone,,
-parietal-bone-right,Parietal bone (right),Parietal bone right,-3.50,164.77,-2.97,right,true,skull,bone,parietal-bone-left,
-parietal-bone-left,Parietal bone (left),Parietal bone left,3.49,164.73,-2.96,left,true,skull,bone,parietal-bone-right,
-occipital-bone,Occipital bone,Occipital bone,0.02,160.32,-4.55,midline,true,skull,bone,,
-ethmoid-bone,Ethmoid bone,Ethmoid Bone,0.00,159.25,5.89,midline,true,skull,bone,,
-sphenoid-bone,Sphenoid bone,Sphenoid bone,0.00,158.48,2.81,midline,true,skull,bone,,
-vomer,Vomer,Vomer,-0.01,157.15,4.64,midline,true,skull,bone,,
-mandible,Mandible,Mandible bone,0.00,154.13,4.39,midline,true,skull,bone,,
-temporal-bone-right,Temporal bone (right),Temporal bone.r,-4.20,158.62,-0.29,right,true,skull,bone,temporal-bone-left,
-temporal-bone-left,Temporal bone (left),Temporal bone.r,4.20,158.62,-0.29,left,false,skull,bone,temporal-bone-right,
-zygomatic-bone-right,Zygomatic bone (right),Zygomatic bone.r,-4.65,158.56,5.21,right,true,skull,bone,zygomatic-bone-left,
-zygomatic-bone-left,Zygomatic bone (left),Zygomatic bone.r,4.65,158.56,5.21,left,false,skull,bone,zygomatic-bone-right,
-nasal-bone-right,Nasal bone (right),Nasal bone.r,-0.41,159.22,9.01,right,true,skull,bone,nasal-bone-left,
-nasal-bone-left,Nasal bone (left),Nasal bone.r,0.41,159.22,9.01,left,false,skull,bone,nasal-bone-right,
-lacrimal-bone-right,Lacrimal bone (right),Lacrimal bone.r,-1.22,158.94,6.98,right,true,skull,bone,lacrimal-bone-left,
-lacrimal-bone-left,Lacrimal bone (left),Lacrimal bone.r,1.22,158.94,6.98,left,false,skull,bone,lacrimal-bone-right,
-maxilla-right,Maxilla (right),Maxilla bone.r,-2.25,157.43,6.64,right,true,skull,bone,maxilla-left,
-maxilla-left,Maxilla (left),Maxilla bone.r,2.25,157.43,6.64,left,false,skull,bone,maxilla-right,
-palatine-bone-right,Palatine bone (right),Palatine bone.r,-1.34,157.28,4.09,right,true,skull,bone,palatine-bone-left,
-palatine-bone-left,Palatine bone (left),Palatine bone.r,1.34,157.28,4.09,left,false,skull,bone,palatine-bone-right,
-inferior-nasal-concha-right,Inferior nasal concha (right),Inferior nasal concha bone.r,-1.10,157.23,5.98,right,true,skull,bone,inferior-nasal-concha-left,
-inferior-nasal-concha-left,Inferior nasal concha (left),Inferior nasal concha bone.r,1.10,157.23,5.98,left,false,skull,bone,inferior-nasal-concha-right,
-upper-medial-incisor-right,Upper medial incisor (right),Upper medial incisor.r,-0.44,154.64,8.69,right,true,skull,teeth,upper-medial-incisor-left,
-upper-medial-incisor-left,Upper medial incisor (left),Upper medial incisor.r,0.44,154.64,8.69,left,false,skull,teeth,upper-medial-incisor-right,
-upper-lateral-incisor-right,Upper lateral incisor (right),Upper lateral incisor.r,-1.12,154.70,8.46,right,true,skull,teeth,upper-lateral-incisor-left,
-upper-lateral-incisor-left,Upper lateral incisor (left),Upper lateral incisor.r,1.12,154.70,8.46,left,false,skull,teeth,upper-lateral-incisor-right,
-upper-canine-right,Upper canine (right),Upper canine.r,-1.70,154.97,8.14,right,true,skull,teeth,upper-canine-left,
-upper-canine-left,Upper canine (left),Upper canine.r,1.70,154.97,8.14,left,false,skull,teeth,upper-canine-right,
-upper-first-premolar-right,Upper first premolar (right),Upper first premolar.r,-2.01,154.98,7.39,right,true,skull,teeth,upper-first-premolar-left,
-upper-first-premolar-left,Upper first premolar (left),Upper first premolar.r,2.01,154.98,7.39,left,false,skull,teeth,upper-first-premolar-right,
-upper-second-premolar-right,Upper second premolar (right),Upper second premolar.r,-2.31,154.96,6.78,right,true,skull,teeth,upper-second-premolar-left,
-upper-second-premolar-left,Upper second premolar (left),Upper second premolar.r,2.31,154.96,6.78,left,false,skull,teeth,upper-second-premolar-right,
-upper-first-molar-right,Upper first molar (right),Upper first molar tooth.r,-2.41,155.08,5.92,right,true,skull,teeth,upper-first-molar-left,
-upper-first-molar-left,Upper first molar (left),Upper first molar tooth.r,2.41,155.08,5.92,left,false,skull,teeth,upper-first-molar-right,
-upper-second-molar-right,Upper second molar (right),Upper second molar tooth.r,-2.37,155.34,5.07,right,true,skull,teeth,upper-second-molar-left,
-upper-second-molar-left,Upper second molar (left),Upper second molar tooth.r,2.37,155.34,5.07,left,false,skull,teeth,upper-second-molar-right,
-lower-medial-incisor-right,Lower medial incisor (right),Lower medial incisor.r,-0.32,152.23,7.97,right,true,skull,teeth,lower-medial-incisor-left,
-lower-medial-incisor-left,Lower medial incisor (left),Lower medial incisor.r,0.32,152.23,7.97,left,false,skull,teeth,lower-medial-incisor-right,
-lower-lateral-incisor-right,Lower lateral incisor (right),Lower lateral incisor.r,-0.80,152.24,7.96,right,true,skull,teeth,lower-lateral-incisor-left,
-lower-lateral-incisor-left,Lower lateral incisor (left),Lower lateral incisor.r,0.80,152.24,7.96,left,false,skull,teeth,lower-lateral-incisor-right,
-lower-canine-right,Lower canine (right),Lower canine.r,-1.28,152.19,7.63,right,true,skull,teeth,lower-canine-left,
-lower-canine-left,Lower canine (left),Lower canine.r,1.28,152.19,7.63,left,false,skull,teeth,lower-canine-right,
-lower-first-premolar-right,Lower first premolar (right),Lower first premolar.r,-1.69,152.47,7.08,right,true,skull,teeth,lower-first-premolar-left,
-lower-first-premolar-left,Lower first premolar (left),Lower first premolar.r,1.69,152.47,7.08,left,false,skull,teeth,lower-first-premolar-right,
-lower-second-premolar-right,Lower second premolar (right),Lower second premolar.r,-1.99,152.56,6.45,right,true,skull,teeth,lower-second-premolar-left,
-lower-second-premolar-left,Lower second premolar (left),Lower second premolar.r,1.99,152.56,6.45,left,false,skull,teeth,lower-second-premolar-right,
-lower-first-molar-right,Lower first molar (right),Lower first molar tooth.r,-2.26,153.02,5.73,right,true,skull,teeth,lower-first-molar-left,
-lower-first-molar-left,Lower first molar (left),Lower first molar tooth.r,2.26,153.02,5.73,left,false,skull,teeth,lower-first-molar-right,
-lower-second-molar-right,Lower second molar (right),Lower second molar tooth.r,-2.62,153.49,4.57,right,true,skull,teeth,lower-second-molar-left,
-lower-second-molar-left,Lower second molar (left),Lower second molar tooth.r,2.62,153.49,4.57,left,false,skull,teeth,lower-second-molar-right,
-atlas-c1,Atlas (C1),Atlas (C1),-0.00,154.28,-2.11,midline,true,torso,bone,,atlas-c1
-axis-c2,Axis (C2),Axis (C2),0.00,153.02,-2.56,midline,true,torso,bone,,atlas-c1
-cervical-vertebra-c3,Cervical vertebra (C3),Cervical vertebrae (C3),-0.00,150.60,-2.54,midline,true,torso,bone,,atlas-c1
-cervical-vertebra-c4,Cervical vertebra (C4),Cervical vertebrae (C4),0.00,149.27,-2.67,midline,true,torso,bone,,atlas-c1
-cervical-vertebra-c5,Cervical vertebra (C5),Cervical vertebrae (C5),0.00,147.95,-2.99,midline,true,torso,bone,,atlas-c1
-cervical-vertebra-c6,Cervical vertebra (C6),Cervical vertebrae (C6),0.00,146.58,-3.48,midline,true,torso,bone,,atlas-c1
-cervical-vertebra-c7,Cervical vertebra (C7),Cervical vertebrae (C7),0.00,145.19,-4.20,midline,true,torso,bone,,atlas-c1
-thoracic-vertebra-t1,Thoracic vertebra (T1),Thoracic vertebrae (T1),0.00,143.80,-4.81,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t2,Thoracic vertebra (T2),Thoracic vertebrae (T2),0.00,142.00,-5.37,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t3,Thoracic vertebra (T3),Thoracic vertebrae (T3),0.00,139.86,-6.19,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t4,Thoracic vertebra (T4),Thoracic vertebrae (T4),0.00,137.52,-6.55,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t5,Thoracic vertebra (T5),Thoracic vertebrae (T5),-0.00,134.76,-6.64,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t6,Thoracic vertebra (T6),Thoracic vertebrae (T6),-0.00,131.44,-6.68,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t7,Thoracic vertebra (T7),Thoracic vertebrae (T7),0.00,128.67,-6.48,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t8,Thoracic vertebra (T8),Thoracic vertebrae (T8),0.00,125.61,-6.39,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t9,Thoracic vertebra (T9),Thoracic vertebrae (T9),0.00,122.85,-5.86,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t10,Thoracic vertebra (T10),Thoracic vertebrae (T10),0.00,119.77,-5.34,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t11,Thoracic vertebra (T11),Thoracic vertebrae (T11),0.00,116.96,-4.49,midline,true,torso,bone,,thoracic-vertebra-t1
-thoracic-vertebra-t12,Thoracic vertebra (T12),Thoracic vertebrae (T12),-0.00,113.93,-3.65,midline,true,torso,bone,,thoracic-vertebra-t1
-lumbar-vertebra-l1,Lumbar vertebra (L1),Lumbar vertebrae (L1),0.00,110.41,-2.92,midline,true,torso,bone,,lumbar-vertebra-l1
-lumbar-vertebra-l2,Lumbar vertebra (L2),Lumbar vertebrae (L2),0.00,107.48,-2.38,midline,true,torso,bone,,lumbar-vertebra-l1
-lumbar-vertebra-l3,Lumbar vertebra (L3),Lumbar vertebrae (L3),0.00,104.34,-2.31,midline,true,torso,bone,,lumbar-vertebra-l1
-lumbar-vertebra-l4,Lumbar vertebra (L4),Lumbar vertebrae (L4),-0.00,101.51,-2.40,midline,true,torso,bone,,lumbar-vertebra-l1
-lumbar-vertebra-l5,Lumbar vertebra (L5),Lumbar vertebrae (L5),-0.00,98.26,-2.88,midline,true,torso,bone,,lumbar-vertebra-l1
-sacrum,Sacrum,Sacrum,-0.00,92.34,-4.98,midline,true,torso,bone,,
-coccyx,Coccyx,Coccyx,-0.01,84.58,-7.62,midline,true,torso,bone,,
-manubrium,Manubrium,Manubrium of sternum,0.01,137.76,5.75,midline,true,torso,bone,,
-body-of-sternum,Body of sternum,Body of sternum,-0.00,129.88,9.08,midline,true,torso,bone,,
-rib-1-right,Rib 1 (right),Rib (1st).r,-4.40,141.69,0.15,right,true,torso,bone,rib-1-left,rib-1-right
-rib-1-left,Rib 1 (left),Rib (1st).r,4.40,141.69,0.15,left,false,torso,bone,rib-1-right,rib-1-right
-rib-2-right,Rib 2 (right),Rib (2nd).r,-5.79,139.07,0.83,right,true,torso,bone,rib-2-left,rib-1-right
-rib-2-left,Rib 2 (left),Rib (2nd).r,5.79,139.07,0.83,left,false,torso,bone,rib-2-right,rib-1-right
-rib-3-right,Rib 3 (right),Rib (3rd).r,-6.43,136.36,0.67,right,true,torso,bone,rib-3-left,rib-1-right
-rib-3-left,Rib 3 (left),Rib (3rd).r,6.43,136.36,0.67,left,false,torso,bone,rib-3-right,rib-1-right
-rib-4-right,Rib 4 (right),Rib (4th).r,-7.01,133.62,0.76,right,true,torso,bone,rib-4-left,rib-1-right
-rib-4-left,Rib 4 (left),Rib (4th).r,7.01,133.62,0.76,left,false,torso,bone,rib-4-right,rib-1-right
-rib-5-right,Rib 5 (right),Rib (5th).r,-7.34,130.50,0.74,right,true,torso,bone,rib-5-left,rib-1-right
-rib-5-left,Rib 5 (left),Rib (5th).r,7.34,130.50,0.74,left,false,torso,bone,rib-5-right,rib-1-right
-rib-6-right,Rib 6 (right),Rib (6th).r,-7.68,127.51,0.06,right,true,torso,bone,rib-6-left,rib-1-right
-rib-6-left,Rib 6 (left),Rib (6th).r,7.68,127.51,0.06,left,false,torso,bone,rib-6-right,rib-1-right
-rib-7-right,Rib 7 (right),Rib (7th).r,-7.89,124.36,-0.58,right,true,torso,bone,rib-7-left,rib-1-right
-rib-7-left,Rib 7 (left),Rib (7th).r,7.89,124.36,-0.58,left,false,torso,bone,rib-7-right,rib-1-right
-rib-8-right,Rib 8 (right),Rib (8th).r,-7.59,121.16,-1.47,right,true,torso,bone,rib-8-left,rib-1-right
-rib-8-left,Rib 8 (left),Rib (8th).r,7.59,121.16,-1.47,left,false,torso,bone,rib-8-right,rib-1-right
-rib-9-right,Rib 9 (right),Rib (9th).r,-7.52,118.21,-2.68,right,true,torso,bone,rib-9-left,rib-1-right
-rib-9-left,Rib 9 (left),Rib (9th).r,7.52,118.21,-2.68,left,false,torso,bone,rib-9-right,rib-1-right
-rib-10-right,Rib 10 (right),Rib (10th).r,-7.42,115.14,-3.04,right,true,torso,bone,rib-10-left,rib-1-right
-rib-10-left,Rib 10 (left),Rib (10th).r,7.42,115.14,-3.04,left,false,torso,bone,rib-10-right,rib-1-right
-rib-11-right,Rib 11 (right),Rib (11th).r,-6.99,112.48,-3.84,right,true,torso,bone,rib-11-left,rib-1-right
-rib-11-left,Rib 11 (left),Rib (11th).r,6.99,112.48,-3.84,left,false,torso,bone,rib-11-right,rib-1-right
-rib-12-right,Rib 12 (right),Rib (12th).r,-5.36,110.54,-4.51,right,true,torso,bone,rib-12-left,rib-1-right
-rib-12-left,Rib 12 (left),Rib (12th).r,5.36,110.54,-4.51,left,false,torso,bone,rib-12-right,rib-1-right
-costal-cartilage-of-rib-1-right,Costal cartilage of rib 1 (right),Costal cart of 1st rib.r,-3.92,138.77,4.00,right,true,torso,costal_cartilage,costal-cartilage-of-rib-1-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-1-left,Costal cartilage of rib 1 (left),Costal cart of 1st rib.r,3.92,138.77,4.00,left,false,torso,costal_cartilage,costal-cartilage-of-rib-1-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-2-right,Costal cartilage of rib 2 (right),Costal cart of 2nd rib.r,-2.90,135.14,6.95,right,true,torso,costal_cartilage,costal-cartilage-of-rib-2-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-2-left,Costal cartilage of rib 2 (left),Costal cart of 2nd rib.r,2.90,135.14,6.95,left,false,torso,costal_cartilage,costal-cartilage-of-rib-2-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-3-right,Costal cartilage of rib 3 (right),Costal cart of 3rd rib.r,-3.47,132.00,7.99,right,true,torso,costal_cartilage,costal-cartilage-of-rib-3-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-3-left,Costal cartilage of rib 3 (left),Costal cart of 3rd rib.r,3.47,132.00,7.99,left,false,torso,costal_cartilage,costal-cartilage-of-rib-3-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-4-right,Costal cartilage of rib 4 (right),Costal cart of 4th rib.r,-4.41,129.11,9.08,right,true,torso,costal_cartilage,costal-cartilage-of-rib-4-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-4-left,Costal cartilage of rib 4 (left),Costal cart of 4th rib.r,4.41,129.11,9.08,left,false,torso,costal_cartilage,costal-cartilage-of-rib-4-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-5-right,Costal cartilage of rib 5 (right),Costal cart of 5th rib.r,-5.23,125.98,10.15,right,true,torso,costal_cartilage,costal-cartilage-of-rib-5-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-5-left,Costal cartilage of rib 5 (left),Costal cart of 5th rib.r,5.23,125.98,10.15,left,false,torso,costal_cartilage,costal-cartilage-of-rib-5-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-6-right,Costal cartilage of rib 6 (right),Costal cart of 6th rib.r,-5.61,123.28,10.16,right,true,torso,costal_cartilage,costal-cartilage-of-rib-6-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-6-left,Costal cartilage of rib 6 (left),Costal cart of 6th rib.r,5.61,123.28,10.16,left,false,torso,costal_cartilage,costal-cartilage-of-rib-6-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-7-right,Costal cartilage of rib 7 (right),Costal cart of 7th rib.r,-6.11,120.71,9.41,right,true,torso,costal_cartilage,costal-cartilage-of-rib-7-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-7-left,Costal cartilage of rib 7 (left),Costal cart of 7th rib.r,6.11,120.71,9.41,left,false,torso,costal_cartilage,costal-cartilage-of-rib-7-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-8-right,Costal cartilage of rib 8 (right),Costal cart of 8th rib.r,-7.82,116.13,8.33,right,true,torso,costal_cartilage,costal-cartilage-of-rib-8-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-8-left,Costal cartilage of rib 8 (left),Costal cart of 8th rib.r,7.82,116.13,8.33,left,false,torso,costal_cartilage,costal-cartilage-of-rib-8-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-9-right,Costal cartilage of rib 9 (right),Costal cart of 9th rib.r,-9.61,111.61,6.36,right,true,torso,costal_cartilage,costal-cartilage-of-rib-9-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-9-left,Costal cartilage of rib 9 (left),Costal cart of 9th rib.r,9.61,111.61,6.36,left,false,torso,costal_cartilage,costal-cartilage-of-rib-9-right,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-10-right,Costal cartilage of rib 10 (right),Costal cart of 10th rib.r,-10.37,108.20,5.06,right,true,torso,costal_cartilage,costal-cartilage-of-rib-10-left,costal-cartilage-of-rib-1-right
-costal-cartilage-of-rib-10-left,Costal cartilage of rib 10 (left),Costal cart of 10th rib.r,10.37,108.20,5.06,left,false,torso,costal_cartilage,costal-cartilage-of-rib-10-right,costal-cartilage-of-rib-1-right
-clavicle-right,Clavicle (right),Clavicle.r,-8.01,140.67,-0.32,right,true,limbs,bone,clavicle-left,
-clavicle-left,Clavicle (left),Clavicle.r,8.01,140.67,-0.32,left,false,limbs,bone,clavicle-right,
-scapula-right,Scapula (right),Scapula.r.,-11.68,133.66,-6.00,right,true,limbs,bone,scapula-left,
-scapula-left,Scapula (left),Scapula.r.,11.68,133.66,-6.00,left,false,limbs,bone,scapula-right,
-humerus-right,Humerus (right),Humerus.r,-19.66,124.63,-3.16,right,true,limbs,bone,humerus-left,
-humerus-left,Humerus (left),Humerus.r,19.66,124.63,-3.16,left,false,limbs,bone,humerus-right,
-radius-right,Radius (right),Radius.r,-25.78,97.74,-1.25,right,true,limbs,bone,radius-left,
-radius-left,Radius (left),Radius.r,25.78,97.74,-1.25,left,false,limbs,bone,radius-right,
-ulna-right,Ulna (right),Ulna.r,-22.91,98.80,-2.31,right,true,limbs,bone,ulna-left,
-ulna-left,Ulna (left),Ulna.r,22.91,98.80,-2.31,left,false,limbs,bone,ulna-right,
-hip-bone-right,Hip bone (right),Hip bone.r,-6.89,90.47,-1.52,right,true,torso,bone,hip-bone-left,
-hip-bone-left,Hip bone (left),Hip bone.r,6.89,90.47,-1.52,left,false,torso,bone,hip-bone-right,
-femur-right,Femur (right),Femur.r,-9.02,65.82,-2.03,right,true,limbs,bone,femur-left,
-femur-left,Femur (left),Femur.r,9.02,65.82,-2.03,left,false,limbs,bone,femur-right,
-patella-right,Patella (right),Patella.r,-8.43,44.45,0.48,right,true,limbs,bone,patella-left,
-patella-left,Patella (left),Patella.r,8.43,44.45,0.48,left,false,limbs,bone,patella-right,
-tibia-right,Tibia (right),Tibia.r,-7.61,25.50,-2.87,right,true,limbs,bone,tibia-left,
-tibia-left,Tibia (left),Tibia.r,7.61,25.50,-2.87,left,false,limbs,bone,tibia-right,
-fibula-right,Fibula (right),Fibula.r,-10.69,23.71,-4.33,right,true,limbs,bone,fibula-left,
-fibula-left,Fibula (left),Fibula.r,10.69,23.71,-4.33,left,false,limbs,bone,fibula-right,
-scaphoid-right,Scaphoid (right),Scaphoid.r,-27.09,85.48,1.35,right,true,hands,bone,scaphoid-left,
-scaphoid-left,Scaphoid (left),Scaphoid.r,27.09,85.48,1.35,left,false,hands,bone,scaphoid-right,
-lunate-right,Lunate (right),Lunate bone.r,-25.35,85.47,1.34,right,true,hands,bone,lunate-left,
-lunate-left,Lunate (left),Lunate bone.r,25.35,85.47,1.34,left,false,hands,bone,lunate-right,
-triquetrum-right,Triquetrum (right),Triquetrum.r,-24.65,84.66,1.73,right,true,hands,bone,triquetrum-left,
-triquetrum-left,Triquetrum (left),Triquetrum.r,24.65,84.66,1.73,left,false,hands,bone,triquetrum-right,
-pisiform-right,Pisiform (right),Pisiform.r,-24.58,85.15,2.53,right,true,hands,bone,pisiform-left,
-pisiform-left,Pisiform (left),Pisiform.r,24.58,85.15,2.53,left,false,hands,bone,pisiform-right,
-trapezium-right,Trapezium (right),Trapezium.r,-28.34,84.65,2.24,right,true,hands,bone,trapezium-left,
-trapezium-left,Trapezium (left),Trapezium.r,28.34,84.65,2.24,left,false,hands,bone,trapezium-right,
-trapezoid-right,Trapezoid (right),Trapezoid.r,-27.78,84.03,1.60,right,true,hands,bone,trapezoid-left,
-trapezoid-left,Trapezoid (left),Trapezoid.r,27.78,84.03,1.60,left,false,hands,bone,trapezoid-right,
-capitate-right,Capitate (right),Capitate.r,-26.61,84.38,1.46,right,true,hands,bone,capitate-left,
-capitate-left,Capitate (left),Capitate.r,26.61,84.38,1.46,left,false,hands,bone,capitate-right,
-hamate-right,Hamate (right),Hamate.r,-25.37,84.16,1.81,right,true,hands,bone,hamate-left,
-hamate-left,Hamate (left),Hamate.r,25.37,84.16,1.81,left,false,hands,bone,hamate-right,
-metacarpal-1-right,Metacarpal 1 (right),1st metacarpal bone.r,-30.17,82.93,3.43,right,true,hands,bone,metacarpal-1-left,metacarpal-1-right
-metacarpal-1-left,Metacarpal 1 (left),1st metacarpal bone.r,30.17,82.93,3.43,left,false,hands,bone,metacarpal-1-right,metacarpal-1-right
-metacarpal-2-right,Metacarpal 2 (right),2nd metacarpal bone.r,-28.74,80.24,2.53,right,true,hands,bone,metacarpal-2-left,metacarpal-1-right
-metacarpal-2-left,Metacarpal 2 (left),2nd metacarpal bone.r,28.74,80.24,2.53,left,false,hands,bone,metacarpal-2-right,metacarpal-1-right
-metacarpal-3-right,Metacarpal 3 (right),3rd metacarpal bone.r,-27.24,80.23,2.30,right,true,hands,bone,metacarpal-3-left,metacarpal-1-right
-metacarpal-3-left,Metacarpal 3 (left),3rd metacarpal bone.r,27.24,80.23,2.30,left,false,hands,bone,metacarpal-3-right,metacarpal-1-right
-metacarpal-4-right,Metacarpal 4 (right),4th metacarpal bone.r,-25.69,80.49,2.42,right,true,hands,bone,metacarpal-4-left,metacarpal-1-right
-metacarpal-4-left,Metacarpal 4 (left),4th metacarpal bone.r,25.69,80.49,2.42,left,false,hands,bone,metacarpal-4-right,metacarpal-1-right
-metacarpal-5-right,Metacarpal 5 (right),5th metacarpal bone.r,-24.45,80.93,2.77,right,true,hands,bone,metacarpal-5-left,metacarpal-1-right
-metacarpal-5-left,Metacarpal 5 (left),5th metacarpal bone.r,24.45,80.93,2.77,left,false,hands,bone,metacarpal-5-right,metacarpal-1-right
-proximal-phalanx-of-finger-1-right,Proximal phalanx of finger 1 (right),Proximal phalanx of 1st finger.r,-32.00,80.06,4.98,right,true,hands,bone,proximal-phalanx-of-finger-1-left,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-1-left,Proximal phalanx of finger 1 (left),Proximal phalanx of 1st finger.r,32.00,80.06,4.98,left,false,hands,bone,proximal-phalanx-of-finger-1-right,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-2-right,Proximal phalanx of finger 2 (right),Proximal phalanx of 2d finger.r,-30.27,75.25,4.12,right,true,hands,bone,proximal-phalanx-of-finger-2-left,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-2-left,Proximal phalanx of finger 2 (left),Proximal phalanx of 2d finger.r,30.27,75.25,4.12,left,false,hands,bone,proximal-phalanx-of-finger-2-right,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-3-right,Proximal phalanx of finger 3 (right),Proximal phalanx of 3rd finger.r,-27.84,75.24,4.56,right,true,hands,bone,proximal-phalanx-of-finger-3-left,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-3-left,Proximal phalanx of finger 3 (left),Proximal phalanx of 3rd finger.r,27.84,75.24,4.56,left,false,hands,bone,proximal-phalanx-of-finger-3-right,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-4-right,Proximal phalanx of finger 4 (right),Proximal phalanx of 4th finger.r,-25.66,75.75,4.48,right,true,hands,bone,proximal-phalanx-of-finger-4-left,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-4-left,Proximal phalanx of finger 4 (left),Proximal phalanx of 4th finger.r,25.66,75.75,4.48,left,false,hands,bone,proximal-phalanx-of-finger-4-right,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-5-right,Proximal phalanx of finger 5 (right),Proximal phalanx of 5th finger.r,-23.80,76.78,4.50,right,true,hands,bone,proximal-phalanx-of-finger-5-left,proximal-phalanx-of-finger-1-right
-proximal-phalanx-of-finger-5-left,Proximal phalanx of finger 5 (left),Proximal phalanx of 5th finger.r,23.80,76.78,4.50,left,false,hands,bone,proximal-phalanx-of-finger-5-right,proximal-phalanx-of-finger-1-right
-distal-phalanx-of-finger-1-right,Distal phalanx of finger 1 (right),Distal phalanx of 1st finger.r,-32.88,77.91,6.18,right,true,hands,bone,distal-phalanx-of-finger-1-left,distal-phalanx-of-finger-1-right
-distal-phalanx-of-finger-1-left,Distal phalanx of finger 1 (left),Distal phalanx of 1st finger.r,32.88,77.91,6.18,left,false,hands,bone,distal-phalanx-of-finger-1-right,distal-phalanx-of-finger-1-right
-middle-phalanx-of-finger-2-right,Middle phalanx of finger 2 (right),Middle phalanx of 2d finger.r,-31.30,72.81,5.82,right,true,hands,bone,middle-phalanx-of-finger-2-left,middle-phalanx-of-finger-2-right
-middle-phalanx-of-finger-2-left,Middle phalanx of finger 2 (left),Middle phalanx of 2d finger.r,31.30,72.81,5.82,left,false,hands,bone,middle-phalanx-of-finger-2-right,middle-phalanx-of-finger-2-right
-distal-phalanx-of-finger-2-right,Distal phalanx of finger 2 (right),Distal phalanx of 2d finger.r,-31.76,71.53,7.54,right,true,hands,bone,distal-phalanx-of-finger-2-left,distal-phalanx-of-finger-1-right
-distal-phalanx-of-finger-2-left,Distal phalanx of finger 2 (left),Distal phalanx of 2d finger.r,31.76,71.53,7.54,left,false,hands,bone,distal-phalanx-of-finger-2-right,distal-phalanx-of-finger-1-right
-middle-phalanx-of-finger-3-right,Middle phalanx of finger 3 (right),Middle phalanx of 3rd finger.r,-28.36,72.20,6.59,right,true,hands,bone,middle-phalanx-of-finger-3-left,middle-phalanx-of-finger-2-right
-middle-phalanx-of-finger-3-left,Middle phalanx of finger 3 (left),Middle phalanx of 3rd finger.r,28.36,72.20,6.59,left,false,hands,bone,middle-phalanx-of-finger-3-right,middle-phalanx-of-finger-2-right
-distal-phalanx-of-finger-3-right,Distal phalanx of finger 3 (right),Distal phalanx of 3d finger.r,-28.65,70.60,8.40,right,true,hands,bone,distal-phalanx-of-finger-3-left,distal-phalanx-of-finger-1-right
-distal-phalanx-of-finger-3-left,Distal phalanx of finger 3 (left),Distal phalanx of 3d finger.r,28.65,70.60,8.40,left,false,hands,bone,distal-phalanx-of-finger-3-right,distal-phalanx-of-finger-1-right
-middle-phalanx-of-finger-4-right,Middle phalanx of finger 4 (right),Middle phalanx of 4th finger.r,-25.79,72.88,6.52,right,true,hands,bone,middle-phalanx-of-finger-4-left,middle-phalanx-of-finger-2-right
-middle-phalanx-of-finger-4-left,Middle phalanx of finger 4 (left),Middle phalanx of 4th finger.r,25.79,72.88,6.52,left,false,hands,bone,middle-phalanx-of-finger-4-right,middle-phalanx-of-finger-2-right
-distal-phalanx-of-finger-4-right,Distal phalanx of finger 4 (right),Distal phalanx of 4th finger.r,-25.91,71.62,8.40,right,true,hands,bone,distal-phalanx-of-finger-4-left,distal-phalanx-of-finger-1-right
-distal-phalanx-of-finger-4-left,Distal phalanx of finger 4 (left),Distal phalanx of 4th finger.r,25.91,71.62,8.40,left,false,hands,bone,distal-phalanx-of-finger-4-right,distal-phalanx-of-finger-1-right
-middle-phalanx-of-finger-5-right,Middle phalanx of finger 5 (right),Middle phalanx of 5th finger.r,-23.32,74.47,5.96,right,true,hands,bone,middle-phalanx-of-finger-5-left,middle-phalanx-of-finger-2-right
-middle-phalanx-of-finger-5-left,Middle phalanx of finger 5 (left),Middle phalanx of 5th finger.r,23.32,74.47,5.96,left,false,hands,bone,middle-phalanx-of-finger-5-right,middle-phalanx-of-finger-2-right
-distal-phalanx-of-finger-5-right,Distal phalanx of finger 5 (right),Distal phalanx of 5th finger.r,-23.15,72.97,7.22,right,true,hands,bone,distal-phalanx-of-finger-5-left,distal-phalanx-of-finger-1-right
-distal-phalanx-of-finger-5-left,Distal phalanx of finger 5 (left),Distal phalanx of 5th finger.r,23.15,72.97,7.22,left,false,hands,bone,distal-phalanx-of-finger-5-right,distal-phalanx-of-finger-1-right
-sesamoid-bones-of-hand-right,Sesamoid bones of hand (right),Sesamoid_bones_of_hand.r,-27.65,79.52,4.45,right,true,hands,sesamoid,sesamoid-bones-of-hand-left,
-sesamoid-bones-of-hand-left,Sesamoid bones of hand (left),Sesamoid_bones_of_hand.r,27.65,79.52,4.45,left,false,hands,sesamoid,sesamoid-bones-of-hand-right,
-calcaneus-right,Calcaneus (right),Calcaneus.r,-7.65,3.68,-5.52,right,true,feet,bone,calcaneus-left,
-calcaneus-left,Calcaneus (left),Calcaneus.r,7.65,3.68,-5.52,left,false,feet,bone,calcaneus-right,
-talus-right,Talus (right),Talus.r,-7.48,6.82,-3.69,right,true,feet,bone,talus-left,
-talus-left,Talus (left),Talus.r,7.48,6.82,-3.69,left,false,feet,bone,talus-right,
-navicular-right,Navicular (right),Navicular bone.r,-7.23,6.22,-0.27,right,true,feet,bone,navicular-left,
-navicular-left,Navicular (left),Navicular bone.r,7.23,6.22,-0.27,left,false,feet,bone,navicular-right,
-medial-cuneiform-right,Medial cuneiform (right),Medial cuneiform bone.r,-6.99,5.22,1.53,right,true,feet,bone,medial-cuneiform-left,
-medial-cuneiform-left,Medial cuneiform (left),Medial cuneiform bone.r,6.99,5.22,1.53,left,false,feet,bone,medial-cuneiform-right,
-intermediate-cuneiform-right,Intermediate cuneiform (right),Intermediate cuneiform bone.r,-8.41,5.89,1.19,right,true,feet,bone,intermediate-cuneiform-left,
-intermediate-cuneiform-left,Intermediate cuneiform (left),Intermediate cuneiform bone.r,8.41,5.89,1.19,left,false,feet,bone,intermediate-cuneiform-right,
-lateral-cuneiform-right,Lateral cuneiform (right),Lateral cuneiform bone.r,-9.33,5.38,0.69,right,true,feet,bone,lateral-cuneiform-left,
-lateral-cuneiform-left,Lateral cuneiform (left),Lateral cuneiform bone.r,9.33,5.38,0.69,left,false,feet,bone,lateral-cuneiform-right,
-cuboid-right,Cuboid (right),Cuboid bone.r,-9.61,4.40,-0.69,right,true,feet,bone,cuboid-left,
-cuboid-left,Cuboid (left),Cuboid bone.r,9.61,4.40,-0.69,left,false,feet,bone,cuboid-right,
-metatarsal-1-right,Metatarsal 1 (right),First metatarsal bone.r,-7.12,3.72,5.28,right,true,feet,bone,metatarsal-1-left,metatarsal-1-right
-metatarsal-1-left,Metatarsal 1 (left),First metatarsal bone.r,7.12,3.72,5.28,left,false,feet,bone,metatarsal-1-right,metatarsal-1-right
-metatarsal-2-right,Metatarsal 2 (right),Second metatarsal bone.r,-8.94,3.86,4.98,right,true,feet,bone,metatarsal-2-left,metatarsal-1-right
-metatarsal-2-left,Metatarsal 2 (left),Second metatarsal bone.r,8.94,3.86,4.98,left,false,feet,bone,metatarsal-2-right,metatarsal-1-right
-metatarsal-3-right,Metatarsal 3 (right),Third metatarsal bone.r,-10.08,3.57,4.73,right,true,feet,bone,metatarsal-3-left,metatarsal-1-right
-metatarsal-3-left,Metatarsal 3 (left),Third metatarsal bone.r,10.08,3.57,4.73,left,false,feet,bone,metatarsal-3-right,metatarsal-1-right
-metatarsal-4-right,Metatarsal 4 (right),Fourth metatarsal bone.r,-10.92,3.07,3.80,right,true,feet,bone,metatarsal-4-left,metatarsal-1-right
-metatarsal-4-left,Metatarsal 4 (left),Fourth metatarsal bone.r,10.92,3.07,3.80,left,false,feet,bone,metatarsal-4-right,metatarsal-1-right
-metatarsal-5-right,Metatarsal 5 (right),Fifth metatarsal bone.r,-11.95,2.51,2.27,right,true,feet,bone,metatarsal-5-left,metatarsal-1-right
-metatarsal-5-left,Metatarsal 5 (left),Fifth metatarsal bone.r,11.95,2.51,2.27,left,false,feet,bone,metatarsal-5-right,metatarsal-1-right
-proximal-phalanx-of-toe-1-right,Proximal phalanx of toe 1 (right),Proximal phalanx of first finger of foot.r,-7.39,2.03,9.69,right,true,feet,bone,proximal-phalanx-of-toe-1-left,proximal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-1-left,Proximal phalanx of toe 1 (left),Proximal phalanx of first finger of foot.r,7.39,2.03,9.69,left,false,feet,bone,proximal-phalanx-of-toe-1-right,proximal-phalanx-of-toe-1-right
-distal-phalanx-of-toe-1-right,Distal phalanx of toe 1 (right),Distal phalanx of first finger of foot.r,-8.05,1.59,12.12,right,true,feet,bone,distal-phalanx-of-toe-1-left,distal-phalanx-of-toe-1-right
-distal-phalanx-of-toe-1-left,Distal phalanx of toe 1 (left),Distal phalanx of first finger of foot.r,8.05,1.59,12.12,left,false,feet,bone,distal-phalanx-of-toe-1-right,distal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-2-right,Proximal phalanx of toe 2 (right),Proximal phalanx of second finger of foot.r,-9.56,2.00,9.71,right,true,feet,bone,proximal-phalanx-of-toe-2-left,proximal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-2-left,Proximal phalanx of toe 2 (left),Proximal phalanx of second finger of foot.r,9.56,2.00,9.71,left,false,feet,bone,proximal-phalanx-of-toe-2-right,proximal-phalanx-of-toe-1-right
-middle-phalanx-of-toe-2-right,Middle phalanx of toe 2 (right),Middle phalanx of second finger of foot.r,-10.09,1.65,11.75,right,true,feet,bone,middle-phalanx-of-toe-2-left,middle-phalanx-of-toe-2-right
-middle-phalanx-of-toe-2-left,Middle phalanx of toe 2 (left),Middle phalanx of second finger of foot.r,10.09,1.65,11.75,left,false,feet,bone,middle-phalanx-of-toe-2-right,middle-phalanx-of-toe-2-right
-distal-phalanx-of-toe-2-right,Distal phalanx of toe 2 (right),Distal phalanx of second finger of foot.r,-10.38,1.33,13.03,right,true,feet,bone,distal-phalanx-of-toe-2-left,distal-phalanx-of-toe-1-right
-distal-phalanx-of-toe-2-left,Distal phalanx of toe 2 (left),Distal phalanx of second finger of foot.r,10.38,1.33,13.03,left,false,feet,bone,distal-phalanx-of-toe-2-right,distal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-3-right,Proximal phalanx of toe 3 (right),Proximal phalanx of third finger of foot.r,-11.16,1.98,9.18,right,true,feet,bone,proximal-phalanx-of-toe-3-left,proximal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-3-left,Proximal phalanx of toe 3 (left),Proximal phalanx of third finger of foot.r,11.16,1.98,9.18,left,false,feet,bone,proximal-phalanx-of-toe-3-right,proximal-phalanx-of-toe-1-right
-middle-phalanx-of-toe-3-right,Middle phalanx of toe 3 (right),Middle phalanx of third finger of foot.r,-11.80,1.63,11.25,right,true,feet,bone,middle-phalanx-of-toe-3-left,middle-phalanx-of-toe-2-right
-middle-phalanx-of-toe-3-left,Middle phalanx of toe 3 (left),Middle phalanx of third finger of foot.r,11.80,1.63,11.25,left,false,feet,bone,middle-phalanx-of-toe-3-right,middle-phalanx-of-toe-2-right
-distal-phalanx-of-toe-3-right,Distal phalanx of toe 3 (right),Distal phalanx of third finger of foot.r,-12.11,1.41,12.45,right,true,feet,bone,distal-phalanx-of-toe-3-left,distal-phalanx-of-toe-1-right
-distal-phalanx-of-toe-3-left,Distal phalanx of toe 3 (left),Distal phalanx of third finger of foot.r,12.11,1.41,12.45,left,false,feet,bone,distal-phalanx-of-toe-3-right,distal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-4-right,Proximal phalanx of toe 4 (right),Proximal phalanx of fourth finger of foot.r,-12.31,1.69,8.14,right,true,feet,bone,proximal-phalanx-of-toe-4-left,proximal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-4-left,Proximal phalanx of toe 4 (left),Proximal phalanx of fourth finger of foot.r,12.31,1.69,8.14,left,false,feet,bone,proximal-phalanx-of-toe-4-right,proximal-phalanx-of-toe-1-right
-middle-phalanx-of-toe-4-right,Middle phalanx of toe 4 (right),Middle phalanx of fourth finger of foot.r,-12.99,1.40,9.92,right,true,feet,bone,middle-phalanx-of-toe-4-left,middle-phalanx-of-toe-2-right
-middle-phalanx-of-toe-4-left,Middle phalanx of toe 4 (left),Middle phalanx of fourth finger of foot.r,12.99,1.40,9.92,left,false,feet,bone,middle-phalanx-of-toe-4-right,middle-phalanx-of-toe-2-right
-distal-phalanx-of-toe-4-right,Distal phalanx of toe 4 (right),Distal phalanx of fourth finger of foot.r,-13.21,1.29,10.95,right,true,feet,bone,distal-phalanx-of-toe-4-left,distal-phalanx-of-toe-1-right
-distal-phalanx-of-toe-4-left,Distal phalanx of toe 4 (left),Distal phalanx of fourth finger of foot.r,13.21,1.29,10.95,left,false,feet,bone,distal-phalanx-of-toe-4-right,distal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-5-right,Proximal phalanx of toe 5 (right),Proximal phalanx of fifth finger of foot.r,-13.56,1.52,6.83,right,true,feet,bone,proximal-phalanx-of-toe-5-left,proximal-phalanx-of-toe-1-right
-proximal-phalanx-of-toe-5-left,Proximal phalanx of toe 5 (left),Proximal phalanx of fifth finger of foot.r,13.56,1.52,6.83,left,false,feet,bone,proximal-phalanx-of-toe-5-right,proximal-phalanx-of-toe-1-right
-middle-phalanx-of-toe-5-right,Middle phalanx of toe 5 (right),Middle phalanx of fifth finger of foot.r,-14.12,1.29,8.37,right,true,feet,bone,middle-phalanx-of-toe-5-left,middle-phalanx-of-toe-2-right
-middle-phalanx-of-toe-5-left,Middle phalanx of toe 5 (left),Middle phalanx of fifth finger of foot.r,14.12,1.29,8.37,left,false,feet,bone,middle-phalanx-of-toe-5-right,middle-phalanx-of-toe-2-right
-distal-phalanx-of-toe-5-right,Distal phalanx of toe 5 (right),Distal phalanx of fifth finger of foot.r,-14.26,1.18,9.14,right,true,feet,bone,distal-phalanx-of-toe-5-left,distal-phalanx-of-toe-1-right
-distal-phalanx-of-toe-5-left,Distal phalanx of toe 5 (left),Distal phalanx of fifth finger of foot.r,14.26,1.18,9.14,left,false,feet,bone,distal-phalanx-of-toe-5-right,distal-phalanx-of-toe-1-right
-sesamoid-bones-of-foot-right,Sesamoid bones of foot (right),Sesamoid bones of foot.r,-7.18,1.39,7.05,right,true,feet,sesamoid,sesamoid-bones-of-foot-left,
-sesamoid-bones-of-foot-left,Sesamoid bones of foot (left),Sesamoid bones of foot.r,7.18,1.39,7.05,left,false,feet,sesamoid,sesamoid-bones-of-foot-right,
+id,name,mesh_name,x,y,z,side,direct_mesh,region,bone_type,bilateral_partner,group_representative,name_alternates
+frontal-bone,Frontal bone,Frontal bone,0.00,164.87,5.38,midline,true,skull,bone,,,Forehead bone
+parietal-bone-right,Parietal bone (right),Parietal bone right,-3.50,164.77,-2.97,right,true,skull,bone,parietal-bone-left,,Side of skull
+parietal-bone-left,Parietal bone (left),Parietal bone left,3.49,164.73,-2.96,left,true,skull,bone,parietal-bone-right,,Side of skull
+occipital-bone,Occipital bone,Occipital bone,0.02,160.32,-4.55,midline,true,skull,bone,,,Back of skull
+ethmoid-bone,Ethmoid bone,Ethmoid Bone,0.00,159.25,5.89,midline,true,skull,bone,,,
+sphenoid-bone,Sphenoid bone,Sphenoid bone,0.00,158.48,2.81,midline,true,skull,bone,,,
+vomer,Vomer,Vomer,-0.01,157.15,4.64,midline,true,skull,bone,,,
+mandible,Mandible,Mandible bone,0.00,154.13,4.39,midline,true,skull,bone,,,Jaw|Jawbone
+temporal-bone-right,Temporal bone (right),Temporal bone.r,-4.20,158.62,-0.29,right,true,skull,bone,temporal-bone-left,,Temple bone
+temporal-bone-left,Temporal bone (left),Temporal bone.r,4.20,158.62,-0.29,left,false,skull,bone,temporal-bone-right,,Temple bone
+zygomatic-bone-right,Zygomatic bone (right),Zygomatic bone.r,-4.65,158.56,5.21,right,true,skull,bone,zygomatic-bone-left,,Cheekbone|Cheek bone|Malar bone
+zygomatic-bone-left,Zygomatic bone (left),Zygomatic bone.r,4.65,158.56,5.21,left,false,skull,bone,zygomatic-bone-right,,Cheekbone|Cheek bone|Malar bone
+nasal-bone-right,Nasal bone (right),Nasal bone.r,-0.41,159.22,9.01,right,true,skull,bone,nasal-bone-left,,Nose bone
+nasal-bone-left,Nasal bone (left),Nasal bone.r,0.41,159.22,9.01,left,false,skull,bone,nasal-bone-right,,Nose bone
+lacrimal-bone-right,Lacrimal bone (right),Lacrimal bone.r,-1.22,158.94,6.98,right,true,skull,bone,lacrimal-bone-left,,
+lacrimal-bone-left,Lacrimal bone (left),Lacrimal bone.r,1.22,158.94,6.98,left,false,skull,bone,lacrimal-bone-right,,
+maxilla-right,Maxilla (right),Maxilla bone.r,-2.25,157.43,6.64,right,true,skull,bone,maxilla-left,,Upper jaw|Upper jawbone
+maxilla-left,Maxilla (left),Maxilla bone.r,2.25,157.43,6.64,left,false,skull,bone,maxilla-right,,Upper jaw|Upper jawbone
+palatine-bone-right,Palatine bone (right),Palatine bone.r,-1.34,157.28,4.09,right,true,skull,bone,palatine-bone-left,,
+palatine-bone-left,Palatine bone (left),Palatine bone.r,1.34,157.28,4.09,left,false,skull,bone,palatine-bone-right,,
+inferior-nasal-concha-right,Inferior nasal concha (right),Inferior nasal concha bone.r,-1.10,157.23,5.98,right,true,skull,bone,inferior-nasal-concha-left,,
+inferior-nasal-concha-left,Inferior nasal concha (left),Inferior nasal concha bone.r,1.10,157.23,5.98,left,false,skull,bone,inferior-nasal-concha-right,,
+upper-medial-incisor-right,Upper medial incisor (right),Upper medial incisor.r,-0.44,154.64,8.69,right,true,skull,teeth,upper-medial-incisor-left,,
+upper-medial-incisor-left,Upper medial incisor (left),Upper medial incisor.r,0.44,154.64,8.69,left,false,skull,teeth,upper-medial-incisor-right,,
+upper-lateral-incisor-right,Upper lateral incisor (right),Upper lateral incisor.r,-1.12,154.70,8.46,right,true,skull,teeth,upper-lateral-incisor-left,,
+upper-lateral-incisor-left,Upper lateral incisor (left),Upper lateral incisor.r,1.12,154.70,8.46,left,false,skull,teeth,upper-lateral-incisor-right,,
+upper-canine-right,Upper canine (right),Upper canine.r,-1.70,154.97,8.14,right,true,skull,teeth,upper-canine-left,,
+upper-canine-left,Upper canine (left),Upper canine.r,1.70,154.97,8.14,left,false,skull,teeth,upper-canine-right,,
+upper-first-premolar-right,Upper first premolar (right),Upper first premolar.r,-2.01,154.98,7.39,right,true,skull,teeth,upper-first-premolar-left,,
+upper-first-premolar-left,Upper first premolar (left),Upper first premolar.r,2.01,154.98,7.39,left,false,skull,teeth,upper-first-premolar-right,,
+upper-second-premolar-right,Upper second premolar (right),Upper second premolar.r,-2.31,154.96,6.78,right,true,skull,teeth,upper-second-premolar-left,,
+upper-second-premolar-left,Upper second premolar (left),Upper second premolar.r,2.31,154.96,6.78,left,false,skull,teeth,upper-second-premolar-right,,
+upper-first-molar-right,Upper first molar (right),Upper first molar tooth.r,-2.41,155.08,5.92,right,true,skull,teeth,upper-first-molar-left,,
+upper-first-molar-left,Upper first molar (left),Upper first molar tooth.r,2.41,155.08,5.92,left,false,skull,teeth,upper-first-molar-right,,
+upper-second-molar-right,Upper second molar (right),Upper second molar tooth.r,-2.37,155.34,5.07,right,true,skull,teeth,upper-second-molar-left,,
+upper-second-molar-left,Upper second molar (left),Upper second molar tooth.r,2.37,155.34,5.07,left,false,skull,teeth,upper-second-molar-right,,
+lower-medial-incisor-right,Lower medial incisor (right),Lower medial incisor.r,-0.32,152.23,7.97,right,true,skull,teeth,lower-medial-incisor-left,,
+lower-medial-incisor-left,Lower medial incisor (left),Lower medial incisor.r,0.32,152.23,7.97,left,false,skull,teeth,lower-medial-incisor-right,,
+lower-lateral-incisor-right,Lower lateral incisor (right),Lower lateral incisor.r,-0.80,152.24,7.96,right,true,skull,teeth,lower-lateral-incisor-left,,
+lower-lateral-incisor-left,Lower lateral incisor (left),Lower lateral incisor.r,0.80,152.24,7.96,left,false,skull,teeth,lower-lateral-incisor-right,,
+lower-canine-right,Lower canine (right),Lower canine.r,-1.28,152.19,7.63,right,true,skull,teeth,lower-canine-left,,
+lower-canine-left,Lower canine (left),Lower canine.r,1.28,152.19,7.63,left,false,skull,teeth,lower-canine-right,,
+lower-first-premolar-right,Lower first premolar (right),Lower first premolar.r,-1.69,152.47,7.08,right,true,skull,teeth,lower-first-premolar-left,,
+lower-first-premolar-left,Lower first premolar (left),Lower first premolar.r,1.69,152.47,7.08,left,false,skull,teeth,lower-first-premolar-right,,
+lower-second-premolar-right,Lower second premolar (right),Lower second premolar.r,-1.99,152.56,6.45,right,true,skull,teeth,lower-second-premolar-left,,
+lower-second-premolar-left,Lower second premolar (left),Lower second premolar.r,1.99,152.56,6.45,left,false,skull,teeth,lower-second-premolar-right,,
+lower-first-molar-right,Lower first molar (right),Lower first molar tooth.r,-2.26,153.02,5.73,right,true,skull,teeth,lower-first-molar-left,,
+lower-first-molar-left,Lower first molar (left),Lower first molar tooth.r,2.26,153.02,5.73,left,false,skull,teeth,lower-first-molar-right,,
+lower-second-molar-right,Lower second molar (right),Lower second molar tooth.r,-2.62,153.49,4.57,right,true,skull,teeth,lower-second-molar-left,,
+lower-second-molar-left,Lower second molar (left),Lower second molar tooth.r,2.62,153.49,4.57,left,false,skull,teeth,lower-second-molar-right,,
+atlas-c1,Atlas (C1),Atlas (C1),-0.00,154.28,-2.11,midline,true,torso,bone,,atlas-c1,First cervical vertebra|C1 vertebra
+axis-c2,Axis (C2),Axis (C2),0.00,153.02,-2.56,midline,true,torso,bone,,atlas-c1,Second cervical vertebra|C2 vertebra
+cervical-vertebra-c3,Cervical vertebra (C3),Cervical vertebrae (C3),-0.00,150.60,-2.54,midline,true,torso,bone,,atlas-c1,
+cervical-vertebra-c4,Cervical vertebra (C4),Cervical vertebrae (C4),0.00,149.27,-2.67,midline,true,torso,bone,,atlas-c1,
+cervical-vertebra-c5,Cervical vertebra (C5),Cervical vertebrae (C5),0.00,147.95,-2.99,midline,true,torso,bone,,atlas-c1,
+cervical-vertebra-c6,Cervical vertebra (C6),Cervical vertebrae (C6),0.00,146.58,-3.48,midline,true,torso,bone,,atlas-c1,
+cervical-vertebra-c7,Cervical vertebra (C7),Cervical vertebrae (C7),0.00,145.19,-4.20,midline,true,torso,bone,,atlas-c1,
+thoracic-vertebra-t1,Thoracic vertebra (T1),Thoracic vertebrae (T1),0.00,143.80,-4.81,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t2,Thoracic vertebra (T2),Thoracic vertebrae (T2),0.00,142.00,-5.37,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t3,Thoracic vertebra (T3),Thoracic vertebrae (T3),0.00,139.86,-6.19,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t4,Thoracic vertebra (T4),Thoracic vertebrae (T4),0.00,137.52,-6.55,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t5,Thoracic vertebra (T5),Thoracic vertebrae (T5),-0.00,134.76,-6.64,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t6,Thoracic vertebra (T6),Thoracic vertebrae (T6),-0.00,131.44,-6.68,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t7,Thoracic vertebra (T7),Thoracic vertebrae (T7),0.00,128.67,-6.48,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t8,Thoracic vertebra (T8),Thoracic vertebrae (T8),0.00,125.61,-6.39,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t9,Thoracic vertebra (T9),Thoracic vertebrae (T9),0.00,122.85,-5.86,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t10,Thoracic vertebra (T10),Thoracic vertebrae (T10),0.00,119.77,-5.34,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t11,Thoracic vertebra (T11),Thoracic vertebrae (T11),0.00,116.96,-4.49,midline,true,torso,bone,,thoracic-vertebra-t1,
+thoracic-vertebra-t12,Thoracic vertebra (T12),Thoracic vertebrae (T12),-0.00,113.93,-3.65,midline,true,torso,bone,,thoracic-vertebra-t1,
+lumbar-vertebra-l1,Lumbar vertebra (L1),Lumbar vertebrae (L1),0.00,110.41,-2.92,midline,true,torso,bone,,lumbar-vertebra-l1,
+lumbar-vertebra-l2,Lumbar vertebra (L2),Lumbar vertebrae (L2),0.00,107.48,-2.38,midline,true,torso,bone,,lumbar-vertebra-l1,
+lumbar-vertebra-l3,Lumbar vertebra (L3),Lumbar vertebrae (L3),0.00,104.34,-2.31,midline,true,torso,bone,,lumbar-vertebra-l1,
+lumbar-vertebra-l4,Lumbar vertebra (L4),Lumbar vertebrae (L4),-0.00,101.51,-2.40,midline,true,torso,bone,,lumbar-vertebra-l1,
+lumbar-vertebra-l5,Lumbar vertebra (L5),Lumbar vertebrae (L5),-0.00,98.26,-2.88,midline,true,torso,bone,,lumbar-vertebra-l1,
+sacrum,Sacrum,Sacrum,-0.00,92.34,-4.98,midline,true,torso,bone,,,Sacred bone
+coccyx,Coccyx,Coccyx,-0.01,84.58,-7.62,midline,true,torso,bone,,,Tailbone
+manubrium,Manubrium,Manubrium of sternum,0.01,137.76,5.75,midline,true,torso,bone,,,Upper sternum
+body-of-sternum,Body of sternum,Body of sternum,-0.00,129.88,9.08,midline,true,torso,bone,,,Sternum|Breastbone
+rib-1-right,Rib 1 (right),Rib (1st).r,-4.40,141.69,0.15,right,true,torso,bone,rib-1-left,rib-1-right,
+rib-1-left,Rib 1 (left),Rib (1st).r,4.40,141.69,0.15,left,false,torso,bone,rib-1-right,rib-1-right,
+rib-2-right,Rib 2 (right),Rib (2nd).r,-5.79,139.07,0.83,right,true,torso,bone,rib-2-left,rib-1-right,
+rib-2-left,Rib 2 (left),Rib (2nd).r,5.79,139.07,0.83,left,false,torso,bone,rib-2-right,rib-1-right,
+rib-3-right,Rib 3 (right),Rib (3rd).r,-6.43,136.36,0.67,right,true,torso,bone,rib-3-left,rib-1-right,
+rib-3-left,Rib 3 (left),Rib (3rd).r,6.43,136.36,0.67,left,false,torso,bone,rib-3-right,rib-1-right,
+rib-4-right,Rib 4 (right),Rib (4th).r,-7.01,133.62,0.76,right,true,torso,bone,rib-4-left,rib-1-right,
+rib-4-left,Rib 4 (left),Rib (4th).r,7.01,133.62,0.76,left,false,torso,bone,rib-4-right,rib-1-right,
+rib-5-right,Rib 5 (right),Rib (5th).r,-7.34,130.50,0.74,right,true,torso,bone,rib-5-left,rib-1-right,
+rib-5-left,Rib 5 (left),Rib (5th).r,7.34,130.50,0.74,left,false,torso,bone,rib-5-right,rib-1-right,
+rib-6-right,Rib 6 (right),Rib (6th).r,-7.68,127.51,0.06,right,true,torso,bone,rib-6-left,rib-1-right,
+rib-6-left,Rib 6 (left),Rib (6th).r,7.68,127.51,0.06,left,false,torso,bone,rib-6-right,rib-1-right,
+rib-7-right,Rib 7 (right),Rib (7th).r,-7.89,124.36,-0.58,right,true,torso,bone,rib-7-left,rib-1-right,
+rib-7-left,Rib 7 (left),Rib (7th).r,7.89,124.36,-0.58,left,false,torso,bone,rib-7-right,rib-1-right,
+rib-8-right,Rib 8 (right),Rib (8th).r,-7.59,121.16,-1.47,right,true,torso,bone,rib-8-left,rib-1-right,
+rib-8-left,Rib 8 (left),Rib (8th).r,7.59,121.16,-1.47,left,false,torso,bone,rib-8-right,rib-1-right,
+rib-9-right,Rib 9 (right),Rib (9th).r,-7.52,118.21,-2.68,right,true,torso,bone,rib-9-left,rib-1-right,
+rib-9-left,Rib 9 (left),Rib (9th).r,7.52,118.21,-2.68,left,false,torso,bone,rib-9-right,rib-1-right,
+rib-10-right,Rib 10 (right),Rib (10th).r,-7.42,115.14,-3.04,right,true,torso,bone,rib-10-left,rib-1-right,
+rib-10-left,Rib 10 (left),Rib (10th).r,7.42,115.14,-3.04,left,false,torso,bone,rib-10-right,rib-1-right,
+rib-11-right,Rib 11 (right),Rib (11th).r,-6.99,112.48,-3.84,right,true,torso,bone,rib-11-left,rib-1-right,
+rib-11-left,Rib 11 (left),Rib (11th).r,6.99,112.48,-3.84,left,false,torso,bone,rib-11-right,rib-1-right,
+rib-12-right,Rib 12 (right),Rib (12th).r,-5.36,110.54,-4.51,right,true,torso,bone,rib-12-left,rib-1-right,
+rib-12-left,Rib 12 (left),Rib (12th).r,5.36,110.54,-4.51,left,false,torso,bone,rib-12-right,rib-1-right,
+costal-cartilage-of-rib-1-right,Costal cartilage of rib 1 (right),Costal cart of 1st rib.r,-3.92,138.77,4.00,right,true,torso,costal_cartilage,costal-cartilage-of-rib-1-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-1-left,Costal cartilage of rib 1 (left),Costal cart of 1st rib.r,3.92,138.77,4.00,left,false,torso,costal_cartilage,costal-cartilage-of-rib-1-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-2-right,Costal cartilage of rib 2 (right),Costal cart of 2nd rib.r,-2.90,135.14,6.95,right,true,torso,costal_cartilage,costal-cartilage-of-rib-2-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-2-left,Costal cartilage of rib 2 (left),Costal cart of 2nd rib.r,2.90,135.14,6.95,left,false,torso,costal_cartilage,costal-cartilage-of-rib-2-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-3-right,Costal cartilage of rib 3 (right),Costal cart of 3rd rib.r,-3.47,132.00,7.99,right,true,torso,costal_cartilage,costal-cartilage-of-rib-3-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-3-left,Costal cartilage of rib 3 (left),Costal cart of 3rd rib.r,3.47,132.00,7.99,left,false,torso,costal_cartilage,costal-cartilage-of-rib-3-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-4-right,Costal cartilage of rib 4 (right),Costal cart of 4th rib.r,-4.41,129.11,9.08,right,true,torso,costal_cartilage,costal-cartilage-of-rib-4-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-4-left,Costal cartilage of rib 4 (left),Costal cart of 4th rib.r,4.41,129.11,9.08,left,false,torso,costal_cartilage,costal-cartilage-of-rib-4-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-5-right,Costal cartilage of rib 5 (right),Costal cart of 5th rib.r,-5.23,125.98,10.15,right,true,torso,costal_cartilage,costal-cartilage-of-rib-5-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-5-left,Costal cartilage of rib 5 (left),Costal cart of 5th rib.r,5.23,125.98,10.15,left,false,torso,costal_cartilage,costal-cartilage-of-rib-5-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-6-right,Costal cartilage of rib 6 (right),Costal cart of 6th rib.r,-5.61,123.28,10.16,right,true,torso,costal_cartilage,costal-cartilage-of-rib-6-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-6-left,Costal cartilage of rib 6 (left),Costal cart of 6th rib.r,5.61,123.28,10.16,left,false,torso,costal_cartilage,costal-cartilage-of-rib-6-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-7-right,Costal cartilage of rib 7 (right),Costal cart of 7th rib.r,-6.11,120.71,9.41,right,true,torso,costal_cartilage,costal-cartilage-of-rib-7-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-7-left,Costal cartilage of rib 7 (left),Costal cart of 7th rib.r,6.11,120.71,9.41,left,false,torso,costal_cartilage,costal-cartilage-of-rib-7-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-8-right,Costal cartilage of rib 8 (right),Costal cart of 8th rib.r,-7.82,116.13,8.33,right,true,torso,costal_cartilage,costal-cartilage-of-rib-8-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-8-left,Costal cartilage of rib 8 (left),Costal cart of 8th rib.r,7.82,116.13,8.33,left,false,torso,costal_cartilage,costal-cartilage-of-rib-8-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-9-right,Costal cartilage of rib 9 (right),Costal cart of 9th rib.r,-9.61,111.61,6.36,right,true,torso,costal_cartilage,costal-cartilage-of-rib-9-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-9-left,Costal cartilage of rib 9 (left),Costal cart of 9th rib.r,9.61,111.61,6.36,left,false,torso,costal_cartilage,costal-cartilage-of-rib-9-right,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-10-right,Costal cartilage of rib 10 (right),Costal cart of 10th rib.r,-10.37,108.20,5.06,right,true,torso,costal_cartilage,costal-cartilage-of-rib-10-left,costal-cartilage-of-rib-1-right,
+costal-cartilage-of-rib-10-left,Costal cartilage of rib 10 (left),Costal cart of 10th rib.r,10.37,108.20,5.06,left,false,torso,costal_cartilage,costal-cartilage-of-rib-10-right,costal-cartilage-of-rib-1-right,
+clavicle-right,Clavicle (right),Clavicle.r,-8.01,140.67,-0.32,right,true,limbs,bone,clavicle-left,,Collarbone
+clavicle-left,Clavicle (left),Clavicle.r,8.01,140.67,-0.32,left,false,limbs,bone,clavicle-right,,Collarbone
+scapula-right,Scapula (right),Scapula.r.,-11.68,133.66,-6.00,right,true,limbs,bone,scapula-left,,Shoulder blade
+scapula-left,Scapula (left),Scapula.r.,11.68,133.66,-6.00,left,false,limbs,bone,scapula-right,,Shoulder blade
+humerus-right,Humerus (right),Humerus.r,-19.66,124.63,-3.16,right,true,limbs,bone,humerus-left,,Upper arm bone
+humerus-left,Humerus (left),Humerus.r,19.66,124.63,-3.16,left,false,limbs,bone,humerus-right,,Upper arm bone
+radius-right,Radius (right),Radius.r,-25.78,97.74,-1.25,right,true,limbs,bone,radius-left,,Forearm bone (thumb side)
+radius-left,Radius (left),Radius.r,25.78,97.74,-1.25,left,false,limbs,bone,radius-right,,Forearm bone (thumb side)
+ulna-right,Ulna (right),Ulna.r,-22.91,98.80,-2.31,right,true,limbs,bone,ulna-left,,Forearm bone (pinky side)
+ulna-left,Ulna (left),Ulna.r,22.91,98.80,-2.31,left,false,limbs,bone,ulna-right,,Forearm bone (pinky side)
+hip-bone-right,Hip bone (right),Hip bone.r,-6.89,90.47,-1.52,right,true,torso,bone,hip-bone-left,,Pelvis|Innominate bone|Os coxa
+hip-bone-left,Hip bone (left),Hip bone.r,6.89,90.47,-1.52,left,false,torso,bone,hip-bone-right,,Pelvis|Innominate bone|Os coxa
+femur-right,Femur (right),Femur.r,-9.02,65.82,-2.03,right,true,limbs,bone,femur-left,,Thigh bone|Thighbone
+femur-left,Femur (left),Femur.r,9.02,65.82,-2.03,left,false,limbs,bone,femur-right,,Thigh bone|Thighbone
+patella-right,Patella (right),Patella.r,-8.43,44.45,0.48,right,true,limbs,bone,patella-left,,Kneecap
+patella-left,Patella (left),Patella.r,8.43,44.45,0.48,left,false,limbs,bone,patella-right,,Kneecap
+tibia-right,Tibia (right),Tibia.r,-7.61,25.50,-2.87,right,true,limbs,bone,tibia-left,,Shinbone|Shin bone
+tibia-left,Tibia (left),Tibia.r,7.61,25.50,-2.87,left,false,limbs,bone,tibia-right,,Shinbone|Shin bone
+fibula-right,Fibula (right),Fibula.r,-10.69,23.71,-4.33,right,true,limbs,bone,fibula-left,,Calf bone
+fibula-left,Fibula (left),Fibula.r,10.69,23.71,-4.33,left,false,limbs,bone,fibula-right,,Calf bone
+scaphoid-right,Scaphoid (right),Scaphoid.r,-27.09,85.48,1.35,right,true,hands,bone,scaphoid-left,,
+scaphoid-left,Scaphoid (left),Scaphoid.r,27.09,85.48,1.35,left,false,hands,bone,scaphoid-right,,
+lunate-right,Lunate (right),Lunate bone.r,-25.35,85.47,1.34,right,true,hands,bone,lunate-left,,
+lunate-left,Lunate (left),Lunate bone.r,25.35,85.47,1.34,left,false,hands,bone,lunate-right,,
+triquetrum-right,Triquetrum (right),Triquetrum.r,-24.65,84.66,1.73,right,true,hands,bone,triquetrum-left,,
+triquetrum-left,Triquetrum (left),Triquetrum.r,24.65,84.66,1.73,left,false,hands,bone,triquetrum-right,,
+pisiform-right,Pisiform (right),Pisiform.r,-24.58,85.15,2.53,right,true,hands,bone,pisiform-left,,
+pisiform-left,Pisiform (left),Pisiform.r,24.58,85.15,2.53,left,false,hands,bone,pisiform-right,,
+trapezium-right,Trapezium (right),Trapezium.r,-28.34,84.65,2.24,right,true,hands,bone,trapezium-left,,
+trapezium-left,Trapezium (left),Trapezium.r,28.34,84.65,2.24,left,false,hands,bone,trapezium-right,,
+trapezoid-right,Trapezoid (right),Trapezoid.r,-27.78,84.03,1.60,right,true,hands,bone,trapezoid-left,,
+trapezoid-left,Trapezoid (left),Trapezoid.r,27.78,84.03,1.60,left,false,hands,bone,trapezoid-right,,
+capitate-right,Capitate (right),Capitate.r,-26.61,84.38,1.46,right,true,hands,bone,capitate-left,,
+capitate-left,Capitate (left),Capitate.r,26.61,84.38,1.46,left,false,hands,bone,capitate-right,,
+hamate-right,Hamate (right),Hamate.r,-25.37,84.16,1.81,right,true,hands,bone,hamate-left,,
+hamate-left,Hamate (left),Hamate.r,25.37,84.16,1.81,left,false,hands,bone,hamate-right,,
+metacarpal-1-right,Metacarpal 1 (right),1st metacarpal bone.r,-30.17,82.93,3.43,right,true,hands,bone,metacarpal-1-left,metacarpal-1-right,
+metacarpal-1-left,Metacarpal 1 (left),1st metacarpal bone.r,30.17,82.93,3.43,left,false,hands,bone,metacarpal-1-right,metacarpal-1-right,
+metacarpal-2-right,Metacarpal 2 (right),2nd metacarpal bone.r,-28.74,80.24,2.53,right,true,hands,bone,metacarpal-2-left,metacarpal-1-right,
+metacarpal-2-left,Metacarpal 2 (left),2nd metacarpal bone.r,28.74,80.24,2.53,left,false,hands,bone,metacarpal-2-right,metacarpal-1-right,
+metacarpal-3-right,Metacarpal 3 (right),3rd metacarpal bone.r,-27.24,80.23,2.30,right,true,hands,bone,metacarpal-3-left,metacarpal-1-right,
+metacarpal-3-left,Metacarpal 3 (left),3rd metacarpal bone.r,27.24,80.23,2.30,left,false,hands,bone,metacarpal-3-right,metacarpal-1-right,
+metacarpal-4-right,Metacarpal 4 (right),4th metacarpal bone.r,-25.69,80.49,2.42,right,true,hands,bone,metacarpal-4-left,metacarpal-1-right,
+metacarpal-4-left,Metacarpal 4 (left),4th metacarpal bone.r,25.69,80.49,2.42,left,false,hands,bone,metacarpal-4-right,metacarpal-1-right,
+metacarpal-5-right,Metacarpal 5 (right),5th metacarpal bone.r,-24.45,80.93,2.77,right,true,hands,bone,metacarpal-5-left,metacarpal-1-right,
+metacarpal-5-left,Metacarpal 5 (left),5th metacarpal bone.r,24.45,80.93,2.77,left,false,hands,bone,metacarpal-5-right,metacarpal-1-right,
+proximal-phalanx-of-finger-1-right,Proximal phalanx of finger 1 (right),Proximal phalanx of 1st finger.r,-32.00,80.06,4.98,right,true,hands,bone,proximal-phalanx-of-finger-1-left,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-1-left,Proximal phalanx of finger 1 (left),Proximal phalanx of 1st finger.r,32.00,80.06,4.98,left,false,hands,bone,proximal-phalanx-of-finger-1-right,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-2-right,Proximal phalanx of finger 2 (right),Proximal phalanx of 2d finger.r,-30.27,75.25,4.12,right,true,hands,bone,proximal-phalanx-of-finger-2-left,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-2-left,Proximal phalanx of finger 2 (left),Proximal phalanx of 2d finger.r,30.27,75.25,4.12,left,false,hands,bone,proximal-phalanx-of-finger-2-right,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-3-right,Proximal phalanx of finger 3 (right),Proximal phalanx of 3rd finger.r,-27.84,75.24,4.56,right,true,hands,bone,proximal-phalanx-of-finger-3-left,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-3-left,Proximal phalanx of finger 3 (left),Proximal phalanx of 3rd finger.r,27.84,75.24,4.56,left,false,hands,bone,proximal-phalanx-of-finger-3-right,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-4-right,Proximal phalanx of finger 4 (right),Proximal phalanx of 4th finger.r,-25.66,75.75,4.48,right,true,hands,bone,proximal-phalanx-of-finger-4-left,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-4-left,Proximal phalanx of finger 4 (left),Proximal phalanx of 4th finger.r,25.66,75.75,4.48,left,false,hands,bone,proximal-phalanx-of-finger-4-right,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-5-right,Proximal phalanx of finger 5 (right),Proximal phalanx of 5th finger.r,-23.80,76.78,4.50,right,true,hands,bone,proximal-phalanx-of-finger-5-left,proximal-phalanx-of-finger-1-right,
+proximal-phalanx-of-finger-5-left,Proximal phalanx of finger 5 (left),Proximal phalanx of 5th finger.r,23.80,76.78,4.50,left,false,hands,bone,proximal-phalanx-of-finger-5-right,proximal-phalanx-of-finger-1-right,
+distal-phalanx-of-finger-1-right,Distal phalanx of finger 1 (right),Distal phalanx of 1st finger.r,-32.88,77.91,6.18,right,true,hands,bone,distal-phalanx-of-finger-1-left,distal-phalanx-of-finger-1-right,
+distal-phalanx-of-finger-1-left,Distal phalanx of finger 1 (left),Distal phalanx of 1st finger.r,32.88,77.91,6.18,left,false,hands,bone,distal-phalanx-of-finger-1-right,distal-phalanx-of-finger-1-right,
+middle-phalanx-of-finger-2-right,Middle phalanx of finger 2 (right),Middle phalanx of 2d finger.r,-31.30,72.81,5.82,right,true,hands,bone,middle-phalanx-of-finger-2-left,middle-phalanx-of-finger-2-right,
+middle-phalanx-of-finger-2-left,Middle phalanx of finger 2 (left),Middle phalanx of 2d finger.r,31.30,72.81,5.82,left,false,hands,bone,middle-phalanx-of-finger-2-right,middle-phalanx-of-finger-2-right,
+distal-phalanx-of-finger-2-right,Distal phalanx of finger 2 (right),Distal phalanx of 2d finger.r,-31.76,71.53,7.54,right,true,hands,bone,distal-phalanx-of-finger-2-left,distal-phalanx-of-finger-1-right,
+distal-phalanx-of-finger-2-left,Distal phalanx of finger 2 (left),Distal phalanx of 2d finger.r,31.76,71.53,7.54,left,false,hands,bone,distal-phalanx-of-finger-2-right,distal-phalanx-of-finger-1-right,
+middle-phalanx-of-finger-3-right,Middle phalanx of finger 3 (right),Middle phalanx of 3rd finger.r,-28.36,72.20,6.59,right,true,hands,bone,middle-phalanx-of-finger-3-left,middle-phalanx-of-finger-2-right,
+middle-phalanx-of-finger-3-left,Middle phalanx of finger 3 (left),Middle phalanx of 3rd finger.r,28.36,72.20,6.59,left,false,hands,bone,middle-phalanx-of-finger-3-right,middle-phalanx-of-finger-2-right,
+distal-phalanx-of-finger-3-right,Distal phalanx of finger 3 (right),Distal phalanx of 3d finger.r,-28.65,70.60,8.40,right,true,hands,bone,distal-phalanx-of-finger-3-left,distal-phalanx-of-finger-1-right,
+distal-phalanx-of-finger-3-left,Distal phalanx of finger 3 (left),Distal phalanx of 3d finger.r,28.65,70.60,8.40,left,false,hands,bone,distal-phalanx-of-finger-3-right,distal-phalanx-of-finger-1-right,
+middle-phalanx-of-finger-4-right,Middle phalanx of finger 4 (right),Middle phalanx of 4th finger.r,-25.79,72.88,6.52,right,true,hands,bone,middle-phalanx-of-finger-4-left,middle-phalanx-of-finger-2-right,
+middle-phalanx-of-finger-4-left,Middle phalanx of finger 4 (left),Middle phalanx of 4th finger.r,25.79,72.88,6.52,left,false,hands,bone,middle-phalanx-of-finger-4-right,middle-phalanx-of-finger-2-right,
+distal-phalanx-of-finger-4-right,Distal phalanx of finger 4 (right),Distal phalanx of 4th finger.r,-25.91,71.62,8.40,right,true,hands,bone,distal-phalanx-of-finger-4-left,distal-phalanx-of-finger-1-right,
+distal-phalanx-of-finger-4-left,Distal phalanx of finger 4 (left),Distal phalanx of 4th finger.r,25.91,71.62,8.40,left,false,hands,bone,distal-phalanx-of-finger-4-right,distal-phalanx-of-finger-1-right,
+middle-phalanx-of-finger-5-right,Middle phalanx of finger 5 (right),Middle phalanx of 5th finger.r,-23.32,74.47,5.96,right,true,hands,bone,middle-phalanx-of-finger-5-left,middle-phalanx-of-finger-2-right,
+middle-phalanx-of-finger-5-left,Middle phalanx of finger 5 (left),Middle phalanx of 5th finger.r,23.32,74.47,5.96,left,false,hands,bone,middle-phalanx-of-finger-5-right,middle-phalanx-of-finger-2-right,
+distal-phalanx-of-finger-5-right,Distal phalanx of finger 5 (right),Distal phalanx of 5th finger.r,-23.15,72.97,7.22,right,true,hands,bone,distal-phalanx-of-finger-5-left,distal-phalanx-of-finger-1-right,
+distal-phalanx-of-finger-5-left,Distal phalanx of finger 5 (left),Distal phalanx of 5th finger.r,23.15,72.97,7.22,left,false,hands,bone,distal-phalanx-of-finger-5-right,distal-phalanx-of-finger-1-right,
+sesamoid-bones-of-hand-right,Sesamoid bones of hand (right),Sesamoid_bones_of_hand.r,-27.65,79.52,4.45,right,true,hands,sesamoid,sesamoid-bones-of-hand-left,,
+sesamoid-bones-of-hand-left,Sesamoid bones of hand (left),Sesamoid_bones_of_hand.r,27.65,79.52,4.45,left,false,hands,sesamoid,sesamoid-bones-of-hand-right,,
+calcaneus-right,Calcaneus (right),Calcaneus.r,-7.65,3.68,-5.52,right,true,feet,bone,calcaneus-left,,Heel bone
+calcaneus-left,Calcaneus (left),Calcaneus.r,7.65,3.68,-5.52,left,false,feet,bone,calcaneus-right,,Heel bone
+talus-right,Talus (right),Talus.r,-7.48,6.82,-3.69,right,true,feet,bone,talus-left,,Ankle bone|Anklebone
+talus-left,Talus (left),Talus.r,7.48,6.82,-3.69,left,false,feet,bone,talus-right,,Ankle bone|Anklebone
+navicular-right,Navicular (right),Navicular bone.r,-7.23,6.22,-0.27,right,true,feet,bone,navicular-left,,Scaphoid of foot
+navicular-left,Navicular (left),Navicular bone.r,7.23,6.22,-0.27,left,false,feet,bone,navicular-right,,Scaphoid of foot
+medial-cuneiform-right,Medial cuneiform (right),Medial cuneiform bone.r,-6.99,5.22,1.53,right,true,feet,bone,medial-cuneiform-left,,
+medial-cuneiform-left,Medial cuneiform (left),Medial cuneiform bone.r,6.99,5.22,1.53,left,false,feet,bone,medial-cuneiform-right,,
+intermediate-cuneiform-right,Intermediate cuneiform (right),Intermediate cuneiform bone.r,-8.41,5.89,1.19,right,true,feet,bone,intermediate-cuneiform-left,,
+intermediate-cuneiform-left,Intermediate cuneiform (left),Intermediate cuneiform bone.r,8.41,5.89,1.19,left,false,feet,bone,intermediate-cuneiform-right,,
+lateral-cuneiform-right,Lateral cuneiform (right),Lateral cuneiform bone.r,-9.33,5.38,0.69,right,true,feet,bone,lateral-cuneiform-left,,
+lateral-cuneiform-left,Lateral cuneiform (left),Lateral cuneiform bone.r,9.33,5.38,0.69,left,false,feet,bone,lateral-cuneiform-right,,
+cuboid-right,Cuboid (right),Cuboid bone.r,-9.61,4.40,-0.69,right,true,feet,bone,cuboid-left,,
+cuboid-left,Cuboid (left),Cuboid bone.r,9.61,4.40,-0.69,left,false,feet,bone,cuboid-right,,
+metatarsal-1-right,Metatarsal 1 (right),First metatarsal bone.r,-7.12,3.72,5.28,right,true,feet,bone,metatarsal-1-left,metatarsal-1-right,
+metatarsal-1-left,Metatarsal 1 (left),First metatarsal bone.r,7.12,3.72,5.28,left,false,feet,bone,metatarsal-1-right,metatarsal-1-right,
+metatarsal-2-right,Metatarsal 2 (right),Second metatarsal bone.r,-8.94,3.86,4.98,right,true,feet,bone,metatarsal-2-left,metatarsal-1-right,
+metatarsal-2-left,Metatarsal 2 (left),Second metatarsal bone.r,8.94,3.86,4.98,left,false,feet,bone,metatarsal-2-right,metatarsal-1-right,
+metatarsal-3-right,Metatarsal 3 (right),Third metatarsal bone.r,-10.08,3.57,4.73,right,true,feet,bone,metatarsal-3-left,metatarsal-1-right,
+metatarsal-3-left,Metatarsal 3 (left),Third metatarsal bone.r,10.08,3.57,4.73,left,false,feet,bone,metatarsal-3-right,metatarsal-1-right,
+metatarsal-4-right,Metatarsal 4 (right),Fourth metatarsal bone.r,-10.92,3.07,3.80,right,true,feet,bone,metatarsal-4-left,metatarsal-1-right,
+metatarsal-4-left,Metatarsal 4 (left),Fourth metatarsal bone.r,10.92,3.07,3.80,left,false,feet,bone,metatarsal-4-right,metatarsal-1-right,
+metatarsal-5-right,Metatarsal 5 (right),Fifth metatarsal bone.r,-11.95,2.51,2.27,right,true,feet,bone,metatarsal-5-left,metatarsal-1-right,
+metatarsal-5-left,Metatarsal 5 (left),Fifth metatarsal bone.r,11.95,2.51,2.27,left,false,feet,bone,metatarsal-5-right,metatarsal-1-right,
+proximal-phalanx-of-toe-1-right,Proximal phalanx of toe 1 (right),Proximal phalanx of first finger of foot.r,-7.39,2.03,9.69,right,true,feet,bone,proximal-phalanx-of-toe-1-left,proximal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-1-left,Proximal phalanx of toe 1 (left),Proximal phalanx of first finger of foot.r,7.39,2.03,9.69,left,false,feet,bone,proximal-phalanx-of-toe-1-right,proximal-phalanx-of-toe-1-right,
+distal-phalanx-of-toe-1-right,Distal phalanx of toe 1 (right),Distal phalanx of first finger of foot.r,-8.05,1.59,12.12,right,true,feet,bone,distal-phalanx-of-toe-1-left,distal-phalanx-of-toe-1-right,
+distal-phalanx-of-toe-1-left,Distal phalanx of toe 1 (left),Distal phalanx of first finger of foot.r,8.05,1.59,12.12,left,false,feet,bone,distal-phalanx-of-toe-1-right,distal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-2-right,Proximal phalanx of toe 2 (right),Proximal phalanx of second finger of foot.r,-9.56,2.00,9.71,right,true,feet,bone,proximal-phalanx-of-toe-2-left,proximal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-2-left,Proximal phalanx of toe 2 (left),Proximal phalanx of second finger of foot.r,9.56,2.00,9.71,left,false,feet,bone,proximal-phalanx-of-toe-2-right,proximal-phalanx-of-toe-1-right,
+middle-phalanx-of-toe-2-right,Middle phalanx of toe 2 (right),Middle phalanx of second finger of foot.r,-10.09,1.65,11.75,right,true,feet,bone,middle-phalanx-of-toe-2-left,middle-phalanx-of-toe-2-right,
+middle-phalanx-of-toe-2-left,Middle phalanx of toe 2 (left),Middle phalanx of second finger of foot.r,10.09,1.65,11.75,left,false,feet,bone,middle-phalanx-of-toe-2-right,middle-phalanx-of-toe-2-right,
+distal-phalanx-of-toe-2-right,Distal phalanx of toe 2 (right),Distal phalanx of second finger of foot.r,-10.38,1.33,13.03,right,true,feet,bone,distal-phalanx-of-toe-2-left,distal-phalanx-of-toe-1-right,
+distal-phalanx-of-toe-2-left,Distal phalanx of toe 2 (left),Distal phalanx of second finger of foot.r,10.38,1.33,13.03,left,false,feet,bone,distal-phalanx-of-toe-2-right,distal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-3-right,Proximal phalanx of toe 3 (right),Proximal phalanx of third finger of foot.r,-11.16,1.98,9.18,right,true,feet,bone,proximal-phalanx-of-toe-3-left,proximal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-3-left,Proximal phalanx of toe 3 (left),Proximal phalanx of third finger of foot.r,11.16,1.98,9.18,left,false,feet,bone,proximal-phalanx-of-toe-3-right,proximal-phalanx-of-toe-1-right,
+middle-phalanx-of-toe-3-right,Middle phalanx of toe 3 (right),Middle phalanx of third finger of foot.r,-11.80,1.63,11.25,right,true,feet,bone,middle-phalanx-of-toe-3-left,middle-phalanx-of-toe-2-right,
+middle-phalanx-of-toe-3-left,Middle phalanx of toe 3 (left),Middle phalanx of third finger of foot.r,11.80,1.63,11.25,left,false,feet,bone,middle-phalanx-of-toe-3-right,middle-phalanx-of-toe-2-right,
+distal-phalanx-of-toe-3-right,Distal phalanx of toe 3 (right),Distal phalanx of third finger of foot.r,-12.11,1.41,12.45,right,true,feet,bone,distal-phalanx-of-toe-3-left,distal-phalanx-of-toe-1-right,
+distal-phalanx-of-toe-3-left,Distal phalanx of toe 3 (left),Distal phalanx of third finger of foot.r,12.11,1.41,12.45,left,false,feet,bone,distal-phalanx-of-toe-3-right,distal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-4-right,Proximal phalanx of toe 4 (right),Proximal phalanx of fourth finger of foot.r,-12.31,1.69,8.14,right,true,feet,bone,proximal-phalanx-of-toe-4-left,proximal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-4-left,Proximal phalanx of toe 4 (left),Proximal phalanx of fourth finger of foot.r,12.31,1.69,8.14,left,false,feet,bone,proximal-phalanx-of-toe-4-right,proximal-phalanx-of-toe-1-right,
+middle-phalanx-of-toe-4-right,Middle phalanx of toe 4 (right),Middle phalanx of fourth finger of foot.r,-12.99,1.40,9.92,right,true,feet,bone,middle-phalanx-of-toe-4-left,middle-phalanx-of-toe-2-right,
+middle-phalanx-of-toe-4-left,Middle phalanx of toe 4 (left),Middle phalanx of fourth finger of foot.r,12.99,1.40,9.92,left,false,feet,bone,middle-phalanx-of-toe-4-right,middle-phalanx-of-toe-2-right,
+distal-phalanx-of-toe-4-right,Distal phalanx of toe 4 (right),Distal phalanx of fourth finger of foot.r,-13.21,1.29,10.95,right,true,feet,bone,distal-phalanx-of-toe-4-left,distal-phalanx-of-toe-1-right,
+distal-phalanx-of-toe-4-left,Distal phalanx of toe 4 (left),Distal phalanx of fourth finger of foot.r,13.21,1.29,10.95,left,false,feet,bone,distal-phalanx-of-toe-4-right,distal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-5-right,Proximal phalanx of toe 5 (right),Proximal phalanx of fifth finger of foot.r,-13.56,1.52,6.83,right,true,feet,bone,proximal-phalanx-of-toe-5-left,proximal-phalanx-of-toe-1-right,
+proximal-phalanx-of-toe-5-left,Proximal phalanx of toe 5 (left),Proximal phalanx of fifth finger of foot.r,13.56,1.52,6.83,left,false,feet,bone,proximal-phalanx-of-toe-5-right,proximal-phalanx-of-toe-1-right,
+middle-phalanx-of-toe-5-right,Middle phalanx of toe 5 (right),Middle phalanx of fifth finger of foot.r,-14.12,1.29,8.37,right,true,feet,bone,middle-phalanx-of-toe-5-left,middle-phalanx-of-toe-2-right,
+middle-phalanx-of-toe-5-left,Middle phalanx of toe 5 (left),Middle phalanx of fifth finger of foot.r,14.12,1.29,8.37,left,false,feet,bone,middle-phalanx-of-toe-5-right,middle-phalanx-of-toe-2-right,
+distal-phalanx-of-toe-5-right,Distal phalanx of toe 5 (right),Distal phalanx of fifth finger of foot.r,-14.26,1.18,9.14,right,true,feet,bone,distal-phalanx-of-toe-5-left,distal-phalanx-of-toe-1-right,
+distal-phalanx-of-toe-5-left,Distal phalanx of toe 5 (left),Distal phalanx of fifth finger of foot.r,14.26,1.18,9.14,left,false,feet,bone,distal-phalanx-of-toe-5-right,distal-phalanx-of-toe-1-right,
+sesamoid-bones-of-foot-right,Sesamoid bones of foot (right),Sesamoid bones of foot.r,-7.18,1.39,7.05,right,true,feet,sesamoid,sesamoid-bones-of-foot-left,,
+sesamoid-bones-of-foot-left,Sesamoid bones of foot (left),Sesamoid bones of foot.r,7.18,1.39,7.05,left,false,feet,sesamoid,sesamoid-bones-of-foot-right,,
