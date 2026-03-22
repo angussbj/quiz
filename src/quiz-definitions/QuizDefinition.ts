@@ -1,6 +1,8 @@
 import type { VisualizationType } from '@/visualizations/VisualizationRendererProps';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from '@/quiz-modes/ToggleDefinition';
 import type { ToggleConstraint } from '@/quiz-modes/ToggleConstraint';
+import type { TimeScale } from '@/visualizations/timeline/buildTimelineElements';
+import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 
 export type QuizModeType =
   | 'free-recall-unordered'
@@ -67,17 +69,24 @@ export interface QuizDefinition<K extends string = string> {
   /** When true, elements excluded by range/group filters are hidden entirely instead of shown as context. */
   readonly hideFilteredElements?: boolean;
   /** Column in the data CSV that stores the parent river name for tributary rivers.
-   *  When the 'includeTributaries' toggle is false, rows with a non-empty value in this
-   *  column are excluded from the quiz and rendered as visual context (parent river colour). */
+   *  When the 'mergeTributaries' toggle is true, tributary paths are merged into the parent
+   *  element's svgPathData and a subtitle "(and tributaries)" appears in the prompt. */
   readonly tributaryColumn?: string;
   /** Column in the data CSV that stores the parent river name for distributary rivers.
-   *  When the 'includeDistributaries' toggle is false, these are excluded and rendered
-   *  with the parent river's colour. */
+   *  When the 'mergeDistributaries' toggle is true, distributary paths are merged into the
+   *  parent element's svgPathData. */
   readonly distributaryColumn?: string;
   /** Column in the data CSV that stores the canonical river name for named-section rivers.
-   *  When the 'includeSegmentNames' toggle is false, all segments are answered together —
-   *  typing any segment name marks the canonical and all its segments correct. */
+   *  When the 'mergeSegmentNames' toggle is true (default), segment paths are merged into
+   *  the canonical element and segment names become alternate answers. */
   readonly segmentColumn?: string;
+  /**
+   * Time axis scale for timeline visualizations.
+   * - `'linear'` (default): equal pixel space per year.
+   * - `'log'`: equal pixel space per order of magnitude (log10 years before present).
+   *   Use for deep-time timelines spanning millions or billions of years.
+   */
+  readonly timeScale?: TimeScale;
   /**
    * How locate mode measures distance from the click to the target element.
    * - `'centroid'` (default): distance to the element's geographic center point.
@@ -99,17 +108,13 @@ export interface QuizDefinition<K extends string = string> {
    */
   readonly hideUnfocusedElements?: boolean;
   /**
-   * Allows a select toggle to dynamically switch which CSV column powers both group filter chips
-   * and timeline bar coloring. Each toggle value maps to a column config, or undefined for "no grouping".
-   *
-   * When set, `groupFilterColumn` and `groupFilterLabel` on the definition are ignored in favour
-   * of the dynamically selected column.
+   * Override element state colors for this quiz. Maps visual states to CSS variable references
+   * (e.g., `{ default: 'var(--color-lake)' }`). Renderers use these instead of STATUS_COLORS.main
+   * for the specified states.
    */
-  readonly dynamicGrouping?: {
-    readonly selectToggleKey: string;
-    readonly options: Readonly<Record<string, {
-      readonly column: string;
-      readonly chipLabel: string;
-    } | undefined>>;
-  };
+  readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;
+  /** When true, whitespace differences matter for answer matching. Default: false (whitespace stripped). */
+  readonly whitespaceMatters?: boolean;
+  /** When true, punctuation differences matter for answer matching. Default: false (punctuation stripped). */
+  readonly punctuationMatters?: boolean;
 }

@@ -24,22 +24,34 @@
 .interactivePath {
   cursor: pointer;
   stroke-linejoin: round;
-  transition: fill var(--transition-normal), fill-opacity var(--transition-normal), stroke var(--transition-normal);
+  transition: fill var(--transition-normal), fill-opacity var(--transition-normal), stroke var(--transition-normal), filter var(--transition-fast);
 }
 
 .interactivePath:hover {
-  fill-opacity: 0.4;
+  filter: brightness(1.25);
+}
+
+/* River elements wrap visible paths + a transparent hit-area in a <g>.
+   The visible paths have pointer-events: none, so they can't receive :hover
+   themselves — the group-level hover triggers brightness on all children. */
+.interactiveGroup {
+  cursor: pointer;
+}
+
+.interactiveGroup:hover > path {
+  filter: brightness(1.25);
 }
 
 .interactiveDot {
   cursor: pointer;
-  transition: transform var(--transition-fast), fill var(--transition-normal);
+  transition: transform var(--transition-fast), fill var(--transition-normal), filter var(--transition-fast);
   transform-origin: center;
   transform-box: fill-box;
 }
 
 .interactiveDot:hover {
   transform: scale(1.5);
+  filter: brightness(1.25);
 }
 
 .label {

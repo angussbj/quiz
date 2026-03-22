@@ -16,8 +16,8 @@ export interface MapElement extends VisualizationElement {
   /** Name of the parent river this distributary branches from (e.g. 'Nile' for 'Rosetta Branch'). */
   readonly distributaryOf?: string;
   /** Canonical river name when this element is a named section of a larger river
-   *  (e.g. 'Tigris' for 'Dicle'). When the 'includeSegmentNames' toggle is off,
-   *  all segments are answered together with the canonical. */
+   *  (e.g. 'Tigris' for 'Dicle'). When the 'mergeSegmentNames' toggle is on (default),
+   *  segment paths are merged into the canonical element and answered together. */
   readonly segmentOf?: string;
 }
 

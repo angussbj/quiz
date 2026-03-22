@@ -15,31 +15,39 @@ interface TrackableElement {
  * Unassigned elements are greedily placed in the lowest available track
  * where they don't overlap any existing element (with a small gap).
  *
+ * @param elements         Elements to assign tracks to.
+ * @param minimumGapUnits  Minimum gap (in position units) between adjacent elements.
+ * @param toPosition       Optional mapping from fractional year to a position value
+ *                         used for overlap comparisons. Defaults to identity.
+ *                         Use `logYearToViewBoxX` for log-scale timelines so that
+ *                         track assignment reflects visual proximity, not year distance.
+ *
  * Returns a map from element ID to track index.
  */
 export function assignTracks(
   elements: ReadonlyArray<TrackableElement>,
-  minimumGapYears: number = 0,
+  minimumGapUnits: number = 0,
+  toPosition: (fractionalYear: number) => number = (y) => y,
 ): Readonly<Record<string, number>> {
   const result: Record<string, number> = {};
 
-  // Track end times: trackEnds[i] is the fractional year where track i becomes free
+  // Track end positions: trackEnds[i] is the position where track i becomes free
   const trackEnds: number[] = [];
 
-  // Sort by start time, then by duration (shorter first) for stable packing
+  // Sort by start position, then by span (shorter first) for stable packing
   const sorted = [...elements].sort((a, b) => {
-    const aStart = timestampToFractionalYear(a.start, false);
-    const bStart = timestampToFractionalYear(b.start, false);
+    const aStart = toPosition(timestampToFractionalYear(a.start, false));
+    const bStart = toPosition(timestampToFractionalYear(b.start, false));
     if (aStart !== bStart) return aStart - bStart;
-    const aEnd = a.end ? timestampToFractionalYear(a.end, true) : aStart;
-    const bEnd = b.end ? timestampToFractionalYear(b.end, true) : bStart;
+    const aEnd = toPosition(a.end ? timestampToFractionalYear(a.end, true) : timestampToFractionalYear(a.start, false));
+    const bEnd = toPosition(b.end ? timestampToFractionalYear(b.end, true) : timestampToFractionalYear(b.start, false));
     return (aEnd - aStart) - (bEnd - bStart);
   });
 
   for (const element of sorted) {
-    const start = timestampToFractionalYear(element.start, false);
+    const start = toPosition(timestampToFractionalYear(element.start, false));
     const end = element.end
-      ? timestampToFractionalYear(element.end, true)
+      ? toPosition(timestampToFractionalYear(element.end, true))
       : start;
 
     if (element.track !== undefined) {
@@ -48,7 +56,7 @@ export function assignTracks(
       while (trackEnds.length <= element.track) {
         trackEnds.push(-Infinity);
       }
-      trackEnds[element.track] = Math.max(trackEnds[element.track], end + minimumGapYears);
+      trackEnds[element.track] = Math.max(trackEnds[element.track], end + minimumGapUnits);
       continue;
     }
 
@@ -67,7 +75,7 @@ export function assignTracks(
     }
 
     result[element.id] = assignedTrack;
-    trackEnds[assignedTrack] = end + minimumGapYears;
+    trackEnds[assignedTrack] = end + minimumGapUnits;
   }
 
   return result;

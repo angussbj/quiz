@@ -22,6 +22,7 @@ export function TimelineLocateMode({
   forceGiveUp = false,
   reviewing = false,
   reviewResult,
+  timeScale,
 }: QuizModeProps) {
   const rawPrecision = selectValues?.['datePrecision'];
   const datePrecision: DatePrecision =
@@ -29,7 +30,7 @@ export function TimelineLocateMode({
       ? rawPrecision
       : 'month';
 
-  const quiz = useTimelineLocateQuiz(elements, datePrecision);
+  const quiz = useTimelineLocateQuiz(elements, datePrecision, timeScale);
   const [dateInput, setDateInput] = useState('');
   const [inputError, setInputError] = useState(false);
 
@@ -189,6 +190,7 @@ export function TimelineLocateMode({
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
           clustering={clustering}
+          timeScale={timeScale}
         />
       </div>
     </div>

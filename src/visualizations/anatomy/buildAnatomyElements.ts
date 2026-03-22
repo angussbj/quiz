@@ -31,7 +31,7 @@ export function buildAnatomyElements(
 
     return {
       id,
-      label: row[labelColumn] ?? id,
+      label: row[labelColumn] || id,
       viewBoxCenter: { x, y },
       viewBoxBounds: bounds,
       interactive: true,

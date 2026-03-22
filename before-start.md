@@ -1,0 +1,74 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "Quizzical" [ref=e6] [cursor=pointer]:
+        - /url: /quiz
+      - button "System theme" [ref=e7] [cursor=pointer]:
+        - img [ref=e9]
+  - generic [ref=e11]:
+    - navigation "Breadcrumbs" [ref=e13]:
+      - link "Home" [ref=e14] [cursor=pointer]:
+        - /url: /quiz
+      - generic [ref=e15]:
+        - generic [ref=e16]: /
+        - link "Science" [ref=e17] [cursor=pointer]:
+          - /url: /quiz/science
+      - generic [ref=e18]:
+        - generic [ref=e19]: /
+        - link "Chemistry" [ref=e20] [cursor=pointer]:
+          - /url: /quiz/science/chemistry
+      - generic [ref=e21]:
+        - generic [ref=e22]: /
+        - generic [ref=e23]: Periodic Table
+    - main [ref=e24]:
+      - generic [ref=e28]:
+        - heading "Periodic Table" [level=1] [ref=e29]
+        - paragraph [ref=e30]: Name the elements of the periodic table.
+        - generic [ref=e31]:
+          - generic [ref=e32]: Mode
+          - combobox "Mode" [ref=e33] [cursor=pointer]:
+            - option "Free Recall" [selected]
+            - option "Prompted Recall"
+            - option "Ordered Recall"
+            - option "Identify"
+        - generic [ref=e34]:
+          - generic [ref=e35]: Time limit
+          - generic [ref=e36]:
+            - button "Decrease time limit" [ref=e37] [cursor=pointer]: −
+            - textbox "Time limit" [ref=e38]:
+              - /placeholder: —
+            - button "Increase time limit" [ref=e39] [cursor=pointer]: +
+            - generic [ref=e40]: minutes
+        - generic [ref=e41]:
+          - generic [ref=e42]: Atomic number range
+          - generic [ref=e43]:
+            - textbox "1" [ref=e44]
+            - generic [ref=e45]: to
+            - textbox "118" [ref=e46]
+        - generic [ref=e47]:
+          - generic [ref=e48]: Element category
+          - button "Deselect all" [ref=e50] [cursor=pointer]
+          - group "Element category" [ref=e51]:
+            - button "Nonmetal" [pressed] [ref=e52] [cursor=pointer]
+            - button "Noble gas" [pressed] [ref=e53] [cursor=pointer]
+            - button "Alkali metal" [pressed] [ref=e54] [cursor=pointer]
+            - button "Alkaline earth metal" [pressed] [ref=e55] [cursor=pointer]
+            - button "Metalloid" [pressed] [ref=e56] [cursor=pointer]
+            - button "Halogen" [pressed] [ref=e57] [cursor=pointer]
+            - button "Post transition metal" [pressed] [ref=e58] [cursor=pointer]
+            - button "Transition metal" [pressed] [ref=e59] [cursor=pointer]
+            - button "Lanthanide" [pressed] [ref=e60] [cursor=pointer]
+            - button "Actinide" [pressed] [ref=e61] [cursor=pointer]
+        - generic [ref=e63]:
+          - heading "Display" [level=2] [ref=e64]
+          - generic [ref=e65]:
+            - generic [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]: Element symbols
+              - switch [ref=e68]
+            - generic [ref=e70] [cursor=pointer]:
+              - generic [ref=e71]: Atomic numbers
+              - switch [checked] [ref=e72]
+            - generic [ref=e74] [cursor=pointer]:
+              - generic [ref=e75]: Category colours
+              - switch [ref=e76]
+        - button "Start Quiz" [ref=e78] [cursor=pointer]

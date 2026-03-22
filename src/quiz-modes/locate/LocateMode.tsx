@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { InlineResults } from '../InlineResults';
+import { QuizPromptBar } from '../QuizPromptBar';
 import { useLocateQuiz } from './useLocateQuiz';
 import { LocateFeedback } from './LocateFeedback';
 import styles from './LocateMode.module.css';
@@ -50,7 +50,7 @@ export function LocateMode({
         percentage: quiz.totalTargets > 0 ? Math.round((quiz.correctCount / quiz.totalTargets) * 100) : 0,
       });
     }
-     
+
   }, [quiz.isFinished, quiz.correctCount, quiz.totalTargets]);
 
   const elementToggles = useMemo(() => {
@@ -78,48 +78,23 @@ export function LocateMode({
     <div className={styles.container}>
       <div className={styles.controlsArea}>
         {!reviewing ? (
-          <>
-            <div className={styles.promptBar}>
-              {quiz.isFinished ? (
-                <FinishedPrompt
-                  correctCount={quiz.correctCount}
-                  totalTargets={quiz.totalTargets}
-                />
-              ) : (
-                <PromptDisplay
-                  targetLabel={quiz.currentTarget?.label ?? ''}
-                  currentIndex={quiz.currentTargetIndex}
-                  total={quiz.totalTargets}
-                />
-              )}
-              {!quiz.isFinished && (
-                <div className={styles.controls}>
-                  <button
-                    className={styles.skipButton}
-                    onClick={quiz.handleSkip}
-                  >
-                    Skip
-                  </button>
-                  <button
-                    className={styles.giveUpButton}
-                    onClick={quiz.handleGiveUp}
-                  >
-                    Give up
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className={styles.scoreBar}>
-              <span className={styles.scoreLabel}>
-                {quiz.correctCount}/{quiz.currentTargetIndex} correct
+          <QuizPromptBar
+            promptKey={quiz.currentTarget?.label ?? ''}
+            prompt={<>Click where <strong>{quiz.currentTarget?.label ?? ''}</strong> is</>}
+            promptSubtitle={quiz.currentTarget?.promptSubtitle}
+            counter={quiz.isFinished ? undefined : `${quiz.currentTargetIndex + 1}/${quiz.totalTargets}`}
+            progressCurrent={quiz.currentTargetIndex}
+            progressTotal={quiz.totalTargets}
+            scoreLabel={`${quiz.correctCount}/${quiz.currentTargetIndex} correct`}
+            onSkip={quiz.handleSkip}
+            onGiveUp={quiz.handleGiveUp}
+            isFinished={quiz.isFinished}
+            finishedContent={
+              <span className={styles.finishedText}>
+                Finished — {quiz.correctCount}/{quiz.totalTargets} correct
               </span>
-              <ProgressBar
-                current={quiz.currentTargetIndex}
-                total={quiz.totalTargets}
-              />
-            </div>
-          </>
+            }
+          />
         ) : (
           reviewResult && <InlineResults result={reviewResult} />
         )}
@@ -141,63 +116,6 @@ export function LocateMode({
           svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
         />
       </div>
-    </div>
-  );
-}
-
-interface PromptDisplayProps {
-  readonly targetLabel: string;
-  readonly currentIndex: number;
-  readonly total: number;
-}
-
-function PromptDisplay({ targetLabel, currentIndex, total }: PromptDisplayProps) {
-  return (
-    <div className={styles.prompt}>
-      <span className={styles.promptCounter}>{currentIndex + 1}/{total}</span>
-      <motion.span
-        key={targetLabel}
-        className={styles.promptText}
-        initial={{ opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.15 }}
-      >
-        Click where <strong>{targetLabel}</strong> is
-      </motion.span>
-    </div>
-  );
-}
-
-interface FinishedPromptProps {
-  readonly correctCount: number;
-  readonly totalTargets: number;
-}
-
-function FinishedPrompt({ correctCount, totalTargets }: FinishedPromptProps) {
-  return (
-    <div className={styles.prompt}>
-      <span className={styles.promptText}>
-        Finished — {correctCount}/{totalTargets} correct
-      </span>
-    </div>
-  );
-}
-
-interface ProgressBarProps {
-  readonly current: number;
-  readonly total: number;
-}
-
-function ProgressBar({ current, total }: ProgressBarProps) {
-  const percentage = total > 0 ? (current / total) * 100 : 0;
-  return (
-    <div className={styles.progressTrack}>
-      <motion.div
-        className={styles.progressFill}
-        initial={{ width: '0%' }}
-        animate={{ width: `${percentage}%` }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-      />
     </div>
   );
 }

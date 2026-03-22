@@ -166,7 +166,7 @@ export function buildMapElements(
     const segmentOf = row['segment_of'] || undefined;
     return {
       id,
-      label: row[labelColumn] ?? id,
+      label: row[labelColumn] || id,
       geoCoordinates: { latitude: lat, longitude: lng },
       viewBoxCenter: center,
       viewBoxBounds: bounds,

@@ -1,6 +1,6 @@
 import type { TimelineElement } from './TimelineElement';
 import type { TimelineTimestamp } from './TimelineTimestamp';
-import { buildTimelineElements, type TimelineElementInput } from './buildTimelineElements';
+import { buildTimelineElements, type TimelineElementInput, type TimeScale } from './buildTimelineElements';
 
 function parseTimestamp(row: Readonly<Record<string, string>>, prefix: string): TimelineTimestamp | undefined {
   const year = row[`${prefix}_year`] ?? row[prefix];
@@ -17,6 +17,7 @@ function parseTimestamp(row: Readonly<Record<string, string>>, prefix: string): 
 export function buildTimelineElementsFromRows(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
+  timeScale: TimeScale = 'linear',
 ): ReadonlyArray<TimelineElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
@@ -28,7 +29,7 @@ export function buildTimelineElementsFromRows(
     if (!start) continue;
     inputs.push({
       id,
-      label: row[labelColumn] ?? id,
+      label: row[labelColumn] || id,
       start,
       end: parseTimestamp(row, 'end'),
       category: row['category'] ?? (groupColumn ? row[groupColumn] : '') ?? '',
@@ -36,5 +37,5 @@ export function buildTimelineElementsFromRows(
     });
   }
 
-  return buildTimelineElements(inputs);
+  return buildTimelineElements(inputs, timeScale);
 }

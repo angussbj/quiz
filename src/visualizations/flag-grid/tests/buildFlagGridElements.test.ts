@@ -1,5 +1,5 @@
 import { buildFlagGridElements } from '../buildFlagGridElements';
-import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y, FLAG_COLUMNS } from '../flagGridLayout';
+import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y, FLAG_DEFAULT_COLUMNS } from '../flagGridLayout';
 import { isFlagGridElement } from '../FlagGridElement';
 
 const sampleRows = [
@@ -63,7 +63,7 @@ describe('buildFlagGridElements', () => {
     const elements = buildFlagGridElements(sampleRows, columnMappings);
     for (const element of elements) {
       if (!isFlagGridElement(element)) continue;
-      expect(element.column).toBeLessThan(FLAG_COLUMNS);
+      expect(element.column).toBeLessThan(FLAG_DEFAULT_COLUMNS);
       expect(element.row).toBeGreaterThanOrEqual(0);
     }
     // 9 elements = 8 in first row + 1 in second row

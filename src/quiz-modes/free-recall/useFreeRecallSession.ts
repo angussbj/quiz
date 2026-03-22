@@ -4,7 +4,7 @@ import type { QuizSessionState } from '../QuizSessionState';
 import type { ToggleDefinition } from '../ToggleDefinition';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { calculateUnorderedRecallScore } from '@/scoring/calculateUnorderedRecallScore';
-import { matchAnswer } from './matchAnswer';
+import { matchAnswer, type NormalizeOptions } from './matchAnswer';
 
 interface FreeRecallSessionConfig {
   readonly elements: ReadonlyArray<VisualizationElement>;
@@ -12,6 +12,7 @@ interface FreeRecallSessionConfig {
   readonly answerColumn: string;
   readonly toggleDefinitions: ReadonlyArray<ToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;
+  readonly normalizeOptions?: NormalizeOptions;
 }
 
 interface FreeRecallSessionResult {
@@ -34,6 +35,7 @@ export function useFreeRecallSession({
   answerColumn,
   toggleDefinitions,
   toggleValues,
+  normalizeOptions,
 }: FreeRecallSessionConfig): FreeRecallSessionResult {
   const [correctIds, setCorrectIds] = useState<ReadonlyArray<string>>([]);
   const [givenUp, setGivenUp] = useState(false);
@@ -111,7 +113,7 @@ export function useFreeRecallSession({
   const handleTextAnswer = useCallback((text: string) => {
     if (givenUp) return;
 
-    const match = matchAnswer(text, remainingRowsRef.current, answerColumn);
+    const match = matchAnswer(text, remainingRowsRef.current, answerColumn, normalizeOptions);
     if (!match) {
       setAmbiguousMessage(undefined);
     } else if ('type' in match) {

@@ -92,7 +92,7 @@ export function useTimelineZoom({
 
   const clampPanOffset = useCallback((offset: number, overrideTimelineWidth?: number) => {
     const tlWidth = overrideTimelineWidth ?? timelineWidthRef.current;
-    const buffer = containerWidthRef.current / 3;
+    const buffer = containerWidthRef.current / 2;
     return Math.max(
       containerWidthRef.current - tlWidth - buffer,
       Math.min(buffer, offset),

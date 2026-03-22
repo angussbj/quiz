@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { VisualizationElement, ViewBoxPosition, ElementVisualState } from './VisualizationElement';
 import type { BackgroundLabel } from './map/BackgroundLabel';
+import type { TimeScale } from './timeline/buildTimelineElements';
 
 export interface ElementCluster {
   readonly center: ViewBoxPosition;
@@ -81,14 +82,20 @@ export interface VisualizationRendererProps {
     readonly width: number;
     readonly height: number;
   };
+  /** Time axis scale for timeline renderers. See QuizDefinition.timeScale. */
+  readonly timeScale?: TimeScale;
   /**
    * Element IDs to bring into view when this array changes (by reference).
    * The visualisation pans and/or zooms OUT to show all specified elements.
    * It will never zoom in. One-shot — does not keep them in view after the move.
    */
   readonly putInView?: ReadonlyArray<string>;
-  /** Time scale for timeline renderers: 'linear' (default) or 'log'. */
-  readonly timeScale?: 'linear' | 'log';
+  /**
+   * Override element state colors for specific states. Maps visual states to CSS variable
+   * references (e.g., `{ default: 'var(--color-lake)' }`). Renderers use these instead of
+   * STATUS_COLORS.main for the specified states.
+   */
+  readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';

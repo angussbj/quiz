@@ -2,7 +2,14 @@ import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { VisualizationElement, ViewBoxPosition, ElementVisualState } from '@/visualizations/VisualizationElement';
 import { isTimelineElement, type TimelineElement } from '@/visualizations/timeline/TimelineElement';
 import type { TimelineTimestamp } from '@/visualizations/timeline/TimelineTimestamp';
-import { UNITS_PER_YEAR } from '@/visualizations/timeline/buildTimelineElements';
+import { timestampToFractionalYear } from '@/visualizations/timeline/TimelineTimestamp';
+import { UNITS_PER_YEAR, type TimeScale } from '@/visualizations/timeline/buildTimelineElements';
+import {
+  computeLogReferenceYear,
+  logYearToViewBoxX,
+  viewBoxXToLogYear,
+  scoreLogScaleAnswer,
+} from '@/visualizations/timeline/logTimeScale';
 import {
   type DatePrecision,
   needsRangeAnswer,
@@ -39,13 +46,14 @@ export interface TimelineLocateQuizActions {
   readonly handleGiveUp: () => void;
 }
 
-function viewBoxXToTimestamp(x: number, precision: DatePrecision): TimelineTimestamp {
-  const fractionalYear = x / UNITS_PER_YEAR;
-  const year = Math.floor(fractionalYear);
+function viewBoxXToTimestamp(x: number, precision: DatePrecision, timeScale: TimeScale, logReferenceYear: number): TimelineTimestamp {
+  const fractionalYear = timeScale === 'log' ? viewBoxXToLogYear(x, logReferenceYear) : x / UNITS_PER_YEAR;
+  const year = Math.trunc(fractionalYear);
 
   if (precision === 'year') return [year];
 
-  const monthFraction = (fractionalYear - year) * 12;
+  const fractPart = fractionalYear - Math.floor(fractionalYear);
+  const monthFraction = fractPart * 12;
   const month = Math.max(1, Math.min(12, Math.floor(monthFraction) + 1));
 
   if (precision === 'month') return [year, month];
@@ -60,11 +68,25 @@ function viewBoxXToTimestamp(x: number, precision: DatePrecision): TimelineTimes
 export function useTimelineLocateQuiz(
   elements: ReadonlyArray<VisualizationElement>,
   precision: DatePrecision,
+  timeScale: TimeScale = 'linear',
 ): TimelineLocateQuizState & TimelineLocateQuizActions {
   const timelineElements = useMemo(
     () => elements.filter((e): e is TimelineElement => isTimelineElement(e) && e.interactive !== false),
     [elements],
   );
+
+  // Compute the log-scale reference year from the latest event in the data.
+  const logReferenceYear = useMemo(() => {
+    if (timeScale !== 'log') return 0;
+    let maxYear = -Infinity;
+    for (const el of timelineElements) {
+      const endYear = el.end
+        ? timestampToFractionalYear(el.end, true)
+        : timestampToFractionalYear(el.start, false);
+      maxYear = Math.max(maxYear, endYear);
+    }
+    return computeLogReferenceYear(maxYear);
+  }, [timeScale, timelineElements]);
 
   const [targetOrder] = useState<ReadonlyArray<string>>(() =>
     shuffle(timelineElements.map((e) => e.id)),
@@ -110,7 +132,17 @@ export function useTimelineLocateQuiz(
     if (isFinished || !currentTarget) return;
 
     let score: number;
-    if (endAnswer) {
+    if (timeScale === 'log') {
+      // For log-scale timelines, score based on viewBox-space proximity rather than
+      // year-space distance (which is meaningless at geological scales).
+      const userFrac = timestampToFractionalYear(answer, false);
+      const userViewBoxX = logYearToViewBoxX(userFrac, logReferenceYear);
+      const eventStartViewBoxX = logYearToViewBoxX(timestampToFractionalYear(currentTarget.start, false), logReferenceYear);
+      const eventEndViewBoxX = currentTarget.end
+        ? logYearToViewBoxX(timestampToFractionalYear(currentTarget.end, true), logReferenceYear)
+        : eventStartViewBoxX;
+      score = scoreLogScaleAnswer(userViewBoxX, eventStartViewBoxX, eventEndViewBoxX);
+    } else if (endAnswer) {
       score = scoreRangeAnswer(
         answer,
         endAnswer,
@@ -130,12 +162,12 @@ export function useTimelineLocateQuiz(
       [currentTarget.id]: isCorrect ? 'correct' : 'incorrect',
     }));
     setCurrentTargetIndex((prev) => prev + 1);
-  }, [isFinished, currentTarget, precision]);
+  }, [isFinished, currentTarget, precision, timeScale, logReferenceYear]);
 
   const handlePositionClick = useCallback((position: ViewBoxPosition) => {
     if (isFinished || !currentTarget) return;
 
-    const clickTimestamp = viewBoxXToTimestamp(position.x, precision);
+    const clickTimestamp = viewBoxXToTimestamp(position.x, precision, timeScale, logReferenceYear);
 
     if (currentNeedsRange) {
       if (rangePhase === 'start') {
@@ -147,7 +179,7 @@ export function useTimelineLocateQuiz(
     } else {
       submitAnswer(clickTimestamp);
     }
-  }, [isFinished, currentTarget, precision, currentNeedsRange, rangePhase, pendingStartAnswer, submitAnswer]);
+  }, [isFinished, currentTarget, precision, timeScale, logReferenceYear, currentNeedsRange, rangePhase, pendingStartAnswer, submitAnswer]);
 
   const handleDateInput = useCallback((text: string): boolean => {
     if (isFinished || !currentTarget) return false;

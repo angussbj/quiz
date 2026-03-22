@@ -49,6 +49,10 @@ export interface VisualizationElement {
   readonly group?: string;
   /** Label placement relative to the element center. Default: 'right'. Subtypes may override with a richer type. */
   readonly labelPosition?: 'left' | 'right' | 'above' | 'below' | 'above-left' | 'above-right' | 'below-left' | 'below-right' | LeaderLineLabelPosition;
+  /** Optional subtitle shown below the element name in identify/locate prompts.
+   *  Set automatically when related elements (tributaries, distributaries) are merged
+   *  into this element's paths. E.g. "(and tributaries)". */
+  readonly promptSubtitle?: string;
 }
 
 /** Pre-computed label position for leader-line style labels (e.g. anatomy diagrams) */

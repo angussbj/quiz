@@ -3,12 +3,13 @@ import type { VisualizationElement, ElementVisualState } from '@/visualizations/
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import { calculateScore } from '@/scoring/calculateScore';
 import { shuffle } from '@/utilities/shuffle';
-import { matchAnswer } from '../free-recall/matchAnswer';
+import { matchAnswer, type NormalizeOptions } from '../free-recall/matchAnswer';
 
 interface PromptedRecallConfig {
   readonly elements: ReadonlyArray<VisualizationElement>;
   readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly answerColumn: string;
+  readonly normalizeOptions?: NormalizeOptions;
 }
 
 export interface PromptedRecallState {
@@ -46,6 +47,7 @@ export function usePromptedRecallQuiz({
   elements,
   dataRows,
   answerColumn,
+  normalizeOptions,
 }: PromptedRecallConfig): PromptedRecallState & PromptedRecallActions {
   const [shuffledOrder] = useState(() =>
     shuffle(elements.filter((e) => e.interactive !== false).map((e) => e.id)),
@@ -125,7 +127,7 @@ export function usePromptedRecallQuiz({
       const currentRow = dataRowsById[currentElementId];
       if (!currentRow) return false;
 
-      const match = matchAnswer(text, [currentRow], answerColumn);
+      const match = matchAnswer(text, [currentRow], answerColumn, normalizeOptions);
       if (match && 'elementId' in match) {
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
@@ -147,7 +149,7 @@ export function usePromptedRecallQuiz({
       const currentRow = dataRowsById[currentElementId];
       if (!currentRow) return;
 
-      const match = matchAnswer(text, [currentRow], answerColumn);
+      const match = matchAnswer(text, [currentRow], answerColumn, normalizeOptions);
       if (match && 'elementId' in match) {
         clearFlash();
         setCorrectIds((prev) => new Set([...prev, currentElementId]));

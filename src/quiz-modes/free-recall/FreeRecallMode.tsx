@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
-import { InlineResults } from '../InlineResults';
+import { RecallInputBar } from '../RecallInputBar';
 import { useFreeRecallSession } from './useFreeRecallSession';
 import styles from './FreeRecallMode.module.css';
 
@@ -30,6 +29,7 @@ export function FreeRecallMode({
   forceGiveUp = false,
   reviewing = false,
   reviewResult,
+  normalizeOptions,
 }: QuizModeProps) {
   const { session, elementToggles, handleTextAnswer, handleGiveUp, ambiguousMessage } = useFreeRecallSession({
     elements,
@@ -37,6 +37,7 @@ export function FreeRecallMode({
     answerColumn: columnMappings['answer'] ?? 'answer',
     toggleDefinitions,
     toggleValues,
+    normalizeOptions,
   });
 
   const [inputText, setInputText] = useState('');
@@ -99,7 +100,6 @@ export function FreeRecallMode({
   const isFinished = session.status === 'finished';
   const correctCount = session.correctElementIds.length;
   const totalCount = correctCount + session.remainingElementIds.length;
-  const percentage = totalCount > 0 ? (correctCount / totalCount) * 100 : 0;
 
   return (
     <div className={styles.container}>
@@ -118,86 +118,22 @@ export function FreeRecallMode({
         />
       </div>
 
-      <div className={styles.controlsArea}>
-        {!reviewing ? (
-          <div className={styles.controls}>
-            <div className={styles.progressRow}>
-              <span className={styles.progressText}>
-                {correctCount}/{totalCount}
-              </span>
-              <div className={styles.progressBarTrack}>
-                <div
-                  className={styles.progressBarFill}
-                  style={{ width: `${percentage}%` }}
-                />
-              </div>
-              <span className={styles.progressText}>
-                {Math.round(percentage)}%
-              </span>
-            </div>
-
-            {!isFinished && (
-              <div className={styles.inputRow}>
-                <input
-                  ref={inputRef}
-                  className={styles.answerInput}
-                  type="text"
-                  value={inputText}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Type an answer…"
-                  autoFocus
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                />
-                <button
-                  className={styles.giveUpButton}
-                  onClick={handleGiveUp}
-                  type="button"
-                >
-                  Give up
-                </button>
-              </div>
-            )}
-
-            <AnimatePresence mode="wait">
-              {ambiguousMessage ? (
-                <motion.div
-                  key="ambiguous"
-                  className={styles.ambiguousMessage}
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  {ambiguousMessage}
-                </motion.div>
-              ) : session.lastMatchedAnswer ? (
-                <motion.div
-                  key={session.lastMatchedElementId}
-                  className={styles.lastAnswer}
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  ✓ {session.lastMatchedAnswer}
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-
-            {isFinished && (
-              <div className={styles.finishedMessage}>
-                <span className={styles.scoreHighlight}>{correctCount}/{totalCount}</span>
-                {correctCount === totalCount ? ' — Perfect!' : ' answered'}
-              </div>
-            )}
-          </div>
-        ) : (
-          reviewResult && <InlineResults result={reviewResult} />
-        )}
-      </div>
+      <RecallInputBar
+        correctCount={correctCount}
+        totalCount={totalCount}
+        inputValue={inputText}
+        inputRef={inputRef}
+        onInputChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Type an answer…"
+        onGiveUp={handleGiveUp}
+        lastMatchedElementId={session.lastMatchedElementId}
+        lastMatchedAnswer={session.lastMatchedAnswer}
+        ambiguousMessage={ambiguousMessage}
+        isFinished={isFinished}
+        reviewing={reviewing}
+        reviewResult={reviewResult}
+      />
     </div>
   );
 }

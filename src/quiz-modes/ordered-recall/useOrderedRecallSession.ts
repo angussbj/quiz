@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import { calculateScore } from '@/scoring/calculateScore';
-import { matchAnswer } from '../free-recall/matchAnswer';
+import { matchAnswer, type NormalizeOptions } from '../free-recall/matchAnswer';
 
 interface OrderedRecallConfig {
   readonly elements: ReadonlyArray<VisualizationElement>;
   readonly dataRows: ReadonlyArray<Readonly<Record<string, string>>>;
   readonly answerColumn: string;
+  readonly normalizeOptions?: NormalizeOptions;
 }
 
 export interface OrderedRecallState {
@@ -44,11 +45,17 @@ export function useOrderedRecallSession({
   elements,
   dataRows,
   answerColumn,
+  normalizeOptions,
 }: OrderedRecallConfig): OrderedRecallState & OrderedRecallActions {
   // Use element IDs in their original data order (not shuffled)
+  const interactiveIds = useMemo(
+    () => new Set(elements.filter((e) => e.interactive !== false).map((e) => e.id)),
+    [elements],
+  );
+
   const orderedIds = useMemo(
-    () => dataRows.map((row) => row['id'] ?? ''),
-    [dataRows],
+    () => dataRows.map((row) => row['id'] ?? '').filter((id) => interactiveIds.has(id)),
+    [dataRows, interactiveIds],
   );
 
   const dataRowsById = useMemo(() => {
@@ -125,7 +132,7 @@ export function useOrderedRecallSession({
       const currentRow = dataRowsById[currentElementId];
       if (!currentRow) return false;
 
-      const match = matchAnswer(text, [currentRow], answerColumn);
+      const match = matchAnswer(text, [currentRow], answerColumn, normalizeOptions);
       if (match && 'elementId' in match) {
         setCorrectIds((prev) => new Set([...prev, currentElementId]));
         setAnsweredIds((prev) => new Set([...prev, currentElementId]));
@@ -147,7 +154,7 @@ export function useOrderedRecallSession({
       const currentRow = dataRowsById[currentElementId];
       if (!currentRow) return;
 
-      const match = matchAnswer(text, [currentRow], answerColumn);
+      const match = matchAnswer(text, [currentRow], answerColumn, normalizeOptions);
       if (match && 'elementId' in match) {
         clearFlash();
         setCorrectIds((prev) => new Set([...prev, currentElementId]));

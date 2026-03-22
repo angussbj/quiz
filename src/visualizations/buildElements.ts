@@ -6,11 +6,13 @@ import { buildTimelineElementsFromRows } from './timeline/buildTimelineElementsF
 import { buildFlagGridElements } from './flag-grid/buildFlagGridElements';
 import { buildAnatomyElements } from './anatomy/buildAnatomyElements';
 import { buildAnatomy3DElements } from './anatomy-3d/buildAnatomy3DElements';
+import type { TimeScale } from './timeline/buildTimelineElements';
 
 export function buildElements(
   visualizationType: VisualizationType,
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
+  timeScale?: TimeScale,
 ): ReadonlyArray<VisualizationElement> {
   switch (visualizationType) {
     case 'map':
@@ -18,7 +20,7 @@ export function buildElements(
     case 'grid':
       return buildGridElements(rows, columnMappings);
     case 'timeline':
-      return buildTimelineElementsFromRows(rows, columnMappings);
+      return buildTimelineElementsFromRows(rows, columnMappings, timeScale);
     case 'flag-grid':
       return buildFlagGridElements(rows, columnMappings);
     case 'anatomy':

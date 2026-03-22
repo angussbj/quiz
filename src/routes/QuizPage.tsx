@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router';
 import { getQuizById } from '@/quiz-definitions/getQuizById';
 import { useQuizData } from '@/quiz-definitions/useQuizData';
@@ -6,6 +6,7 @@ import { buildElements } from '@/visualizations/buildElements';
 import { resolveRenderer } from '@/visualizations/resolveRenderer';
 import { useBackgroundPaths } from '@/visualizations/map/useBackgroundPaths';
 import { useLakePaths } from '@/visualizations/map/useLakePaths';
+import { extractEmbeddedLakePaths } from '@/visualizations/map/extractEmbeddedLakePaths';
 import { computeBackgroundLabels } from '@/visualizations/map/computeBackgroundLabels';
 import { QuizShell } from '@/quiz-modes/QuizShell';
 import { ActiveQuiz } from '@/quiz-modes/ActiveQuiz';
@@ -98,47 +99,22 @@ interface QuizPageLoadedProps {
   readonly lakePaths: ReturnType<typeof useLakePaths>;
 }
 
-function getInitialGroupByValue(definition: NonNullable<ReturnType<typeof getQuizById>>): string | undefined {
-  const dg = definition.dynamicGrouping;
-  if (!dg) return undefined;
-  const selectToggle = definition.selectToggles?.find((t) => t.key === dg.selectToggleKey);
-  return selectToggle?.defaultValue;
-}
-
 function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPageLoadedProps) {
-  const [groupByValue, setGroupByValue] = useState(() => getInitialGroupByValue(definition));
-
-  // Resolve effective grouping column and label from dynamic grouping (if configured)
-  const dg = definition.dynamicGrouping;
-  const effectiveGroupConfig = useMemo(() => {
-    if (!dg || groupByValue === undefined) {
-      return {
-        column: definition.groupFilterColumn,
-        chipLabel: definition.groupFilterLabel,
-      };
-    }
-    const option = dg.options[groupByValue];
-    return option
-      ? { column: option.column, chipLabel: option.chipLabel }
-      : { column: undefined, chipLabel: undefined };
-  }, [dg, groupByValue, definition.groupFilterColumn, definition.groupFilterLabel]);
-
-  // Override columnMappings.group when dynamic grouping is active
-  const effectiveColumnMappings = useMemo(() => {
-    if (!dg) return definition.columnMappings;
-    const groupColumn = effectiveGroupConfig.column;
-    if (groupColumn) {
-      return { ...definition.columnMappings, group: groupColumn };
-    }
-    // "None" — remove group mapping
-    const { group: _, ...rest } = definition.columnMappings;
-    return rest;
-  }, [dg, definition.columnMappings, effectiveGroupConfig.column]);
-
   const elements = useMemo(
-    () => buildElements(definition.visualizationType, rows, effectiveColumnMappings),
-    [definition.visualizationType, rows, effectiveColumnMappings],
+    () => buildElements(definition.visualizationType, rows, definition.columnMappings, definition.timeScale),
+    [definition.visualizationType, rows, definition.columnMappings, definition.timeScale],
   );
+
+  const embeddedLakePaths = useMemo(() => {
+    if (definition.columnMappings['pathRenderStyle'] !== 'stroke') return undefined;
+    return extractEmbeddedLakePaths(rows);
+  }, [definition.columnMappings, rows]);
+
+  const allLakePaths = useMemo(() => {
+    if (!embeddedLakePaths?.length) return lakePaths;
+    if (!lakePaths) return embeddedLakePaths;
+    return [...lakePaths, ...embeddedLakePaths];
+  }, [lakePaths, embeddedLakePaths]);
   const backgroundLabels = useMemo(() => {
     if (!backgroundPaths) return undefined;
     const allLabels = computeBackgroundLabels(backgroundPaths);
@@ -147,15 +123,13 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
   const Renderer = resolveRenderer(definition.visualizationType);
 
   const availableGroups = useMemo(() => {
-    if (!effectiveGroupConfig.column) return undefined;
+    if (!definition.groupFilterColumn) return undefined;
+    // Filter to rows that have a corresponding quiz element — e.g. territory rows that get
+    // merged or removed by buildElements should not contribute chips.
     const elementIds = new Set(elements.map((el) => el.id));
     const elementRows = rows.filter((row) => elementIds.has(row['id'] ?? ''));
-    return uniqueColumnValues(elementRows, effectiveGroupConfig.column);
-  }, [rows, elements, effectiveGroupConfig.column]);
-
-  const handleGroupByChange = useCallback((value: string) => {
-    setGroupByValue(value);
-  }, []);
+    return uniqueColumnValues(elementRows, definition.groupFilterColumn);
+  }, [rows, elements, definition.groupFilterColumn]);
 
   return (
     <div className={styles.page}>
@@ -172,12 +146,10 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         rangeColumn={definition.rangeColumn}
         rangeLabel={definition.rangeLabel}
         rangeMax={definition.rangeColumn ? rows.length : undefined}
-        groupFilterColumn={effectiveGroupConfig.column}
-        groupFilterLabel={effectiveGroupConfig.chipLabel}
+        groupFilterColumn={definition.groupFilterColumn}
+        groupFilterLabel={definition.groupFilterLabel}
         availableGroups={availableGroups}
         dataRows={rows}
-        dynamicGroupingKey={dg?.selectToggleKey}
-        onGroupByChange={dg ? handleGroupByChange : undefined}
       >
         {(config) => (
           <ActiveQuiz
@@ -185,15 +157,15 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             visualizationType={definition.visualizationType}
             elements={elements}
             dataRows={rows}
-            columnMappings={effectiveColumnMappings}
+            columnMappings={definition.columnMappings}
             toggleDefinitions={definition.toggles}
             selectToggleDefinitions={definition.selectToggles}
             Renderer={Renderer}
             backgroundPaths={backgroundPaths}
-            lakePaths={lakePaths}
+            lakePaths={allLakePaths}
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
-            groupFilterColumn={effectiveGroupConfig.column}
+            groupFilterColumn={definition.groupFilterColumn}
             hideFilteredElements={definition.hideFilteredElements}
             hideUnfocusedElements={definition.hideUnfocusedElements}
             tributaryColumn={definition.tributaryColumn}
@@ -202,6 +174,12 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             initialCameraPosition={definition.initialCameraPosition}
             groupFilterCameraPositions={definition.groupFilterCameraPositions}
             locateDistanceMode={definition.locateDistanceMode}
+            timeScale={definition.timeScale}
+            elementStateColorOverrides={definition.elementStateColorOverrides}
+            normalizeOptions={definition.whitespaceMatters || definition.punctuationMatters ? {
+              whitespaceMatters: definition.whitespaceMatters,
+              punctuationMatters: definition.punctuationMatters,
+            } : undefined}
           />
         )}
       </QuizShell>

@@ -1,19 +1,35 @@
 
+export interface NormalizeOptions {
+  /** When true, whitespace differences affect matching. Default: false (whitespace stripped). */
+  readonly whitespaceMatters?: boolean;
+  /** When true, punctuation differences affect matching. Default: false (punctuation stripped). */
+  readonly punctuationMatters?: boolean;
+}
+
 /**
  * Normalize text for fuzzy matching:
  * - Lowercase
  * - Strip diacritics/accents (é → e, ñ → n, etc.)
- * - Strip punctuation
- * - Collapse whitespace
+ * - Strip punctuation (unless punctuationMatters)
+ * - Strip whitespace (unless whitespaceMatters, in which case collapse to single space)
  */
-export function normalizeText(text: string): string {
-  return text
+export function normalizeText(text: string, options?: NormalizeOptions): string {
+  let result = text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-zA-Z0-9\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/[\u0300-\u036f]/g, '');
+
+  if (!options?.punctuationMatters) {
+    result = result.replace(/[^a-zA-Z0-9\s]/g, '');
+  }
+
+  if (options?.whitespaceMatters) {
+    result = result.replace(/\s+/g, ' ').trim();
+  } else {
+    result = result.replace(/\s+/g, '');
+  }
+
+  return result;
 }
 
 export interface AnswerMatch {
@@ -42,8 +58,9 @@ export function matchAnswer(
   input: string,
   remainingRows: ReadonlyArray<Readonly<Record<string, string>>>,
   answerColumn: string,
+  options?: NormalizeOptions,
 ): AnswerMatch | AmbiguousMatch | undefined {
-  const normalizedInput = normalizeText(input);
+  const normalizedInput = normalizeText(input, options);
   if (normalizedInput === '') return undefined;
 
   const alternatesColumn = `${answerColumn}_alternates`;
@@ -53,7 +70,7 @@ export function matchAnswer(
     const primaryAnswer = row[answerColumn];
     if (primaryAnswer === undefined) continue;
 
-    if (normalizeText(primaryAnswer) === normalizedInput) {
+    if (normalizeText(primaryAnswer, options) === normalizedInput) {
       matches.push({ elementId: row['id'] ?? '', displayAnswer: primaryAnswer });
       continue;
     }
@@ -62,7 +79,7 @@ export function matchAnswer(
     if (alternates) {
       const alternateValues = alternates.split('|').map((s) => s.trim());
       for (const alt of alternateValues) {
-        if (normalizeText(alt) === normalizedInput) {
+        if (normalizeText(alt, options) === normalizedInput) {
           matches.push({ elementId: row['id'] ?? '', displayAnswer: primaryAnswer });
           break;
         }

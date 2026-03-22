@@ -18,7 +18,9 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </header>
       <div className={styles.contentArea}>
-        <Breadcrumbs />
+        <div className={styles.breadcrumbsWrapper}>
+          <Breadcrumbs />
+        </div>
         <main className={styles.main}>
           {children}
         </main>

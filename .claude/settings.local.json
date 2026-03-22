@@ -100,7 +100,11 @@
       "Bash(unzip:*)",
       "Bash(lsof:*)",
       "mcp__plugin_playwright_playwright__browser_network_requests",
-      "Bash(npx playwright:*)"
+      "Bash(npx playwright:*)",
+      "Bash(ps:*)",
+      "WebFetch(domain:www.wikidata.org)",
+      "WebFetch(domain:query.wikidata.org)",
+      "WebFetch(domain:anatomytool.org)"
     ]
   }
 }

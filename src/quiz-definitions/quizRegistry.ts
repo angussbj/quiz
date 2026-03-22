@@ -156,9 +156,9 @@ const riversQuizBase = {
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'includeTributaries', label: 'Include tributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'includeDistributaries', label: 'Include distributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'includeSegmentNames', label: 'Include segment names', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'mergeTributaries', label: 'Merge tributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'mergeDistributaries', label: 'Merge distributaries', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'mergeSegmentNames', label: 'Merge segment names', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
   presets: [],
   columnMappings: {
@@ -174,6 +174,11 @@ const riversQuizBase = {
   tributaryColumn: 'tributary_of',
   distributaryColumn: 'distributary_of',
   segmentColumn: 'segment_of',
+  hideFilteredElements: true,
+  elementStateColorOverrides: {
+    default: 'var(--color-lake)',
+    context: 'var(--color-lake)',
+  },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 
@@ -246,7 +251,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Match all countries of the world to their flags.',
     path: ['Geography'],
     visualizationType: 'flag-grid',
-    availableModes: ['free-recall-unordered', 'multiple-choice', 'prompted-recall'],
+    availableModes: ['free-recall-unordered', 'identify', 'multiple-choice', 'prompted-recall'],
     defaultMode: 'multiple-choice',
     toggles: [
       { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true },
@@ -260,6 +265,11 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/capitals/world-capitals.csv',
     supportingDataPaths: [],
+    modeConstraints: {
+      identify: [
+        { type: 'forced' as const, key: 'showCountryNames', forcedValue: false, reason: 'Country names would reveal answers in identify mode' },
+      ],
+    },
     groupFilterColumn: 'region',
     groupFilterLabel: 'Region',
     hideFilteredElements: true,
@@ -553,6 +563,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/music/composers.csv',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
+    timeScale: 'log' as const,
   },
 
   // ===== Leaders (Political, Religious, Military, Cultural) =====
@@ -582,6 +593,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/leaders/political-leaders.csv',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
+    timeScale: 'log' as const,
   },
   {
     ...timelineQuizBase,
@@ -609,6 +621,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/leaders/religious-leaders.csv',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
+    timeScale: 'log' as const,
   },
   {
     ...timelineQuizBase,
@@ -636,6 +649,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/leaders/military-leaders.csv',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
+    timeScale: 'log' as const,
   },
   {
     ...timelineQuizBase,
@@ -663,6 +677,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/leaders/cultural-leaders.csv',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
+    timeScale: 'log' as const,
   },
 
   // ===== Technology Inventions =====
@@ -692,6 +707,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/technology/major-inventions.csv',
     groupFilterColumn: 'category',
     groupFilterLabel: 'Category',
+    timeScale: 'log' as const,
   },
 
   // ===== Species Evolution =====
@@ -721,6 +737,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/science/species-evolution-major.csv',
     groupFilterColumn: 'group',
     groupFilterLabel: 'Life group',
+    timeScale: 'log' as const,
   },
   {
     ...timelineQuizBase,
@@ -748,6 +765,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/science/species-evolution-all.csv',
     groupFilterColumn: 'group',
     groupFilterLabel: 'Life group',
+    timeScale: 'log' as const,
   },
 
   // ===== Space Exploration =====
@@ -810,6 +828,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/ancient/major-empires.csv',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
+    timeScale: 'log' as const,
   },
 
   // ===== My Suggestions: Ancient Civilizations =====
@@ -868,6 +887,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/culture/art-movements.csv',
     groupFilterColumn: 'category',
     groupFilterLabel: 'Art form',
+    timeScale: 'log' as const,
   },
 
   // ===== My Suggestions: Pandemics =====
@@ -897,6 +917,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/science/pandemics.csv',
     groupFilterColumn: 'category',
     groupFilterLabel: 'Disease type',
+    timeScale: 'log' as const,
   },
 
   // ===== My Suggestions: Scientific Discoveries =====
@@ -930,6 +951,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/history/science/scientific-discoveries.csv',
     groupFilterColumn: 'field',
     groupFilterLabel: 'Scientific field',
+    timeScale: 'log' as const,
   },
 
   // ===== Country Subdivisions =====
@@ -937,7 +959,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     ...subdivisionsQuizBase,
     id: 'geo-subdivisions-us',
     title: 'US States',
-    description: 'Name all 50 US states and the District of Columbia.',
+    description: 'Name all 50 US states.',
     dataPath: '/data/subdivisions/united-states.csv',
     initialCameraPosition: { x: -125, y: -50, width: 60, height: 30 },
     groupFilterColumn: 'region',

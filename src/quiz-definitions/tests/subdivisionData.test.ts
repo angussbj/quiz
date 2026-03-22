@@ -11,7 +11,7 @@ interface SubdivisionFile {
 }
 
 const SUBDIVISION_FILES: ReadonlyArray<SubdivisionFile> = [
-  { slug: 'united-states', label: 'US States', expectedMin: 50, expectedMax: 52, sampleNames: ['California', 'Texas', 'Alaska', 'District of Columbia'] },
+  { slug: 'united-states', label: 'US States', expectedMin: 50, expectedMax: 50, sampleNames: ['California', 'Texas', 'Alaska', 'New York'] },
   { slug: 'india', label: 'Indian States', expectedMin: 35, expectedMax: 37, sampleNames: ['Maharashtra', 'Tamil Nadu', 'Delhi', 'Kerala'] },
   { slug: 'china', label: 'Chinese Provinces', expectedMin: 30, expectedMax: 35, sampleNames: ['Beijing', 'Shanghai', 'Guangdong', 'Sichuan'] },
   { slug: 'brazil', label: 'Brazilian States', expectedMin: 26, expectedMax: 28, sampleNames: ['São Paulo', 'Rio de Janeiro', 'Amazonas'] },

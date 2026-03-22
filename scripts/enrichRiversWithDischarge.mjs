@@ -309,6 +309,7 @@ const TRIBUTARY_OF = {
   // ── Murray-Darling ──────────────────────────────────────────────────────
   'Darling':    'Murray',
   'Barwon':     'Darling',
+  'Weir':       'Barwon',
 
   // ── Saskatchewan ────────────────────────────────────────────────────────
   'North Saskatchewan': 'Saskatchewan',
@@ -316,6 +317,9 @@ const TRIBUTARY_OF = {
   // ── Amazon system (additional) ───────────────────────────────────────────
   'Japurá':     'Amazonas',  // same river as Caquetá; Brazilian name section
   'Tapajós':    'Amazonas',
+  'Marañón':    'Amazonas',  // major Amazon headwater
+  'Purús':      'Amazonas',
+  'Branco':     'Negro',     // Negro tributary
 
   // ── Zambezi system ──────────────────────────────────────────────────────
   'Kafue':      'Zambezi',
@@ -326,10 +330,137 @@ const TRIBUTARY_OF = {
 
   // ── Mackenzie system (additional) ────────────────────────────────────────
   'Liard':      'Mackenzie',
+
+  // ── Yenisei system ───────────────────────────────────────────────────────
+  'Nizhnyaya Tunguska': 'Yenisey',  // Lower Tunguska
+  'Podkamennaya Tunguska': 'Yenisey',  // Middle Tunguska
+  'Kem':        'Yenisey',
+  'Kureyka':    'Yenisey',
+
+  // ── Ob system ────────────────────────────────────────────────────────────
+  'Tobol':      'Ertis',     // major Irtysh tributary
+  'Biya':       'Ob',        // Ob headwater (Biya + Katun = Ob)
+  "Tom'":       'Ob',        // Tom River
+  'Katun':      'Ob',        // Ob headwater (Biya + Katun = Ob)
+  'Chulym':     'Ob',
+  'Malaya Ob':  'Ob',
+  'Vakh':       'Ob',
+  'Vasyugan':   'Ob',
+  'Ishim':      'Ertis',
+  'Naryn':      'Ertis',
+
+  // ── Lena system ──────────────────────────────────────────────────────────
+  'Vilyuy':     'Lena',
+  'Atbara':     'Nile',      // Nile tributary
+  'Tyung':      'Vilyuy',
+  'Markha':     'Vilyuy',
+  'Maya':       'Aldan',
+  'Bytantay':   'Yana',
+
+  // ── Kolyma system ────────────────────────────────────────────────────────
+  'Omolon':     'Kolyma',
+
+  // ── Khatanga system ──────────────────────────────────────────────────────
+  'Kotuy':      'Khatanga',
+
+  // ── Amur system (additional) ─────────────────────────────────────────────
+  'Ingoda':     'Shilka',    // Ingoda + Onon = Shilka → Amur
+  'Bikin':      'Ussuri',
+
+  // ── Danube system ────────────────────────────────────────────────────────
+  'Tisa':       'Danube',    // Tisza
+  'Morava':     'Danube',
+  'Prut':       'Danube',
+  'Sava':       'Danube',
+  'Inn':        'Danube',
+  'Mur':        'Danube',
+  'Drina':      'Sava',
+  'Una':        'Sava',
+
+  // ── European rivers ──────────────────────────────────────────────────────
+  'Ariège':     'Garonne',
+  'Vychegda':   'Severnaya Dvina',
+  'Pinega':     'Severnaya Dvina',
+  'Save':       'Garonne',   // French Save (not the Balkan Sava)
+  'Tarn':       'Garonne',
+  'Vienne':     'Loire',
+  'Vorma':      'Glma',      // tributary of Glomma (Norway)
+  'Vltava':     'Elbe',
+  'Warta':      'Oder',
+  'Marne':      'Seine',
+  'Yonne':      'Seine',
+  'Durance':    'Rhône',
+  'Segre':      'Ebro',
+  'Main':       'Rhein',
+  'Mincio':     'Po',
+  'Ticino':     'Po',
+  'Dora Baltea': 'Po',
+  'Vilija':     'Nemunas',
+  'Desna':      'Dnieper',   // ambiguous but Dnieper is the main one
+
+  // ── Volga system ─────────────────────────────────────────────────────────
+  'Sura':       'Volga',
+  'Sheksna':    'Volga',
+  'Tvertsa':    'Volga',
+  'Vyatka':     'Kama',
+  'Vishera':    'Kama',
+  'Chusovaya':  'Kama',
+
+  // ── Pechora / Dvina / Northern Russia ────────────────────────────────────
+  'Usa':        'Pechora',
+  'Vym':        'Vychegda',
+  'Seym':       'Desna',
+  'Tsna':       'Oka',
+  'Unzha':      'Oka',
+  'Tura':       'Tobol',
+
+  // ── Congo system (additional) ─────────────────────────────────────────────
+  'Alima':      'Congo',
+  'Kwilu':      'Congo',
+
+  // ── Congo system ─────────────────────────────────────────────────────────
+  'Sangha':     'Congo',
+  'Ruki':       'Congo',     // Ruki/Busira/Tshuapa river system
+  'Ouham':      'Chari',     // major Chari tributary
+  'Kwango':     'Kasai',
+
+  // ── Ganges system ────────────────────────────────────────────────────────
+  'Gandak':     'Ganges',
+
+  // ── Mississippi system ───────────────────────────────────────────────────
+  'Tennessee':  'Ohio',
+  'Wabash':     'Ohio',
+
+  // ── Columbia system ──────────────────────────────────────────────────────
+  'Willamette': 'Columbia',
+  'Pend Orielle': 'Columbia',
+
+  // ── Yukon system ─────────────────────────────────────────────────────────
+  'Tanana':     'Yukon',
+  'Koyukuk':    'Yukon',
+  'Porcupine':  'Yukon',
+
+  // ── Yangtze system ───────────────────────────────────────────────────────
+  'Min':        'Yangtze',
+  'Yuan':       'Yangtze',   // Yuanjiang
+  'Dadu':       'Min',       // Dadu He → Min → Yangtze
+
+  // ── Orinoco system ───────────────────────────────────────────────────────
+  'Meta':       'Orinoco',
+
+  // ── Paraná system ────────────────────────────────────────────────────────
+  'Salado':     'Paraná',
+
+  // ── Klamath system ───────────────────────────────────────────────────────
+  'Trinity':    'Klamath',
+
+  // ── New Zealand / Oceania ────────────────────────────────────────────────
+  'Kawarau':    'Clutha',
+  'Katherine':  'Daly',      // Northern Territory, Australia
 };
 
 // Distributaries: branches that flow FROM a river (e.g. delta channels).
-// When 'includeDistributaries' toggle is off, these render with the parent's colour.
+// When 'mergeDistributaries' toggle is on, these render merged with the parent.
 const DISTRIBUTARY_OF = {
   // ── Nile delta ───────────────────────────────────────────────────────────
   'Damietta Branch': 'Nile',
@@ -337,6 +468,20 @@ const DISTRIBUTARY_OF = {
 
   // ── Lena delta ───────────────────────────────────────────────────────────
   'Bykovskaya Protoka': 'Lena',
+
+  // ── Rhine delta arms (Netherlands) ───────────────────────────────────────
+  'Waal':      'Rhein',
+  'Nederrijn': 'Rhein',
+  'IJssel':    'Rhein',
+  'Lek':       'Rhein',
+
+  // ── Danube delta / side channels ─────────────────────────────────────────
+  'Borcea':         'Danube',   // Romanian side channel
+  'Bratul Chillia': 'Danube',   // northernmost Danube delta arm
+  'Soroksari Duna': 'Danube',   // Budapest side channel
+
+  // ── Araguaia side channel ─────────────────────────────────────────────────
+  'Braco Menor': 'Araguaia',
 };
 
 // Segment names: different names for sections of the same physical river.
@@ -348,6 +493,10 @@ const DISTRIBUTARY_OF = {
 const SEGMENT_OF = {
   // ── Tigris: Dicle is the Turkish name for the upper section ──────────────
   'Dicle':       'Tigris',
+
+  // ── Euphrates: Al Furat (Arabic) and Firat (Turkish) upstream sections ───
+  'Al Furat':    'Euphrates',
+  'Firat':       'Euphrates',
 
   // ── Dnieper: Dnepre is an alternate-name section in the CSV ─────────────
   'Dnepre':      'Dnieper',
@@ -361,6 +510,54 @@ const SEGMENT_OF = {
 
   // ── Nile: Albert Nile is the section flowing from Lake Albert northward ──
   'Albert Nile': 'Nile',
+
+  // ── Amu Darya: Panj is the upper section, Pamir further upstream ─────────
+  'Panj':        'Amu  Darya',  // note: two spaces in CSV name
+  'Pamir':       'Amu  Darya',
+
+  // ── Okavango/Cubango: Angola name (Cubango) → Botswana name (Okavango) ───
+  'Cubango':     'Okavango',
+
+  // ── Jubba: Genale is the Ethiopian name for the upper section ────────────
+  'Genale':      'Jubba',
+
+  // ── Sangha: Kadéï is the upper section in CAR ───────────────────────────
+  'Kadéï':       'Sangha',
+
+  // ── Congo basin: Ruki/Busira/Tshuapa are the same river ──────────────────
+  // Ruki is the lowest section (→ Congo). Busira is middle, Tshuapa is upper.
+  'Busira':      'Ruki',
+  'Tshuapa':     'Ruki',
+
+  // ── Tarim: Yarkant is the main upper headwater ───────────────────────────
+  'Yarkant':     'Tarim',
+
+  // ── Liao: Xiliao (West Liao) is the main upper section ──────────────────
+  'Xiliao':      'Liao',
+
+  // ── Xingu: Culuene is the upper headwater ───────────────────────────────
+  'Culuene':     'Xingu',
+
+  // ── Tennessee: Holston is the upper headwater ────────────────────────────
+  'Holston':     'Tennessee',
+
+  // ── Sanaga: Lom is the main upper section in Cameroon ───────────────────
+  'Lom':         'Sanaga',
+
+  // ── Mamberamo: Taritatu is the upper section in Papua ───────────────────
+  'Taritatu':    'Mamberamo',
+
+  // ── Great Pee Dee: Yadkin is the upper section in North Carolina ─────────
+  'Yadkin':      'Great Pee Dee',
+
+  // ── Kuskokwim: N. Fork is the upper headwater in Alaska ──────────────────
+  'N. Fork Kuskokwim': 'Kuskokwim',
+
+  // ── Khatanga: Kheta is the main upper section in Siberia ─────────────────
+  'Kheta':       'Khatanga',
+
+  // ── Brazos: Double Mountain Fork is the main upper headwater in Texas ────
+  'Double Mountain Fork Brazos': 'Brazos',
 };
 
 // ── CSV helpers ──────────────────────────────────────────────────────────────
@@ -480,6 +677,18 @@ function computePathLengthKm(rawPaths) {
 
 const text = readFileSync(RIVERS_PATH, 'utf8');
 const { cols, rows } = parseCSV(text);
+
+// Corrections to name_alternates from Natural Earth source data.
+// Key: river name as in CSV. Value: correct alternates string (pipe-separated), or '' to clear.
+const NAME_ALTERNATES_OVERRIDES = {
+  'Volga': '',  // Natural Earth incorrectly lists "Volkhov" as an alternate for Volga
+};
+
+for (const row of rows) {
+  if (row.name in NAME_ALTERNATES_OVERRIDES) {
+    row.name_alternates = NAME_ALTERNATES_OVERRIDES[row.name];
+  }
+}
 
 // Strip any existing enrichment columns before re-adding
 const ENRICHED_COLS = ['discharge_m3s', 'discharge_rank', 'tributary_of', 'distributary_of', 'segment_of', 'length_km', 'total_length_km'];

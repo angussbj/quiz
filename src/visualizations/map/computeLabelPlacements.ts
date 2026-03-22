@@ -196,7 +196,7 @@ function buildSpiralCandidates(
 }
 
 /** Split a name into multiple lines, breaking at spaces, respecting MAX_CHARS_PER_LINE. */
-function splitNameIntoLines(name: string): ReadonlyArray<string> {
+export function splitNameIntoLines(name: string): ReadonlyArray<string> {
   if (name.length <= MAX_CHARS_PER_LINE) return [name];
   const words = name.split(' ');
   const lines: string[] = [];
@@ -214,7 +214,7 @@ function splitNameIntoLines(name: string): ReadonlyArray<string> {
 }
 
 /** Compute a name-length scaling factor: short names get bigger, long names get smaller. */
-function nameLengthScale(name: string): number {
+export function nameLengthScale(name: string): number {
   if (name.length <= NAME_SHORT_THRESHOLD) return NAME_LENGTH_SCALE_MAX;
   if (name.length >= NAME_LONG_THRESHOLD) return NAME_LENGTH_SCALE_MIN;
   const t = (name.length - NAME_SHORT_THRESHOLD) / (NAME_LONG_THRESHOLD - NAME_SHORT_THRESHOLD);

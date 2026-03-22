@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CursorTooltip } from '../CursorTooltip';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
@@ -45,9 +45,9 @@ interface TooltipState {
 export function TimelineRenderer(props: VisualizationRendererProps) {
   const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, putInView, timeScale } = props;
   const isLogScale = timeScale === 'log';
+
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const innerContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
   const timelineElements = useMemo(
@@ -76,12 +76,10 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     [isLogScale, logReferenceYear],
   );
 
-  // Compute horizontal bounds from real elements (exclude spacers)
   const { minX, maxX } = useMemo(() => {
     let min = Infinity;
     let max = -Infinity;
     for (const el of timelineElements) {
-      if (el.id.startsWith('__spacer')) continue;
       min = Math.min(min, el.viewBoxBounds.minX);
       max = Math.max(max, el.viewBoxBounds.maxX);
     }
@@ -119,10 +117,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     isDragging,
     isScrolling,
     scrollIntoView,
-    livePanOffsetRef,
   } = useTimelineZoom({
     containerRef,
-    innerContainerRef,
     totalViewBoxWidth,
     containerWidth,
   });
@@ -132,31 +128,23 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     [timelineElements],
   );
 
-  // Filter out spacers for rendering
-  const visibleElements = useMemo(
-    () => timelineElements.filter((e) => !e.id.startsWith('__spacer')),
-    [timelineElements],
-  );
+  const visibleElements = timelineElements;
 
-  // Axis ticks: compute for the visible viewport PLUS one viewport of padding on each side.
-  // The extra buffer means ticks are already in the DOM when panning brings them into view,
-  // since pan gestures update the CSS transform directly without re-rendering React.
+  // Axis ticks: compute for the visible viewport so labels are always on screen.
+  // Derive the year range actually visible from pan/zoom state.
   // Fall back to full data range when container hasn't measured yet (e.g. jsdom).
   const hasValidViewport = containerWidth > 0 && zoom > 0;
-  // Padding: one viewport width in viewBox units on each side
-  const viewBoxPadding = hasValidViewport ? containerWidth / zoom : 0;
   const visibleStartYear = hasValidViewport
     ? (isLogScale
-        ? viewBoxXToLogYear(-panOffset / zoom + minX - viewBoxPadding, logReferenceYear)
-        : (-panOffset / zoom + minX - viewBoxPadding) / UNITS_PER_YEAR)
+        ? viewBoxXToLogYear(-panOffset / zoom + minX, logReferenceYear)
+        : (-panOffset / zoom + minX) / UNITS_PER_YEAR)
     : (isLogScale ? viewBoxXToLogYear(minX, logReferenceYear) : minX / UNITS_PER_YEAR);
   const visibleEndYear = hasValidViewport
     ? (isLogScale
-        ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX + viewBoxPadding, logReferenceYear)
-        : ((containerWidth - panOffset) / zoom + minX + viewBoxPadding) / UNITS_PER_YEAR)
+        ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX, logReferenceYear)
+        : ((containerWidth - panOffset) / zoom + minX) / UNITS_PER_YEAR)
     : (isLogScale ? viewBoxXToLogYear(maxX, logReferenceYear) : maxX / UNITS_PER_YEAR);
-  // Use 3x container width for pixel budget to match the 3x viewport range
-  const effectivePixels = (containerWidth || timelineWidth || 800) * 3;
+  const effectivePixels = containerWidth || timelineWidth || 800;
   const axisTicks = useMemo(
     () => isLogScale
       ? computeLogAxisTicks(visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear)
@@ -348,64 +336,38 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     scrollIntoView(minLeft, maxRight - minLeft);
   }, [putInView]);
 
-  // Click handler: convert pixel click → viewBox coordinates.
-  // Uses livePanOffsetRef for accuracy (state panOffset may be stale mid-gesture).
+  // Click handler: convert pixel click → viewBox coordinates
+  // The x value passed to onPositionClick is always in viewBox units (log or linear).
   const handleAreaClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     if (!onPositionClick) return;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     const pixelX = event.clientX - rect.left;
-    const viewBoxX = (pixelX - livePanOffsetRef.current) / zoom + minX;
+    const viewBoxX = (pixelX - panOffset) / zoom + minX;
     onPositionClick({ x: viewBoxX, y: 0 });
-  }, [onPositionClick, livePanOffsetRef, zoom, minX]);
+  }, [onPositionClick, panOffset, zoom, minX]);
 
-  // Hide overlapping tick labels via DOM measurement.
-  // Two-pass: major labels are placed first so they always win over minor labels.
-  // Throttled to ~60fps to avoid layout thrashing during pan/zoom.
+  // Hide overlapping tick labels via DOM measurement after layout.
   const axisAreaRef = useRef<HTMLDivElement>(null);
-  const labelThrottleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => {
-    if (labelThrottleRef.current) return;
-    labelThrottleRef.current = setTimeout(() => {
-      labelThrottleRef.current = null;
-      const axisArea = axisAreaRef.current;
-      if (!axisArea) return;
-      const majorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="major"]');
-      const minorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="minor"]');
-
-      const kept: DOMRect[] = [];
-      const overlapsKept = (rect: DOMRect) =>
-        kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
-
-      // First pass: place major labels (greedy left-to-right among majors)
-      for (const label of majorLabels) {
-        const rect = label.getBoundingClientRect();
-        if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
-        if (overlapsKept(rect)) {
-          label.style.visibility = 'hidden';
-        } else {
-          label.style.visibility = '';
-          kept.push(rect);
-        }
+  useLayoutEffect(() => {
+    const axisArea = axisAreaRef.current;
+    if (!axisArea) return;
+    const labels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label]');
+    // Greedy left-to-right: keep a label if it doesn't overlap any previously kept label.
+    const kept: DOMRect[] = [];
+    for (const label of labels) {
+      const rect = label.getBoundingClientRect();
+      // Zero-width means off-screen or not rendered — skip
+      if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
+      const overlaps = kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
+      if (overlaps) {
+        label.style.visibility = 'hidden';
+      } else {
+        label.style.visibility = '';
+        kept.push(rect);
       }
-
-      // Second pass: place minor labels only where they don't collide with any kept label
-      for (const label of minorLabels) {
-        const rect = label.getBoundingClientRect();
-        if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
-        if (overlapsKept(rect)) {
-          label.style.visibility = 'hidden';
-        } else {
-          label.style.visibility = '';
-          kept.push(rect);
-        }
-      }
-    }, 17);
-  }, [axisTicks, zoom]);
-
-  useEffect(() => () => {
-    if (labelThrottleRef.current) clearTimeout(labelThrottleRef.current);
-  }, []);
+    }
+  }, [axisTicks, zoom, panOffset]);
 
   const tooltipTextRef = useRef('');
   const hoveredElementRef = useRef<TimelineElement | null>(null);
@@ -463,7 +425,6 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         onMouseLeave={handleMouseUpOrLeave}
       >
         <div
-          ref={innerContainerRef}
           className={styles.innerContainer}
           style={{
             width: `${timelineWidth}px`,
@@ -481,7 +442,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                   <div className={tick.isMajor ? styles.tickMarkMajor : styles.tickMarkMinor} />
                   {tick.showLabel && (
                     <div
-                      data-tick-label={tick.isMajor ? 'major' : 'minor'}
+                      data-tick-label
                       className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}
                     >
                       {tick.label}

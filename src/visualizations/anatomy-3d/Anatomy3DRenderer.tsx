@@ -120,22 +120,31 @@ export interface CameraView {
   readonly target: THREE.Vector3;
 }
 
-function frontView(box: THREE.Box3, padding = 1.4): CameraView {
+/** Compute camera distance to fit box in view, accounting for canvas aspect ratio.
+ *  PerspectiveCamera FOV is vertical — for portrait canvases the horizontal FOV is
+ *  narrower, so wide objects need the camera further back. */
+function fitDistance(size: THREE.Vector3, aspect: number, padding: number): number {
+  const vFovRad = ((FOV_DEG / 2) * Math.PI) / 180;
+  const distY = (size.y / 2) / Math.tan(vFovRad);
+  const hFovRad = Math.atan(aspect * Math.tan(vFovRad));
+  const distX = (size.x / 2) / Math.tan(hFovRad);
+  return Math.max(distX, distY) * padding;
+}
+
+function frontView(box: THREE.Box3, aspect: number, padding = 1.4): CameraView {
   const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
-  const maxDim = Math.max(size.x, size.y);
-  const dist = (maxDim / 2 / Math.tan(((FOV_DEG / 2) * Math.PI) / 180)) * padding;
+  const dist = fitDistance(size, aspect, padding);
   return {
     position: new THREE.Vector3(center.x, center.y, center.z + dist),
     target: center.clone(),
   };
 }
 
-function backView(box: THREE.Box3, padding = 1.4): CameraView {
+function backView(box: THREE.Box3, aspect: number, padding = 1.4): CameraView {
   const center = box.getCenter(new THREE.Vector3());
   const size = box.getSize(new THREE.Vector3());
-  const maxDim = Math.max(size.x, size.y);
-  const dist = (maxDim / 2 / Math.tan(((FOV_DEG / 2) * Math.PI) / 180)) * padding;
+  const dist = fitDistance(size, aspect, padding);
   return {
     position: new THREE.Vector3(center.x, center.y, center.z - dist),
     target: center.clone(),
@@ -308,7 +317,7 @@ function SkeletonMeshes({
   onModelReady,
 }: SkeletonMeshesProps) {
   const { scene } = useGLTF(MODEL_URL);
-  const { gl } = useThree();
+  const { gl, viewport } = useThree();
   const canvasRef = useRef<HTMLElement | null>(null);
   useEffect(() => { canvasRef.current = gl.domElement; }, [gl]);
 
@@ -333,6 +342,7 @@ function SkeletonMeshes({
 
   // Compute model metadata (bounds, bone centers, camera views) on first load
   useLayoutEffect(() => {
+    const aspect = viewport.aspect || 1;
     const fullBox = new THREE.Box3().setFromObject(scene);
     const yMin = fullBox.min.y;
     const yMax = fullBox.max.y;
@@ -383,19 +393,19 @@ function SkeletonMeshes({
     const handBones = ['1st metacarpal bone.r', '5th metacarpal bone.r', 'Capitate.r', 'Distal phalanx of 3d finger.r'];
     const footBones = ['Calcaneus.r', 'Talus.r', 'First metatarsal bone.r', 'Fifth metatarsal bone.r'];
 
-    const fullBodyFront = frontView(fullSymBox, 1.2);
+    const fullBodyFront = frontView(fullSymBox, aspect, 1.2);
     const fullBodyFrontRaised = {
-      position: fullBodyFront.position.clone().add(new THREE.Vector3(0, 0.15, 0)),
+      position: fullBodyFront.position.clone().add(new THREE.Vector3(0, 0.08, 0)),
       target: fullBodyFront.target.clone(),
     };
 
     const views: Record<string, CameraView> = {
       full: fullBodyFrontRaised,
-      back: backView(symmetricBox(getBox(['Frontal bone', 'Parietal bone right', 'Parietal bone left', 'Rib (12th).r', 'Thoracic vertebrae (T7)', 'Manubrium of sternum'])), 1.3),
-      face: frontView(symmetricBox(getBox(faceBones)), 1.5),
-      torso: frontView(symmetricBox(getBox(torsoBones)), 1.2),
-      legs: frontView(symmetricBox(getBox(legBones)), 1.2),
-      hand: frontView(getBox(handBones), 1.4),
+      back: backView(symmetricBox(getBox(['Frontal bone', 'Parietal bone right', 'Parietal bone left', 'Rib (12th).r', 'Thoracic vertebrae (T7)', 'Manubrium of sternum'])), aspect, 1.3),
+      face: frontView(symmetricBox(getBox(faceBones)), aspect, 1.5),
+      torso: frontView(symmetricBox(getBox(torsoBones)), aspect, 1.2),
+      legs: frontView(symmetricBox(getBox(legBones)), aspect, 1.2),
+      hand: frontView(getBox(handBones), aspect, 1.4),
       foot: (() => {
         const footBox = getBox(footBones);
         const fc = footBox.getCenter(new THREE.Vector3());
@@ -409,6 +419,7 @@ function SkeletonMeshes({
     };
 
     onModelReady(yMin, yMax, centers, views);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- viewport.aspect is read at init; re-running on resize would recompute all bone data
   }, [scene, meshMap, onModelReady]);
 
   // Apply colors to all meshes based on element states.
@@ -564,25 +575,37 @@ function Scene({
   const [yRange, setYRange] = useState({ yMin: 0, yMax: 1 });
   const [meshCenters, setMeshCenters] = useState<Map<string, MeshCenter>>(new Map());
 
-  // Single callback: SkeletonMeshes calls this once with all model data so we
-  // never capture stale state (which caused an infinite re-render loop).
+  // Pending initial camera view: set by handleModelReady, applied by useEffect
+  // after OrbitControls has mounted. When the GLB is cached, SkeletonMeshes'
+  // useLayoutEffect fires before OrbitControls' ref is set (sibling ordering),
+  // so we can't apply the view inline — we defer to a useEffect.
+  const pendingViewRef = useRef<CameraView | null>(null);
+
   const handleModelReady = useCallback(
     (yMin: number, yMax: number, centers: Map<string, MeshCenter>, views: Record<string, CameraView>) => {
       const full = views['full'];
       if (full) {
-        camera.position.copy(full.position);
-        const controls = controlsRef.current;
-        if (controls) {
-          controls.target.copy(full.target);
-          controls.update();
-        }
+        pendingViewRef.current = full;
       }
       setYRange({ yMin, yMax });
       setMeshCenters(centers);
       onModelReady(yMin, yMax, centers, views);
     },
-    [camera, onModelReady],
+    [onModelReady],
   );
+
+  // Apply the initial camera view once OrbitControls is available.
+  // useEffect runs after all useLayoutEffects (including OrbitControls' ref setup).
+  useEffect(() => {
+    const view = pendingViewRef.current;
+    if (!view) return;
+    const controls = controlsRef.current;
+    if (!controls) return;
+    pendingViewRef.current = null;
+    camera.position.copy(view.position);
+    controls.target.copy(view.target);
+    controls.update();
+  });
 
   // Build label centers: one per mesh position, keyed by the meshCenter map key
   // so each constituent mesh in a grouped element gets its own label sprite.
@@ -726,6 +749,17 @@ export function Anatomy3DRenderer({
               {mode === 'off' ? 'Off' : mode === 'hover' ? 'Hover' : 'On'}
             </button>
           ))}
+        </div>
+        <div className={styles.attribution}>
+          <a href="https://anatomytool.org/content/open3dmodel-skeleton-english-labels" target="_blank" rel="noopener noreferrer">Open3DModel - Skeleton</a>
+          {' by '}
+          <a href="https://anatomytool.org/open3Dmodel-about" target="_blank" rel="noopener noreferrer">Open3D project</a>
+          {', '}
+          <a href="https://www.researchgate.net/profile/George-Maat" target="_blank" rel="noopener noreferrer">George J.R. Maat</a>
+          {', LUMC, '}
+          <a href="https://www.eungyeol-lee.com/" target="_blank" rel="noopener noreferrer">Eungyeol Lee</a>
+          {', LUMC et al, '}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA</a>
         </div>
       </nav>
 

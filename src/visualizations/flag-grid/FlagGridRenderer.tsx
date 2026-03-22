@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { FlagGridElement } from './FlagGridElement';
 import { isFlagGridElement } from './FlagGridElement';
@@ -8,8 +8,8 @@ import { elementToggle } from '../elementToggle';
 import { CursorTooltip } from '../CursorTooltip';
 import type { ElementVisualState } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
-import { flagGridElementToVisualizationElement } from './flagGridElementToVisualizationElement';
-import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y } from './flagGridLayout';
+import { layoutFlagElement } from './flagGridElementToVisualizationElement';
+import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y, computeFlagColumns, FLAG_DEFAULT_COLUMNS } from './flagGridLayout';
 import cellStyles from './FlagGridRenderer.module.css';
 
 const FLAG_IMAGE_PADDING = 6;
@@ -165,21 +165,49 @@ function FlagGrid({
 }
 
 export function FlagGridRenderer(props: VisualizationRendererProps) {
-  const gridElements = useMemo(
-    () => props.elements.filter(isFlagGridElement).map(flagGridElementToVisualizationElement),
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      setContainerSize({ width, height });
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const flagElements = useMemo(
+    () => props.elements.filter(isFlagGridElement),
     [props.elements],
   );
 
+  const columns = useMemo(
+    () => containerSize.width > 0
+      ? computeFlagColumns(containerSize.width, containerSize.height, flagElements.length)
+      : FLAG_DEFAULT_COLUMNS,
+    [containerSize.width, containerSize.height, flagElements.length],
+  );
+
+  const layoutElements = useMemo(
+    () => flagElements.map((el, i) => layoutFlagElement(el, i, columns)),
+    [flagElements, columns],
+  );
+
   return (
-    <ZoomPanContainer
-      elements={gridElements}
-      elementStates={props.elementStates}
-      clustering={props.clustering}
-      onClusterClick={props.onClusterClick}
-      putInView={props.putInView}
-    >
-      <FlagGrid {...props} />
-      {props.svgOverlay}
-    </ZoomPanContainer>
+    <div ref={containerRef} style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+      <ZoomPanContainer
+        elements={layoutElements}
+        elementStates={props.elementStates}
+        clustering={props.clustering}
+        onClusterClick={props.onClusterClick}
+        putInView={props.putInView}
+      >
+        <FlagGrid {...props} elements={layoutElements} />
+        {props.svgOverlay}
+      </ZoomPanContainer>
+    </div>
   );
 }

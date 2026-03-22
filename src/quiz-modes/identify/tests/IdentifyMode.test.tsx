@@ -95,7 +95,7 @@ describe('IdentifyMode', () => {
     renderIdentifyMode(3);
 
     // Read the prompted label from "Click on <label>"
-    const promptLabel = screen.getByText(/Click on/).querySelector('span')?.textContent ?? '';
+    const promptLabel = screen.getByText(/Click on/).querySelector('strong')?.textContent ?? '';
 
     await user.click(screen.getByRole('button', { name: promptLabel }));
 
@@ -106,7 +106,7 @@ describe('IdentifyMode', () => {
     const user = userEvent.setup();
     renderIdentifyMode(3);
 
-    const promptLabel = screen.getByText(/Click on/).querySelector('span')?.textContent ?? '';
+    const promptLabel = screen.getByText(/Click on/).querySelector('strong')?.textContent ?? '';
     const wrongLabel = promptLabel === 'City 0' ? 'City 1' : 'City 0';
 
     await user.click(screen.getByRole('button', { name: wrongLabel }));

@@ -1,12 +1,14 @@
 import type { FlagGridElement } from './FlagGridElement';
-import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y, FLAG_COLUMNS } from './flagGridLayout';
+import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y, FLAG_DEFAULT_COLUMNS } from './flagGridLayout';
 import { shuffle } from '@/utilities/shuffle';
 import { assetPath } from '@/utilities/assetPath';
 
 /**
  * Builds flag grid elements from CSV rows.
- * Rows are shuffled into random order and placed in an 8-column grid.
+ * Rows are shuffled into random order and placed in a grid.
  * Each element gets a flag URL derived from the country_code column.
+ * Row/column positions use FLAG_DEFAULT_COLUMNS; the renderer may
+ * re-layout with a different column count based on container dimensions.
  */
 export function buildFlagGridElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
@@ -20,15 +22,15 @@ export function buildFlagGridElements(
 
   return shuffledRows.map((row, index) => {
     const id = row['id'] ?? '';
-    const colIndex = index % FLAG_COLUMNS;
-    const rowIndex = Math.floor(index / FLAG_COLUMNS);
+    const colIndex = index % FLAG_DEFAULT_COLUMNS;
+    const rowIndex = Math.floor(index / FLAG_DEFAULT_COLUMNS);
     const x = colIndex * FLAG_CELL_STEP_X;
     const y = rowIndex * FLAG_CELL_STEP_Y;
     const countryCode = row[flagColumn] ?? '';
 
     return {
       id,
-      label: row[labelColumn] ?? id,
+      label: row[labelColumn] || id,
       row: rowIndex,
       column: colIndex,
       flagUrl: assetPath(`/flags/${countryCode}.svg`),

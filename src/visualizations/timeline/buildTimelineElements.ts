@@ -2,6 +2,7 @@ import type { TimelineElement } from './TimelineElement';
 import type { TimelineTimestamp } from './TimelineTimestamp';
 import { timestampToFractionalYear } from './TimelineTimestamp';
 import { assignTracks } from './assignTracks';
+import { computeLogReferenceYear, logYearToViewBoxX, UNITS_PER_LOG_DECADE } from './logTimeScale';
 
 /**
  * ViewBox units per year on the X axis.
@@ -12,16 +13,18 @@ export const UNITS_PER_YEAR = 20;
 const MINIMUM_BAR_WIDTH = UNITS_PER_YEAR * 0.5;
 
 /**
- * Target viewBox aspect ratio (width / height).
- * Track height is scaled so the overall extent approaches this ratio.
+ * Maximum aspect ratio (width / height) before track heights are scaled up.
+ * Prevents very wide timelines from having tiny sliver-height bars.
  */
-const TARGET_ASPECT_RATIO = 5;
+const MAX_ASPECT_RATIO = 5;
 
 /** Minimum track height in viewBox units. */
 const MIN_TRACK_HEIGHT = 40;
 
 /** Gap between tracks as a fraction of track height. */
 const GAP_FRACTION = 0.2;
+
+export type TimeScale = 'linear' | 'log';
 
 export interface TimelineElementInput {
   readonly id: string;
@@ -39,37 +42,60 @@ export interface TimelineElementInput {
  *
  * Track height is scaled dynamically so the viewBox aspect ratio stays
  * reasonable for both short and long timelines.
+ *
+ * @param timeScale 'log' uses log10(years before present) for x positions,
+ *                  giving equal visual space to each order of magnitude.
+ *                  Suited to deep-time timelines spanning millions of years.
  */
 export function buildTimelineElements(
   inputs: ReadonlyArray<TimelineElementInput>,
+  timeScale: TimeScale = 'linear',
 ): ReadonlyArray<TimelineElement> {
   if (inputs.length === 0) return [];
 
-  // Compute X extent first (needed for visual gap calculation)
-  let minFractional = Infinity;
-  let maxFractional = -Infinity;
-  for (const input of inputs) {
-    const start = timestampToFractionalYear(input.start, false);
-    const end = input.end
-      ? timestampToFractionalYear(input.end, true)
-      : start + MINIMUM_BAR_WIDTH / UNITS_PER_YEAR;
-    minFractional = Math.min(minFractional, start);
-    maxFractional = Math.max(maxFractional, end);
+  // For log scale, compute the reference year from the latest event in the data.
+  let referenceYear = 0;
+  if (timeScale === 'log') {
+    let maxYear = -Infinity;
+    for (const input of inputs) {
+      const endYear = input.end
+        ? timestampToFractionalYear(input.end, true)
+        : timestampToFractionalYear(input.start, false);
+      maxYear = Math.max(maxYear, endYear);
+    }
+    referenceYear = computeLogReferenceYear(maxYear);
   }
-  const totalXExtent = (maxFractional - minFractional) * UNITS_PER_YEAR;
 
-  // At full zoom-out, bars have a minimum pixel width (≈8px) that can cause
-  // visual overlap even when events don't overlap in time. Spreading such
-  // events across separate tracks (which compress well at ≈16px each) produces
-  // a shorter layout than stacking them as sub-layers within one track (≈22px each).
+  const toViewBoxX = timeScale === 'log'
+    ? (y: number) => logYearToViewBoxX(y, referenceYear)
+    : (y: number) => y * UNITS_PER_YEAR;
+
+  // Compute X extent in viewBox units
+  let minViewBoxX = Infinity;
+  let maxViewBoxX = -Infinity;
+  for (const input of inputs) {
+    const start = toViewBoxX(timestampToFractionalYear(input.start, false));
+    const end = input.end
+      ? toViewBoxX(timestampToFractionalYear(input.end, true))
+      : start + MINIMUM_BAR_WIDTH;
+    minViewBoxX = Math.min(minViewBoxX, start);
+    maxViewBoxX = Math.max(maxViewBoxX, end);
+  }
+  const totalXExtent = maxViewBoxX - minViewBoxX;
+
+  // Minimum gap between adjacent bars in viewBox units — prevents track
+  // assignment treating visually-overlapping minimum-width bars as separate.
   const ESTIMATED_CONTAINER_PX = 1000;
   const VISUAL_MIN_BAR_PX = 8;
-  const totalYears = maxFractional - minFractional;
-  const minimumGapYears = totalYears > 0
-    ? totalYears * VISUAL_MIN_BAR_PX / ESTIMATED_CONTAINER_PX
+  const minimumGapUnits = totalXExtent > 0
+    ? totalXExtent * VISUAL_MIN_BAR_PX / ESTIMATED_CONTAINER_PX
     : 0;
 
-  const trackAssignments = assignTracks(inputs, minimumGapYears);
+  const toPosition = timeScale === 'log'
+    ? (y: number) => logYearToViewBoxX(y, referenceYear)
+    : (y: number) => y * UNITS_PER_YEAR;
+
+  const trackAssignments = assignTracks(inputs, minimumGapUnits, toPosition);
 
   // Count tracks
   const trackCount = Math.max(1, ...Object.values(trackAssignments).map((t) => t + 1));
@@ -80,8 +106,8 @@ export function buildTimelineElements(
   const naturalAspectRatio = totalXExtent / naturalHeight;
 
   let trackHeight: number;
-  if (naturalAspectRatio > TARGET_ASPECT_RATIO) {
-    const targetTotalHeight = totalXExtent / TARGET_ASPECT_RATIO;
+  if (naturalAspectRatio > MAX_ASPECT_RATIO) {
+    const targetTotalHeight = totalXExtent / MAX_ASPECT_RATIO;
     trackHeight = targetTotalHeight / naturalDenom;
   } else {
     trackHeight = MIN_TRACK_HEIGHT;
@@ -94,9 +120,11 @@ export function buildTimelineElements(
       ? timestampToFractionalYear(input.end, true)
       : startFractional;
 
-    const rawWidth = (endFractional - startFractional) * UNITS_PER_YEAR;
+    const x = toViewBoxX(startFractional);
+    const rawWidth = input.end
+      ? toViewBoxX(endFractional) - x
+      : (timeScale === 'log' ? UNITS_PER_LOG_DECADE * 0.1 : UNITS_PER_YEAR * 0.5);
     const barWidth = Math.max(rawWidth, MINIMUM_BAR_WIDTH);
-    const x = startFractional * UNITS_PER_YEAR;
     const track = trackAssignments[input.id] ?? 0;
     const y = track * (trackHeight + trackGap);
 
@@ -122,51 +150,5 @@ export function buildTimelineElements(
     };
   });
 
-  // For narrow timelines, add invisible spacer elements to ensure landscape viewBox
-  const spacers = buildLandscapeSpacers(elements);
-
-  return [...elements, ...spacers];
-}
-
-/**
- * If the overall extent is portrait, create invisible spacer elements
- * that widen the viewBox to achieve a landscape aspect ratio.
- * Spacers are non-interactive and have zero height.
- */
-function buildLandscapeSpacers(
-  elements: ReadonlyArray<TimelineElement>,
-): ReadonlyArray<TimelineElement> {
-  if (elements.length === 0) return [];
-
-  let minX = Infinity;
-  let maxX = -Infinity;
-  let maxY = 0;
-  for (const el of elements) {
-    minX = Math.min(minX, el.viewBoxBounds.minX);
-    maxX = Math.max(maxX, el.viewBoxBounds.maxX);
-    maxY = Math.max(maxY, el.viewBoxBounds.maxY);
-  }
-
-  const currentWidth = maxX - minX;
-  const requiredWidth = maxY * TARGET_ASPECT_RATIO;
-
-  if (currentWidth >= requiredWidth) return [];
-
-  const padding = (requiredWidth - currentWidth) / 2;
-  const midY = maxY / 2;
-
-  const makeSpacer = (id: string, x: number): TimelineElement => ({
-    id,
-    label: '',
-    start: [0],
-    category: '',
-    interactive: false,
-    viewBoxCenter: { x, y: midY },
-    viewBoxBounds: { minX: x, minY: midY, maxX: x, maxY: midY },
-  });
-
-  return [
-    makeSpacer('__spacer-left', minX - padding),
-    makeSpacer('__spacer-right', maxX + padding),
-  ];
+  return elements;
 }

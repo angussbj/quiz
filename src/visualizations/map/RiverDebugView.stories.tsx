@@ -120,7 +120,7 @@ function RiverDebugRenderer({
       }}>
         <strong>{region} Rivers — Color Key</strong>
         <div style={{ columns: elements.length > 30 ? 3 : elements.length > 15 ? 2 : 1, marginTop: 4 }}>
-          {elements.map((el, i) => (
+          {elements.map((el) => (
             <div key={el.id} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '1px 0' }}>
               <span style={{
                 display: 'inline-block', width: 12, height: 12, borderRadius: 2,

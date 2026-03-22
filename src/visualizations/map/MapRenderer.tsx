@@ -7,7 +7,9 @@ import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { isMapElement } from './MapElement';
+import type { BackgroundLabel } from './BackgroundLabel';
 import { MapCountryLabels } from './MapCountryLabels';
+import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
 import styles from './MapRenderer.module.css';
 
@@ -74,6 +76,7 @@ export function MapRenderer({
   svgOverlay,
   initialCameraPosition,
   putInView,
+  elementStateColorOverrides,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -106,6 +109,7 @@ export function MapRenderer({
         backgroundPaths={backgroundPaths}
         lakePaths={lakePaths}
         backgroundLabels={backgroundLabels}
+        elementStateColorOverrides={elementStateColorOverrides}
       />
       {svgOverlay}
     </ZoomPanContainer>
@@ -164,10 +168,9 @@ function renderShapeElements(
   targetState: ElementVisualState | undefined,
   riverStrokeWidth: number,
   riverHitStrokeWidth: number,
-  toggles: Readonly<Record<string, boolean>>,
-  nameToState: Readonly<Record<string, ElementVisualState | undefined>>,
   showRegionColors: boolean,
   isDrag: (e: React.MouseEvent) => boolean,
+  elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'],
 ) {
   return elements.map((element) => {
     if (!isMapElement(element) || !element.svgPathData) return null;
@@ -182,44 +185,23 @@ function renderShapeElements(
       if (state !== targetState) return null;
     }
     const isStrokePath = element.pathRenderStyle === 'stroke';
-
-    // Tributaries, distributaries, and segment aliases inherit their parent/canonical river's
-    // visual state so they appear as a visual extension rather than standalone quiz elements.
-    let proxyParentName: string | undefined;
-    if (isStrokePath) {
-      if (element.tributaryOf && !toggles['includeTributaries']) {
-        proxyParentName = element.tributaryOf;
-      } else if (element.distributaryOf && !toggles['includeDistributaries']) {
-        proxyParentName = element.distributaryOf;
-      } else if (element.segmentOf && !toggles['includeSegmentNames']) {
-        proxyParentName = element.segmentOf;
-      }
-    }
-    const parentState = proxyParentName !== undefined ? nameToState[proxyParentName] : undefined;
-    const effectiveState = parentState !== undefined ? parentState : state;
-    const isTributaryProxy = parentState !== undefined;
-
-    if (effectiveState === 'hidden') return null;
+    const effectiveState = state;
 
     // Rivers use a neutral water color instead of region-based group colors
     const color = effectiveState !== undefined
-      ? STATUS_COLORS[effectiveState].main
+      ? (elementStateColorOverrides?.[effectiveState] ?? STATUS_COLORS[effectiveState].main)
       : (isStrokePath ? 'var(--color-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--color-bg-primary)'));
     const effectiveRiverStrokeWidth = isStrokePath && effectiveState === 'highlighted' ? riverStrokeWidth * 2.5 : riverStrokeWidth;
 
     if (isStrokePath) {
-      // Split combined path into subpaths. Z-closed subpaths (lake polygons)
-      // render as fills; open subpaths (river lines) render as strokes.
+      // Split combined path into subpaths. Z-closed subpaths are lake polygons
+      // embedded by Natural Earth — skip them (lakes are rendered separately).
       const subpaths = splitSubpaths(element.svgPathData);
-      const strokePaths = subpaths.filter((p) => !p.endsWith('Z'));
-      const fillPaths = subpaths.filter((p) => p.endsWith('Z'));
-      const strokeD = strokePaths.join(' ');
-      const fillD = fillPaths.join(' ');
-      // Tributary proxies are non-interactive: no click handler, no hit area
-      const handleClick = isTributaryProxy ? undefined : onElementClick;
+      const strokeD = subpaths.filter((p) => !p.endsWith('Z')).join(' ');
+      const handleClick = onElementClick;
 
       return (
-        <g key={`shape-${element.id}`}>
+        <g key={`shape-${element.id}`} className={handleClick ? styles.interactiveGroup : undefined}>
           {/* Invisible wider hit area for clicking (strokes only, non-tributary-proxy) */}
           {handleClick && strokeD && (
             <path
@@ -237,30 +219,6 @@ function renderShapeElements(
                 e.stopPropagation();
                 handleClick(element.id);
               }}
-            />
-          )}
-          {/* Filled lake polygons */}
-          {fillD && (
-            <path
-              d={fillD}
-              style={{
-                fill: color,
-                fillOpacity: strokeOpacity(effectiveState) * 0.4,
-                stroke: color,
-                strokeWidth: effectiveRiverStrokeWidth * 0.7,
-                strokeOpacity: strokeOpacity(effectiveState),
-              }}
-              pointerEvents={handleClick ? 'none' : undefined}
-              className={handleClick ? styles.interactivePath : undefined}
-              onClick={
-                handleClick
-                  ? (e) => {
-                      if (isDrag(e)) return;
-                      e.stopPropagation();
-                      handleClick(element.id);
-                    }
-                  : undefined
-              }
             />
           )}
           {/* Visible river strokes */}
@@ -393,6 +351,7 @@ interface MapContentProps {
   readonly backgroundPaths: VisualizationRendererProps['backgroundPaths'];
   readonly lakePaths: VisualizationRendererProps['lakePaths'];
   readonly backgroundLabels: VisualizationRendererProps['backgroundLabels'];
+  readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
 }
 
 function MapContent({
@@ -407,6 +366,7 @@ function MapContent({
   backgroundPaths,
   lakePaths,
   backgroundLabels,
+  elementStateColorOverrides,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { onPointerDown, isDrag } = useDragDetector();
@@ -414,7 +374,7 @@ function MapContent({
   const showRegionColors = toggles['showRegionColors'] === true;
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
-  // Map from element label (country name) → element state, for MapCountryLabels.
+  // Map from element label → element state, used by MapCountryLabels for state-aware colours.
   const elementNameToState = useMemo(() => {
     const map: Record<string, ElementVisualState | undefined> = {};
     for (const el of elements) {
@@ -425,17 +385,20 @@ function MapContent({
     return map;
   }, [elements, elementStates]);
 
-  // Maps river name → element state, used to resolve tributary proxy colors.
-  // Keyed by element label (river name); first match wins when multiple rows share a name.
-  const nameToState = useMemo(() => {
-    const map: Record<string, ElementVisualState | undefined> = {};
-    for (const el of elements) {
-      if (isMapElement(el) && el.pathRenderStyle === 'stroke' && !(el.label in map)) {
-        map[el.label] = elementStates[el.id];
-      }
-    }
-    return map;
-  }, [elements, elementStates]);
+  // Build BackgroundLabel objects from polygon quiz elements so they pass through the
+  // full label placement system (polylabel positioning, area-based sizing, collision detection).
+  const elementPolygonLabels = useMemo(
+    () => computeElementLabels(elements),
+    [elements],
+  );
+
+  // Merge background labels (excluding polygon element names to avoid duplicates) with
+  // element-derived labels for a single unified placement pass.
+  const allLabels = useMemo((): ReadonlyArray<BackgroundLabel> => {
+    const polygonElementNames = new Set(elementPolygonLabels.map((l) => l.name));
+    const filteredBg = (backgroundLabels ?? []).filter((l) => !polygonElementNames.has(l.name));
+    return [...filteredBg, ...elementPolygonLabels];
+  }, [backgroundLabels, elementPolygonLabels]);
 
   const visibleDotPositions = useMemo(
     () => elements
@@ -506,18 +469,19 @@ function MapContent({
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, toggles, nameToState, showRegionColors, isDrag)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
 
-      {/* Country name labels and flags (from background border data, unified overlap detection) */}
-      {backgroundLabels && (
+      {/* Country/region name labels and flags — background context labels merged with polygon
+          quiz element labels, run through unified placement (polylabel, collision detection). */}
+      {allLabels.length > 0 && (
         <MapCountryLabels
-          labels={backgroundLabels}
+          labels={allLabels}
           showNames={toggles['showCountryNames'] ?? false}
           showFlags={toggles['showMapFlags'] ?? false}
           avoidPoints={visibleDotPositions}
@@ -530,12 +494,10 @@ function MapContent({
         if (clusteredElementIds.has(element.id)) return null;
         if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
-        // Skip label for tributaries/distributaries/segments rendered as proxies (not quiz items)
-        if (element.tributaryOf && !toggles['includeTributaries']) return null;
-        if (element.distributaryOf && !toggles['includeDistributaries']) return null;
-        if (element.segmentOf && !toggles['includeSegmentNames']) return null;
         if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showRiverNames'))) return null;
-        const color = state !== undefined && state !== 'hidden' ? STATUS_COLORS[state].main : 'var(--color-text-primary)';
+        const color = (state !== undefined && state !== 'hidden')
+          ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
+          : 'var(--color-text-primary)';
         const anchor = element.labelAnchor ?? element.viewBoxCenter;
         const pos = element.labelPosition;
         const labelOffset = 0.8; // viewBox units
@@ -545,7 +507,14 @@ function MapContent({
             key={`river-label-${element.id}`}
             {...labelProps}
             className={styles.riverLabel}
-            style={{ fill: color }}
+            style={{
+              fill: color,
+              strokeOpacity: 0.75,
+              paintOrder: 'stroke',
+              stroke: 'var(--color-label-halo)',
+              strokeWidth: 0.5,
+              strokeLinejoin: 'round',
+            }}
           >
             {element.label}
           </text>
@@ -617,7 +586,7 @@ function MapContent({
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
-        // Shape elements (countries) use MapCountryLabels, not element labels
+        // Shape elements (countries/states) use the "Region polygon labels" section above
         if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
         if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showCityNames'))) return null;

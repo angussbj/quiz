@@ -6,6 +6,13 @@
   position: relative;
 }
 
+.reconfigureRow {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
 .quizContent {
   flex: 1;
   display: flex;
@@ -14,7 +21,6 @@
 }
 
 .reconfigureButton {
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);

@@ -4,6 +4,8 @@ import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
 import type { ScoreResult } from '@/scoring/ScoreResult';
+import type { TimeScale } from '@/visualizations/timeline/buildTimelineElements';
+import type { NormalizeOptions } from './free-recall/matchAnswer';
 
 /**
  * Unified props interface for all quiz mode components.
@@ -44,4 +46,8 @@ export interface QuizModeProps {
    * Used by quizzes where elements are always shown (e.g. 3D skeleton). Default: true.
    */
   readonly hideUnfocusedElements?: boolean;
+  /** Time axis scale for timeline quizzes. See QuizDefinition.timeScale. */
+  readonly timeScale?: TimeScale;
+  /** Options controlling answer normalization (whitespace/punctuation sensitivity). */
+  readonly normalizeOptions?: NormalizeOptions;
 }

@@ -17,7 +17,7 @@ export function buildGridElements(
 
     return {
       id,
-      label: row[labelColumn] ?? id,
+      label: row[labelColumn] || id,
       row: rowIndex,
       column: colIndex,
       symbol: row['symbol'] ?? row[labelColumn]?.slice(0, 2) ?? id,

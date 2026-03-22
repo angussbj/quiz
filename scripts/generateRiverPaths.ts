@@ -178,20 +178,6 @@ function extractSegments(geometry: GeoJsonFeature['geometry']): ReadonlyArray<Ri
   return segments;
 }
 
-/** Compute centroid of all coordinates across multiple segments. */
-function segmentsCentroid(segments: ReadonlyArray<RiverSegment>): { lat: number; lng: number } {
-  let sumLat = 0;
-  let sumLng = 0;
-  let count = 0;
-  for (const seg of segments) {
-    for (const [lng, lat] of seg.coords) {
-      sumLng += lng;
-      sumLat += lat;
-      count++;
-    }
-  }
-  return { lat: count > 0 ? sumLat / count : 0, lng: count > 0 ? sumLng / count : 0 };
-}
 
 /**
  * Find the geographic point at parameter t (0-1) along the chained segments.
@@ -314,7 +300,7 @@ function distToRing(point: Coord, ring: ReadonlyArray<Coord>): number {
 }
 
 /** Maximum gap distance (degrees) for matching river endpoints to lake boundaries. */
-const LAKE_MATCH_THRESHOLD = 0.8;
+const LAKE_MATCH_THRESHOLD = 0.5;
 
 /** Scalerank threshold: lakes with scalerank <= this get polygon rendering.
  *  Lakes with scalerank > this get a connecting line instead. */
@@ -605,13 +591,6 @@ function getAllNames(features: ReadonlyArray<GeoJsonFeature>): Set<string> {
   return names;
 }
 
-function getEnglishName(features: ReadonlyArray<GeoJsonFeature>): string {
-  for (const f of features) {
-    const nameEn = f.properties['name_en'] as string | null;
-    if (nameEn) return nameEn.toLowerCase();
-  }
-  return ((features[0].properties['name'] as string) ?? '').toLowerCase();
-}
 
 function getEndpoints(features: ReadonlyArray<GeoJsonFeature>): ReadonlyArray<Coord> {
   const endpoints: Array<Coord> = [];

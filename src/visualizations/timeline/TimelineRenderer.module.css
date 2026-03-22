@@ -2,12 +2,15 @@
 
 .outerContainer {
   width: 100%;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   cursor: grab;
   user-select: none;
+  display: flex;
+  flex-direction: column;
 }
 
 .outerContainer[data-dragging] {
@@ -16,7 +19,9 @@
 
 .innerContainer {
   position: relative;
-  min-height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   will-change: transform, width;
 }
 
@@ -27,6 +32,7 @@
   top: 0;
   z-index: 10;
   height: 32px;
+  flex-shrink: 0;
   background: var(--color-bg-primary);
   border-bottom: 1px solid var(--color-border);
 }
@@ -100,7 +106,8 @@
 
 .tracksArea {
   position: relative;
-  min-height: calc(100% - 32px);
+  flex: 1;
+  min-height: 0;
 }
 
 /* ---- Bar ---- */
