@@ -78,9 +78,9 @@ const CONTEXT_COLORS: ColorSet = { mesh: '#b0a080', emissive: '#000000', opacity
 
 // ─── GLB node-key helpers ─────────────────────────────────────────────────────
 
-/** Three.js GLTFLoader strips dots from node names. */
+/** Three.js GLTFLoader sanitizes node names: spaces → underscores, dots stripped. */
 function toNodeKey(name: string): string {
-  return name.replace(/\./g, '');
+  return name.replace(/ /g, '_').replace(/\./g, '');
 }
 
 // ─── Mesh→element mapping ─────────────────────────────────────────────────────
@@ -351,10 +351,11 @@ function SkeletonMeshes({
 
     // Camera views
     const getBox = (names: ReadonlyArray<string>) => {
+      const sanitized = names.map(n => toNodeKey(n));
       let box: THREE.Box3 | null = null;
       scene.traverse((obj) => {
         if (!(obj instanceof THREE.Mesh)) return;
-        if (names.includes(obj.name)) {
+        if (sanitized.includes(toNodeKey(obj.name))) {
           const b = new THREE.Box3().setFromObject(obj);
           box = box ? box.union(b) : b;
         }
