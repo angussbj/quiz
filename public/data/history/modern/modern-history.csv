@@ -1,0 +1,57 @@
+id,event,start_year,end_year,region,theme,event_alternates
+gutenberg-printing-press,Gutenberg's Printing Press,1440,1455,Europe,Discovery,Printing Press|Movable Type|Gutenberg Bible
+fall-of-constantinople,Fall of Constantinople,1453,,Middle East,Conflict,Siege of Constantinople|Ottoman Conquest of Constantinople
+columbus-reaches-americas,Columbus Reaches the Americas,1492,,Global,Discovery,Discovery of the New World|Columbus's First Voyage
+vasco-da-gama-india,Vasco da Gama Reaches India,1497,1498,Global,Discovery,Portuguese Sea Route to India|Da Gama's Voyage
+transatlantic-slave-trade,Transatlantic Slave Trade,1502,1867,Africa,Empire,Atlantic Slave Trade|Slave Trade|Triangle Trade
+protestant-reformation,Protestant Reformation,1517,1648,Europe,Society,The Reformation|Luther's 95 Theses
+spanish-conquest-aztecs,Spanish Conquest of the Aztecs,1519,1521,Americas,Empire,Fall of Tenochtitlan|Conquest of Mexico
+magellans-circumnavigation,Magellan's Circumnavigation,1519,1522,Global,Discovery,First Circumnavigation of the Earth
+founding-mughal-empire,Founding of the Mughal Empire,1526,1530,Asia,Empire,Mughal Dynasty|Babur's Conquest
+spanish-conquest-incas,Spanish Conquest of the Incas,1532,1572,Americas,Empire,Fall of the Inca Empire|Conquest of Peru
+copernican-revolution,Copernican Revolution,1543,,Europe,Discovery,Heliocentric Model|De Revolutionibus
+dutch-east-india-company,Dutch East India Company,1602,1799,Global,Empire,VOC|Verenigde Oost-Indische Compagnie
+thirty-years-war,Thirty Years' War,1618,1648,Europe,Conflict,
+galileos-trial,Galileo's Trial,1633,,Europe,Discovery,Galileo Affair|Trial of Galileo
+rise-of-qing-dynasty,Rise of the Qing Dynasty,1644,,Asia,Revolution,Manchu Conquest of China|Fall of the Ming Dynasty
+newtons-principia,Newton's Principia,1687,,Europe,Discovery,Principia Mathematica|Laws of Motion
+seven-years-war,Seven Years' War,1756,1763,Global,Conflict,French and Indian War
+industrial-revolution,Industrial Revolution,1760,1840,Europe,Discovery,First Industrial Revolution
+american-revolution,American Revolution,1775,1783,Americas,Revolution,American War of Independence|US Independence
+french-revolution,French Revolution,1789,1799,Europe,Revolution,
+haitian-revolution,Haitian Revolution,1791,1804,Americas,Revolution,Haitian War of Independence
+napoleonic-wars,Napoleonic Wars,1803,1815,Europe,Conflict,
+latin-american-independence,Latin American Independence,1808,1826,Americas,Revolution,South American Independence|Bolivar's Liberation
+opium-wars,Opium Wars,1839,1860,Asia,Conflict,First Opium War|Second Opium War
+taiping-rebellion,Taiping Rebellion,1850,1864,Asia,Conflict,Taiping Civil War
+american-civil-war,American Civil War,1861,1865,Americas,Conflict,US Civil War|War Between the States
+meiji-restoration,Meiji Restoration,1868,,Asia,Revolution,Meiji Revolution|Modernization of Japan
+suez-canal-opening,Opening of the Suez Canal,1869,,Middle East,Discovery,Suez Canal
+scramble-for-africa,Scramble for Africa,1881,1914,Africa,Empire,Partition of Africa|Colonization of Africa
+russo-japanese-war,Russo-Japanese War,1904,1905,Asia,Conflict,
+world-war-i,World War I,1914,1918,Global,Conflict,WWI|The Great War|First World War
+russian-revolution,Russian Revolution,1917,,Europe,Revolution,October Revolution|Bolshevik Revolution
+great-depression,Great Depression,1929,1939,Global,Society,Wall Street Crash|Economic Depression
+world-war-ii,World War II,1939,1945,Global,Conflict,WWII|Second World War
+atomic-bombings,Atomic Bombings of Hiroshima and Nagasaki,1945,,Global,Discovery,Nuclear Weapons|Hiroshima|Nagasaki
+indian-independence,Indian Independence and Partition,1947,,Asia,Revolution,Partition of India|Indian Independence Movement
+creation-of-israel,Creation of Israel,1948,,Middle East,Revolution,Israeli Declaration of Independence|Founding of Israel
+chinese-communist-revolution,Chinese Communist Revolution,1949,,Asia,Revolution,Communist Revolution in China|Chinese Civil War Victory|Proclamation of the People's Republic
+korean-war,Korean War,1950,1953,Asia,Conflict,
+cuban-revolution,Cuban Revolution,1953,1959,Americas,Revolution,Castro's Revolution
+decolonization-of-africa,Decolonization of Africa,1957,1975,Africa,Revolution,African Independence Movements
+vietnam-war,Vietnam War,1954,1975,Asia,Conflict,Second Indochina War|American War
+civil-rights-movement,Civil Rights Movement,1954,1968,Americas,Society,American Civil Rights Movement
+cuban-missile-crisis,Cuban Missile Crisis,1962,,Global,Conflict,October Crisis|Caribbean Crisis
+six-day-war,Six-Day War,1967,,Middle East,Conflict,1967 Arab-Israeli War|June War
+chinese-cultural-revolution,Chinese Cultural Revolution,1966,1976,Asia,Society,Cultural Revolution|Great Proletarian Cultural Revolution
+moon-landing,Moon Landing,1969,,Global,Discovery,Apollo 11|First Man on the Moon
+iranian-revolution,Iranian Revolution,1978,1979,Middle East,Revolution,Islamic Revolution|Iranian Islamic Revolution
+fall-of-berlin-wall,Fall of the Berlin Wall,1989,,Europe,Revolution,Opening of the Berlin Wall
+end-of-apartheid,End of Apartheid,1990,1994,Africa,Society,South African Transition|Mandela's Release
+collapse-of-soviet-union,Collapse of the Soviet Union,1991,,Europe,Revolution,Fall of the USSR|End of the Cold War
+rwandan-genocide,Rwandan Genocide,1994,,Africa,Conflict,Genocide Against the Tutsi
+rise-of-the-internet,Rise of the Internet,1991,2000,Global,Discovery,World Wide Web|Internet Revolution
+september-11-attacks,September 11 Attacks,2001,,Global,Conflict,9/11|Twin Towers Attack
+arab-spring,Arab Spring,2010,2013,Middle East,Revolution,Arab Uprisings|Arab Revolutions
+covid-19-pandemic,COVID-19 Pandemic,2019,2023,Global,Society,Coronavirus Pandemic|COVID

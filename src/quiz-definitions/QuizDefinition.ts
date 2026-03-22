@@ -98,4 +98,18 @@ export interface QuizDefinition<K extends string = string> {
    * Used for quizzes where the elements are always visible (e.g. 3D skeleton).
    */
   readonly hideUnfocusedElements?: boolean;
+  /**
+   * Allows a select toggle to dynamically switch which CSV column powers both group filter chips
+   * and timeline bar coloring. Each toggle value maps to a column config, or undefined for "no grouping".
+   *
+   * When set, `groupFilterColumn` and `groupFilterLabel` on the definition are ignored in favour
+   * of the dynamically selected column.
+   */
+  readonly dynamicGrouping?: {
+    readonly selectToggleKey: string;
+    readonly options: Readonly<Record<string, {
+      readonly column: string;
+      readonly chipLabel: string;
+    } | undefined>>;
+  };
 }

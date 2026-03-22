@@ -40,6 +40,10 @@ interface QuizShellProps {
   readonly groupFilterLabel?: string;
   readonly availableGroups?: ReadonlyArray<string>;
   readonly dataRows?: ReadonlyArray<Readonly<Record<string, string>>>;
+  /** Key of the select toggle that drives dynamic grouping (if any). */
+  readonly dynamicGroupingKey?: string;
+  /** Called when the dynamic grouping select toggle changes value. */
+  readonly onGroupByChange?: (value: string) => void;
   readonly children: (config: QuizConfig) => ReactNode;
 }
 
@@ -67,6 +71,8 @@ export function QuizShell({
   groupFilterLabel,
   availableGroups,
   dataRows,
+  dynamicGroupingKey,
+  onGroupByChange,
   children,
 }: QuizShellProps) {
   const [phase, setPhase] = useState<ShellPhase>('configuring');
@@ -83,6 +89,23 @@ export function QuizShell({
     () => new Set(availableGroups ?? []),
   );
   const toggleState = useToggleState(toggles, presets, selectToggles);
+
+  // When dynamic grouping changes the available groups, reset selected groups to include all
+  const prevGroupsRef = useRef(availableGroups);
+  useEffect(() => {
+    if (availableGroups !== prevGroupsRef.current) {
+      prevGroupsRef.current = availableGroups;
+      setSelectedGroups(new Set(availableGroups ?? []));
+    }
+  }, [availableGroups]);
+
+  // Wrap select toggle changes to intercept dynamic grouping key changes
+  const handleSelectChange = useCallback((key: string, value: string) => {
+    toggleState.setSelect(key, value);
+    if (key === dynamicGroupingKey && onGroupByChange) {
+      onGroupByChange(value);
+    }
+  }, [toggleState, dynamicGroupingKey, onGroupByChange]);
 
   const handleGroupToggle = useCallback((group: string) => {
     setSelectedGroups((prev) => {
@@ -203,7 +226,7 @@ export function QuizShell({
         modeConstraints={modeConstraints}
         selectToggles={selectToggles}
         selectValues={toggleState.selectValues}
-        onSelectChange={toggleState.setSelect}
+        onSelectChange={handleSelectChange}
       />
     );
   }
