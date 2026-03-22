@@ -14,15 +14,22 @@ function distanceToState(distance: number): ElementVisualState {
   return 'incorrect';
 }
 
-export function useGridLocateQuiz(elements: ReadonlyArray<VisualizationElement>) {
+/**
+ * @param targetElements — the active/filtered elements (used for quiz targets)
+ * @param clickableElements — all elements on the grid (used for click lookup, includes background)
+ */
+export function useGridLocateQuiz(
+  targetElements: ReadonlyArray<VisualizationElement>,
+  clickableElements: ReadonlyArray<VisualizationElement>,
+) {
   const [targetOrder] = useState<ReadonlyArray<string>>(() =>
-    shuffle(elements.filter((e) => e.interactive).map((e) => e.id)),
+    shuffle(targetElements.filter((e) => e.interactive).map((e) => e.id)),
   );
   const [currentTargetIndex, setCurrentTargetIndex] = useState(0);
   const [distances, setDistances] = useState<ReadonlyArray<number>>([]);
   const [elementStates, setElementStates] = useState<Readonly<Record<string, ElementVisualState>>>(() => {
     const states: Record<string, ElementVisualState> = {};
-    for (const element of elements) {
+    for (const element of targetElements) {
       states[element.id] = element.interactive ? 'hidden' : 'context';
     }
     return states;
@@ -39,8 +46,9 @@ export function useGridLocateQuiz(elements: ReadonlyArray<VisualizationElement>)
     };
   }, []);
 
+  // Use the full element set for click lookups so background elements can be clicked
   const elementsById = useRef(
-    new Map(elements.map((e) => [e.id, e])),
+    new Map(clickableElements.map((e) => [e.id, e])),
   ).current;
 
   const currentTargetId = currentTargetIndex < targetOrder.length

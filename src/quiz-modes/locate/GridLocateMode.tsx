@@ -15,6 +15,7 @@ import styles from './LocateMode.module.css';
  */
 export function GridLocateMode({
   elements,
+  allElements,
   toggleValues,
   toggleDefinitions = [],
   Renderer,
@@ -28,7 +29,7 @@ export function GridLocateMode({
   reviewResult,
   initialCameraPosition,
 }: QuizModeProps) {
-  const quiz = useGridLocateQuiz(elements);
+  const quiz = useGridLocateQuiz(elements, allElements ?? elements);
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;

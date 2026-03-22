@@ -301,6 +301,7 @@ export function ActiveQuiz({
       <div className={styles.quizArea}>
         <Mode
           elements={activeElements}
+          allElements={elements}
           dataRows={activeDataRows}
           columnMappings={columnMappings}
           toggleDefinitions={toggleDefinitions}
