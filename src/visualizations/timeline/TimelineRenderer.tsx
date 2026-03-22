@@ -47,6 +47,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   const isLogScale = timeScale === 'log';
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const innerContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
   const timelineElements = useMemo(
@@ -118,8 +119,10 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     isDragging,
     isScrolling,
     scrollIntoView,
+    livePanOffsetRef,
   } = useTimelineZoom({
     containerRef,
+    innerContainerRef,
     totalViewBoxWidth,
     containerWidth,
   });
@@ -135,21 +138,25 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     [timelineElements],
   );
 
-  // Axis ticks: compute for the visible viewport so labels are always on screen.
-  // Derive the year range actually visible from pan/zoom state.
+  // Axis ticks: compute for the visible viewport PLUS one viewport of padding on each side.
+  // The extra buffer means ticks are already in the DOM when panning brings them into view,
+  // since pan gestures update the CSS transform directly without re-rendering React.
   // Fall back to full data range when container hasn't measured yet (e.g. jsdom).
   const hasValidViewport = containerWidth > 0 && zoom > 0;
+  // Padding: one viewport width in viewBox units on each side
+  const viewBoxPadding = hasValidViewport ? containerWidth / zoom : 0;
   const visibleStartYear = hasValidViewport
     ? (isLogScale
-        ? viewBoxXToLogYear(-panOffset / zoom + minX, logReferenceYear)
-        : (-panOffset / zoom + minX) / UNITS_PER_YEAR)
+        ? viewBoxXToLogYear(-panOffset / zoom + minX - viewBoxPadding, logReferenceYear)
+        : (-panOffset / zoom + minX - viewBoxPadding) / UNITS_PER_YEAR)
     : (isLogScale ? viewBoxXToLogYear(minX, logReferenceYear) : minX / UNITS_PER_YEAR);
   const visibleEndYear = hasValidViewport
     ? (isLogScale
-        ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX, logReferenceYear)
-        : ((containerWidth - panOffset) / zoom + minX) / UNITS_PER_YEAR)
+        ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX + viewBoxPadding, logReferenceYear)
+        : ((containerWidth - panOffset) / zoom + minX + viewBoxPadding) / UNITS_PER_YEAR)
     : (isLogScale ? viewBoxXToLogYear(maxX, logReferenceYear) : maxX / UNITS_PER_YEAR);
-  const effectivePixels = containerWidth || timelineWidth || 800;
+  // Use 3x container width for pixel budget to match the 3x viewport range
+  const effectivePixels = (containerWidth || timelineWidth || 800) * 3;
   const axisTicks = useMemo(
     () => isLogScale
       ? computeLogAxisTicks(visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear)
@@ -341,15 +348,16 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     scrollIntoView(minLeft, maxRight - minLeft);
   }, [putInView]);
 
-  // Click handler: convert pixel click → viewBox coordinates
+  // Click handler: convert pixel click → viewBox coordinates.
+  // Uses livePanOffsetRef for accuracy (state panOffset may be stale mid-gesture).
   const handleAreaClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     if (!onPositionClick) return;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     const pixelX = event.clientX - rect.left;
-    const viewBoxX = (pixelX - panOffset) / zoom + minX;
+    const viewBoxX = (pixelX - livePanOffsetRef.current) / zoom + minX;
     onPositionClick({ x: viewBoxX, y: 0 });
-  }, [onPositionClick, panOffset, zoom, minX]);
+  }, [onPositionClick, livePanOffsetRef, zoom, minX]);
 
   // Hide overlapping tick labels via DOM measurement.
   // Two-pass: major labels are placed first so they always win over minor labels.
@@ -393,7 +401,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         }
       }
     }, 17);
-  }, [axisTicks, zoom, panOffset]);
+  }, [axisTicks, zoom]);
 
   useEffect(() => () => {
     if (labelThrottleRef.current) clearTimeout(labelThrottleRef.current);
@@ -455,6 +463,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         onMouseLeave={handleMouseUpOrLeave}
       >
         <div
+          ref={innerContainerRef}
           className={styles.innerContainer}
           style={{
             width: `${timelineWidth}px`,
