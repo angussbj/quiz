@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CursorTooltip } from '../CursorTooltip';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
@@ -351,43 +351,53 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     onPositionClick({ x: viewBoxX, y: 0 });
   }, [onPositionClick, panOffset, zoom, minX]);
 
-  // Hide overlapping tick labels via DOM measurement after layout.
+  // Hide overlapping tick labels via DOM measurement.
   // Two-pass: major labels are placed first so they always win over minor labels.
+  // Throttled to ~60fps to avoid layout thrashing during pan/zoom.
   const axisAreaRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const axisArea = axisAreaRef.current;
-    if (!axisArea) return;
-    const majorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="major"]');
-    const minorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="minor"]');
+  const labelThrottleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (labelThrottleRef.current) return;
+    labelThrottleRef.current = setTimeout(() => {
+      labelThrottleRef.current = null;
+      const axisArea = axisAreaRef.current;
+      if (!axisArea) return;
+      const majorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="major"]');
+      const minorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="minor"]');
 
-    const kept: DOMRect[] = [];
-    const overlapsKept = (rect: DOMRect) =>
-      kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
+      const kept: DOMRect[] = [];
+      const overlapsKept = (rect: DOMRect) =>
+        kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
 
-    // First pass: place major labels (greedy left-to-right among majors)
-    for (const label of majorLabels) {
-      const rect = label.getBoundingClientRect();
-      if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
-      if (overlapsKept(rect)) {
-        label.style.visibility = 'hidden';
-      } else {
-        label.style.visibility = '';
-        kept.push(rect);
+      // First pass: place major labels (greedy left-to-right among majors)
+      for (const label of majorLabels) {
+        const rect = label.getBoundingClientRect();
+        if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
+        if (overlapsKept(rect)) {
+          label.style.visibility = 'hidden';
+        } else {
+          label.style.visibility = '';
+          kept.push(rect);
+        }
       }
-    }
 
-    // Second pass: place minor labels only where they don't collide with any kept label
-    for (const label of minorLabels) {
-      const rect = label.getBoundingClientRect();
-      if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
-      if (overlapsKept(rect)) {
-        label.style.visibility = 'hidden';
-      } else {
-        label.style.visibility = '';
-        kept.push(rect);
+      // Second pass: place minor labels only where they don't collide with any kept label
+      for (const label of minorLabels) {
+        const rect = label.getBoundingClientRect();
+        if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
+        if (overlapsKept(rect)) {
+          label.style.visibility = 'hidden';
+        } else {
+          label.style.visibility = '';
+          kept.push(rect);
+        }
       }
-    }
+    }, 17);
   }, [axisTicks, zoom, panOffset]);
+
+  useEffect(() => () => {
+    if (labelThrottleRef.current) clearTimeout(labelThrottleRef.current);
+  }, []);
 
   const tooltipTextRef = useRef('');
   const hoveredElementRef = useRef<TimelineElement | null>(null);
