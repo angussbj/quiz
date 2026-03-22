@@ -298,8 +298,7 @@ interface SkeletonMeshesProps {
   readonly elementStates: Readonly<Record<string, ElementVisualState>>;
   readonly onElementClick?: (elementId: string) => void;
   readonly onElementHover: (elementId: string | null) => void;
-  readonly onModelBounds: (yMin: number, yMax: number, boneCenters: Map<string, THREE.Vector3>) => void;
-  readonly onInitialView: (views: Record<string, CameraView>) => void;
+  readonly onModelReady: (yMin: number, yMax: number, centers: Map<string, THREE.Vector3>, views: Record<string, CameraView>) => void;
 }
 
 function SkeletonMeshes({
@@ -307,8 +306,7 @@ function SkeletonMeshes({
   elementStates,
   onElementClick,
   onElementHover,
-  onModelBounds,
-  onInitialView,
+  onModelReady,
 }: SkeletonMeshesProps) {
   const { scene } = useGLTF(MODEL_URL);
   const { gl } = useThree();
@@ -396,9 +394,8 @@ function SkeletonMeshes({
       })(),
     };
 
-    onModelBounds(yMin, yMax, centers);
-    onInitialView(views);
-  }, [scene, meshMap, onModelBounds, onInitialView]);
+    onModelReady(yMin, yMax, centers, views);
+  }, [scene, meshMap, onModelReady]);
 
   // Apply colors to all meshes based on element states
   useEffect(() => {
@@ -528,16 +525,10 @@ function Scene({
   const [yRange, setYRange] = useState({ yMin: 0, yMax: 1 });
   const [boneCenters, setBoneCenters] = useState<Map<string, THREE.Vector3>>(new Map());
 
-  const handleModelBounds = useCallback(
-    (yMin: number, yMax: number, centers: Map<string, THREE.Vector3>) => {
-      setYRange({ yMin, yMax });
-      setBoneCenters(centers);
-    },
-    [],
-  );
-
-  const handleInitialView = useCallback(
-    (views: Record<string, CameraView>) => {
+  // Single callback: SkeletonMeshes calls this once with all model data so we
+  // never capture stale boneCenters state (which caused an infinite re-render loop).
+  const handleModelReady = useCallback(
+    (yMin: number, yMax: number, centers: Map<string, THREE.Vector3>, views: Record<string, CameraView>) => {
       const full = views['full'];
       if (full) {
         camera.position.copy(full.position);
@@ -547,12 +538,11 @@ function Scene({
           controls.update();
         }
       }
-      setYRange((prev) => {
-        onModelReady(prev.yMin, prev.yMax, boneCenters, views);
-        return prev;
-      });
+      setYRange({ yMin, yMax });
+      setBoneCenters(centers);
+      onModelReady(yMin, yMax, centers, views);
     },
-    [camera, boneCenters, onModelReady],
+    [camera, onModelReady],
   );
 
   // Build label centers from boneCenters map + elementLabels
@@ -575,8 +565,7 @@ function Scene({
           elementStates={elementStates}
           onElementClick={onElementClick}
           onElementHover={setHoveredElementId}
-          onModelBounds={handleModelBounds}
-          onInitialView={handleInitialView}
+          onModelReady={handleModelReady}
         />
       </Suspense>
       <OrbitControls ref={controlsRef} makeDefault />
