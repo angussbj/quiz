@@ -37,9 +37,10 @@ function buildQuestions(
   elements: ReadonlyArray<VisualizationElement>,
   choiceCount: number,
 ): ReadonlyArray<MultipleChoiceQuestion> {
-  const shuffledElements = shuffle(elements);
+  const interactiveElements = elements.filter((e) => e.interactive !== false);
+  const shuffledElements = shuffle(interactiveElements);
   return shuffledElements.map((target) => {
-    const distractors = shuffle(elements.filter((e) => e.id !== target.id))
+    const distractors = shuffle(interactiveElements.filter((e) => e.id !== target.id))
       .slice(0, choiceCount - 1);
     const choices = shuffle([target, ...distractors]);
     return { targetElement: target, choices };

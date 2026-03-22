@@ -42,7 +42,7 @@ export function useIdentifyQuiz(
   elements: ReadonlyArray<VisualizationElement>,
 ): IdentifyQuizState & IdentifyQuizActions {
   const [shuffledOrder] = useState(() =>
-    shuffle(elements.map((e) => e.id)),
+    shuffle(elements.filter((e) => e.interactive !== false).map((e) => e.id)),
   );
 
   const elementLabelsById = useMemo(() => {
