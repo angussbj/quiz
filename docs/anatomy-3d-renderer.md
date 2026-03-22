@@ -21,6 +21,23 @@ The GLB (`public/data/bones-3d/overview-skeleton.glb`) contains only right-side 
 
 The `meshMap` keys encode this: `"original:MeshKey"` or `"mirrored:MeshKey"`.
 
+**Z-fighting prevention**: In the mirrored scene, meshes with an `original:` entry but no `mirrored:` entry are hidden (`visible = false`) — these are midline or direct-mesh quiz bones already rendered in the original scene. Meshes with no entry at all (non-quiz context like teeth, costal cartilage) keep context colors in both scenes so they mirror correctly.
+
+## Grouped Elements and meshEntries
+
+When elements are grouped (bilateral merge or numbered merge), every constituent mesh maps to the same quiz element. The `Anatomy3DElement.meshEntries` array holds all mesh entries for the group:
+
+- **Ungrouped**: 1 entry (e.g. `sternum` → `[{ meshName: 'Manubrium_of_sternum', side: 'midline', ... }]`)
+- **Bilateral pair**: 2 entries (right + left, e.g. `femur` → right mesh + mirrored left mesh)
+- **Numbered group**: N entries (e.g. `rib` with bilateral = 24 entries: 12 ribs × 2 sides)
+
+All meshes in the group:
+- Display the **same visual state** (color, opacity, emissive).
+- Respond to **the same click** (clicking any constituent mesh selects the group element).
+- Get their **own label sprite** (all showing the same group name, e.g. "Rib").
+
+For locate mode distance checking, clicking any mesh in the group returns that mesh's element ID. Since the element is the correct answer, the distance is 0 regardless of which specific mesh was clicked.
+
 ## Three.js Name Sanitization
 
 Three.js GLTFLoader sanitizes node names: **spaces become underscores**, dots are stripped. The `toNodeKey()` function applies the same transform so lookups match. Any hardcoded mesh name references (e.g. camera preset bone lists) must use original GLB names — `toNodeKey` handles the comparison.
@@ -43,7 +60,7 @@ Labels are sprite-based (canvas-rendered text textures that always face the came
 
 Key design decision: labels **never** appear for unanswered bones (`default`, `highlighted`), regardless of label mode. This prevents the label control from revealing answers. The mode only controls noise among already-answered labels.
 
-Bilateral bones get two label sprites (one per side, mirrored on x). Label scale varies by body zone (`zoneScale`) — extremities (hands, feet, head) use smaller labels to avoid clutter.
+Each mesh in a grouped element gets its own label sprite (all showing the same name). Label scale varies by body zone (`zoneScale`) — extremities (hands, feet, head) use smaller labels to avoid clutter.
 
 ## Element State Colors
 

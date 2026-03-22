@@ -173,6 +173,15 @@ describe('buildBone3DElements', () => {
       expect(elements[0].viewBoxCenter.y).toBeCloseTo(-42);
     });
 
+    it('merged element has meshEntries from both sides', () => {
+      const rows = [makeRow(), makeLeftRow()];
+      const elements = buildBone3DElements(rows, {});
+      expect(elements[0].meshEntries).toHaveLength(2);
+      const sides = elements[0].meshEntries.map((e) => e.side);
+      expect(sides).toContain('right');
+      expect(sides).toContain('left');
+    });
+
     it('keeps unpaired bones as-is', () => {
       const rows = [makeRow({ bilateral_partner: '' })];
       const elements = buildBone3DElements(rows, {});
@@ -248,6 +257,18 @@ describe('buildBone3DElements', () => {
       expect(elements).toHaveLength(2);
     });
 
+    it('merged numbered element has meshEntries from all members', () => {
+      const rows = [
+        makeRibRow(1), makeRibLeftRow(1),
+        makeRibRow(2), makeRibLeftRow(2),
+        makeRibRow(3), makeRibLeftRow(3),
+      ];
+      const elements = buildBone3DElements(rows, {});
+      // 3 ribs × 2 sides (bilateral already merged into 3) = 3 bilateral elements,
+      // then numbered merge collects all 3 bilateral elements' meshEntries (2 each) = 6
+      expect(elements[0].meshEntries).toHaveLength(6);
+    });
+
     it('produces individual elements when groupNumbered=false', () => {
       const rows = [makeRibRow(1), makeRibLeftRow(1), makeRibRow(2), makeRibLeftRow(2)];
       // groupBilateral still on, groupNumbered off → 2 bilateral-merged elements
@@ -267,9 +288,7 @@ describe('bone3DLocateDistance', () => {
       interactive: true,
       viewBoxCenter: { x, y, z },
       viewBoxBounds: { minX: x, minY: y, maxX: x, maxY: y },
-      meshName: 'Test.r',
-      side: 'right',
-      directMesh: true,
+      meshEntries: [{ meshName: 'Test.r', side: 'right', directMesh: true }],
     };
   }
 

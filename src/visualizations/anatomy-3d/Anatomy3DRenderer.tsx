@@ -4,7 +4,6 @@
  */
 import {
   Suspense,
-  Fragment,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -85,6 +84,9 @@ interface MeshEntry {
 /**
  * Build a lookup from (scene type × sanitized mesh name) → element ID.
  * scene type: 'original' | 'mirrored'
+ *
+ * Grouped elements (bilateral/numbered) have multiple meshEntries — each maps
+ * to the same element ID so they all color, click, and label identically.
  */
 function buildMeshMap(
   elements: VisualizationRendererProps['elements'],
@@ -92,25 +94,19 @@ function buildMeshMap(
   const map = new Map<string, MeshEntry>();
   for (const el of elements) {
     if (!isAnatomy3DElement(el)) continue;
-    const key = toNodeKey(el.meshName);
-    if (el.side === 'midline') {
-      // Midline: same element in both scenes — original only (mirrored overlaps at x=0)
-      map.set(`original:${key}`, { elementId: el.id, side: 'midline', directMesh: true });
-    } else if (el.side === 'right') {
-      if (el.directMesh) {
-        map.set(`original:${key}`, { elementId: el.id, side: 'right', directMesh: true });
+    for (const entry of el.meshEntries) {
+      const key = toNodeKey(entry.meshName);
+      if (entry.side === 'midline') {
+        map.set(`original:${key}`, { elementId: el.id, side: 'midline', directMesh: true });
+      } else if (entry.side === 'right') {
+        map.set(`original:${key}`, { elementId: el.id, side: 'right', directMesh: entry.directMesh });
       } else {
-        // Right-side .r bone: lives in original scene
-        map.set(`original:${key}`, { elementId: el.id, side: 'right', directMesh: false });
-      }
-    } else {
-      // left
-      if (el.directMesh) {
-        // Direct-mesh left (e.g. Parietal bone left): in original scene by its own name
-        map.set(`original:${key}`, { elementId: el.id, side: 'left', directMesh: true });
-      } else {
-        // Mirrored left (normal .r bone): same mesh name, in mirrored scene
-        map.set(`mirrored:${key}`, { elementId: el.id, side: 'left', directMesh: false });
+        // left
+        if (entry.directMesh) {
+          map.set(`original:${key}`, { elementId: el.id, side: 'left', directMesh: true });
+        } else {
+          map.set(`mirrored:${key}`, { elementId: el.id, side: 'left', directMesh: false });
+        }
       }
     }
   }
@@ -190,7 +186,6 @@ const LABEL_FONT = 'bold 13px system-ui, sans-serif';
 const LABEL_H_PADDING = 12;
 const LABEL_HEIGHT = 0.022;
 const LABEL_OFFSET = 0.08;
-const BILATERAL_THRESHOLD = 0.04;
 
 function makeLabelTexture(text: string): { texture: THREE.CanvasTexture; aspect: number } {
   const scale = 2;
@@ -219,23 +214,18 @@ function makeLabelTexture(text: string): { texture: THREE.CanvasTexture; aspect:
 interface BoneLabelProps {
   readonly center: THREE.Vector3;
   readonly text: string;
-  readonly mirrorX?: boolean;
   readonly scale?: number;
 }
 
-function BoneLabel({ center, text, mirrorX = false, scale = 1 }: BoneLabelProps) {
+function BoneLabel({ center, text, scale = 1 }: BoneLabelProps) {
   const spriteRef = useRef<THREE.Sprite>(null);
   const { camera } = useThree();
   const { texture, aspect } = useMemo(() => makeLabelTexture(text), [text]);
-  const effectiveCenter = useMemo(
-    () => mirrorX ? new THREE.Vector3(-center.x, center.y, center.z) : center.clone(),
-    [center, mirrorX],
-  );
   const dirScratch = useRef(new THREE.Vector3());
   useFrame(() => {
     if (!spriteRef.current) return;
-    dirScratch.current.subVectors(camera.position, effectiveCenter).normalize();
-    spriteRef.current.position.copy(effectiveCenter).addScaledVector(dirScratch.current, LABEL_OFFSET);
+    dirScratch.current.subVectors(camera.position, center).normalize();
+    spriteRef.current.position.copy(center).addScaledVector(dirScratch.current, LABEL_OFFSET);
   });
   const h = LABEL_HEIGHT * scale;
   return (
@@ -254,7 +244,7 @@ function zoneScale(center: THREE.Vector3, yMin: number, yMax: number): number {
 }
 
 interface BoneLabelsProps {
-  readonly centers: ReadonlyArray<{ id: string; center: THREE.Vector3; label: string; state: ElementVisualState | undefined }>;
+  readonly centers: ReadonlyArray<{ id: string; center: THREE.Vector3; label: string; state: ElementVisualState | undefined; meshKey: string }>;
   readonly yMin: number;
   readonly yMax: number;
   readonly hoveredElementId: string | null;
@@ -285,16 +275,10 @@ function shouldShowBoneLabel(
 function BoneLabels({ centers, yMin, yMax, hoveredElementId, labelMode }: BoneLabelsProps) {
   return (
     <>
-      {centers.map(({ id, center, label, state }) => {
+      {centers.map(({ id, center, label, state, meshKey }) => {
         if (!shouldShowBoneLabel(state, labelMode, id, hoveredElementId)) return null;
-        const isBilateral = Math.abs(center.x) > BILATERAL_THRESHOLD;
         const sc = zoneScale(center, yMin, yMax);
-        return (
-          <Fragment key={id}>
-            <BoneLabel center={center} text={label} scale={sc} />
-            {isBilateral && <BoneLabel center={center} text={label} mirrorX scale={sc} />}
-          </Fragment>
-        );
+        return <BoneLabel key={meshKey} center={center} text={label} scale={sc} />;
       })}
     </>
   );
@@ -302,12 +286,18 @@ function BoneLabels({ centers, yMin, yMax, hoveredElementId, labelMode }: BoneLa
 
 // ─── SkeletonMeshes (the model + coloring) ────────────────────────────────────
 
+/** Per-mesh center used for label placement. Grouped elements have multiple entries. */
+interface MeshCenter {
+  readonly elementId: string;
+  readonly center: THREE.Vector3;
+}
+
 interface SkeletonMeshesProps {
   readonly meshMap: Map<string, MeshEntry>;
   readonly elementStates: Readonly<Record<string, ElementVisualState>>;
   readonly onElementClick?: (elementId: string) => void;
   readonly onElementHover: (elementId: string | null) => void;
-  readonly onModelReady: (yMin: number, yMax: number, centers: Map<string, THREE.Vector3>, views: Record<string, CameraView>) => void;
+  readonly onModelReady: (yMin: number, yMax: number, centers: Map<string, MeshCenter>, views: Record<string, CameraView>) => void;
 }
 
 function SkeletonMeshes({
@@ -347,15 +337,29 @@ function SkeletonMeshes({
     const yMin = fullBox.min.y;
     const yMax = fullBox.max.y;
 
-    // Bone centers (right-side meshes only for bilateral; midline for midline)
-    const centers = new Map<string, THREE.Vector3>();
+    // Bone centers: one entry per mesh (not per element) so grouped elements
+    // get a label at each constituent mesh position.
+    // Key: "elementId:original:meshKey" or "elementId:mirrored:meshKey"
+    const centers = new Map<string, { elementId: string; center: THREE.Vector3 }>();
     scene.traverse((obj) => {
       if (!(obj instanceof THREE.Mesh) || !obj.name) return;
       const key = toNodeKey(obj.name);
-      const entry = meshMap.get(`original:${key}`);
-      if (!entry) return;
-      const box = new THREE.Box3().setFromObject(obj);
-      if (!box.isEmpty()) centers.set(entry.elementId, box.getCenter(new THREE.Vector3()));
+      const origEntry = meshMap.get(`original:${key}`);
+      if (origEntry) {
+        const box = new THREE.Box3().setFromObject(obj);
+        if (!box.isEmpty()) {
+          const c = box.getCenter(new THREE.Vector3());
+          centers.set(`${origEntry.elementId}:original:${key}`, { elementId: origEntry.elementId, center: c });
+          // If this mesh also has a mirrored entry, add a mirrored center
+          const mirEntry = meshMap.get(`mirrored:${key}`);
+          if (mirEntry) {
+            centers.set(`${mirEntry.elementId}:mirrored:${key}`, {
+              elementId: mirEntry.elementId,
+              center: new THREE.Vector3(-c.x, c.y, c.z),
+            });
+          }
+        }
+      }
     });
 
     // Camera views
@@ -407,24 +411,49 @@ function SkeletonMeshes({
     onModelReady(yMin, yMax, centers, views);
   }, [scene, meshMap, onModelReady]);
 
-  // Apply colors to all meshes based on element states
+  // Apply colors to all meshes based on element states.
+  // The mirrored scene only renders meshes with `mirrored:` entries — all others
+  // are hidden to prevent z-fighting with the original scene.
   useEffect(() => {
+    const applyMeshColors = (obj: THREE.Mesh, colors: ColorSet) => {
+      const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      for (const mat of mats) {
+        if (mat instanceof THREE.MeshStandardMaterial) {
+          mat.color.set(colors.mesh);
+          mat.emissive.set(colors.emissive);
+          mat.opacity = colors.opacity;
+          mat.transparent = colors.opacity < 1;
+        }
+      }
+      obj.visible = true;
+    };
+
+    const hideMesh = (obj: THREE.Mesh) => {
+      obj.visible = false;
+    };
+
     const applyColors = (obj: THREE.Object3D, sceneType: 'original' | 'mirrored') => {
       if (obj instanceof THREE.Mesh && obj.name) {
         const key = toNodeKey(obj.name);
-        const entry = meshMap.get(`${sceneType}:${key}`);
-        const state = entry ? elementStates[entry.elementId] : undefined;
-        // Midline in mirrored scene: skip (handled in original scene, mirrored copy overlaps)
-        if (sceneType === 'mirrored' && entry?.side === 'midline') return;
-        const colors = entry ? stateColorSet(state) : CONTEXT_COLORS;
-        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-        for (const mat of mats) {
-          if (mat instanceof THREE.MeshStandardMaterial) {
-            mat.color.set(colors.mesh);
-            mat.emissive.set(colors.emissive);
-            mat.opacity = colors.opacity;
-            mat.transparent = colors.opacity < 1;
+        if (sceneType === 'mirrored') {
+          // Mirrored scene visibility rules:
+          // 1. Has mirrored: entry → show with quiz state (left-side bone via x-flip)
+          // 2. Has original: entry but no mirrored: → hide (midline/direct-mesh already in original)
+          // 3. No entry at all → non-quiz context bone, show mirrored for symmetry
+          const mirroredEntry = meshMap.get(`mirrored:${key}`);
+          if (mirroredEntry) {
+            const state = elementStates[mirroredEntry.elementId];
+            applyMeshColors(obj, stateColorSet(state));
+          } else if (meshMap.has(`original:${key}`)) {
+            hideMesh(obj);
+          } else {
+            applyMeshColors(obj, CONTEXT_COLORS);
           }
+        } else {
+          // Original scene: quiz elements get state colors, non-quiz get context colors
+          const entry = meshMap.get(`original:${key}`);
+          const colors = entry ? stateColorSet(elementStates[entry.elementId]) : CONTEXT_COLORS;
+          applyMeshColors(obj, colors);
         }
       }
       for (const child of obj.children) applyColors(child, sceneType);
@@ -516,7 +545,7 @@ interface SceneProps {
   readonly animTarget: CameraView | null;
   readonly onAnimDone: () => void;
   readonly labelMode: 'off' | 'hover' | 'on';
-  readonly onModelReady: (yMin: number, yMax: number, centers: Map<string, THREE.Vector3>, views: Record<string, CameraView>) => void;
+  readonly onModelReady: (yMin: number, yMax: number, centers: Map<string, MeshCenter>, views: Record<string, CameraView>) => void;
 }
 
 function Scene({
@@ -533,12 +562,12 @@ function Scene({
   const { camera } = useThree();
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
   const [yRange, setYRange] = useState({ yMin: 0, yMax: 1 });
-  const [boneCenters, setBoneCenters] = useState<Map<string, THREE.Vector3>>(new Map());
+  const [meshCenters, setMeshCenters] = useState<Map<string, MeshCenter>>(new Map());
 
   // Single callback: SkeletonMeshes calls this once with all model data so we
-  // never capture stale boneCenters state (which caused an infinite re-render loop).
+  // never capture stale state (which caused an infinite re-render loop).
   const handleModelReady = useCallback(
-    (yMin: number, yMax: number, centers: Map<string, THREE.Vector3>, views: Record<string, CameraView>) => {
+    (yMin: number, yMax: number, centers: Map<string, MeshCenter>, views: Record<string, CameraView>) => {
       const full = views['full'];
       if (full) {
         camera.position.copy(full.position);
@@ -549,20 +578,27 @@ function Scene({
         }
       }
       setYRange({ yMin, yMax });
-      setBoneCenters(centers);
+      setMeshCenters(centers);
       onModelReady(yMin, yMax, centers, views);
     },
     [camera, onModelReady],
   );
 
-  // Build label centers from boneCenters map + elementLabels
+  // Build label centers: one per mesh position, keyed by the meshCenter map key
+  // so each constituent mesh in a grouped element gets its own label sprite.
   const labelCenters = useMemo(() => {
-    return elementLabels.flatMap(({ id, label, state }) => {
-      const center = boneCenters.get(id);
-      if (!center) return [];
-      return [{ id, center, label, state }];
-    });
-  }, [elementLabels, boneCenters]);
+    const labelMap = new Map<string, { label: string; state: ElementVisualState | undefined }>();
+    for (const { id, label, state } of elementLabels) {
+      labelMap.set(id, { label, state });
+    }
+    const result: Array<{ id: string; center: THREE.Vector3; label: string; state: ElementVisualState | undefined; meshKey: string }> = [];
+    for (const [meshKey, { elementId, center }] of meshCenters) {
+      const info = labelMap.get(elementId);
+      if (!info) continue;
+      result.push({ id: elementId, center, label: info.label, state: info.state, meshKey });
+    }
+    return result;
+  }, [elementLabels, meshCenters]);
 
   return (
     <>
@@ -634,7 +670,7 @@ export function Anatomy3DRenderer({
   );
 
   const handleModelReady = useCallback(
-    (_yMin: number, _yMax: number, _centers: Map<string, THREE.Vector3>, modelViews: Record<string, CameraView>) => {
+    (_yMin: number, _yMax: number, _centers: Map<string, MeshCenter>, modelViews: Record<string, CameraView>) => {
       setViews(modelViews);
     },
     [],

@@ -26,6 +26,8 @@ export interface ActiveQuizProps {
   readonly rangeColumn?: string;
   readonly groupFilterColumn?: string;
   readonly hideFilteredElements?: boolean;
+  /** When false, locate mode shows all elements visible from the start. See QuizDefinition. */
+  readonly hideUnfocusedElements?: boolean;
   readonly tributaryColumn?: string;
   readonly distributaryColumn?: string;
   readonly segmentColumn?: string;
@@ -58,6 +60,7 @@ export function ActiveQuiz({
   rangeColumn,
   groupFilterColumn,
   hideFilteredElements,
+  hideUnfocusedElements,
   tributaryColumn,
   distributaryColumn,
   segmentColumn,
@@ -287,6 +290,7 @@ export function ActiveQuiz({
           reviewResult={reviewResult}
           initialCameraPosition={effectiveCameraPosition}
           locateDistanceMode={locateDistanceMode}
+          hideUnfocusedElements={hideUnfocusedElements}
         />
       </div>
     </div>

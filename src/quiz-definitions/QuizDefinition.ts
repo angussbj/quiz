@@ -92,4 +92,10 @@ export interface QuizDefinition<K extends string = string> {
     readonly width: number;
     readonly height: number;
   };
+  /**
+   * When false, the locate quiz mode shows all elements even before they are answered
+   * (instead of hiding them). Default / absent / true = default hide behaviour.
+   * Used for quizzes where the elements are always visible (e.g. 3D skeleton).
+   */
+  readonly hideUnfocusedElements?: boolean;
 }

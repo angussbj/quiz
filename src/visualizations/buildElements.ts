@@ -5,6 +5,7 @@ import { buildGridElements } from './periodic-table/buildGridElements';
 import { buildTimelineElementsFromRows } from './timeline/buildTimelineElementsFromRows';
 import { buildFlagGridElements } from './flag-grid/buildFlagGridElements';
 import { buildAnatomyElements } from './anatomy/buildAnatomyElements';
+import { buildAnatomy3DElements } from './anatomy-3d/buildAnatomy3DElements';
 
 export function buildElements(
   visualizationType: VisualizationType,
@@ -22,5 +23,7 @@ export function buildElements(
       return buildFlagGridElements(rows, columnMappings);
     case 'anatomy':
       return buildAnatomyElements(rows, columnMappings);
+    case 'anatomy-3d':
+      return buildAnatomy3DElements(rows, columnMappings);
   }
 }
