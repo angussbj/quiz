@@ -45,6 +45,7 @@ const capitalsQuizBase = {
   },
   dataPath: '/data/capitals/world-capitals.csv',
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
+  locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
   modeConstraints: {
     identify: [
       { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
@@ -84,6 +85,7 @@ const countriesQuizBase = {
   dataPath: '/data/borders/world-borders.csv',
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
   locateDistanceMode: 'polygon-boundary' as const,
+  locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
@@ -201,6 +203,7 @@ const subdivisionsQuizBase = {
   },
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
   locateDistanceMode: 'polygon-boundary' as const,
+  locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'dataPath'>;
 
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
@@ -290,6 +293,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     rangeLabel: 'Atomic number',
     groupFilterColumn: 'category',
     groupFilterLabel: 'Element category',
+    locateDistanceMode: 'grid-centroid' as const,
+    locateThresholds: { correct: 0, correctSecond: 1, correctThird: 2 },
   },
   {
     ...humanBonesQuizBase,

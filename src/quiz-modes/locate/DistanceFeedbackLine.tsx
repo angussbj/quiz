@@ -1,14 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { LocateFeedbackItem } from './LocateFeedbackItem';
+import { STATUS_COLORS } from '@/visualizations/elementStateColors';
 import { formatDistance } from './formatDistance';
 
-function distanceColor(distanceKm: number): string {
-  if (distanceKm <= 100) return 'var(--color-correct)';
-  if (distanceKm <= 300) return 'var(--color-highlight)';
-  return 'var(--color-incorrect)';
+function feedbackColor(item: LocateFeedbackItem): string {
+  if (item.elementState === 'hidden') return STATUS_COLORS['default'].main;
+  return STATUS_COLORS[item.elementState].main;
 }
 
-interface LocateFeedbackProps {
+interface DistanceFeedbackLineProps {
   readonly feedbackItems: ReadonlyArray<LocateFeedbackItem>;
 }
 
@@ -17,7 +17,7 @@ interface LocateFeedbackProps {
  * Each feedback item fades in immediately and fades out after ~2s.
  * Renders inside the SVG viewBox coordinate space.
  */
-export function LocateFeedback({ feedbackItems }: LocateFeedbackProps) {
+export function DistanceFeedbackLine({ feedbackItems }: DistanceFeedbackLineProps) {
   return (
     <AnimatePresence>
       {feedbackItems.map((item) => (
@@ -46,7 +46,7 @@ function feedbackIntensity(score: number) {
 }
 
 function FeedbackLine({ item }: FeedbackLineProps) {
-  const color = distanceColor(item.distanceKm);
+  const color = feedbackColor(item);
   const midX = (item.clickPosition.x + item.targetPosition.x) / 2;
   const midY = (item.clickPosition.y + item.targetPosition.y) / 2;
   const intensity = feedbackIntensity(item.score);

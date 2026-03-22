@@ -39,7 +39,12 @@ export interface ActiveQuizProps {
     readonly width: number;
     readonly height: number;
   }>>;
-  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary' | 'grid-centroid';
+  readonly locateThresholds?: {
+    readonly correct: number;
+    readonly correctSecond: number;
+    readonly correctThird: number;
+  };
 }
 
 /**
@@ -68,6 +73,7 @@ export function ActiveQuiz({
   initialCameraPosition,
   groupFilterCameraPositions,
   locateDistanceMode,
+  locateThresholds,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, backgroundElementIds } = useMemo(() => {
     const hasRangeFilter = rangeColumn && config.elementRange;
@@ -301,7 +307,6 @@ export function ActiveQuiz({
       <div className={styles.quizArea}>
         <Mode
           elements={activeElements}
-          allElements={elements}
           dataRows={activeDataRows}
           columnMappings={columnMappings}
           toggleDefinitions={toggleDefinitions}
@@ -318,6 +323,7 @@ export function ActiveQuiz({
           reviewResult={reviewResult}
           initialCameraPosition={effectiveCameraPosition}
           locateDistanceMode={locateDistanceMode}
+          locateThresholds={locateThresholds}
           hideUnfocusedElements={hideUnfocusedElements}
         />
       </div>

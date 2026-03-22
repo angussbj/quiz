@@ -50,6 +50,15 @@ export interface LakePath {
   readonly svgPathData: string;
 }
 
+/** A distance feedback line to be rendered by the visualization (e.g., from click to correct target). */
+export interface DistanceFeedbackLine {
+  readonly id: string;
+  readonly from: ViewBoxPosition;
+  readonly to: ViewBoxPosition;
+  readonly elementState: ElementVisualState;
+  readonly label?: string;
+}
+
 /**
  * Props every visualization renderer receives.
  * THE contract between quiz modes and renderers.
@@ -89,6 +98,8 @@ export interface VisualizationRendererProps {
    * It will never zoom in. One-shot — does not keep them in view after the move.
    */
   readonly putInView?: ReadonlyArray<string>;
+  /** Distance feedback lines for the renderer to draw (e.g., locate mode click-to-target paths). */
+  readonly distanceFeedbackLines?: ReadonlyArray<DistanceFeedbackLine>;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';

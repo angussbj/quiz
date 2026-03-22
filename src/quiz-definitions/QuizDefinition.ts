@@ -84,7 +84,17 @@ export interface QuizDefinition<K extends string = string> {
    * - `'polygon-boundary'`: zero distance for clicks inside the element's polygon;
    *   distance to the nearest border point for clicks outside. Use for country/region quizzes.
    */
-  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary' | 'grid-centroid';
+  /**
+   * Thresholds for graded locate feedback (correct/second/third/incorrect).
+   * Units match the distance mode: km for map modes, Manhattan steps for grid-centroid.
+   * When absent, falls back to legacy 100km correct threshold.
+   */
+  readonly locateThresholds?: {
+    readonly correct: number;
+    readonly correctSecond: number;
+    readonly correctThird: number;
+  };
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
   readonly initialCameraPosition?: {
     readonly x: number;
