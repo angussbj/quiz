@@ -150,8 +150,8 @@ export function useTimelineZoom({
     const mouseX = e.clientX - rect.left;
 
     const zoomFactor = isPinch
-      ? (e.deltaY > 0 ? 0.97 : 1.03)
-      : (e.deltaY > 0 ? 0.95 : 1.05);
+      ? (e.deltaY > 0 ? 0.90 : 1.10)
+      : (e.deltaY > 0 ? 0.92 : 1.08);
 
     setPanAndZoom(({ zoom }) => {
       // Read from live ref for accurate position during concurrent gestures
