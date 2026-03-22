@@ -352,19 +352,35 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   }, [onPositionClick, panOffset, zoom, minX]);
 
   // Hide overlapping tick labels via DOM measurement after layout.
+  // Two-pass: major labels are placed first so they always win over minor labels.
   const axisAreaRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const axisArea = axisAreaRef.current;
     if (!axisArea) return;
-    const labels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label]');
-    // Greedy left-to-right: keep a label if it doesn't overlap any previously kept label.
+    const majorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="major"]');
+    const minorLabels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label="minor"]');
+
     const kept: DOMRect[] = [];
-    for (const label of labels) {
+    const overlapsKept = (rect: DOMRect) =>
+      kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
+
+    // First pass: place major labels (greedy left-to-right among majors)
+    for (const label of majorLabels) {
       const rect = label.getBoundingClientRect();
-      // Zero-width means off-screen or not rendered — skip
       if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
-      const overlaps = kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
-      if (overlaps) {
+      if (overlapsKept(rect)) {
+        label.style.visibility = 'hidden';
+      } else {
+        label.style.visibility = '';
+        kept.push(rect);
+      }
+    }
+
+    // Second pass: place minor labels only where they don't collide with any kept label
+    for (const label of minorLabels) {
+      const rect = label.getBoundingClientRect();
+      if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
+      if (overlapsKept(rect)) {
         label.style.visibility = 'hidden';
       } else {
         label.style.visibility = '';
@@ -446,7 +462,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                   <div className={tick.isMajor ? styles.tickMarkMajor : styles.tickMarkMinor} />
                   {tick.showLabel && (
                     <div
-                      data-tick-label
+                      data-tick-label={tick.isMajor ? 'major' : 'minor'}
                       className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}
                     >
                       {tick.label}
