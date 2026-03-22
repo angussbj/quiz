@@ -36,6 +36,8 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     column: 0,
     symbol: 'H',
     atomicNumber: 1,
+    trueRow: 0,
+    trueColumn: 0,
     ...overrides,
   };
 }

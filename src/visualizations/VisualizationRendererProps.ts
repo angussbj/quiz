@@ -70,6 +70,8 @@ export interface VisualizationRendererProps {
   readonly lakePaths?: ReadonlyArray<LakePath>;
   /** Labels positioned at background shape centroids (e.g., country names) */
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
+  /** Additional SVG content rendered behind all elements (e.g., path lines that cells cover) */
+  readonly svgUnderlay?: ReactNode;
   /** Additional SVG content rendered on top of all elements (e.g., feedback overlays) */
   readonly svgOverlay?: ReactNode;
   /** The element currently being targeted (e.g., for identify mode highlight ring) */

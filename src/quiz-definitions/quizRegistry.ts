@@ -270,7 +270,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the elements of the periodic table.',
     path: ['Science', 'Chemistry'],
     visualizationType: 'grid',
-    availableModes: ['free-recall-unordered', 'prompted-recall', 'free-recall-ordered', 'identify'],
+    availableModes: ['free-recall-unordered', 'prompted-recall', 'free-recall-ordered', 'identify', 'locate'],
     defaultMode: 'free-recall-unordered',
     toggles: [
       { key: 'showSymbols', label: 'Element symbols', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' },

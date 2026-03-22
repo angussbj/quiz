@@ -6,6 +6,7 @@ import { FreeRecallMode } from './free-recall/FreeRecallMode';
 import { OrderedRecallMode } from './ordered-recall/OrderedRecallMode';
 import { IdentifyMode } from './identify/IdentifyMode';
 import { LocateMode } from './locate/LocateMode';
+import { GridLocateMode } from './locate/GridLocateMode';
 import { TimelineLocateMode } from './locate/TimelineLocateMode';
 import { PromptedRecallMode } from './prompted-recall/PromptedRecallMode';
 import { MultipleChoiceMode } from './multiple-choice/MultipleChoiceMode';
@@ -22,7 +23,7 @@ export function resolveMode(
     case 'free-recall-unordered': return FreeRecallMode;
     case 'free-recall-ordered': return OrderedRecallMode;
     case 'identify': return IdentifyMode;
-    case 'locate': return visualizationType === 'timeline' ? TimelineLocateMode : LocateMode;
+    case 'locate': return visualizationType === 'timeline' ? TimelineLocateMode : visualizationType === 'grid' ? GridLocateMode : LocateMode;
     case 'prompted-recall': return PromptedRecallMode;
     case 'multiple-choice': return MultipleChoiceMode;
   }
