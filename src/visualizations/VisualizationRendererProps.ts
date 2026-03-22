@@ -87,6 +87,8 @@ export interface VisualizationRendererProps {
    * It will never zoom in. One-shot — does not keep them in view after the move.
    */
   readonly putInView?: ReadonlyArray<string>;
+  /** Time scale for timeline renderers: 'linear' (default) or 'log'. */
+  readonly timeScale?: 'linear' | 'log';
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';

@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CursorTooltip } from '../CursorTooltip';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
@@ -9,6 +9,7 @@ import { isTimelineElement } from './TimelineElement';
 import { buildCategoryColorMap } from './categoryColors';
 import { STATUS_COLORS } from '../elementStateColors';
 import { computeAxisTicks } from './computeAxisTicks';
+import { computeLogAxisTicks, computeLogReferenceYear, logYearToViewBoxX, viewBoxXToLogYear } from './logTimeScale';
 import { formatTimestampRange, timestampToFractionalYear } from './TimelineTimestamp';
 import { UNITS_PER_YEAR } from './buildTimelineElements';
 import { useTimelineZoom } from './useTimelineZoom';
@@ -42,7 +43,8 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, putInView } = props;
+  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, putInView, timeScale } = props;
+  const isLogScale = timeScale === 'log';
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
@@ -50,6 +52,27 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   const timelineElements = useMemo(
     () => elements.filter(isTimelineElement),
     [elements],
+  );
+
+  // Compute the log-scale reference year from the latest event in the data.
+  const logReferenceYear = useMemo(() => {
+    if (!isLogScale) return 0;
+    let maxYear = -Infinity;
+    for (const el of timelineElements) {
+      const endYear = el.end
+        ? timestampToFractionalYear(el.end, true)
+        : timestampToFractionalYear(el.start, false);
+      maxYear = Math.max(maxYear, endYear);
+    }
+    return computeLogReferenceYear(maxYear);
+  }, [isLogScale, timelineElements]);
+
+  /** Convert a fractional year to its viewBox X coordinate. */
+  const yearToViewBoxX = useMemo(
+    () => isLogScale
+      ? (y: number) => logYearToViewBoxX(y, logReferenceYear)
+      : (y: number) => y * UNITS_PER_YEAR,
+    [isLogScale, logReferenceYear],
   );
 
   // Compute horizontal bounds from real elements (exclude spacers)
@@ -116,12 +139,22 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   // Derive the year range actually visible from pan/zoom state.
   // Fall back to full data range when container hasn't measured yet (e.g. jsdom).
   const hasValidViewport = containerWidth > 0 && zoom > 0;
-  const visibleStartYear = hasValidViewport ? (-panOffset / zoom + minX) / UNITS_PER_YEAR : minX / UNITS_PER_YEAR;
-  const visibleEndYear = hasValidViewport ? ((containerWidth - panOffset) / zoom + minX) / UNITS_PER_YEAR : maxX / UNITS_PER_YEAR;
+  const visibleStartYear = hasValidViewport
+    ? (isLogScale
+        ? viewBoxXToLogYear(-panOffset / zoom + minX, logReferenceYear)
+        : (-panOffset / zoom + minX) / UNITS_PER_YEAR)
+    : (isLogScale ? viewBoxXToLogYear(minX, logReferenceYear) : minX / UNITS_PER_YEAR);
+  const visibleEndYear = hasValidViewport
+    ? (isLogScale
+        ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX, logReferenceYear)
+        : ((containerWidth - panOffset) / zoom + minX) / UNITS_PER_YEAR)
+    : (isLogScale ? viewBoxXToLogYear(maxX, logReferenceYear) : maxX / UNITS_PER_YEAR);
   const effectivePixels = containerWidth || timelineWidth || 800;
   const axisTicks = useMemo(
-    () => computeAxisTicks(visibleStartYear, visibleEndYear, effectivePixels),
-    [visibleStartYear, visibleEndYear, effectivePixels],
+    () => isLogScale
+      ? computeLogAxisTicks(visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear)
+      : computeAxisTicks(visibleStartYear, visibleEndYear, effectivePixels),
+    [isLogScale, visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear],
   );
 
   // Compute pixel positions and per-track sub-layers for overlapping bars.
@@ -157,8 +190,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         // Compute from raw timestamps, not viewBoxBounds (which has baked-in minimum width)
         const startFrac = timestampToFractionalYear(el.start, false);
         const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
-        const left = (startFrac * UNITS_PER_YEAR - minX) * zoom;
-        const rawWidth = (endFrac - startFrac) * UNITS_PER_YEAR * zoom;
+        const left = (yearToViewBoxX(startFrac) - minX) * zoom;
+        const rawWidth = (yearToViewBoxX(endFrac) - yearToViewBoxX(startFrac)) * zoom;
         const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
         return { el, left, right: left + width, width };
       });
@@ -229,8 +262,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       const pixelExtents = sorted.map((el) => {
         const startFrac = timestampToFractionalYear(el.start, false);
         const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
-        const left = (startFrac * UNITS_PER_YEAR - minX) * zoom;
-        const rawWidth = (endFrac - startFrac) * UNITS_PER_YEAR * zoom;
+        const left = (yearToViewBoxX(startFrac) - minX) * zoom;
+        const rawWidth = (yearToViewBoxX(endFrac) - yearToViewBoxX(startFrac)) * zoom;
         const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
         return { el, left, right: left + width, width };
       });
@@ -266,7 +299,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     }
 
     return { barLayouts: layouts, totalContentHeight: currentY + AXIS_HEIGHT };
-  }, [visibleElements, zoom, minX]);
+  }, [visibleElements, zoom, minX, yearToViewBoxX]);
 
   // Scroll to newly-revealed elements (correct answers, or incorrect/missed when first becoming visible)
   const prevElementStatesRef = useRef<Readonly<Record<string, string>>>({});
@@ -317,6 +350,28 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     const viewBoxX = (pixelX - panOffset) / zoom + minX;
     onPositionClick({ x: viewBoxX, y: 0 });
   }, [onPositionClick, panOffset, zoom, minX]);
+
+  // Hide overlapping tick labels via DOM measurement after layout.
+  const axisAreaRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const axisArea = axisAreaRef.current;
+    if (!axisArea) return;
+    const labels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label]');
+    // Greedy left-to-right: keep a label if it doesn't overlap any previously kept label.
+    const kept: DOMRect[] = [];
+    for (const label of labels) {
+      const rect = label.getBoundingClientRect();
+      // Zero-width means off-screen or not rendered — skip
+      if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
+      const overlaps = kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
+      if (overlaps) {
+        label.style.visibility = 'hidden';
+      } else {
+        label.style.visibility = '';
+        kept.push(rect);
+      }
+    }
+  }, [axisTicks, zoom, panOffset]);
 
   const tooltipTextRef = useRef('');
   const hoveredElementRef = useRef<TimelineElement | null>(null);
@@ -378,20 +433,22 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
           style={{
             width: `${timelineWidth}px`,
             transform: `translateX(${panOffset}px)`,
-            minHeight: `${totalContentHeight}px`,
             transition: isScrolling && !isDragging.current ? 'transform 0.4s ease-out' : undefined,
           }}
           onClick={handleAreaClick}
         >
           {/* Axis */}
-          <div className={styles.axisArea}>
+          <div className={styles.axisArea} ref={axisAreaRef}>
             {axisTicks.map((tick, i) => {
-              const pixelX = (tick.fractionalYear * UNITS_PER_YEAR - minX) * zoom;
+              const pixelX = (yearToViewBoxX(tick.fractionalYear) - minX) * zoom;
               return (
                 <div key={i} className={styles.tick} style={{ left: `${pixelX}px` }}>
                   <div className={tick.isMajor ? styles.tickMarkMajor : styles.tickMarkMinor} />
                   {tick.showLabel && (
-                    <div className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}>
+                    <div
+                      data-tick-label
+                      className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}
+                    >
                       {tick.label}
                     </div>
                   )}
@@ -401,14 +458,14 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
           </div>
 
           {/* Grid lines (behind bars) */}
-          <div className={styles.tracksArea}>
+          <div className={styles.tracksArea} style={{ minHeight: `${totalContentHeight - AXIS_HEIGHT}px` }}>
             {axisTicks.filter((t) => t.isMajor).map((tick, i) => {
-              const pixelX = (tick.fractionalYear * UNITS_PER_YEAR - minX) * zoom;
+              const pixelX = (yearToViewBoxX(tick.fractionalYear) - minX) * zoom;
               return (
                 <div
                   key={`grid-${i}`}
                   className={styles.gridLine}
-                  style={{ left: `${pixelX}px`, height: `${totalContentHeight - AXIS_HEIGHT}px` }}
+                  style={{ left: `${pixelX}px` }}
                 />
               );
             })}
