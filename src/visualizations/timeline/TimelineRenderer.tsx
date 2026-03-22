@@ -48,6 +48,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const innerContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
   const timelineElements = useMemo(
@@ -119,6 +120,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     scrollIntoView,
   } = useTimelineZoom({
     containerRef,
+    innerContainerRef,
     totalViewBoxWidth,
     containerWidth,
   });
@@ -425,6 +427,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         onMouseLeave={handleMouseUpOrLeave}
       >
         <div
+          ref={innerContainerRef}
           className={styles.innerContainer}
           style={{
             width: `${timelineWidth}px`,

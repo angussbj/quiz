@@ -136,7 +136,7 @@ describe('countries quiz data validation', () => {
   it('contains expected countries across all continents', () => {
     const names = new Set(sovereignRows.map((r) => r.name));
     // Sample from each continent
-    expect(names.has('United States')).toBe(true);
+    expect(names.has('United States of America')).toBe(true);
     expect(names.has('Brazil')).toBe(true);
     expect(names.has('Japan')).toBe(true);
     expect(names.has('Australia')).toBe(true);
