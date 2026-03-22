@@ -87,3 +87,38 @@
   color: var(--color-accent, #4a90d9);
   border-color: var(--color-accent, #4a90d9);
 }
+
+/* ─── Label toggle ───────────────────────────────────────────────────────── */
+
+.labelToggle {
+  display: flex;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.labelButton {
+  flex: 1;
+  padding: 0.3rem 0;
+  font-size: 0.72rem;
+  font-family: inherit;
+  border: none;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.labelButton:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
+.labelButton:hover:not(.labelButtonActive) {
+  background: var(--color-bg-secondary);
+}
+
+.labelButtonActive {
+  background: var(--color-accent, #4a90d9);
+  color: #fff;
+  font-weight: 600;
+}

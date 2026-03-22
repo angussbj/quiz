@@ -270,14 +270,34 @@ interface BoneLabelsProps {
   readonly labelMode: 'off' | 'hover' | 'on';
 }
 
-function BoneLabels({ centers, yMin, yMax, hoveredElementId, labelMode }: BoneLabelsProps) {
-  if (labelMode === 'off') return null;
+/** Should this element's label be visible given its state and the label mode?
+ *  Respects element-states.md: answered states always show, default/highlighted
+ *  only show when label mode permits (and even then only on hover for 'hover' mode),
+ *  hidden never shows. This prevents labels from giving away answers. */
+function shouldShowBoneLabel(
+  state: ElementVisualState | undefined,
+  labelMode: 'off' | 'hover' | 'on',
+  id: string,
+  hoveredElementId: string | null,
+): boolean {
+  if (labelMode === 'off') return false;
+  // Hidden elements never get labels
+  if (state === 'hidden') return false;
+  // Answered/resolved states: always show label (the answer is known)
+  if (state === 'correct' || state === 'correct-second' || state === 'correct-third' ||
+      state === 'incorrect' || state === 'missed' || state === 'context') {
+    return true;
+  }
+  // default / highlighted: only on hover (never bulk-reveal unanswered labels)
+  if (id === hoveredElementId) return true;
+  return false;
+}
 
+function BoneLabels({ centers, yMin, yMax, hoveredElementId, labelMode }: BoneLabelsProps) {
   return (
     <>
       {centers.map(({ id, center, label, state }) => {
-        if (state === 'hidden') return null;
-        if (labelMode === 'hover' && id !== hoveredElementId) return null;
+        if (!shouldShowBoneLabel(state, labelMode, id, hoveredElementId)) return null;
         const isBilateral = Math.abs(center.x) > BILATERAL_THRESHOLD;
         const sc = zoneScale(center, yMin, yMax);
         return (
@@ -603,27 +623,20 @@ const HOTKEY_MAP: Readonly<Record<string, string>> = Object.fromEntries(
 /**
  * 3D skeleton renderer implementing the VisualizationRendererProps contract.
  *
- * Toggle keys:
- *   labelMode (selectToggle): 'off' | 'hover' | 'on'
+ * Label mode is managed locally in the sidebar (not a quiz toggle)
+ * to keep it close to the 3D viewport. Labels respect element state
+ * visibility rules (element-states.md) to avoid revealing answers.
  */
 export function Anatomy3DRenderer({
   elements,
   elementStates,
   onElementClick,
-  toggles,
 }: VisualizationRendererProps) {
   const [views, setViews] = useState<Record<string, CameraView>>({});
   const [animTarget, setAnimTarget] = useState<CameraView | null>(null);
+  const [labelMode, setLabelMode] = useState<'off' | 'hover' | 'on'>('hover');
 
   const meshMap = useMemo(() => buildMeshMap(elements), [elements]);
-
-  // Label mode from toggles (select toggle value stored as string in a 'labelMode' key)
-  // Fallback: 'hover' if not set
-  const labelModeRaw = (toggles as Readonly<Record<string, string | boolean>>)['labelMode'];
-  const labelMode: 'off' | 'hover' | 'on' =
-    labelModeRaw === 'off' || labelModeRaw === 'hover' || labelModeRaw === 'on'
-      ? labelModeRaw
-      : 'hover';
 
   // Element labels for the label overlay
   const elementLabels = useMemo(
@@ -670,6 +683,18 @@ export function Anatomy3DRenderer({
             >
               <span className={styles.presetLabel}>{label}</span>
               <kbd className={styles.hotkey}>{hotkey}</kbd>
+            </button>
+          ))}
+        </div>
+        <span className={styles.sidebarHeading}>Labels</span>
+        <div className={styles.labelToggle}>
+          {(['off', 'hover', 'on'] as const).map((mode) => (
+            <button
+              key={mode}
+              className={`${styles.labelButton} ${mode === labelMode ? styles.labelButtonActive : ''}`}
+              onClick={() => setLabelMode(mode)}
+            >
+              {mode === 'off' ? 'Off' : mode === 'hover' ? 'Hover' : 'On'}
             </button>
           ))}
         </div>
