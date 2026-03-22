@@ -1,15 +1,6 @@
 /**
  * Anatomy3DRenderer — React Three Fiber renderer for the 3D human skeleton quiz.
- *
- * Receives VisualizationRendererProps and renders a GLB skeleton model.
- * Per-bone colors follow element-state rules (element-states.md).
- * Bones not in the quiz element list are shown in the 'context' style.
- *
- * Toggle keys understood by this renderer (from VisualizationRendererProps.toggles):
- *   labelMode  — via selectToggles: 'off' | 'hover' | 'on'  (stored as string in toggles via prefix)
- *   showLabels — boolean (if select toggle is not available, fall back to this)
- *
- * The sidebar (camera presets) is rendered inside the component.
+ * See docs/anatomy-3d-renderer.md for architecture, label visibility rules, and color mapping.
  */
 import {
   Suspense,
