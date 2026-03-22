@@ -39,4 +39,9 @@ export interface QuizModeProps {
   readonly reviewResult?: ReviewResult;
   /** How locate mode measures distance. See QuizDefinition.locateDistanceMode. */
   readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
+  /**
+   * When false, interactive elements start visible (default state) instead of hidden.
+   * Used by quizzes where elements are always shown (e.g. 3D skeleton). Default: true.
+   */
+  readonly hideUnfocusedElements?: boolean;
 }

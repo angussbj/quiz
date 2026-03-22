@@ -5,6 +5,7 @@ import { getQuizById } from '@/quiz-definitions/getQuizById';
 
 const HomePage = lazy(() => import('./routes/HomePage.tsx'));
 const QuizPage = lazy(() => import('./routes/QuizPage.tsx'));
+const SkeletonSpike = lazy(() => import('./routes/SkeletonSpike.tsx'));
 
 function QuizOrCategoryPage() {
   const { '*': slug } = useParams();
@@ -21,6 +22,7 @@ export function App() {
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/bones-3d-spike" element={<SkeletonSpike />} />
             <Route path="/*" element={<QuizOrCategoryPage />} />
           </Routes>
         </Suspense>

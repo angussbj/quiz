@@ -2,6 +2,8 @@
 export interface ViewBoxPosition {
   readonly x: number;
   readonly y: number;
+  /** Optional third axis for 3D renderers (e.g. anatomy-3d). 2D renderers ignore this. */
+  readonly z?: number;
 }
 
 /** Bounding box in SVG viewBox coordinate space */

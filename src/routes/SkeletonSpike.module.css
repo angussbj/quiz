@@ -1,0 +1,157 @@
+.page {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - var(--header-height, 56px));
+  display: flex;
+  flex-direction: row;
+}
+
+.canvas {
+  flex: 1;
+  height: 100%;
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────── */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.sidebarHeading {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  padding: 0 0.25rem;
+}
+
+/* ─── Preset buttons ──────────────────────────────────────── */
+
+.presets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.presetButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.presetButton:hover:not(:disabled) {
+  border-color: var(--color-accent, #4a90d9);
+  color: var(--color-accent, #4a90d9);
+}
+
+.presetButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.presetLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.hotkey {
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-surface-raised, rgba(128, 128, 128, 0.12));
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  padding: 0 0.3rem;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.presetButton:hover:not(:disabled) .hotkey {
+  color: var(--color-accent, #4a90d9);
+  border-color: var(--color-accent, #4a90d9);
+}
+
+/* ─── Label mode selector ─────────────────────────────────── */
+
+.labelModeGroup {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.labelModeButton {
+  flex: 1;
+  padding: 0.3rem 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.labelModeButton:last-child {
+  border-right: none;
+}
+
+.labelModeButton:hover:not(.labelModeActive) {
+  background: var(--color-surface-raised, rgba(128, 128, 128, 0.1));
+  color: var(--color-text);
+}
+
+.labelModeActive {
+  background: var(--color-accent, #4a90d9);
+  color: #fff;
+}
+
+/* ─── Bone name label ─────────────────────────────────────── */
+
+.label {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.labelKey {
+  color: var(--color-text-muted);
+}
+
+.labelValue {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.labelHint {
+  color: var(--color-text-muted);
+  font-style: italic;
+}

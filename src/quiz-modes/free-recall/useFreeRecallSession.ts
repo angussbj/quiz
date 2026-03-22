@@ -41,6 +41,11 @@ export function useFreeRecallSession({
   const [lastMatchedAnswer, setLastMatchedAnswer] = useState<string | undefined>(undefined);
   const [ambiguousMessage, setAmbiguousMessage] = useState<string | undefined>(undefined);
 
+  const elementLabelById = useMemo(
+    () => new Map(elements.map((el) => [el.id, el.label])),
+    [elements],
+  );
+
   const correctIdSet = useMemo(() => new Set(correctIds), [correctIds]);
   const interactiveElements = useMemo(
     () => elements.filter((el) => el.interactive !== false),
@@ -115,9 +120,9 @@ export function useFreeRecallSession({
       setAmbiguousMessage(undefined);
       setCorrectIds((prev) => [...prev, match.elementId]);
       setLastMatchedElementId(match.elementId);
-      setLastMatchedAnswer(match.displayAnswer);
+      setLastMatchedAnswer(elementLabelById.get(match.elementId) ?? match.displayAnswer);
     }
-  }, [answerColumn, givenUp]);
+  }, [answerColumn, elementLabelById, givenUp]);
 
   const handleGiveUp = useCallback(() => {
     setGivenUp(true);

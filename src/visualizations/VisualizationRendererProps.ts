@@ -89,4 +89,4 @@ export interface VisualizationRendererProps {
   readonly putInView?: ReadonlyArray<string>;
 }
 
-export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy';
+export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';

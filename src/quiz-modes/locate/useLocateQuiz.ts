@@ -25,26 +25,40 @@ export interface LocateQuizState {
 
 export interface LocateQuizActions {
   readonly handlePositionClick: (position: ViewBoxPosition) => void;
+  /** Handle a click on a named element (for renderers where the user clicks a 3D object). */
+  readonly handleElementClick: (elementId: string) => void;
   readonly handleSkip: () => void;
   readonly handleGiveUp: () => void;
 }
 
+export interface LocateQuizOptions {
+  /** How locate mode measures distance. See QuizDefinition.locateDistanceMode. */
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
+  /**
+   * When false, interactive elements start in 'default' state (visible) instead of
+   * 'hidden'. Use for quizzes where all elements are always shown (e.g. 3D skeleton).
+   */
+  readonly hideUnfocusedElements?: boolean;
+}
+
 export function useLocateQuiz(
   elements: ReadonlyArray<VisualizationElement>,
-  locateDistanceMode?: 'centroid' | 'polygon-boundary',
+  options?: LocateQuizOptions,
 ): LocateQuizState & LocateQuizActions {
   const [targetOrder] = useState<ReadonlyArray<string>>(() =>
     shuffle(elements.filter((e) => e.interactive).map((e) => e.id)),
   );
   const [currentTargetIndex, setCurrentTargetIndex] = useState(0);
   const [distances, setDistances] = useState<ReadonlyArray<number>>([]);
+  const hideUnfocused = options?.hideUnfocusedElements !== false;
   const [elementStates, setElementStates] = useState<Readonly<Record<string, ElementVisualState>>>(() => {
     const states: Record<string, ElementVisualState> = {};
     for (const element of elements) {
-      // Interactive elements (quiz targets) start hidden — showing their
-      // positions would give away the answers. Non-interactive elements
-      // (decorative) start revealed.
-      states[element.id] = element.interactive ? 'hidden' : 'context';
+      // Interactive elements (quiz targets) start hidden (or default if hideUnfocused is false).
+      // Non-interactive (decorative) elements always start in context state.
+      states[element.id] = element.interactive
+        ? (hideUnfocused ? 'hidden' : 'default')
+        : 'context';
     }
     return states;
   });
@@ -112,7 +126,7 @@ export function useLocateQuiz(
         const clickLng = clickPosition.x;
 
         // Polygon-boundary mode: zero distance inside, border distance outside
-        if (locateDistanceMode === 'polygon-boundary' && targetElement.svgPathData &&
+        if (options?.locateDistanceMode === 'polygon-boundary' && targetElement.svgPathData &&
             targetElement.pathRenderStyle !== 'stroke') {
           const { borderPoint, isInside } = computePolygonDistance(clickPosition, targetElement.svgPathData);
           if (isInside) {
@@ -157,7 +171,7 @@ export function useLocateQuiz(
         feedbackTargetPosition: targetElement.viewBoxCenter,
       };
     },
-    [locateDistanceMode],
+    [options?.locateDistanceMode],
   );
 
   const handlePositionClick = useCallback(
@@ -193,6 +207,49 @@ export function useLocateQuiz(
     [isFinished, currentTarget, currentTargetIndex, computeDistanceAndTarget, scheduleFeedbackRemoval],
   );
 
+  /**
+   * Handle a click on a named element (used by 3D renderers).
+   * Correct if the clicked element IS the target; incorrect otherwise.
+   * Distance is Euclidean in model units (cm for 3D bones).
+   */
+  const handleElementClick = useCallback(
+    (clickedElementId: string) => {
+      if (isFinished || !currentTarget) return;
+      const clickedEl = elementsById.get(clickedElementId);
+      if (!clickedEl) return;
+
+      const dx = clickedEl.viewBoxCenter.x - currentTarget.viewBoxCenter.x;
+      const dy = clickedEl.viewBoxCenter.y - currentTarget.viewBoxCenter.y;
+      const dz = (clickedEl.viewBoxCenter.z ?? 0) - (currentTarget.viewBoxCenter.z ?? 0);
+      const distanceCm = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      // Correct = same element (distance ≈ 0); use 1 cm as floating-point tolerance
+      const isCorrect = distanceCm < 1;
+      // Store distance in the same array; 0 for correct, actual cm for wrong
+      const feedbackId = `feedback-${currentTargetIndex}`;
+      const feedbackItem: LocateFeedbackItem = {
+        id: feedbackId,
+        elementId: currentTarget.id,
+        clickPosition: clickedEl.viewBoxCenter,
+        targetPosition: currentTarget.viewBoxCenter,
+        distanceKm: distanceCm, // cm stored in the km field for element-click mode
+        score: isCorrect ? 1 : 0,
+        createdAt: Date.now(),
+      };
+
+      setDistances((prev) => [...prev, distanceCm]);
+      setFeedbackItems((prev) => [...prev, feedbackItem]);
+      scheduleFeedbackRemoval(feedbackId);
+
+      setElementStates((prev) => ({
+        ...prev,
+        [currentTarget.id]: isCorrect ? 'correct' : 'incorrect',
+      }));
+
+      setCurrentTargetIndex((prev) => prev + 1);
+    },
+    [isFinished, currentTarget, currentTargetIndex, elementsById, scheduleFeedbackRemoval],
+  );
+
   const handleSkip = useCallback(() => {
     if (isFinished || !currentTarget) return;
     setElementStates((prev) => ({
@@ -226,6 +283,7 @@ export function useLocateQuiz(
     isFinished,
     averageDistance,
     handlePositionClick,
+    handleElementClick,
     handleSkip,
     handleGiveUp,
   };

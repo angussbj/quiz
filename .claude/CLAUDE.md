@@ -144,6 +144,7 @@ Source files are gitignored (too large). Download URLs are in each script's head
 - `docs/quiz-integration.md` — Quiz page flow, mode composition patterns, element building, background paths, answer matching
 - `docs/history-quiz-guidelines.md` — Principles for selecting/grouping historical events, CSV format for timelines, date precision
 - `docs/element-states.md` — Approved element visual state table and per-mode usage contract
+- `docs/anatomy-3d-renderer.md` — 3D skeleton renderer: GLB mirroring, name sanitization, label visibility, state colors
 
 ## Worktree Development
 

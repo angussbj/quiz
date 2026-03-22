@@ -27,8 +27,9 @@ export function LocateMode({
   reviewResult,
   initialCameraPosition,
   locateDistanceMode,
+  hideUnfocusedElements,
 }: QuizModeProps) {
-  const quiz = useLocateQuiz(elements, locateDistanceMode);
+  const quiz = useLocateQuiz(elements, { locateDistanceMode, hideUnfocusedElements });
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
@@ -129,6 +130,7 @@ export function LocateMode({
           elements={elements}
           elementStates={reviewElementStates}
           onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
+          onElementClick={reviewing || quiz.isFinished ? undefined : quiz.handleElementClick}
           toggles={toggleValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}

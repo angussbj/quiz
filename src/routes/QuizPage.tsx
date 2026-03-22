@@ -155,6 +155,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             rangeColumn={definition.rangeColumn}
             groupFilterColumn={definition.groupFilterColumn}
             hideFilteredElements={definition.hideFilteredElements}
+            hideUnfocusedElements={definition.hideUnfocusedElements}
             tributaryColumn={definition.tributaryColumn}
             distributaryColumn={definition.distributaryColumn}
             segmentColumn={definition.segmentColumn}
