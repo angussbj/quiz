@@ -80,6 +80,10 @@ Source files are gitignored (too large). Download URLs are in each script's head
 
 ## Conventions
 
+### Avoid Unnecessary Duplication
+- Before creating a new component/hook/mode that is similar to an existing one, ask whether the existing code can be extended instead. Creating a parallel copy (e.g. `GridLocateMode` alongside `LocateMode`) adds significant maintenance burden and is usually avoidable.
+- When you spot that a planned implementation would duplicate an existing pattern, flag it and propose how to extend the original instead. The user may adjust the requirements or approach to avoid the duplication.
+
 ### File Organization
 - One component/interface per file. One responsibility per file.
 - Break long functions into multiple smaller functions, and large classes into multiple smaller classes. Functions and classes should each have one clear responsibility.

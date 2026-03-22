@@ -8,6 +8,7 @@ import { elementToggle } from '../elementToggle';
 import type { ElementVisualState } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
 import { gridElementToVisualizationElement } from './gridElementToVisualizationElement';
+import { GridFeedbackOverlay } from './GridFeedbackOverlay';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 
 export const ZOOM_DETAIL_THRESHOLD = 1.8;
@@ -22,7 +23,8 @@ interface CellProps {
   readonly showName: boolean;
   readonly isClustered: boolean;
   readonly zoomedIn: boolean;
-  readonly onClick?: (elementId: string) => void;
+  readonly onElementClick?: (elementId: string) => void;
+  readonly onPositionClick?: (position: { readonly x: number; readonly y: number }) => void;
 }
 
 function stateToFill(state: ElementVisualState, groupColorIndex: number | undefined, showGroups: boolean): string {
@@ -71,15 +73,14 @@ function GridCell({
   showName,
   isClustered,
   zoomedIn,
-  onClick,
+  onElementClick,
+  onPositionClick,
 }: CellProps) {
   if (isClustered) return null;
 
   const x = element.column * CELL_STEP;
   const y = element.row * CELL_STEP;
-  const isIncorrect = state === 'incorrect';
-  // For incorrect flash: render base cell as hidden, overlay fades out on top
-  const baseState = isIncorrect ? 'hidden' : state;
+  const baseState = state;
   const fill = stateToFill(baseState, groupColorIndex, showGroups);
   const stroke = stateToStroke(baseState);
   const textFill = stateToTextFill(baseState, groupColorIndex, showGroups);
@@ -89,6 +90,19 @@ function GridCell({
   const nameVisible = (answered || showName) && zoomedIn;
   const interactive = element.interactive;
 
+  const cellCenterX = x + CELL_SIZE / 2;
+  const cellCenterY = y + CELL_SIZE / 2;
+
+  const handleClick = interactive
+    ? () => {
+        if (onPositionClick) {
+          onPositionClick({ x: cellCenterX, y: cellCenterY });
+        } else if (onElementClick) {
+          onElementClick(element.id);
+        }
+      }
+    : undefined;
+
   const hasAtomicNumber = atomicNumberVisible && element.atomicNumber > 0;
   const symbolY = hasAtomicNumber || nameVisible
     ? y + CELL_SIZE * 0.45
@@ -97,10 +111,9 @@ function GridCell({
   return (
     <g
       data-element-id={element.id}
-      onClick={interactive ? () => onClick?.(element.id) : undefined}
+      onClick={handleClick}
       style={{ cursor: interactive ? 'pointer' : 'default' }}
     >
-      {/* Base cell — always visible underneath */}
       <rect
         x={x}
         y={y}
@@ -151,47 +164,6 @@ function GridCell({
           {element.label}
         </text>
       )}
-
-      {/* Incorrect flash overlay — fades out to reveal base cell */}
-      {isIncorrect && (
-        <g style={{ animation: 'flash-fade 800ms ease-out forwards' }}>
-          <rect
-            x={x}
-            y={y}
-            width={CELL_SIZE}
-            height={CELL_SIZE}
-            rx={4}
-            ry={4}
-            fill="var(--color-incorrect-bg)"
-            stroke="var(--color-incorrect)"
-            strokeWidth={2.5}
-          />
-          <text
-            x={x + CELL_SIZE / 2}
-            y={y + CELL_SIZE / 2}
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="var(--color-incorrect)"
-            fontSize={zoomedIn ? 18 : 14}
-            fontWeight="bold"
-          >
-            {element.symbol}
-          </text>
-          {zoomedIn && (
-            <text
-              x={x + CELL_SIZE / 2}
-              y={y + CELL_SIZE * 0.75}
-              textAnchor="middle"
-              dominantBaseline="central"
-              fill="var(--color-incorrect)"
-              fontSize={8}
-              opacity={0.85}
-            >
-              {element.label}
-            </text>
-          )}
-        </g>
-      )}
     </g>
   );
 }
@@ -200,8 +172,10 @@ function PeriodicTableGrid({
   elements,
   elementStates,
   onElementClick,
+  onPositionClick,
   toggles,
   elementToggles,
+  distanceFeedbackLines,
 }: VisualizationRendererProps) {
   const { scale, clusteredElementIds } = useZoomPan();
   const zoomedIn = scale >= ZOOM_DETAIL_THRESHOLD;
@@ -237,10 +211,14 @@ function PeriodicTableGrid({
             showName={elementToggle(elementToggles, toggles, element.id, 'showNames')}
             isClustered={clusteredElementIds.has(element.id)}
             zoomedIn={zoomedIn}
-            onClick={onElementClick}
+            onElementClick={onElementClick}
+            onPositionClick={onPositionClick}
           />
         );
       })}
+      {distanceFeedbackLines && distanceFeedbackLines.length > 0 && (
+        <GridFeedbackOverlay lines={distanceFeedbackLines} elements={elements} />
+      )}
     </g>
   );
 }
@@ -259,6 +237,7 @@ export function PeriodicTableRenderer(props: VisualizationRendererProps) {
       onClusterClick={props.onClusterClick}
       putInView={props.putInView}
     >
+      {props.svgUnderlay}
       <PeriodicTableGrid {...props} />
       {props.svgOverlay}
     </ZoomPanContainer>

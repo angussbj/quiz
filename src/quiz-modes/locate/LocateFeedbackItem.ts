@@ -1,6 +1,6 @@
-import type { ViewBoxPosition } from '@/visualizations/VisualizationElement';
+import type { ViewBoxPosition, ElementVisualState } from '@/visualizations/VisualizationElement';
 
-/** A single feedback item shown after the user clicks on the map. */
+/** A single feedback item shown after the user clicks in locate mode. */
 export interface LocateFeedbackItem {
   readonly id: string;
   readonly elementId: string;
@@ -8,5 +8,6 @@ export interface LocateFeedbackItem {
   readonly targetPosition: ViewBoxPosition;
   readonly distanceKm: number;
   readonly score: number;
+  readonly elementState: ElementVisualState;
   readonly createdAt: number;
 }

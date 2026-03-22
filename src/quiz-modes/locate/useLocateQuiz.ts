@@ -4,11 +4,31 @@ import { isMapElement } from '@/visualizations/map/MapElement';
 import { closestPointOnPath } from '@/visualizations/map/closestPointOnPath';
 import { computePolygonDistance } from '@/visualizations/map/polygonDistance';
 import { calculateGreatCircleDistance } from '@/scoring/calculateGreatCircleDistance';
-import { calculateLocateAnswerScore, isLocateAnswerCorrect } from '@/scoring/calculateLocateAnswerScore';
+import { calculateLocateAnswerScore } from '@/scoring/calculateLocateAnswerScore';
+import { periodicTableGridDistance, buildOccupiedCells } from '@/quiz-definitions/quiz-specific-logic/periodicTableGridDistance';
 import { shuffle } from '@/utilities/shuffle';
 import type { LocateFeedbackItem } from './LocateFeedbackItem';
 
 const FEEDBACK_DURATION_MS = 2000;
+
+export interface LocateThresholds {
+  readonly correct: number;
+  readonly correctSecond: number;
+  readonly correctThird: number;
+}
+
+function distanceToElementState(distance: number, thresholds: LocateThresholds): ElementVisualState {
+  if (distance <= thresholds.correct) return 'correct';
+  if (distance <= thresholds.correctSecond) return 'correct-second';
+  if (distance <= thresholds.correctThird) return 'correct-third';
+  return 'incorrect';
+}
+
+const DEFAULT_MAP_THRESHOLDS: LocateThresholds = {
+  correct: 100,
+  correctSecond: 200,
+  correctThird: 300,
+};
 
 export interface LocateQuizState {
   readonly currentTarget: VisualizationElement | undefined;
@@ -33,7 +53,9 @@ export interface LocateQuizActions {
 
 export interface LocateQuizOptions {
   /** How locate mode measures distance. See QuizDefinition.locateDistanceMode. */
-  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary' | 'grid-centroid';
+  /** Thresholds for graded locate feedback. */
+  readonly locateThresholds?: LocateThresholds;
   /**
    * When false, interactive elements start in 'default' state (visible) instead of
    * 'hidden'. Use for quizzes where all elements are always shown (e.g. 3D skeleton).
@@ -79,6 +101,10 @@ export function useLocateQuiz(
     new Map(elements.map((e) => [e.id, e])),
   ).current;
 
+  const occupiedCells = useRef(
+    buildOccupiedCells(elements.map((e) => e.viewBoxCenter)),
+  ).current;
+
   const currentTargetId = currentTargetIndex < targetOrder.length
     ? targetOrder[currentTargetIndex]
     : undefined;
@@ -86,7 +112,8 @@ export function useLocateQuiz(
   const isFinished = currentTargetIndex >= targetOrder.length;
   const totalTargets = targetOrder.length;
 
-  const correctCount = distances.filter((d) => isLocateAnswerCorrect(d)).length;
+  const thresholds = options?.locateThresholds ?? DEFAULT_MAP_THRESHOLDS;
+  const correctCount = distances.filter((d) => d <= thresholds.correct).length;
   const totalScore = distances.reduce(
     (sum, d) => sum + calculateLocateAnswerScore(d),
     0,
@@ -107,20 +134,21 @@ export function useLocateQuiz(
   /**
    * Compute the distance from a click to a target element, and the feedback target position
    * (the point to draw the "correct location" marker at).
-   *
-   * For polygon-boundary mode (countries/regions):
-   * - Inside the polygon: distance = 0, feedback target = click position.
-   * - Outside: distance = great-circle to nearest border point, feedback target = that border point.
-   *
-   * For centroid mode (cities, default):
-   * - Distance = great-circle to element's geographic center.
-   * - Feedback target = element's viewBox center.
    */
   const computeDistanceAndTarget = useCallback(
     (clickPosition: ViewBoxPosition, targetElement: VisualizationElement): {
       readonly distanceKm: number;
       readonly feedbackTargetPosition: ViewBoxPosition;
     } => {
+      // Grid-centroid mode: Manhattan distance in the true 32-column grid
+      if (options?.locateDistanceMode === 'grid-centroid') {
+        const distance = periodicTableGridDistance(clickPosition, targetElement.viewBoxCenter, occupiedCells);
+        return {
+          distanceKm: distance,
+          feedbackTargetPosition: targetElement.viewBoxCenter,
+        };
+      }
+
       if (isMapElement(targetElement)) {
         const clickLat = -clickPosition.y;
         const clickLng = clickPosition.x;
@@ -180,7 +208,7 @@ export function useLocateQuiz(
 
       const { distanceKm, feedbackTargetPosition } = computeDistanceAndTarget(position, currentTarget);
       const score = calculateLocateAnswerScore(distanceKm);
-      const isCorrect = isLocateAnswerCorrect(distanceKm);
+      const elementState = distanceToElementState(distanceKm, thresholds);
 
       const feedbackId = `feedback-${currentTargetIndex}`;
       const feedbackItem: LocateFeedbackItem = {
@@ -190,6 +218,7 @@ export function useLocateQuiz(
         targetPosition: feedbackTargetPosition,
         distanceKm,
         score,
+        elementState,
         createdAt: Date.now(),
       };
 
@@ -199,12 +228,12 @@ export function useLocateQuiz(
 
       setElementStates((prev) => ({
         ...prev,
-        [currentTarget.id]: isCorrect ? 'correct' : 'incorrect',
+        [currentTarget.id]: elementState,
       }));
 
       setCurrentTargetIndex((prev) => prev + 1);
     },
-    [isFinished, currentTarget, currentTargetIndex, computeDistanceAndTarget, scheduleFeedbackRemoval],
+    [isFinished, currentTarget, currentTargetIndex, computeDistanceAndTarget, scheduleFeedbackRemoval, thresholds],
   );
 
   /**
@@ -224,6 +253,7 @@ export function useLocateQuiz(
       const distanceCm = Math.sqrt(dx * dx + dy * dy + dz * dz);
       // Correct = same element (distance ≈ 0); use 1 cm as floating-point tolerance
       const isCorrect = distanceCm < 1;
+      const elementState: ElementVisualState = isCorrect ? 'correct' : 'incorrect';
       // Store distance in the same array; 0 for correct, actual cm for wrong
       const feedbackId = `feedback-${currentTargetIndex}`;
       const feedbackItem: LocateFeedbackItem = {
@@ -233,6 +263,7 @@ export function useLocateQuiz(
         targetPosition: currentTarget.viewBoxCenter,
         distanceKm: distanceCm, // cm stored in the km field for element-click mode
         score: isCorrect ? 1 : 0,
+        elementState,
         createdAt: Date.now(),
       };
 
@@ -242,7 +273,7 @@ export function useLocateQuiz(
 
       setElementStates((prev) => ({
         ...prev,
-        [currentTarget.id]: isCorrect ? 'correct' : 'incorrect',
+        [currentTarget.id]: elementState,
       }));
 
       setCurrentTargetIndex((prev) => prev + 1);

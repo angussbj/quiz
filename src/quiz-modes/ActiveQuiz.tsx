@@ -51,7 +51,12 @@ export interface ActiveQuizProps {
     readonly width: number;
     readonly height: number;
   }>>;
-  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary' | 'grid-centroid';
+  readonly locateThresholds?: {
+    readonly correct: number;
+    readonly correctSecond: number;
+    readonly correctThird: number;
+  };
   readonly timeScale?: TimeScale;
   readonly elementStateColorOverrides?: VisualizationRendererProps['elementStateColorOverrides'];
   readonly normalizeOptions?: NormalizeOptions;
@@ -83,6 +88,7 @@ export function ActiveQuiz({
   initialCameraPosition,
   groupFilterCameraPositions,
   locateDistanceMode,
+  locateThresholds,
   timeScale,
   elementStateColorOverrides,
   normalizeOptions,
@@ -453,6 +459,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           reviewResult={reviewResult}
           initialCameraPosition={effectiveCameraPosition}
           locateDistanceMode={locateDistanceMode}
+          locateThresholds={locateThresholds}
           hideUnfocusedElements={hideUnfocusedElements}
           timeScale={timeScale}
           normalizeOptions={normalizeOptions}

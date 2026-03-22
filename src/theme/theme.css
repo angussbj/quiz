@@ -125,9 +125,3 @@
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
-
-/* Fade-out animation for incorrect answer flashes in visualizations */
-@keyframes flash-fade {
-  0%, 50% { opacity: 1; }
-  100% { opacity: 0; }
-}

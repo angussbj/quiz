@@ -10,8 +10,13 @@ export interface GridElement extends VisualizationElement {
   readonly column: number;
   readonly symbol: string;
   readonly atomicNumber: number;
+  /** Row in the extended 32-column periodic table (lanthanides/actinides inserted inline). */
+  readonly trueRow: number;
+  /** Column in the extended 32-column periodic table. */
+  readonly trueColumn: number;
 }
 
 export function isGridElement(element: VisualizationElement): element is GridElement {
-  return 'row' in element && 'column' in element && 'symbol' in element && 'atomicNumber' in element;
+  return 'row' in element && 'column' in element && 'symbol' in element && 'atomicNumber' in element
+    && 'trueRow' in element && 'trueColumn' in element;
 }

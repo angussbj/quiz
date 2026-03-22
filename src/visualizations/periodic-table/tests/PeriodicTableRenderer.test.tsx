@@ -36,6 +36,8 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     column: 0,
     symbol: 'H',
     atomicNumber: 1,
+    trueRow: 0,
+    trueColumn: 0,
     ...overrides,
   };
 }
@@ -146,10 +148,8 @@ describe('PeriodicTableRenderer', () => {
     const correctRect = container.querySelector('g[data-element-id="H"] rect');
     expect(correctRect).toHaveAttribute('stroke', 'var(--color-correct)');
 
-    // Incorrect renders as overlay (second rect) over a hidden base
-    const incorrectRects = container.querySelectorAll('g[data-element-id="He"] rect');
-    expect(incorrectRects.length).toBe(2);
-    expect(incorrectRects[1]).toHaveAttribute('stroke', 'var(--color-incorrect)');
+    const incorrectRect = container.querySelector('g[data-element-id="He"] rect');
+    expect(incorrectRect).toHaveAttribute('stroke', 'var(--color-incorrect)');
   });
 
   it('highlights an element via highlighted state', () => {

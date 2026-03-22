@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { QuizModeProps } from '../QuizModeProps';
+import type { DistanceFeedbackLine as DistanceFeedbackLineType } from '@/visualizations/VisualizationRendererProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { InlineResults } from '../InlineResults';
 import { QuizPromptBar } from '../QuizPromptBar';
 import { useLocateQuiz } from './useLocateQuiz';
-import { LocateFeedback } from './LocateFeedback';
+import { DistanceFeedbackLine } from './DistanceFeedbackLine';
 import styles from './LocateMode.module.css';
 
 /**
- * Locate mode: user clicks on the map to locate prompted targets.
+ * Locate mode: user clicks on the map/grid to locate prompted targets.
  * Self-contained — manages its own quiz state internally.
  */
 export function LocateMode({
@@ -27,9 +28,10 @@ export function LocateMode({
   reviewResult,
   initialCameraPosition,
   locateDistanceMode,
+  locateThresholds,
   hideUnfocusedElements,
 }: QuizModeProps) {
-  const quiz = useLocateQuiz(elements, { locateDistanceMode, hideUnfocusedElements });
+  const quiz = useLocateQuiz(elements, { locateDistanceMode, locateThresholds, hideUnfocusedElements });
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
@@ -74,13 +76,35 @@ export function LocateMode({
     [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
+  const isGridMode = locateDistanceMode === 'grid-centroid';
+  const promptVerb = isGridMode ? 'Click on' : 'Click where';
+  const promptSuffix = isGridMode ? '' : ' is';
+
+  // Grid mode: pass feedback data to the renderer (it handles path computation and drawing).
+  // Other modes: render straight-line feedback as SVG overlay on top of elements.
+  const feedbackOverlay = !isGridMode
+    ? <DistanceFeedbackLine feedbackItems={quiz.feedbackItems} />
+    : undefined;
+  const gridFeedbackLines: ReadonlyArray<DistanceFeedbackLineType> | undefined = useMemo(() => {
+    if (!isGridMode) return undefined;
+    return quiz.feedbackItems
+      .filter((item) => item.distanceKm > 0)
+      .map((item) => ({
+        id: item.id,
+        from: item.clickPosition,
+        to: item.targetPosition,
+        elementState: item.elementState,
+        label: `${item.distanceKm} away`,
+      }));
+  }, [isGridMode, quiz.feedbackItems]);
+
   return (
     <div className={styles.container}>
       <div className={styles.controlsArea}>
         {!reviewing ? (
           <QuizPromptBar
             promptKey={quiz.currentTarget?.label ?? ''}
-            prompt={<>Click where <strong>{quiz.currentTarget?.label ?? ''}</strong> is</>}
+            prompt={<>{promptVerb} <strong>{quiz.currentTarget?.label ?? ''}</strong>{promptSuffix}</>}
             promptSubtitle={quiz.currentTarget?.promptSubtitle}
             counter={quiz.isFinished ? undefined : `${quiz.currentTargetIndex + 1}/${quiz.totalTargets}`}
             progressCurrent={quiz.currentTargetIndex}
@@ -113,7 +137,8 @@ export function LocateMode({
           backgroundLabels={backgroundLabels}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
-          svgOverlay={<LocateFeedback feedbackItems={quiz.feedbackItems} />}
+          svgOverlay={feedbackOverlay}
+          distanceFeedbackLines={gridFeedbackLines}
         />
       </div>
     </div>

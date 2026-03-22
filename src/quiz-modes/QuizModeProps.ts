@@ -40,7 +40,13 @@ export interface QuizModeProps {
   readonly reviewing?: boolean;
   readonly reviewResult?: ReviewResult;
   /** How locate mode measures distance. See QuizDefinition.locateDistanceMode. */
-  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary' | 'grid-centroid';
+  /** Thresholds for graded locate feedback. See QuizDefinition.locateThresholds. */
+  readonly locateThresholds?: {
+    readonly correct: number;
+    readonly correctSecond: number;
+    readonly correctThird: number;
+  };
   /**
    * When false, interactive elements start visible (default state) instead of hidden.
    * Used by quizzes where elements are always shown (e.g. 3D skeleton). Default: true.

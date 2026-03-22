@@ -51,6 +51,8 @@ describe('isGridElement', () => {
       column: 1,
       symbol: 'Fe',
       atomicNumber: 26,
+      trueRow: 3,
+      trueColumn: 21,
     };
     expect(isGridElement(gridElement)).toBe(true);
   });
