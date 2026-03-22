@@ -48,7 +48,7 @@ export function usePromptedRecallQuiz({
   answerColumn,
 }: PromptedRecallConfig): PromptedRecallState & PromptedRecallActions {
   const [shuffledOrder] = useState(() =>
-    shuffle(elements.map((e) => e.id)),
+    shuffle(elements.filter((e) => e.interactive !== false).map((e) => e.id)),
   );
 
   const dataRowsById = useMemo(() => {

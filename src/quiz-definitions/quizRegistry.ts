@@ -382,6 +382,53 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
   },
 
+  // ===== Modern History =====
+  {
+    ...timelineQuizBase,
+    id: 'hist-modern-history',
+    title: 'Modern History',
+    description: 'Place the defining events of the modern era (1440–present) on a timeline.',
+    path: ['History', 'Modern'],
+    toggles: [
+      { key: 'showLabels', label: 'Event names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
+      { key: 'showDates', label: 'Event dates', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal' } as const,
+      { key: 'showColours', label: 'Group colours', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    selectToggles: [
+      {
+        key: 'datePrecision',
+        label: 'Date precision',
+        options: [{ value: 'year', label: 'Year' }],
+        defaultValue: 'year',
+        group: 'display',
+        modes: ['locate'],
+      },
+      {
+        key: 'groupBy',
+        label: 'Group by',
+        options: [
+          { value: 'none', label: 'None' },
+          { value: 'region', label: 'Region' },
+          { value: 'theme', label: 'Theme' },
+        ],
+        defaultValue: 'region',
+        group: 'filters',
+      },
+    ],
+    presets: [],
+    columnMappings: { answer: 'event', label: 'event', group: 'region' },
+    dataPath: '/data/history/modern/modern-history.csv',
+    dynamicGrouping: {
+      selectToggleKey: 'groupBy',
+      options: {
+        none: undefined,
+        region: { column: 'region', chipLabel: 'Region' },
+        theme: { column: 'theme', chipLabel: 'Theme' },
+      },
+    },
+    hideFilteredElements: true,
+  },
+
   // ===== World War 1 =====
   {
     ...timelineQuizBase,
