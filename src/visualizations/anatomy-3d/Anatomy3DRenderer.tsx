@@ -51,7 +51,7 @@ type ColorSet = { mesh: string; emissive: string; opacity: number };
 function stateColorSet(state: ElementVisualState | undefined): ColorSet {
   switch (state) {
     case 'default':
-      return { mesh: resolveVar('--color-bone-default', '#c8a96e'), emissive: '#000000', opacity: 1 };
+      return { mesh: resolveVar('--color-bone-default', '#e4ccb1'), emissive: '#000000', opacity: 1 };
     case 'hidden':
       return { mesh: '#888888', emissive: '#000000', opacity: 0 };
     case 'highlighted':
@@ -69,12 +69,12 @@ function stateColorSet(state: ElementVisualState | undefined): ColorSet {
     case 'missed':
       return { mesh: resolveVar('--color-missed', '#f97316'), emissive: '#221100', opacity: 1 };
     default:
-      return { mesh: resolveVar('--color-bone-default', '#c8a96e'), emissive: '#000000', opacity: 1 };
+      return { mesh: resolveVar('--color-bone-default', '#e4ccb1'), emissive: '#000000', opacity: 1 };
   }
 }
 
 /** Default bone color (shown for meshes not part of the active quiz). */
-const CONTEXT_COLORS: ColorSet = { mesh: '#b0a080', emissive: '#000000', opacity: 0.5 };
+const CONTEXT_COLORS: ColorSet = { mesh: '#c8bba8', emissive: '#000000', opacity: 0.5 };
 
 // ─── GLB node-key helpers ─────────────────────────────────────────────────────
 
