@@ -66,6 +66,8 @@ export function MapRenderer({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   clustering,
   onClusterClick,
   toggles,
@@ -102,6 +104,8 @@ export function MapRenderer({
         elementStates={elementStates}
         onElementClick={onElementClick}
         onPositionClick={onPositionClick}
+        onElementHoverStart={onElementHoverStart}
+        onElementHoverEnd={onElementHoverEnd}
         uniqueGroups={uniqueGroups}
         showBorders={showBorders}
         toggles={toggles}
@@ -171,6 +175,8 @@ function renderShapeElements(
   showRegionColors: boolean,
   isDrag: (e: React.MouseEvent) => boolean,
   elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'],
+  onElementHoverStart?: (elementId: string) => void,
+  onElementHoverEnd?: () => void,
 ) {
   return elements.map((element) => {
     if (!isMapElement(element) || !element.svgPathData) return null;
@@ -219,6 +225,8 @@ function renderShapeElements(
                 e.stopPropagation();
                 handleClick(element.id);
               }}
+              onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+              onMouseLeave={onElementHoverEnd}
             />
           )}
           {/* Visible river strokes */}
@@ -281,6 +289,8 @@ function renderShapeElements(
               }
             : undefined
         }
+        onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+        onMouseLeave={onElementHoverEnd}
       />
     );
   });
@@ -344,6 +354,8 @@ interface MapContentProps {
   readonly elementStates: VisualizationRendererProps['elementStates'];
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: VisualizationRendererProps['onPositionClick'];
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly showBorders: boolean;
   readonly toggles: Readonly<Record<string, boolean>>;
@@ -359,6 +371,8 @@ function MapContent({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   uniqueGroups,
   showBorders,
   toggles,
@@ -469,13 +483,13 @@ function MapContent({
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
 
       {/* Country/region name labels and flags — background context labels merged with polygon
           quiz element labels, run through unified placement (polylabel, collision detection). */}
@@ -578,6 +592,8 @@ function MapContent({
                   }
                 : undefined
             }
+            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverEnd}
           />
         );
       })}

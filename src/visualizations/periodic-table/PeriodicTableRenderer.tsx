@@ -25,6 +25,8 @@ interface CellProps {
   readonly zoomedIn: boolean;
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: (position: { readonly x: number; readonly y: number }) => void;
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
 }
 
 function stateToFill(state: ElementVisualState, groupColorIndex: number | undefined, showGroups: boolean): string {
@@ -75,6 +77,8 @@ function GridCell({
   zoomedIn,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
 }: CellProps) {
   if (isClustered) return null;
 
@@ -112,6 +116,8 @@ function GridCell({
     <g
       data-element-id={element.id}
       onClick={handleClick}
+      onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+      onMouseLeave={onElementHoverEnd}
       style={{ cursor: interactive ? 'pointer' : 'default' }}
     >
       <rect
@@ -173,6 +179,8 @@ function PeriodicTableGrid({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   toggles,
   elementToggles,
   distanceFeedbackLines,
@@ -213,6 +221,8 @@ function PeriodicTableGrid({
             zoomedIn={zoomedIn}
             onElementClick={onElementClick}
             onPositionClick={onPositionClick}
+            onElementHoverStart={onElementHoverStart}
+            onElementHoverEnd={onElementHoverEnd}
           />
         );
       })}
