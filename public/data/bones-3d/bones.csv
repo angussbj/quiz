@@ -101,26 +101,26 @@ rib-11-right,Rib 11 (right),Rib (11th).r,-6.99,112.48,-3.84,right,true,torso,bon
 rib-11-left,Rib 11 (left),Rib (11th).r,6.99,112.48,-3.84,left,false,torso,bone,rib-11-right,rib-1-right,,Rib_bones
 rib-12-right,Rib 12 (right),Rib (12th).r,-5.36,110.54,-4.51,right,true,torso,bone,rib-12-left,rib-1-right,,Rib_bones
 rib-12-left,Rib 12 (left),Rib (12th).r,5.36,110.54,-4.51,left,false,torso,bone,rib-12-right,rib-1-right,,Rib_bones
-costal-cartilage-of-rib-1-right,Costal cartilage of rib 1 (right),Costal cart of 1st rib.r,-3.92,138.77,4.00,right,true,torso,costal_cartilage,costal-cartilage-of-rib-1-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-1-left,Costal cartilage of rib 1 (left),Costal cart of 1st rib.r,3.92,138.77,4.00,left,false,torso,costal_cartilage,costal-cartilage-of-rib-1-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-2-right,Costal cartilage of rib 2 (right),Costal cart of 2nd rib.r,-2.90,135.14,6.95,right,true,torso,costal_cartilage,costal-cartilage-of-rib-2-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-2-left,Costal cartilage of rib 2 (left),Costal cart of 2nd rib.r,2.90,135.14,6.95,left,false,torso,costal_cartilage,costal-cartilage-of-rib-2-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-3-right,Costal cartilage of rib 3 (right),Costal cart of 3rd rib.r,-3.47,132.00,7.99,right,true,torso,costal_cartilage,costal-cartilage-of-rib-3-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-3-left,Costal cartilage of rib 3 (left),Costal cart of 3rd rib.r,3.47,132.00,7.99,left,false,torso,costal_cartilage,costal-cartilage-of-rib-3-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-4-right,Costal cartilage of rib 4 (right),Costal cart of 4th rib.r,-4.41,129.11,9.08,right,true,torso,costal_cartilage,costal-cartilage-of-rib-4-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-4-left,Costal cartilage of rib 4 (left),Costal cart of 4th rib.r,4.41,129.11,9.08,left,false,torso,costal_cartilage,costal-cartilage-of-rib-4-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-5-right,Costal cartilage of rib 5 (right),Costal cart of 5th rib.r,-5.23,125.98,10.15,right,true,torso,costal_cartilage,costal-cartilage-of-rib-5-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-5-left,Costal cartilage of rib 5 (left),Costal cart of 5th rib.r,5.23,125.98,10.15,left,false,torso,costal_cartilage,costal-cartilage-of-rib-5-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-6-right,Costal cartilage of rib 6 (right),Costal cart of 6th rib.r,-5.61,123.28,10.16,right,true,torso,costal_cartilage,costal-cartilage-of-rib-6-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-6-left,Costal cartilage of rib 6 (left),Costal cart of 6th rib.r,5.61,123.28,10.16,left,false,torso,costal_cartilage,costal-cartilage-of-rib-6-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-7-right,Costal cartilage of rib 7 (right),Costal cart of 7th rib.r,-6.11,120.71,9.41,right,true,torso,costal_cartilage,costal-cartilage-of-rib-7-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-7-left,Costal cartilage of rib 7 (left),Costal cart of 7th rib.r,6.11,120.71,9.41,left,false,torso,costal_cartilage,costal-cartilage-of-rib-7-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-8-right,Costal cartilage of rib 8 (right),Costal cart of 8th rib.r,-7.82,116.13,8.33,right,true,torso,costal_cartilage,costal-cartilage-of-rib-8-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-8-left,Costal cartilage of rib 8 (left),Costal cart of 8th rib.r,7.82,116.13,8.33,left,false,torso,costal_cartilage,costal-cartilage-of-rib-8-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-9-right,Costal cartilage of rib 9 (right),Costal cart of 9th rib.r,-9.61,111.61,6.36,right,true,torso,costal_cartilage,costal-cartilage-of-rib-9-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-9-left,Costal cartilage of rib 9 (left),Costal cart of 9th rib.r,9.61,111.61,6.36,left,false,torso,costal_cartilage,costal-cartilage-of-rib-9-right,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-10-right,Costal cartilage of rib 10 (right),Costal cart of 10th rib.r,-10.37,108.20,5.06,right,true,torso,costal_cartilage,costal-cartilage-of-rib-10-left,costal-cartilage-of-rib-1-right,,
-costal-cartilage-of-rib-10-left,Costal cartilage of rib 10 (left),Costal cart of 10th rib.r,10.37,108.20,5.06,left,false,torso,costal_cartilage,costal-cartilage-of-rib-10-right,costal-cartilage-of-rib-1-right,,
+costal-cartilage-of-rib-1-right,Costal cartilage of rib 1 (right),Costal cart of 1st rib.r,-3.92,138.77,4.00,right,true,torso,costal_cartilage,costal-cartilage-of-rib-1-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-1-left,Costal cartilage of rib 1 (left),Costal cart of 1st rib.r,3.92,138.77,4.00,left,false,torso,costal_cartilage,costal-cartilage-of-rib-1-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-2-right,Costal cartilage of rib 2 (right),Costal cart of 2nd rib.r,-2.90,135.14,6.95,right,true,torso,costal_cartilage,costal-cartilage-of-rib-2-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-2-left,Costal cartilage of rib 2 (left),Costal cart of 2nd rib.r,2.90,135.14,6.95,left,false,torso,costal_cartilage,costal-cartilage-of-rib-2-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-3-right,Costal cartilage of rib 3 (right),Costal cart of 3rd rib.r,-3.47,132.00,7.99,right,true,torso,costal_cartilage,costal-cartilage-of-rib-3-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-3-left,Costal cartilage of rib 3 (left),Costal cart of 3rd rib.r,3.47,132.00,7.99,left,false,torso,costal_cartilage,costal-cartilage-of-rib-3-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-4-right,Costal cartilage of rib 4 (right),Costal cart of 4th rib.r,-4.41,129.11,9.08,right,true,torso,costal_cartilage,costal-cartilage-of-rib-4-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-4-left,Costal cartilage of rib 4 (left),Costal cart of 4th rib.r,4.41,129.11,9.08,left,false,torso,costal_cartilage,costal-cartilage-of-rib-4-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-5-right,Costal cartilage of rib 5 (right),Costal cart of 5th rib.r,-5.23,125.98,10.15,right,true,torso,costal_cartilage,costal-cartilage-of-rib-5-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-5-left,Costal cartilage of rib 5 (left),Costal cart of 5th rib.r,5.23,125.98,10.15,left,false,torso,costal_cartilage,costal-cartilage-of-rib-5-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-6-right,Costal cartilage of rib 6 (right),Costal cart of 6th rib.r,-5.61,123.28,10.16,right,true,torso,costal_cartilage,costal-cartilage-of-rib-6-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-6-left,Costal cartilage of rib 6 (left),Costal cart of 6th rib.r,5.61,123.28,10.16,left,false,torso,costal_cartilage,costal-cartilage-of-rib-6-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-7-right,Costal cartilage of rib 7 (right),Costal cart of 7th rib.r,-6.11,120.71,9.41,right,true,torso,costal_cartilage,costal-cartilage-of-rib-7-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-7-left,Costal cartilage of rib 7 (left),Costal cart of 7th rib.r,6.11,120.71,9.41,left,false,torso,costal_cartilage,costal-cartilage-of-rib-7-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-8-right,Costal cartilage of rib 8 (right),Costal cart of 8th rib.r,-7.82,116.13,8.33,right,true,torso,costal_cartilage,costal-cartilage-of-rib-8-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-8-left,Costal cartilage of rib 8 (left),Costal cart of 8th rib.r,7.82,116.13,8.33,left,false,torso,costal_cartilage,costal-cartilage-of-rib-8-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-9-right,Costal cartilage of rib 9 (right),Costal cart of 9th rib.r,-9.61,111.61,6.36,right,true,torso,costal_cartilage,costal-cartilage-of-rib-9-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-9-left,Costal cartilage of rib 9 (left),Costal cart of 9th rib.r,9.61,111.61,6.36,left,false,torso,costal_cartilage,costal-cartilage-of-rib-9-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-10-right,Costal cartilage of rib 10 (right),Costal cart of 10th rib.r,-10.37,108.20,5.06,right,true,torso,costal_cartilage,costal-cartilage-of-rib-10-left,costal-cartilage-of-rib-1-right,,Costal_cartilage
+costal-cartilage-of-rib-10-left,Costal cartilage of rib 10 (left),Costal cart of 10th rib.r,10.37,108.20,5.06,left,false,torso,costal_cartilage,costal-cartilage-of-rib-10-right,costal-cartilage-of-rib-1-right,,Costal_cartilage
 clavicle-right,Clavicle (right),Clavicle.r,-8.01,140.67,-0.32,right,true,limbs,bone,clavicle-left,,Collarbone,Clavicle
 clavicle-left,Clavicle (left),Clavicle.r,8.01,140.67,-0.32,left,false,limbs,bone,clavicle-right,,Collarbone,Clavicle
 scapula-right,Scapula (right),Scapula.r.,-11.68,133.66,-6.00,right,true,limbs,bone,scapula-left,,Shoulder blade,Scapula
@@ -195,8 +195,8 @@ middle-phalanx-of-finger-5-right,Middle phalanx of finger 5 (right),Middle phala
 middle-phalanx-of-finger-5-left,Middle phalanx of finger 5 (left),Middle phalanx of 5th finger.r,23.32,74.47,5.96,left,false,hands,bone,middle-phalanx-of-finger-5-right,middle-phalanx-of-finger-2-right,,Phalanx_bone
 distal-phalanx-of-finger-5-right,Distal phalanx of finger 5 (right),Distal phalanx of 5th finger.r,-23.15,72.97,7.22,right,true,hands,bone,distal-phalanx-of-finger-5-left,distal-phalanx-of-finger-1-right,,Phalanx_bone
 distal-phalanx-of-finger-5-left,Distal phalanx of finger 5 (left),Distal phalanx of 5th finger.r,23.15,72.97,7.22,left,false,hands,bone,distal-phalanx-of-finger-5-right,distal-phalanx-of-finger-1-right,,Phalanx_bone
-sesamoid-bones-of-hand-right,Sesamoid bones of hand (right),Sesamoid_bones_of_hand.r,-27.65,79.52,4.45,right,true,hands,sesamoid,sesamoid-bones-of-hand-left,,,
-sesamoid-bones-of-hand-left,Sesamoid bones of hand (left),Sesamoid_bones_of_hand.r,27.65,79.52,4.45,left,false,hands,sesamoid,sesamoid-bones-of-hand-right,,,
+sesamoid-bones-of-hand-right,Sesamoid bones of hand (right),Sesamoid_bones_of_hand.r,-27.65,79.52,4.45,right,true,hands,sesamoid,sesamoid-bones-of-hand-left,,,Sesamoid_bones
+sesamoid-bones-of-hand-left,Sesamoid bones of hand (left),Sesamoid_bones_of_hand.r,27.65,79.52,4.45,left,false,hands,sesamoid,sesamoid-bones-of-hand-right,,,Sesamoid_bones
 calcaneus-right,Calcaneus (right),Calcaneus.r,-7.65,3.68,-5.52,right,true,feet,bone,calcaneus-left,,Heel bone,Calcaneus
 calcaneus-left,Calcaneus (left),Calcaneus.r,7.65,3.68,-5.52,left,false,feet,bone,calcaneus-right,,Heel bone,Calcaneus
 talus-right,Talus (right),Talus.r,-7.48,6.82,-3.69,right,true,feet,bone,talus-left,,Ankle bone|Anklebone,Talus_(bone)
@@ -249,5 +249,5 @@ middle-phalanx-of-toe-5-right,Middle phalanx of toe 5 (right),Middle phalanx of 
 middle-phalanx-of-toe-5-left,Middle phalanx of toe 5 (left),Middle phalanx of fifth finger of foot.r,14.12,1.29,8.37,left,false,feet,bone,middle-phalanx-of-toe-5-right,middle-phalanx-of-toe-2-right,,Phalanx_bone
 distal-phalanx-of-toe-5-right,Distal phalanx of toe 5 (right),Distal phalanx of fifth finger of foot.r,-14.26,1.18,9.14,right,true,feet,bone,distal-phalanx-of-toe-5-left,distal-phalanx-of-toe-1-right,,Phalanx_bone
 distal-phalanx-of-toe-5-left,Distal phalanx of toe 5 (left),Distal phalanx of fifth finger of foot.r,14.26,1.18,9.14,left,false,feet,bone,distal-phalanx-of-toe-5-right,distal-phalanx-of-toe-1-right,,Phalanx_bone
-sesamoid-bones-of-foot-right,Sesamoid bones of foot (right),Sesamoid bones of foot.r,-7.18,1.39,7.05,right,true,feet,sesamoid,sesamoid-bones-of-foot-left,,,
-sesamoid-bones-of-foot-left,Sesamoid bones of foot (left),Sesamoid bones of foot.r,7.18,1.39,7.05,left,false,feet,sesamoid,sesamoid-bones-of-foot-right,,,
+sesamoid-bones-of-foot-right,Sesamoid bones of foot (right),Sesamoid bones of foot.r,-7.18,1.39,7.05,right,true,feet,sesamoid,sesamoid-bones-of-foot-left,,,Sesamoid_bones
+sesamoid-bones-of-foot-left,Sesamoid bones of foot (left),Sesamoid bones of foot.r,7.18,1.39,7.05,left,false,feet,sesamoid,sesamoid-bones-of-foot-right,,,Sesamoid_bones
