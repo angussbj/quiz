@@ -12,7 +12,7 @@ import { computeGroupCameraPosition } from './computeGroupCameraPosition';
 import { normalizeText, type NormalizeOptions } from './free-recall/matchAnswer';
 import { Timer } from './Timer';
 import { resolveMode } from './resolveMode';
-import { useWikipediaPreview } from '@/visualizations/wikipedia/useWikipediaPreview';
+import { useWikipediaPreview, type WikipediaPreviewState } from '@/visualizations/wikipedia/useWikipediaPreview';
 import { WikipediaPanel } from '@/visualizations/wikipedia/WikipediaPanel';
 import { shouldShowLabel } from '@/visualizations/shouldShowLabel';
 import { elementToggle } from '@/visualizations/elementToggle';
@@ -30,6 +30,7 @@ interface FilterOverrides {
   readonly wikipediaOnHoverEnd: () => void;
   /** Toggle key that reveals the answer label (e.g. 'showLabels', 'showNames'). */
   readonly labelToggleKey: string | undefined;
+  readonly wikipediaPreviewState: WikipediaPreviewState;
 }
 
 export interface ActiveQuizProps {
@@ -370,6 +371,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
     wikipediaOnHoverStart: wrappedWikipediaHoverStart,
     wikipediaOnHoverEnd: wrappedWikipediaHoverEnd,
     labelToggleKey,
+    wikipediaPreviewState,
   };
 
   // Create the wrapper component exactly once per Renderer identity.
@@ -378,7 +380,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
     function StableFilterRenderer(props: VisualizationRendererProps) {
       // The ref is always assigned before this component renders, so current is never null.
       // Read values from the ref to avoid changing component identity on every render.
-      const { Renderer: Inner, showFilteredBg: showBg, extendedElements: extEls, filteredBgElementIds: bgIds, timeScale: ts, elementStateColorOverrides: colorOverrides, wikipediaOnHoverStart, wikipediaOnHoverEnd, labelToggleKey: lblKey } = filterOverridesRef.current ?? {} as FilterOverrides;
+      const { Renderer: Inner, showFilteredBg: showBg, extendedElements: extEls, filteredBgElementIds: bgIds, timeScale: ts, elementStateColorOverrides: colorOverrides, wikipediaOnHoverStart, wikipediaOnHoverEnd, labelToggleKey: lblKey, wikipediaPreviewState: wpState } = filterOverridesRef.current ?? {} as FilterOverrides;
 
       const mergedStates = useMemo(() => {
         if (!showBg) return props.elementStates;
@@ -431,16 +433,19 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
       if (!Inner) return null;
 
       return (
-        <Inner
-          {...props}
-          elements={extEls ?? props.elements}
-          elementStates={mergedStates}
-          elementToggles={mergedToggles}
-          timeScale={ts}
-          elementStateColorOverrides={colorOverrides}
-          onElementHoverStart={handleWikipediaHoverStart}
-          onElementHoverEnd={handleWikipediaHoverEnd}
-        />
+        <>
+          <Inner
+            {...props}
+            elements={extEls ?? props.elements}
+            elementStates={mergedStates}
+            elementToggles={mergedToggles}
+            timeScale={ts}
+            elementStateColorOverrides={colorOverrides}
+            onElementHoverStart={handleWikipediaHoverStart}
+            onElementHoverEnd={handleWikipediaHoverEnd}
+          />
+          <WikipediaPanel state={wpState} />
+        </>
       );
     }
     StableFilterRenderer.displayName = 'FilterAwareRenderer';
@@ -539,7 +544,6 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           timeScale={timeScale}
           normalizeOptions={normalizeOptions}
         />
-        <WikipediaPanel state={wikipediaPreviewState} />
       </div>
     </div>
   );

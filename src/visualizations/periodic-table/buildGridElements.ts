@@ -8,6 +8,7 @@ export function buildGridElements(
 ): ReadonlyArray<GridElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
+  const wikipediaColumn = columnMappings['wikipedia'] ?? 'wikipedia';
 
   return rows.map((row) => {
     const id = row['id'] ?? '';
@@ -30,7 +31,7 @@ export function buildGridElements(
       viewBoxBounds: { minX: x, minY: y, maxX: x + CELL_SIZE, maxY: y + CELL_SIZE },
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
-      wikipediaSlug: row['wikipedia'] || undefined,
+      wikipediaSlug: row[wikipediaColumn] || undefined,
     };
   });
 }

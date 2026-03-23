@@ -205,11 +205,12 @@ function renderShapeElements(
       const subpaths = splitSubpaths(element.svgPathData);
       const strokeD = subpaths.filter((p) => !p.endsWith('Z')).join(' ');
       const handleClick = onElementClick;
+      const isHoverable = !handleClick && !!onElementHoverStart;
 
       return (
-        <g key={`shape-${element.id}`} className={handleClick ? styles.interactiveGroup : undefined}>
-          {/* Invisible wider hit area for clicking (strokes only, non-tributary-proxy) */}
-          {handleClick && strokeD && (
+        <g key={`shape-${element.id}`} className={handleClick ? styles.interactiveGroup : isHoverable ? styles.hoverableGroup : undefined}>
+          {/* Invisible wider hit area for clicking/hovering (strokes only) */}
+          {(handleClick || isHoverable) && strokeD && (
             <path
               d={strokeD}
               style={{
@@ -219,12 +220,12 @@ function renderShapeElements(
                 strokeLinecap: 'round',
                 strokeLinejoin: 'round',
               }}
-              className={styles.interactivePath}
-              onClick={(e) => {
+              className={handleClick ? styles.interactivePath : styles.hoverablePath}
+              onClick={handleClick ? (e) => {
                 if (isDrag(e)) return;
                 e.stopPropagation();
                 handleClick(element.id);
-              }}
+              } : undefined}
               onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
               onMouseLeave={onElementHoverEnd}
             />
@@ -241,7 +242,7 @@ function renderShapeElements(
                 strokeLinecap: 'round',
                 strokeLinejoin: 'round',
               }}
-              pointerEvents={handleClick ? 'none' : undefined}
+              pointerEvents={(handleClick || isHoverable) ? 'none' : undefined}
               className={handleClick ? styles.interactivePath : undefined}
               onClick={
                 handleClick
@@ -279,7 +280,7 @@ function renderShapeElements(
           stroke: color,
           strokeWidth: 0.075,
         }}
-        className={onElementClick ? styles.interactivePath : styles.borderPath}
+        className={onElementClick ? styles.interactivePath : onElementHoverStart ? styles.hoverablePath : styles.borderPath}
         onClick={
           onElementClick
             ? (e) => {
@@ -399,6 +400,17 @@ function MapContent({
     return map;
   }, [elements, elementStates]);
 
+  // Map from element label → element id, used by MapCountryLabels for hover.
+  const nameToElementId = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const el of elements) {
+      if (isMapElement(el) && el.svgPathData && el.pathRenderStyle !== 'stroke') {
+        map[el.label] = el.id;
+      }
+    }
+    return map;
+  }, [elements]);
+
   // Build BackgroundLabel objects from polygon quiz elements so they pass through the
   // full label placement system (polylabel positioning, area-based sizing, collision detection).
   const elementPolygonLabels = useMemo(
@@ -500,6 +512,9 @@ function MapContent({
           showFlags={toggles['showMapFlags'] ?? false}
           avoidPoints={visibleDotPositions}
           elementNameToState={elementNameToState}
+          nameToElementId={nameToElementId}
+          onElementHoverStart={onElementHoverStart}
+          onElementHoverEnd={onElementHoverEnd}
         />
       )}
 
@@ -520,7 +535,7 @@ function MapContent({
           <text
             key={`river-label-${element.id}`}
             {...labelProps}
-            className={styles.riverLabel}
+            className={onElementHoverStart ? styles.riverLabelHoverable : styles.riverLabel}
             style={{
               fill: color,
               strokeOpacity: 0.75,
@@ -529,6 +544,8 @@ function MapContent({
               strokeWidth: 0.5,
               strokeLinejoin: 'round',
             }}
+            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverEnd}
           >
             {element.label}
           </text>
@@ -582,7 +599,7 @@ function MapContent({
             fill={color}
             stroke={'var(--color-bg-primary)'}
             strokeWidth={dotRadius * 0.27}
-            className={onElementClick ? styles.interactiveDot : undefined}
+            className={onElementClick ? styles.interactiveDot : onElementHoverStart ? styles.hoverableDot : undefined}
             onClick={
               onElementClick
                 ? (e) => {
@@ -613,8 +630,10 @@ function MapContent({
           <text
             key={`city-label-${element.id}`}
             {...labelProps}
-            className={styles.cityLabel}
+            className={onElementHoverStart ? styles.cityLabelHoverable : styles.cityLabel}
             style={{ fontSize: `${fontSize}px` }}
+            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverEnd}
           >
             {element.label}
           </text>
