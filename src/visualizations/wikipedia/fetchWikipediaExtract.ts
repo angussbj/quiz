@@ -19,10 +19,7 @@ export async function fetchWikipediaExtract(
   signal?: AbortSignal,
 ): Promise<WikipediaExtract> {
   const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slug)}`;
-  const res = await fetch(url, {
-    headers: { 'User-Agent': 'QuizApp/1.0 (educational)' },
-    signal,
-  });
+  const res = await fetch(url, { signal });
 
   if (!res.ok) {
     throw new Error(`Wikipedia API returned ${res.status}`);
