@@ -1,198 +1,198 @@
-id,city,country,latitude,longitude,region,subregion,city_alternates,country_alternates,country_code,label_position
-algiers,Algiers,Algeria,36.7323,3.0875,Africa,Northern Africa,,,dz,
-luanda,Luanda,Angola,-8.8368,13.2343,Africa,Middle Africa,,,ao,
-porto-novo,Porto-Novo,Benin,6.4965,2.6036,Africa,Western Africa,,,bj,
-gaborone,Gaborone,Botswana,-24.7623,25.7995,Africa,Southern Africa,,,bw,above
-ouagadougou,Ouagadougou,Burkina Faso,12.3657,-1.5339,Africa,Western Africa,,,bf,below
-gitega,Gitega,Burundi,-3.4271,29.9246,Africa,Eastern Africa,,,bi,
-yaounde,Yaoundé,Cameroon,3.8667,11.5167,Africa,Middle Africa,,,cm,
-praia,Praia,Cape Verde,14.9315,-23.5125,Africa,Western Africa,,Cabo Verde,cv,
-bangui,Bangui,Central African Republic,4.3612,18.555,Africa,Middle Africa,,CAR,cf,
-n-djamena,N'Djamena,Chad,12.11,15.05,Africa,Middle Africa,,,td,
-moroni,Moroni,Comoros,-11.7022,43.2551,Africa,Eastern Africa,,,km,
-brazzaville,Brazzaville,Republic of the Congo,-4.2661,15.2832,Africa,Middle Africa,,Congo,cg,above
-djibouti,Djibouti,Djibouti,11.589,43.145,Africa,Eastern Africa,,,dj,
-kinshasa,Kinshasa,Democratic Republic of the Congo,-4.3276,15.3136,Africa,Middle Africa,,"DR Congo|DRC",cd,below
-cairo,Cairo,Egypt,30.0626,31.2497,Africa,Northern Africa,"Al-Qahirah|Al Qahirah",,eg,
-malabo,Malabo,Equatorial Guinea,3.7558,8.7817,Africa,Middle Africa,,,gq,left
-asmara,Asmara,Eritrea,15.3381,38.9318,Africa,Eastern Africa,,,er,above
-lobamba,Lobamba,Eswatini,-26.4667,31.2,Africa,Southern Africa,,Swaziland,sz,below
-addis-ababa,Addis Ababa,Ethiopia,9.025,38.7469,Africa,Eastern Africa,Addis Abeba,,et,
-libreville,Libreville,Gabon,0.3924,9.4536,Africa,Middle Africa,,,ga,
-banjul,Banjul,Gambia,13.4527,-16.578,Africa,Western Africa,,,gm,
-accra,Accra,Ghana,5.556,-0.1969,Africa,Western Africa,,,gh,left
-conakry,Conakry,Guinea,9.538,-13.6773,Africa,Western Africa,,,gn,
-bissau,Bissau,Guinea-Bissau,11.85,-15.5667,Africa,Western Africa,,,gw,
-yamoussoukro,Yamoussoukro,Ivory Coast,6.8206,-5.2767,Africa,Western Africa,,"Cote d'Ivoire|Côte d'Ivoire",ci,above
-nairobi,Nairobi,Kenya,-1.2833,36.8167,Africa,Eastern Africa,,,ke,
-maseru,Maseru,Lesotho,-29.3167,27.4833,Africa,Southern Africa,,,ls,below
-monrovia,Monrovia,Liberia,6.3005,-10.7969,Africa,Western Africa,,,lr,left
-tripoli,Tripoli,Libya,32.8874,13.1873,Africa,Northern Africa,,,ly,
-antananarivo,Antananarivo,Madagascar,-18.8792,47.5079,Africa,Eastern Africa,,,mg,above
-lilongwe,Lilongwe,Malawi,-13.9669,33.7873,Africa,Eastern Africa,,,mw,
-bamako,Bamako,Mali,12.65,-8,Africa,Western Africa,,,ml,
-nouakchott,Nouakchott,Mauritania,18.0735,-15.9582,Africa,Western Africa,,,mr,
-port-louis,Port Louis,Mauritius,-20.1619,57.4989,Africa,Eastern Africa,,,mu,left
-rabat,Rabat,Morocco,34.0133,-6.8325,Africa,Northern Africa,,,ma,
-maputo,Maputo,Mozambique,-25.9655,32.5832,Africa,Eastern Africa,,,mz,
-windhoek,Windhoek,Namibia,-22.5594,17.0832,Africa,Southern Africa,,,na,left
-niamey,Niamey,Niger,13.5136,2.1089,Africa,Western Africa,,,ne,
-abuja,Abuja,Nigeria,9.0579,7.4951,Africa,Western Africa,,,ng,
-kigali,Kigali,Rwanda,-1.9499,30.0589,Africa,Eastern Africa,,,rw,left
-sao-tome,São Tomé,São Tomé and Príncipe,0.3365,6.7273,Africa,Middle Africa,,"Sao Tome and Principe|Sao Tome",st,left
-dakar,Dakar,Senegal,14.6937,-17.4441,Africa,Western Africa,,,sn,
-victoria,Victoria,Seychelles,-4.62,55.455,Africa,Eastern Africa,,,sc,
-freetown,Freetown,Sierra Leone,8.4871,-13.2356,Africa,Western Africa,,,sl,left
-mogadishu,Mogadishu,Somalia,2.0371,45.3438,Africa,Eastern Africa,,,so,
-pretoria,Pretoria,South Africa,-25.7449,28.1878,Africa,Southern Africa,,,za,left
-juba,Juba,South Sudan,4.8517,31.5825,Africa,Middle Africa,,,ss,
-khartoum,Khartoum,Sudan,15.5518,32.5324,Africa,Northern Africa,,,sd,left
-dodoma,Dodoma,Tanzania,-6.1722,35.7395,Africa,Eastern Africa,,,tz,
-lome,Lomé,Togo,6.1287,1.2215,Africa,Western Africa,,,tg,above
-tunis,Tunis,Tunisia,36.819,10.1658,Africa,Northern Africa,,,tn,
-kampala,Kampala,Uganda,0.3163,32.5822,Africa,Eastern Africa,,,ug,
-lusaka,Lusaka,Zambia,-15.4067,28.2871,Africa,Eastern Africa,,,zm,
-harare,Harare,Zimbabwe,-17.8277,31.0534,Africa,Eastern Africa,,,zw,
-saint-john-s,Saint John's,Antigua and Barbuda,17.1175,-61.8456,North America,Caribbean,,Antigua,ag,
-buenos-aires,Buenos Aires,Argentina,-34.6037,-58.3816,South America,South America,,,ar,left
-nassau,Nassau,Bahamas,25.0667,-77.3333,North America,Caribbean,,The Bahamas,bs,
-bridgetown,Bridgetown,Barbados,13.1073,-59.6202,North America,Caribbean,,,bb,
-belmopan,Belmopan,Belize,17.25,-88.7667,North America,Central America,,,bz,
-sucre,Sucre,Bolivia,-19.0333,-65.2627,South America,South America,,,bo,
-brasilia,Brasília,Brazil,-15.7797,-47.9297,South America,South America,Brasília,,br,
-ottawa,Ottawa,Canada,45.4112,-75.6981,North America,North America,,,ca,
-santiago,Santiago,Chile,-33.4569,-70.6483,South America,South America,,,cl,
-bogota,Bogotá,Colombia,4.711,-74.0721,South America,South America,Bogotá,,co,
-san-jose,San José,Costa Rica,10.9517,-85.1361,North America,Central America,,,cr,
-havana,Havana,Cuba,23.133,-82.383,North America,Caribbean,,,cu,
-roseau,Roseau,Dominica,15.3017,-61.3881,North America,Caribbean,,,dm,
-santo-domingo,Santo Domingo,Dominican Republic,18.4719,-69.8923,North America,Caribbean,,,do,
-quito,Quito,Ecuador,-0.2298,-78.5249,South America,South America,,,ec,
-san-salvador,San Salvador,El Salvador,13.6894,-89.1872,North America,Central America,,,sv,left
-st-george-s,St. George's,Grenada,12.0564,-61.7485,North America,Caribbean,,,gd,left
-guatemala-city,Guatemala City,Guatemala,14.6407,-90.5133,North America,Central America,,,gt,left
-georgetown,Georgetown,Guyana,6.8045,-58.1553,South America,South America,,,gy,left
-port-au-prince,Port-au-Prince,Haiti,18.5435,-72.3388,North America,Caribbean,,,ht,above
-tegucigalpa,Tegucigalpa,Honduras,14.0818,-87.2068,North America,Central America,,,hn,
-kingston,Kingston,Jamaica,17.997,-76.7936,North America,Caribbean,,,jm,left
-mexico-city,Mexico City,Mexico,19.4285,-99.1277,North America,North America,"Ciudad de Mexico|Ciudad de México",,mx,
-managua,Managua,Nicaragua,12.1328,-86.2504,North America,Central America,,,ni,left
-panama-city,Panama City,Panama,8.9936,-79.5197,North America,Central America,,,pa,
-asuncion,Asunción,Paraguay,-25.2637,-57.5759,South America,South America,Asunción,,py,
-lima,Lima,Peru,-12.0432,-77.0282,South America,South America,,,pe,
-basseterre,Basseterre,Saint Kitts and Nevis,17.3026,-62.7177,North America,Caribbean,,St Kitts and Nevis|St Kitts,kn,left
-castries,Castries,Saint Lucia,13.9957,-61.0061,North America,Caribbean,,St Lucia,lc,left
-kingstown,Kingstown,Saint Vincent and the Grenadines,13.1553,-61.2274,North America,Caribbean,,"St Vincent and the Grenadines|St Vincent",vc,left
-paramaribo,Paramaribo,Suriname,5.8664,-55.1668,South America,South America,,,sr,
-port-of-spain,Port of Spain,Trinidad and Tobago,10.6667,-61.5189,North America,Caribbean,,Trinidad,tt,
-washington-d-c,Washington D.C.,United States,38.8951,-77.0364,North America,North America,"Washington D.C.|Washington DC","USA|US|America|United States of America",us,
-montevideo,Montevideo,Uruguay,-34.9033,-56.1882,South America,South America,,,uy,
-caracas,Caracas,Venezuela,10.5,-66.9333,South America,South America,,,ve,
-kabul,Kabul,Afghanistan,34.5281,69.1723,Asia,Southern Asia,,,af,left
-yerevan,Yerevan,Armenia,40.1811,44.5136,Asia,Western Asia,"Jerevan|Erevan",,am,left
-baku,Baku,Azerbaijan,40.3777,49.892,Asia,Western Asia,Bakı,,az,
-manama,Manama,Bahrain,26.2279,50.5857,Asia,Western Asia,,,bh,left
-dhaka,Dhaka,Bangladesh,23.7842,89.9286,Asia,Southern Asia,Dacca,,bd,
-thimphu,Thimphu,Bhutan,27.4661,89.6419,Asia,Southern Asia,,,bt,
-bandar-seri-begawan,Bandar Seri Begawan,Brunei,4.8904,114.9401,Asia,South-Eastern Asia,,,bn,
-phnom-penh,Phnom Penh,Cambodia,11.5625,104.916,Asia,South-Eastern Asia,,,kh,
-beijing,Beijing,China,39.9075,116.3972,Asia,Eastern Asia,Peking,,cn,
-tbilisi,Tbilisi,Georgia,41.6941,44.8337,Asia,Western Asia,Tiflis,,ge,
-new-delhi,New Delhi,India,28.6358,77.2245,Asia,Southern Asia,"Nai Dilli|Nayi Dilli",,in,left
-jakarta,Jakarta,Indonesia,-6.2088,106.8456,Asia,South-Eastern Asia,,,id,
-tehran,Tehran,Iran,35.6944,51.4215,Asia,Southern Asia,"Teheran|Tehrān",,ir,
-baghdad,Baghdad,Iraq,33.3406,44.4009,Asia,Western Asia,Bagdad,,iq,
-jerusalem,Jerusalem,Israel,31.769,35.2163,Asia,Western Asia,Yerushalayim,,il,below
-tokyo,Tokyo,Japan,35.6895,139.6917,Asia,Eastern Asia,"Tōkyō|Tokio",,jp,
-amman,Amman,Jordan,31.9552,35.945,Asia,Western Asia,,,jo,
-astana,Astana,Kazakhstan,51.1694,71.4491,Asia,Central Asia,,,kz,
-kuwait-city,Kuwait City,Kuwait,29.3697,47.9783,Asia,Western Asia,,,kw,
-bishkek,Bishkek,Kyrgyzstan,42.87,74.59,Asia,Central Asia,,,kg,
-vientiane,Vientiane,Laos,17.9667,102.6,Asia,South-Eastern Asia,,,la,
-beirut,Beirut,Lebanon,33.8933,35.5016,Asia,Western Asia,,,lb,left
-kuala-lumpur,Kuala Lumpur,Malaysia,3.1412,101.6865,Asia,South-Eastern Asia,KL,,my,above
-male,Malé,Maldives,4.1755,73.5093,Asia,Southern Asia,,,mv,
-ulan-bator,Ulan Bator,Mongolia,47.8918,106.7371,Asia,Eastern Asia,,,mn,
-naypyidaw,Naypyidaw,Myanmar,19.7633,96.0785,Asia,South-Eastern Asia,Nay Pyi Taw,Burma,mm,left
-kathmandu,Kathmandu,Nepal,27.709,85.2849,Asia,Southern Asia,,,np,left
-pyongyang,Pyongyang,North Korea,39.0339,125.7543,Asia,Eastern Asia,,DPRK,kp,
-muscat,Muscat,Oman,23.5841,58.4078,Asia,Western Asia,,,om,
-islamabad,Islamabad,Pakistan,33.7215,73.0433,Asia,Southern Asia,Islamabad,,pk,
-ramallah,Ramallah,Palestine,31.9038,35.2034,Asia,Western Asia,Ram Allah,,ps,above
-manila,Manila,Philippines,14.5995,120.9842,Asia,South-Eastern Asia,,,ph,
-doha,Doha,Qatar,25.2855,51.531,Asia,Western Asia,,,qa,below
-riyadh,Riyadh,Saudi Arabia,24.6877,46.7219,Asia,Western Asia,"Ar Riyad|Er Riad",,sa,left
-singapore,Singapore,Singapore,1.2897,103.8501,Asia,South-Eastern Asia,,,sg,below
-seoul,Seoul,South Korea,37.566,126.9784,Asia,Eastern Asia,Soul,,kr,below
-sri-jayawardenepura-kotte,Sri Jayawardenepura Kotte,Sri Lanka,6.9271,79.8612,Asia,Southern Asia,"Jayawardenepura|Colombo",,lk,above
-damascus,Damascus,Syria,33.5102,36.2913,Asia,Western Asia,,,sy,
-taipei,Taipei,Taiwan,25.033,121.5654,Asia,Eastern Asia,Taibei,,tw,
-dushanbe,Dushanbe,Tajikistan,38.5367,68.78,Asia,Central Asia,,,tj,
-bangkok,Bangkok,Thailand,13.754,100.5014,Asia,South-Eastern Asia,Krung Thep,,th,left
-dili,Dili,Timor-Leste,-8.5586,125.5736,Asia,South-Eastern Asia,,East Timor,tl,
-ankara,Ankara,Türkiye,39.9034,32.4331,"Europe|Asia",Western Asia,Angora,Turkey,tr,
-ashgabat,Ashgabat,Turkmenistan,37.95,58.3833,Asia,Central Asia,,,tm,
-abu-dhabi,Abu Dhabi,United Arab Emirates,24.4136,54.433,Asia,Western Asia,,UAE,ae,above
-tashkent,Tashkent,Uzbekistan,41.2647,69.2163,Asia,Central Asia,,,uz,
-hanoi,Hanoi,Vietnam,21.0285,105.8542,Asia,South-Eastern Asia,,,vn,
-sana-a,Sana'a,Yemen,15.3694,44.191,Asia,Western Asia,,,ye,
-tirana,Tirana,Albania,41.3275,19.8189,Europe,Southeast Europe,"Tiranë|Tirane",,al,left
-andorra-la-vella,Andorra la Vella,Andorra,42.5078,1.5211,Europe,Southern Europe,,,ad,
-vienna,Vienna,Austria,48.2085,16.3721,Europe,Central Europe,Wien,,at,left
-minsk,Minsk,Belarus,53.9,27.5667,Europe,Eastern Europe,,,by,
-brussels,Brussels,Belgium,50.8505,4.3488,Europe,Western Europe,"Bruxelles|Brussel",,be,
-sarajevo,Sarajevo,Bosnia and Herzegovina,43.8486,18.3564,Europe,Southeast Europe,,Bosnia,ba,left
-sofia,Sofia,Bulgaria,42.6975,23.3242,Europe,Southeast Europe,,,bg,
-zagreb,Zagreb,Croatia,45.8144,15.978,Europe,Southeast Europe,,,hr,
-nicosia,Nicosia,Cyprus,35.1753,33.3642,Europe,Southern Europe,"Lefkosia|Lefkoşa",,cy,
-prague,Prague,Czechia,50.088,14.4208,Europe,Central Europe,Praha,Czech Republic,cz,
-copenhagen,Copenhagen,Denmark,55.6761,12.5683,Europe,Northern Europe,"Kobenhavn|København",,dk,
-tallinn,Tallinn,Estonia,59.437,24.7535,Europe,Northern Europe,,,ee,
-helsinki,Helsinki,Finland,60.1695,24.9355,Europe,Northern Europe,Helsingfors,,fi,left
-paris,Paris,France,48.8534,2.3486,Europe,Western Europe,,,fr,
-berlin,Berlin,Germany,52.5244,13.4105,Europe,Western Europe,,,de,
-athens,Athens,Greece,37.9838,23.7278,Europe,Southern Europe,"Athina|Athinai",,gr,
-budapest,Budapest,Hungary,47.4984,19.0405,Europe,Central Europe,,,hu,
-reykjavik,Reykjavik,Iceland,64.1466,-21.9426,Europe,Northern Europe,Reykjavík,,is,
-dublin,Dublin,Ireland,53.3331,-6.2489,Europe,Northern Europe,Baile Atha Cliath,,ie,
-rome,Rome,Italy,41.8919,12.5113,Europe,Southern Europe,Roma,,it,
-pristina,Pristina,Kosovo,42.6629,21.1655,Europe,Southeast Europe,"Prishtina|Prishtinë",,xk,above
-riga,Riga,Latvia,56.946,24.1059,Europe,Northern Europe,,,lv,
-vaduz,Vaduz,Liechtenstein,47.1415,9.5215,Europe,Western Europe,,,li,
-vilnius,Vilnius,Lithuania,54.6892,25.2798,Europe,Northern Europe,,,lt,left
-luxembourg,Luxembourg,Luxembourg,49.6117,6.13,Europe,Western Europe,Lëtzebuerg,,lu,
-valletta,Valletta,Malta,35.8997,14.5147,Europe,Southern Europe,,,mt,
-chisinau,Chișinău,Moldova,47.0105,28.8638,Europe,Eastern Europe,Kishinev|Chisinau,,md,
-monaco,Monaco,Monaco,43.7384,7.4246,Europe,Western Europe,,,mc,
-podgorica,Podgorica,Montenegro,42.4411,19.2636,Europe,Southeast Europe,,,me,left
-amsterdam,Amsterdam,Netherlands,52.374,4.8897,Europe,Western Europe,,Holland,nl,
-skopje,Skopje,North Macedonia,41.9965,21.4314,Europe,Southeast Europe,,Macedonia,mk,below
-oslo,Oslo,Norway,59.9127,10.7461,Europe,Northern Europe,,,no,
-warsaw,Warsaw,Poland,52.2298,21.0118,Europe,Central Europe,Warszawa,,pl,
-lisbon,Lisbon,Portugal,38.7263,-9.1484,Europe,Southern Europe,Lisboa,,pt,
-bucharest,Bucharest,Romania,44.4323,26.1063,Europe,Southeast Europe,"București|Bucuresti",,ro,
-moscow,Moscow,Russia,55.7522,37.6156,"Europe|Asia",Eastern Europe,"Moskva|Moskwa",,ru,
-san-marino,San Marino,San Marino,43.9424,12.4578,Europe,Southern Europe,City of San Marino,,sm,above
-belgrade,Belgrade,Serbia,44.7866,20.4489,Europe,Southeast Europe,Beograd,,rs,
-bratislava,Bratislava,Slovakia,48.1482,17.1067,Europe,Central Europe,,,sk,
-ljubljana,Ljubljana,Slovenia,46.0511,14.5051,Europe,Central Europe,,,si,left
-madrid,Madrid,Spain,40.4165,-3.7026,Europe,Southern Europe,,,es,
-stockholm,Stockholm,Sweden,59.3326,18.0649,Europe,Northern Europe,,,se,
-bern,Bern,Switzerland,46.9481,7.4474,Europe,Western Europe,Berne,,ch,left
-kyiv,Kyiv,Ukraine,50.4547,30.5238,Europe,Eastern Europe,Kiev,,ua,
-london,London,United Kingdom,51.5085,-0.1257,Europe,Northern Europe,,"UK|Britain|Great Britain|England",gb,
-vatican-city,Vatican City,Vatican City,41.9029,12.4534,Europe,Southern Europe,,The Vatican|Holy See,va,left
-canberra,Canberra,Australia,-35.2835,149.1281,Oceania,Australia and New Zealand,,,au,
-suva,Suva,Fiji,-18.1416,178.4415,Oceania,Melanesia,,,fj,
-south-tarawa,South Tarawa,Kiribati,1.4518,173,Oceania,Micronesia,,,ki,
-majuro,Majuro,Marshall Islands,7.0897,171.3803,Oceania,Micronesia,,,mh,
-palikir,Palikir,Micronesia,6.9147,158.1611,Oceania,Micronesia,,,fm,
-yaren,Yaren,Nauru,-0.5508,166.9252,Oceania,Micronesia,,,nr,left
-wellington,Wellington,New Zealand,-41.2866,174.7756,Oceania,Australia and New Zealand,,,nz,
-ngerulmud,Ngerulmud,Palau,7.5006,134.6242,Oceania,Micronesia,,,pw,
-port-moresby,Port Moresby,Papua New Guinea,-9.4772,147.1509,Oceania,Melanesia,,PNG,pg,left
-apia,Apia,Samoa,-13.8333,-171.7667,Oceania,Polynesia,,,ws,
-honiara,Honiara,Solomon Islands,-9.4333,159.95,Oceania,Melanesia,,,sb,
-nuku-alofa,Nuku'alofa,Tonga,-21.2087,-175.2013,Oceania,Polynesia,,,to,
-funafuti,Funafuti,Tuvalu,-8.5242,179.1942,Oceania,Polynesia,,,tv,
-port-vila,Port Vila,Vanuatu,-17.7334,168.3273,Oceania,Melanesia,,,vu,left
+id,city,country,latitude,longitude,region,subregion,city_alternates,country_alternates,country_code,label_position,wikipedia
+algiers,Algiers,Algeria,36.7323,3.0875,Africa,Northern Africa,,,dz,,Algiers
+luanda,Luanda,Angola,-8.8368,13.2343,Africa,Middle Africa,,,ao,,Luanda
+porto-novo,Porto-Novo,Benin,6.4965,2.6036,Africa,Western Africa,,,bj,,Porto-Novo
+gaborone,Gaborone,Botswana,-24.7623,25.7995,Africa,Southern Africa,,,bw,above,Gaborone
+ouagadougou,Ouagadougou,Burkina Faso,12.3657,-1.5339,Africa,Western Africa,,,bf,below,Ouagadougou
+gitega,Gitega,Burundi,-3.4271,29.9246,Africa,Eastern Africa,,,bi,,Gitega
+yaounde,Yaoundé,Cameroon,3.8667,11.5167,Africa,Middle Africa,,,cm,,Yaoundé
+praia,Praia,Cape Verde,14.9315,-23.5125,Africa,Western Africa,,Cabo Verde,cv,,Praia
+bangui,Bangui,Central African Republic,4.3612,18.555,Africa,Middle Africa,,CAR,cf,,Bangui
+n-djamena,N'Djamena,Chad,12.11,15.05,Africa,Middle Africa,,,td,,N'Djamena
+moroni,Moroni,Comoros,-11.7022,43.2551,Africa,Eastern Africa,,,km,,Moroni
+brazzaville,Brazzaville,Republic of the Congo,-4.2661,15.2832,Africa,Middle Africa,,Congo,cg,above,Brazzaville
+djibouti,Djibouti,Djibouti,11.589,43.145,Africa,Eastern Africa,,,dj,,Djibouti
+kinshasa,Kinshasa,Democratic Republic of the Congo,-4.3276,15.3136,Africa,Middle Africa,,DR Congo|DRC,cd,below,Kinshasa
+cairo,Cairo,Egypt,30.0626,31.2497,Africa,Northern Africa,Al-Qahirah|Al Qahirah,,eg,,Cairo
+malabo,Malabo,Equatorial Guinea,3.7558,8.7817,Africa,Middle Africa,,,gq,left,Malabo
+asmara,Asmara,Eritrea,15.3381,38.9318,Africa,Eastern Africa,,,er,above,Asmara
+lobamba,Lobamba,Eswatini,-26.4667,31.2,Africa,Southern Africa,,Swaziland,sz,below,Lobamba
+addis-ababa,Addis Ababa,Ethiopia,9.025,38.7469,Africa,Eastern Africa,Addis Abeba,,et,,Addis_Ababa
+libreville,Libreville,Gabon,0.3924,9.4536,Africa,Middle Africa,,,ga,,Libreville
+banjul,Banjul,Gambia,13.4527,-16.578,Africa,Western Africa,,,gm,,Banjul
+accra,Accra,Ghana,5.556,-0.1969,Africa,Western Africa,,,gh,left,Accra
+conakry,Conakry,Guinea,9.538,-13.6773,Africa,Western Africa,,,gn,,Conakry
+bissau,Bissau,Guinea-Bissau,11.85,-15.5667,Africa,Western Africa,,,gw,,Bissau
+yamoussoukro,Yamoussoukro,Ivory Coast,6.8206,-5.2767,Africa,Western Africa,,Cote d'Ivoire|Côte d'Ivoire,ci,above,Yamoussoukro
+nairobi,Nairobi,Kenya,-1.2833,36.8167,Africa,Eastern Africa,,,ke,,Nairobi
+maseru,Maseru,Lesotho,-29.3167,27.4833,Africa,Southern Africa,,,ls,below,Maseru
+monrovia,Monrovia,Liberia,6.3005,-10.7969,Africa,Western Africa,,,lr,left,Monrovia
+tripoli,Tripoli,Libya,32.8874,13.1873,Africa,Northern Africa,,,ly,,Tripoli
+antananarivo,Antananarivo,Madagascar,-18.8792,47.5079,Africa,Eastern Africa,,,mg,above,Antananarivo
+lilongwe,Lilongwe,Malawi,-13.9669,33.7873,Africa,Eastern Africa,,,mw,,Lilongwe
+bamako,Bamako,Mali,12.65,-8,Africa,Western Africa,,,ml,,Bamako
+nouakchott,Nouakchott,Mauritania,18.0735,-15.9582,Africa,Western Africa,,,mr,,Nouakchott
+port-louis,Port Louis,Mauritius,-20.1619,57.4989,Africa,Eastern Africa,,,mu,left,Port_Louis
+rabat,Rabat,Morocco,34.0133,-6.8325,Africa,Northern Africa,,,ma,,Rabat
+maputo,Maputo,Mozambique,-25.9655,32.5832,Africa,Eastern Africa,,,mz,,Maputo
+windhoek,Windhoek,Namibia,-22.5594,17.0832,Africa,Southern Africa,,,na,left,Windhoek
+niamey,Niamey,Niger,13.5136,2.1089,Africa,Western Africa,,,ne,,Niamey
+abuja,Abuja,Nigeria,9.0579,7.4951,Africa,Western Africa,,,ng,,Abuja
+kigali,Kigali,Rwanda,-1.9499,30.0589,Africa,Eastern Africa,,,rw,left,Kigali
+sao-tome,São Tomé,São Tomé and Príncipe,0.3365,6.7273,Africa,Middle Africa,,Sao Tome and Principe|Sao Tome,st,left,São_Tomé
+dakar,Dakar,Senegal,14.6937,-17.4441,Africa,Western Africa,,,sn,,Dakar
+victoria,Victoria,Seychelles,-4.62,55.455,Africa,Eastern Africa,,,sc,,Victoria
+freetown,Freetown,Sierra Leone,8.4871,-13.2356,Africa,Western Africa,,,sl,left,Freetown
+mogadishu,Mogadishu,Somalia,2.0371,45.3438,Africa,Eastern Africa,,,so,,Mogadishu
+pretoria,Pretoria,South Africa,-25.7449,28.1878,Africa,Southern Africa,,,za,left,Pretoria
+juba,Juba,South Sudan,4.8517,31.5825,Africa,Middle Africa,,,ss,,Juba
+khartoum,Khartoum,Sudan,15.5518,32.5324,Africa,Northern Africa,,,sd,left,Khartoum
+dodoma,Dodoma,Tanzania,-6.1722,35.7395,Africa,Eastern Africa,,,tz,,Dodoma
+lome,Lomé,Togo,6.1287,1.2215,Africa,Western Africa,,,tg,above,Lomé
+tunis,Tunis,Tunisia,36.819,10.1658,Africa,Northern Africa,,,tn,,Tunis
+kampala,Kampala,Uganda,0.3163,32.5822,Africa,Eastern Africa,,,ug,,Kampala
+lusaka,Lusaka,Zambia,-15.4067,28.2871,Africa,Eastern Africa,,,zm,,Lusaka
+harare,Harare,Zimbabwe,-17.8277,31.0534,Africa,Eastern Africa,,,zw,,Harare
+saint-john-s,Saint John's,Antigua and Barbuda,17.1175,-61.8456,North America,Caribbean,,Antigua,ag,,Saint_John's
+buenos-aires,Buenos Aires,Argentina,-34.6037,-58.3816,South America,South America,,,ar,left,Buenos_Aires
+nassau,Nassau,Bahamas,25.0667,-77.3333,North America,Caribbean,,The Bahamas,bs,,Nassau
+bridgetown,Bridgetown,Barbados,13.1073,-59.6202,North America,Caribbean,,,bb,,Bridgetown
+belmopan,Belmopan,Belize,17.25,-88.7667,North America,Central America,,,bz,,Belmopan
+sucre,Sucre,Bolivia,-19.0333,-65.2627,South America,South America,,,bo,,Sucre
+brasilia,Brasília,Brazil,-15.7797,-47.9297,South America,South America,Brasília,,br,,Brasília
+ottawa,Ottawa,Canada,45.4112,-75.6981,North America,North America,,,ca,,Ottawa
+santiago,Santiago,Chile,-33.4569,-70.6483,South America,South America,,,cl,,Santiago
+bogota,Bogotá,Colombia,4.711,-74.0721,South America,South America,Bogotá,,co,,Bogotá
+san-jose,San José,Costa Rica,10.9517,-85.1361,North America,Central America,,,cr,,San_José
+havana,Havana,Cuba,23.133,-82.383,North America,Caribbean,,,cu,,Havana
+roseau,Roseau,Dominica,15.3017,-61.3881,North America,Caribbean,,,dm,,Roseau
+santo-domingo,Santo Domingo,Dominican Republic,18.4719,-69.8923,North America,Caribbean,,,do,,Santo_Domingo
+quito,Quito,Ecuador,-0.2298,-78.5249,South America,South America,,,ec,,Quito
+san-salvador,San Salvador,El Salvador,13.6894,-89.1872,North America,Central America,,,sv,left,San_Salvador
+st-george-s,St. George's,Grenada,12.0564,-61.7485,North America,Caribbean,,,gd,left,St._George's
+guatemala-city,Guatemala City,Guatemala,14.6407,-90.5133,North America,Central America,,,gt,left,Guatemala_City
+georgetown,Georgetown,Guyana,6.8045,-58.1553,South America,South America,,,gy,left,Georgetown
+port-au-prince,Port-au-Prince,Haiti,18.5435,-72.3388,North America,Caribbean,,,ht,above,Port-au-Prince
+tegucigalpa,Tegucigalpa,Honduras,14.0818,-87.2068,North America,Central America,,,hn,,Tegucigalpa
+kingston,Kingston,Jamaica,17.997,-76.7936,North America,Caribbean,,,jm,left,Kingston
+mexico-city,Mexico City,Mexico,19.4285,-99.1277,North America,North America,Ciudad de Mexico|Ciudad de México,,mx,,Mexico_City
+managua,Managua,Nicaragua,12.1328,-86.2504,North America,Central America,,,ni,left,Managua
+panama-city,Panama City,Panama,8.9936,-79.5197,North America,Central America,,,pa,,Panama_City
+asuncion,Asunción,Paraguay,-25.2637,-57.5759,South America,South America,Asunción,,py,,Asunción
+lima,Lima,Peru,-12.0432,-77.0282,South America,South America,,,pe,,Lima
+basseterre,Basseterre,Saint Kitts and Nevis,17.3026,-62.7177,North America,Caribbean,,St Kitts and Nevis|St Kitts,kn,left,Basseterre
+castries,Castries,Saint Lucia,13.9957,-61.0061,North America,Caribbean,,St Lucia,lc,left,Castries
+kingstown,Kingstown,Saint Vincent and the Grenadines,13.1553,-61.2274,North America,Caribbean,,St Vincent and the Grenadines|St Vincent,vc,left,Kingstown
+paramaribo,Paramaribo,Suriname,5.8664,-55.1668,South America,South America,,,sr,,Paramaribo
+port-of-spain,Port of Spain,Trinidad and Tobago,10.6667,-61.5189,North America,Caribbean,,Trinidad,tt,,Port_of_Spain
+washington-d-c,Washington D.C.,United States,38.8951,-77.0364,North America,North America,Washington D.C.|Washington DC,USA|US|America|United States of America,us,,Washington_D.C.
+montevideo,Montevideo,Uruguay,-34.9033,-56.1882,South America,South America,,,uy,,Montevideo
+caracas,Caracas,Venezuela,10.5,-66.9333,South America,South America,,,ve,,Caracas
+kabul,Kabul,Afghanistan,34.5281,69.1723,Asia,Southern Asia,,,af,left,Kabul
+yerevan,Yerevan,Armenia,40.1811,44.5136,Asia,Western Asia,Jerevan|Erevan,,am,left,Yerevan
+baku,Baku,Azerbaijan,40.3777,49.892,Asia,Western Asia,Bakı,,az,,Baku
+manama,Manama,Bahrain,26.2279,50.5857,Asia,Western Asia,,,bh,left,Manama
+dhaka,Dhaka,Bangladesh,23.7842,89.9286,Asia,Southern Asia,Dacca,,bd,,Dhaka
+thimphu,Thimphu,Bhutan,27.4661,89.6419,Asia,Southern Asia,,,bt,,Thimphu
+bandar-seri-begawan,Bandar Seri Begawan,Brunei,4.8904,114.9401,Asia,South-Eastern Asia,,,bn,,Bandar_Seri_Begawan
+phnom-penh,Phnom Penh,Cambodia,11.5625,104.916,Asia,South-Eastern Asia,,,kh,,Phnom_Penh
+beijing,Beijing,China,39.9075,116.3972,Asia,Eastern Asia,Peking,,cn,,Beijing
+tbilisi,Tbilisi,Georgia,41.6941,44.8337,Asia,Western Asia,Tiflis,,ge,,Tbilisi
+new-delhi,New Delhi,India,28.6358,77.2245,Asia,Southern Asia,Nai Dilli|Nayi Dilli,,in,left,New_Delhi
+jakarta,Jakarta,Indonesia,-6.2088,106.8456,Asia,South-Eastern Asia,,,id,,Jakarta
+tehran,Tehran,Iran,35.6944,51.4215,Asia,Southern Asia,Teheran|Tehrān,,ir,,Tehran
+baghdad,Baghdad,Iraq,33.3406,44.4009,Asia,Western Asia,Bagdad,,iq,,Baghdad
+jerusalem,Jerusalem,Israel,31.769,35.2163,Asia,Western Asia,Yerushalayim,,il,below,Jerusalem
+tokyo,Tokyo,Japan,35.6895,139.6917,Asia,Eastern Asia,Tōkyō|Tokio,,jp,,Tokyo
+amman,Amman,Jordan,31.9552,35.945,Asia,Western Asia,,,jo,,Amman
+astana,Astana,Kazakhstan,51.1694,71.4491,Asia,Central Asia,,,kz,,Astana
+kuwait-city,Kuwait City,Kuwait,29.3697,47.9783,Asia,Western Asia,,,kw,,Kuwait_City
+bishkek,Bishkek,Kyrgyzstan,42.87,74.59,Asia,Central Asia,,,kg,,Bishkek
+vientiane,Vientiane,Laos,17.9667,102.6,Asia,South-Eastern Asia,,,la,,Vientiane
+beirut,Beirut,Lebanon,33.8933,35.5016,Asia,Western Asia,,,lb,left,Beirut
+kuala-lumpur,Kuala Lumpur,Malaysia,3.1412,101.6865,Asia,South-Eastern Asia,KL,,my,above,Kuala_Lumpur
+male,Malé,Maldives,4.1755,73.5093,Asia,Southern Asia,,,mv,,Malé
+ulan-bator,Ulan Bator,Mongolia,47.8918,106.7371,Asia,Eastern Asia,,,mn,,Ulan_Bator
+naypyidaw,Naypyidaw,Myanmar,19.7633,96.0785,Asia,South-Eastern Asia,Nay Pyi Taw,Burma,mm,left,Naypyidaw
+kathmandu,Kathmandu,Nepal,27.709,85.2849,Asia,Southern Asia,,,np,left,Kathmandu
+pyongyang,Pyongyang,North Korea,39.0339,125.7543,Asia,Eastern Asia,,DPRK,kp,,Pyongyang
+muscat,Muscat,Oman,23.5841,58.4078,Asia,Western Asia,,,om,,Muscat
+islamabad,Islamabad,Pakistan,33.7215,73.0433,Asia,Southern Asia,Islamabad,,pk,,Islamabad
+ramallah,Ramallah,Palestine,31.9038,35.2034,Asia,Western Asia,Ram Allah,,ps,above,Ramallah
+manila,Manila,Philippines,14.5995,120.9842,Asia,South-Eastern Asia,,,ph,,Manila
+doha,Doha,Qatar,25.2855,51.531,Asia,Western Asia,,,qa,below,Doha
+riyadh,Riyadh,Saudi Arabia,24.6877,46.7219,Asia,Western Asia,Ar Riyad|Er Riad,,sa,left,Riyadh
+singapore,Singapore,Singapore,1.2897,103.8501,Asia,South-Eastern Asia,,,sg,below,Singapore
+seoul,Seoul,South Korea,37.566,126.9784,Asia,Eastern Asia,Soul,,kr,below,Seoul
+sri-jayawardenepura-kotte,Sri Jayawardenepura Kotte,Sri Lanka,6.9271,79.8612,Asia,Southern Asia,Jayawardenepura|Colombo,,lk,above,Sri_Jayawardenepura_Kotte
+damascus,Damascus,Syria,33.5102,36.2913,Asia,Western Asia,,,sy,,Damascus
+taipei,Taipei,Taiwan,25.033,121.5654,Asia,Eastern Asia,Taibei,,tw,,Taipei
+dushanbe,Dushanbe,Tajikistan,38.5367,68.78,Asia,Central Asia,,,tj,,Dushanbe
+bangkok,Bangkok,Thailand,13.754,100.5014,Asia,South-Eastern Asia,Krung Thep,,th,left,Bangkok
+dili,Dili,Timor-Leste,-8.5586,125.5736,Asia,South-Eastern Asia,,East Timor,tl,,Dili
+ankara,Ankara,Türkiye,39.9034,32.4331,Europe|Asia,Western Asia,Angora,Turkey,tr,,Ankara
+ashgabat,Ashgabat,Turkmenistan,37.95,58.3833,Asia,Central Asia,,,tm,,Ashgabat
+abu-dhabi,Abu Dhabi,United Arab Emirates,24.4136,54.433,Asia,Western Asia,,UAE,ae,above,Abu_Dhabi
+tashkent,Tashkent,Uzbekistan,41.2647,69.2163,Asia,Central Asia,,,uz,,Tashkent
+hanoi,Hanoi,Vietnam,21.0285,105.8542,Asia,South-Eastern Asia,,,vn,,Hanoi
+sana-a,Sana'a,Yemen,15.3694,44.191,Asia,Western Asia,,,ye,,Sana'a
+tirana,Tirana,Albania,41.3275,19.8189,Europe,Southeast Europe,Tiranë|Tirane,,al,left,Tirana
+andorra-la-vella,Andorra la Vella,Andorra,42.5078,1.5211,Europe,Southern Europe,,,ad,,Andorra_la_Vella
+vienna,Vienna,Austria,48.2085,16.3721,Europe,Central Europe,Wien,,at,left,Vienna
+minsk,Minsk,Belarus,53.9,27.5667,Europe,Eastern Europe,,,by,,Minsk
+brussels,Brussels,Belgium,50.8505,4.3488,Europe,Western Europe,Bruxelles|Brussel,,be,,Brussels
+sarajevo,Sarajevo,Bosnia and Herzegovina,43.8486,18.3564,Europe,Southeast Europe,,Bosnia,ba,left,Sarajevo
+sofia,Sofia,Bulgaria,42.6975,23.3242,Europe,Southeast Europe,,,bg,,Sofia
+zagreb,Zagreb,Croatia,45.8144,15.978,Europe,Southeast Europe,,,hr,,Zagreb
+nicosia,Nicosia,Cyprus,35.1753,33.3642,Europe,Southern Europe,Lefkosia|Lefkoşa,,cy,,Nicosia
+prague,Prague,Czechia,50.088,14.4208,Europe,Central Europe,Praha,Czech Republic,cz,,Prague
+copenhagen,Copenhagen,Denmark,55.6761,12.5683,Europe,Northern Europe,Kobenhavn|København,,dk,,Copenhagen
+tallinn,Tallinn,Estonia,59.437,24.7535,Europe,Northern Europe,,,ee,,Tallinn
+helsinki,Helsinki,Finland,60.1695,24.9355,Europe,Northern Europe,Helsingfors,,fi,left,Helsinki
+paris,Paris,France,48.8534,2.3486,Europe,Western Europe,,,fr,,Paris
+berlin,Berlin,Germany,52.5244,13.4105,Europe,Western Europe,,,de,,Berlin
+athens,Athens,Greece,37.9838,23.7278,Europe,Southern Europe,Athina|Athinai,,gr,,Athens
+budapest,Budapest,Hungary,47.4984,19.0405,Europe,Central Europe,,,hu,,Budapest
+reykjavik,Reykjavik,Iceland,64.1466,-21.9426,Europe,Northern Europe,Reykjavík,,is,,Reykjavik
+dublin,Dublin,Ireland,53.3331,-6.2489,Europe,Northern Europe,Baile Atha Cliath,,ie,,Dublin
+rome,Rome,Italy,41.8919,12.5113,Europe,Southern Europe,Roma,,it,,Rome
+pristina,Pristina,Kosovo,42.6629,21.1655,Europe,Southeast Europe,Prishtina|Prishtinë,,xk,above,Pristina
+riga,Riga,Latvia,56.946,24.1059,Europe,Northern Europe,,,lv,,Riga
+vaduz,Vaduz,Liechtenstein,47.1415,9.5215,Europe,Western Europe,,,li,,Vaduz
+vilnius,Vilnius,Lithuania,54.6892,25.2798,Europe,Northern Europe,,,lt,left,Vilnius
+luxembourg,Luxembourg,Luxembourg,49.6117,6.13,Europe,Western Europe,Lëtzebuerg,,lu,,Luxembourg
+valletta,Valletta,Malta,35.8997,14.5147,Europe,Southern Europe,,,mt,,Valletta
+chisinau,Chișinău,Moldova,47.0105,28.8638,Europe,Eastern Europe,Kishinev|Chisinau,,md,,Chișinău
+monaco,Monaco,Monaco,43.7384,7.4246,Europe,Western Europe,,,mc,,Monaco
+podgorica,Podgorica,Montenegro,42.4411,19.2636,Europe,Southeast Europe,,,me,left,Podgorica
+amsterdam,Amsterdam,Netherlands,52.374,4.8897,Europe,Western Europe,,Holland,nl,,Amsterdam
+skopje,Skopje,North Macedonia,41.9965,21.4314,Europe,Southeast Europe,,Macedonia,mk,below,Skopje
+oslo,Oslo,Norway,59.9127,10.7461,Europe,Northern Europe,,,no,,Oslo
+warsaw,Warsaw,Poland,52.2298,21.0118,Europe,Central Europe,Warszawa,,pl,,Warsaw
+lisbon,Lisbon,Portugal,38.7263,-9.1484,Europe,Southern Europe,Lisboa,,pt,,Lisbon
+bucharest,Bucharest,Romania,44.4323,26.1063,Europe,Southeast Europe,București|Bucuresti,,ro,,Bucharest
+moscow,Moscow,Russia,55.7522,37.6156,Europe|Asia,Eastern Europe,Moskva|Moskwa,,ru,,Moscow
+san-marino,San Marino,San Marino,43.9424,12.4578,Europe,Southern Europe,City of San Marino,,sm,above,San_Marino
+belgrade,Belgrade,Serbia,44.7866,20.4489,Europe,Southeast Europe,Beograd,,rs,,Belgrade
+bratislava,Bratislava,Slovakia,48.1482,17.1067,Europe,Central Europe,,,sk,,Bratislava
+ljubljana,Ljubljana,Slovenia,46.0511,14.5051,Europe,Central Europe,,,si,left,Ljubljana
+madrid,Madrid,Spain,40.4165,-3.7026,Europe,Southern Europe,,,es,,Madrid
+stockholm,Stockholm,Sweden,59.3326,18.0649,Europe,Northern Europe,,,se,,Stockholm
+bern,Bern,Switzerland,46.9481,7.4474,Europe,Western Europe,Berne,,ch,left,Bern
+kyiv,Kyiv,Ukraine,50.4547,30.5238,Europe,Eastern Europe,Kiev,,ua,,Kyiv
+london,London,United Kingdom,51.5085,-0.1257,Europe,Northern Europe,,UK|Britain|Great Britain|England,gb,,London
+vatican-city,Vatican City,Vatican City,41.9029,12.4534,Europe,Southern Europe,,The Vatican|Holy See,va,left,Vatican_City
+canberra,Canberra,Australia,-35.2835,149.1281,Oceania,Australia and New Zealand,,,au,,Canberra
+suva,Suva,Fiji,-18.1416,178.4415,Oceania,Melanesia,,,fj,,Suva
+south-tarawa,South Tarawa,Kiribati,1.4518,173,Oceania,Micronesia,,,ki,,South_Tarawa
+majuro,Majuro,Marshall Islands,7.0897,171.3803,Oceania,Micronesia,,,mh,,Majuro
+palikir,Palikir,Micronesia,6.9147,158.1611,Oceania,Micronesia,,,fm,,Palikir
+yaren,Yaren,Nauru,-0.5508,166.9252,Oceania,Micronesia,,,nr,left,Yaren
+wellington,Wellington,New Zealand,-41.2866,174.7756,Oceania,Australia and New Zealand,,,nz,,Wellington
+ngerulmud,Ngerulmud,Palau,7.5006,134.6242,Oceania,Micronesia,,,pw,,Ngerulmud
+port-moresby,Port Moresby,Papua New Guinea,-9.4772,147.1509,Oceania,Melanesia,,PNG,pg,left,Port_Moresby
+apia,Apia,Samoa,-13.8333,-171.7667,Oceania,Polynesia,,,ws,,Apia
+honiara,Honiara,Solomon Islands,-9.4333,159.95,Oceania,Melanesia,,,sb,,Honiara
+nuku-alofa,Nuku'alofa,Tonga,-21.2087,-175.2013,Oceania,Polynesia,,,to,,Nuku'alofa
+funafuti,Funafuti,Tuvalu,-8.5242,179.1942,Oceania,Polynesia,,,tv,,Funafuti
+port-vila,Port Vila,Vanuatu,-17.7334,168.3273,Oceania,Melanesia,,,vu,left,Port_Vila

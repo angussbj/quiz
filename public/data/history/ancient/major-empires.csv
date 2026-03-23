@@ -1,50 +1,50 @@
-id,empire,start_year,end_year,continent,empire_alternates
-akkadian-empire,Akkadian Empire,-2334,-2154,Middle East,Empire of Akkad|Akkad|Akkadian
-egyptian-new-kingdom,Egyptian New Kingdom,-1550,-1070,Africa,New Kingdom of Egypt|Egyptian Empire|Egyptian|New Kingdom
-assyrian-empire,Assyrian Empire,-911,-609,Middle East,Neo-Assyrian Empire|Assyria|Assyrian
-kingdom-of-kush,Kingdom of Kush,-1070,-350,Africa,Kushite Empire|Nubian Empire|Meroe|Kush
-babylonian-empire,Babylonian Empire,-605,-539,Middle East,Neo-Babylonian Empire|Chaldean Empire|Babylon|Babylonian
-achaemenid-empire,Achaemenid Empire,-550,-330,Middle East,Persian Empire|First Persian Empire|Hakhamaneshian Empire|Achaemenid|Persian
-athenian-empire,Athenian Empire,-477,-404,Europe,Delian League|League of Athens|Athenian
-macedonian-empire,Macedonian Empire,-336,-323,Asia,Empire of Alexander|Alexander's Empire|Argead Empire|Macedonian
-maurya-empire,Maurya Empire,-322,-185,Asia,Mauryan Empire|Mauryan Dynasty|Mauryan|Maurya
-seleucid-empire,Seleucid Empire,-312,-63,Middle East,Seleucid Kingdom|Syrian Empire|Seleucid
-roman-republic,Roman Republic,-509,-27,Europe,Res Publica Romana|SPQR|Roman Republic
-qin-dynasty,Qin Dynasty,-221,-206,Asia,Qin Empire|Ch'in Dynasty|Qin|Ch'in
-han-dynasty,Han Dynasty,-206,220,Asia,Han Empire|Former Han|Later Han|Han
-parthian-empire,Parthian Empire,-247,224,Middle East,Arsacid Empire|Parthia|Parthian
-roman-empire,Roman Empire,-27,476,Europe,Western Roman Empire|Imperium Romanum|Roman
-kingdom-of-aksum,Kingdom of Aksum,100,940,Africa,Aksumite Empire|Axumite Empire|Axum|Aksum
-sassanid-empire,Sassanid Empire,224,651,Middle East,Sasanian Empire|Second Persian Empire|Neo-Persian Empire|Sassanid|Sasanian
-gupta-empire,Gupta Empire,320,550,Asia,Gupta Dynasty|Golden Age of India|Gupta
-byzantine-empire,Byzantine Empire,330,1453,Europe,Eastern Roman Empire|Byzantium|Romaioi|Byzantine
-hunnic-empire,Hunnic Empire,370,469,Europe,Empire of the Huns|Attila's Empire|Hunnic
-maya-civilization,Maya Civilization,250,900,North America,Maya Empire|Classic Maya|Mayan Civilization|Maya|Mayan
-tang-dynasty,Tang Dynasty,618,907,Asia,Tang Empire|T'ang Dynasty|Tang
-umayyad-caliphate,Umayyad Caliphate,661,750,Middle East,Umayyad Empire|First Islamic Caliphate|Umayyad
-carolingian-empire,Carolingian Empire,800,888,Europe,Empire of Charlemagne|Frankish Empire|Carolingian|Frankish
-abbasid-caliphate,Abbasid Caliphate,750,1258,Middle East,Abbasid Empire|Second Islamic Caliphate|Abbasid
-khmer-empire,Khmer Empire,802,1431,Asia,Angkor Empire|Khmer Kingdom|Khmer|Angkor
-holy-roman-empire,Holy Roman Empire,962,1806,Europe,HRE|First Reich|Sacrum Romanum Imperium|Holy Roman
-song-dynasty,Song Dynasty,960,1279,Asia,Song Empire|Sung Dynasty|Song|Sung
-mali-empire,Mali Empire,1235,1600,Africa,Mandingo Empire|Manden Kurufaba|Mali
-mongol-empire,Mongol Empire,1206,1368,Asia,Mongol Khanate|Great Mongol Nation|Yeke Mongghol Ulus|Mongol
-aztec-empire,Aztec Empire,1428,1521,North America,Triple Alliance|Mexica Empire|Nahua Empire|Aztec|Mexica
-inca-empire,Inca Empire,1438,1533,South America,Tawantinsuyu|Incan Empire|Inca|Incan
-ming-dynasty,Ming Dynasty,1368,1644,Asia,Ming Empire|Great Ming|Ming
-ottoman-empire,Ottoman Empire,1299,1922,Middle East,Ottoman Sultanate|Turkish Empire|Sublime Porte|Ottoman|Turkish
-songhai-empire,Songhai Empire,1464,1591,Africa,Songhay Empire|Songhai Kingdom|Songhai|Songhay
-spanish-empire,Spanish Empire,1492,1898,Europe,Imperio Español|Spanish Colonial Empire|Spanish
-mughal-empire,Mughal Empire,1526,1857,Asia,Mogul Empire|Timurid Empire|Hindustan|Mughal|Mogul
-portuguese-empire,Portuguese Empire,1415,1975,Europe,Imperio Portugues|Portuguese Colonial Empire|Portuguese
-safavid-empire,Safavid Empire,1501,1736,Middle East,Safavid Persia|Safavid Dynasty|Safavid
-russian-empire,Russian Empire,1721,1917,Europe,Rossiyskaya Imperiya|Czarist Russia|Tsarist Russia|Russian
-qing-dynasty,Qing Dynasty,1644,1912,Asia,Manchu Empire|Great Qing|Ch'ing Dynasty|Qing|Manchu
-habsburg-empire,Habsburg Empire,1526,1918,Europe,Austro-Hungarian Empire|House of Habsburg|Austrian Empire|Habsburg|Austrian|Austro-Hungarian
-british-empire,British Empire,1583,1997,Europe,British Colonial Empire|Pax Britannica|British
-zulu-kingdom,Zulu Kingdom,1816,1897,Africa,Zulu Empire|Kingdom of Zulu|uZulu|Zulu
-napoleonic-empire,French Empire,1804,1815,Europe,Napoleonic Empire|First French Empire|Empire Francais|French|Napoleonic
-japanese-empire,Japanese Empire,1868,1945,Asia,Empire of Japan|Imperial Japan|Dai Nippon Teikoku|Japanese
-german-empire,German Empire,1871,1918,Europe,Deutsches Kaiserreich|Second Reich|Imperial Germany|German
-timurid-empire,Timurid Empire,1370,1507,Asia,Timurid Dynasty|Timur's Empire|Tamerlane's Empire|Timurid
-vijayanagara-empire,Vijayanagara Empire,1336,1646,Asia,Kingdom of Vijayanagara|Karnata Empire|Vijayanagara
+id,empire,start_year,end_year,continent,empire_alternates,wikipedia
+akkadian-empire,Akkadian Empire,-2334,-2154,Middle East,Empire of Akkad|Akkad|Akkadian,Akkadian_Empire
+egyptian-new-kingdom,Egyptian New Kingdom,-1550,-1070,Africa,New Kingdom of Egypt|Egyptian Empire|Egyptian|New Kingdom,Egyptian_New_Kingdom
+assyrian-empire,Assyrian Empire,-911,-609,Middle East,Neo-Assyrian Empire|Assyria|Assyrian,Assyrian_Empire
+kingdom-of-kush,Kingdom of Kush,-1070,-350,Africa,Kushite Empire|Nubian Empire|Meroe|Kush,Kingdom_of_Kush
+babylonian-empire,Babylonian Empire,-605,-539,Middle East,Neo-Babylonian Empire|Chaldean Empire|Babylon|Babylonian,Babylonian_Empire
+achaemenid-empire,Achaemenid Empire,-550,-330,Middle East,Persian Empire|First Persian Empire|Hakhamaneshian Empire|Achaemenid|Persian,Achaemenid_Empire
+athenian-empire,Athenian Empire,-477,-404,Europe,Delian League|League of Athens|Athenian,Athenian_Empire
+macedonian-empire,Macedonian Empire,-336,-323,Asia,Empire of Alexander|Alexander's Empire|Argead Empire|Macedonian,Macedonian_Empire
+maurya-empire,Maurya Empire,-322,-185,Asia,Mauryan Empire|Mauryan Dynasty|Mauryan|Maurya,Maurya_Empire
+seleucid-empire,Seleucid Empire,-312,-63,Middle East,Seleucid Kingdom|Syrian Empire|Seleucid,Seleucid_Empire
+roman-republic,Roman Republic,-509,-27,Europe,Res Publica Romana|SPQR|Roman Republic,Roman_Republic
+qin-dynasty,Qin Dynasty,-221,-206,Asia,Qin Empire|Ch'in Dynasty|Qin|Ch'in,Qin_Dynasty
+han-dynasty,Han Dynasty,-206,220,Asia,Han Empire|Former Han|Later Han|Han,Han_Dynasty
+parthian-empire,Parthian Empire,-247,224,Middle East,Arsacid Empire|Parthia|Parthian,Parthian_Empire
+roman-empire,Roman Empire,-27,476,Europe,Western Roman Empire|Imperium Romanum|Roman,Roman_Empire
+kingdom-of-aksum,Kingdom of Aksum,100,940,Africa,Aksumite Empire|Axumite Empire|Axum|Aksum,Kingdom_of_Aksum
+sassanid-empire,Sassanid Empire,224,651,Middle East,Sasanian Empire|Second Persian Empire|Neo-Persian Empire|Sassanid|Sasanian,Sassanid_Empire
+gupta-empire,Gupta Empire,320,550,Asia,Gupta Dynasty|Golden Age of India|Gupta,Gupta_Empire
+byzantine-empire,Byzantine Empire,330,1453,Europe,Eastern Roman Empire|Byzantium|Romaioi|Byzantine,Byzantine_Empire
+hunnic-empire,Hunnic Empire,370,469,Europe,Empire of the Huns|Attila's Empire|Hunnic,Hunnic_Empire
+maya-civilization,Maya Civilization,250,900,North America,Maya Empire|Classic Maya|Mayan Civilization|Maya|Mayan,Maya_Civilization
+tang-dynasty,Tang Dynasty,618,907,Asia,Tang Empire|T'ang Dynasty|Tang,Tang_Dynasty
+umayyad-caliphate,Umayyad Caliphate,661,750,Middle East,Umayyad Empire|First Islamic Caliphate|Umayyad,Umayyad_Caliphate
+carolingian-empire,Carolingian Empire,800,888,Europe,Empire of Charlemagne|Frankish Empire|Carolingian|Frankish,Carolingian_Empire
+abbasid-caliphate,Abbasid Caliphate,750,1258,Middle East,Abbasid Empire|Second Islamic Caliphate|Abbasid,Abbasid_Caliphate
+khmer-empire,Khmer Empire,802,1431,Asia,Angkor Empire|Khmer Kingdom|Khmer|Angkor,Khmer_Empire
+holy-roman-empire,Holy Roman Empire,962,1806,Europe,HRE|First Reich|Sacrum Romanum Imperium|Holy Roman,Holy_Roman_Empire
+song-dynasty,Song Dynasty,960,1279,Asia,Song Empire|Sung Dynasty|Song|Sung,Song_Dynasty
+mali-empire,Mali Empire,1235,1600,Africa,Mandingo Empire|Manden Kurufaba|Mali,Mali_Empire
+mongol-empire,Mongol Empire,1206,1368,Asia,Mongol Khanate|Great Mongol Nation|Yeke Mongghol Ulus|Mongol,Mongol_Empire
+aztec-empire,Aztec Empire,1428,1521,North America,Triple Alliance|Mexica Empire|Nahua Empire|Aztec|Mexica,Aztec_Empire
+inca-empire,Inca Empire,1438,1533,South America,Tawantinsuyu|Incan Empire|Inca|Incan,Inca_Empire
+ming-dynasty,Ming Dynasty,1368,1644,Asia,Ming Empire|Great Ming|Ming,Ming_Dynasty
+ottoman-empire,Ottoman Empire,1299,1922,Middle East,Ottoman Sultanate|Turkish Empire|Sublime Porte|Ottoman|Turkish,Ottoman_Empire
+songhai-empire,Songhai Empire,1464,1591,Africa,Songhay Empire|Songhai Kingdom|Songhai|Songhay,Songhai_Empire
+spanish-empire,Spanish Empire,1492,1898,Europe,Imperio Español|Spanish Colonial Empire|Spanish,Spanish_Empire
+mughal-empire,Mughal Empire,1526,1857,Asia,Mogul Empire|Timurid Empire|Hindustan|Mughal|Mogul,Mughal_Empire
+portuguese-empire,Portuguese Empire,1415,1975,Europe,Imperio Portugues|Portuguese Colonial Empire|Portuguese,Portuguese_Empire
+safavid-empire,Safavid Empire,1501,1736,Middle East,Safavid Persia|Safavid Dynasty|Safavid,Safavid_Empire
+russian-empire,Russian Empire,1721,1917,Europe,Rossiyskaya Imperiya|Czarist Russia|Tsarist Russia|Russian,Russian_Empire
+qing-dynasty,Qing Dynasty,1644,1912,Asia,Manchu Empire|Great Qing|Ch'ing Dynasty|Qing|Manchu,Qing_Dynasty
+habsburg-empire,Habsburg Empire,1526,1918,Europe,Austro-Hungarian Empire|House of Habsburg|Austrian Empire|Habsburg|Austrian|Austro-Hungarian,Habsburg_Empire
+british-empire,British Empire,1583,1997,Europe,British Colonial Empire|Pax Britannica|British,British_Empire
+zulu-kingdom,Zulu Kingdom,1816,1897,Africa,Zulu Empire|Kingdom of Zulu|uZulu|Zulu,Zulu_Kingdom
+napoleonic-empire,French Empire,1804,1815,Europe,Napoleonic Empire|First French Empire|Empire Francais|French|Napoleonic,French_Empire
+japanese-empire,Japanese Empire,1868,1945,Asia,Empire of Japan|Imperial Japan|Dai Nippon Teikoku|Japanese,Japanese_Empire
+german-empire,German Empire,1871,1918,Europe,Deutsches Kaiserreich|Second Reich|Imperial Germany|German,German_Empire
+timurid-empire,Timurid Empire,1370,1507,Asia,Timurid Dynasty|Timur's Empire|Tamerlane's Empire|Timurid,Timurid_Empire
+vijayanagara-empire,Vijayanagara Empire,1336,1646,Asia,Kingdom of Vijayanagara|Karnata Empire|Vijayanagara,Vijayanagara_Empire

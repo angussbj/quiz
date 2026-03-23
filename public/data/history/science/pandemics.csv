@@ -1,34 +1,34 @@
-id,pandemic,start_year,end_year,category,pandemic_alternates
-plague-of-athens,Plague of Athens,-430,-426,Ancient Plagues,Athenian Plague|Thucydides Plague
-antonine-plague,Antonine Plague,165,180,Ancient Plagues,Plague of Galen|Roman Plague of 165
-plague-of-cyprian,Plague of Cyprian,249,262,Ancient Plagues,Cyprian Plague
-plague-of-justinian,Plague of Justinian,541,549,Plague & Bacterial,Justinianic Plague|First Plague Pandemic
-plague-of-sheroe,Plague of Sheroe,627,628,Plague & Bacterial,Plague of Amwas|Plague of Shehrbaraz
-black-death,Black Death,1346,1353,Plague & Bacterial,Bubonic Plague|Great Mortality|Pestilence|Second Plague Pandemic
-cocoliztli-1545,Cocoliztli Epidemic,1545,1550,Other Viral,Great Pestilence of New Spain|Huey Cocoliztli
-sweating-sickness,English Sweating Sickness,1485,1551,Other Viral,English Sweat|Sudor Anglicus
-plague-of-1563,Elizabethan Plague,1563,1564,Plague & Bacterial,London Plague 1563
-great-plague-of-milan,Great Plague of Milan,1629,1631,Plague & Bacterial,Italian Plague of 1629|Plague of Manzoni
-great-plague-of-seville,Great Plague of Seville,1647,1652,Plague & Bacterial,Andalusian Plague of 1647
-great-plague-of-london,Great Plague of London,1665,1666,Plague & Bacterial,London Plague of 1665|Great Plague
-great-plague-of-marseille,Great Plague of Marseille,1720,1722,Plague & Bacterial,Plague of Provence|Last Major Plague of Europe
-aztec-smallpox,Aztec Smallpox Epidemic,1519,1520,Smallpox & Viral,New World Smallpox|Smallpox of the Conquest
-american-smallpox,American Smallpox Epidemics,1633,1634,Smallpox & Viral,New England Smallpox|Colonial Smallpox
-boston-smallpox,Boston Smallpox Epidemic,1721,1722,Smallpox & Viral,New England Smallpox 1721
-first-cholera,First Cholera Pandemic,1817,1824,Cholera,Cholera Pandemic 1817|Asiatic Cholera 1817
-second-cholera,Second Cholera Pandemic,1829,1851,Cholera,Cholera Pandemic 1829|Asiatic Cholera 1829
-third-cholera,Third Cholera Pandemic,1852,1860,Cholera,Cholera Pandemic 1852
-fourth-cholera,Fourth Cholera Pandemic,1863,1875,Cholera,Cholera Pandemic 1863
-fifth-cholera,Fifth Cholera Pandemic,1881,1896,Cholera,Cholera Pandemic 1881|Cholera 1881
-sixth-cholera,Sixth Cholera Pandemic,1899,1923,Cholera,Cholera Pandemic 1899
-seventh-cholera,Seventh Cholera Pandemic,1961,,Cholera,El Tor Cholera Pandemic|Cholera Pandemic 1961
-russian-flu-1889,Russian Flu,1889,1890,Influenza,Asiatic Flu|Influenza Pandemic 1889
-spanish-flu,Spanish Flu,1918,1920,Influenza,1918 Influenza Pandemic|H1N1 1918|Great Influenza
-asian-flu,Asian Flu,1957,1958,Influenza,Influenza Pandemic 1957|H2N2 Pandemic
-hong-kong-flu,Hong Kong Flu,1968,1969,Influenza,Influenza Pandemic 1968|H3N2 Pandemic
-swine-flu-2009,Swine Flu,2009,2010,Influenza,2009 Influenza Pandemic|H1N1 2009|Swine Influenza
-hiv-aids,HIV/AIDS,1981,,Other Viral,AIDS Pandemic|Human Immunodeficiency Virus Epidemic
-sars,SARS,2002,2004,Other Viral,Severe Acute Respiratory Syndrome|SARS-CoV-1
-west-africa-ebola,West Africa Ebola Epidemic,2014,2016,Other Viral,Ebola Epidemic 2014|Ebola Virus Disease Outbreak
-covid-19,COVID-19,2019,,Other Viral,Coronavirus Pandemic|SARS-CoV-2 Pandemic|COVID Pandemic
-polio-epidemic,Polio Epidemics,1916,1955,Other Viral,Poliomyelitis Epidemics|Infantile Paralysis
+id,pandemic,start_year,end_year,category,pandemic_alternates,wikipedia
+plague-of-athens,Plague of Athens,-430,-426,Ancient Plagues,Athenian Plague|Thucydides Plague,Plague_of_Athens
+antonine-plague,Antonine Plague,165,180,Ancient Plagues,Plague of Galen|Roman Plague of 165,Antonine_Plague
+plague-of-cyprian,Plague of Cyprian,249,262,Ancient Plagues,Cyprian Plague,Plague_of_Cyprian
+plague-of-justinian,Plague of Justinian,541,549,Plague & Bacterial,Justinianic Plague|First Plague Pandemic,Plague_of_Justinian
+plague-of-sheroe,Plague of Sheroe,627,628,Plague & Bacterial,Plague of Amwas|Plague of Shehrbaraz,Plague_of_Sheroe
+black-death,Black Death,1346,1353,Plague & Bacterial,Bubonic Plague|Great Mortality|Pestilence|Second Plague Pandemic,Black_Death
+cocoliztli-1545,Cocoliztli Epidemic,1545,1550,Other Viral,Great Pestilence of New Spain|Huey Cocoliztli,
+sweating-sickness,English Sweating Sickness,1485,1551,Other Viral,English Sweat|Sudor Anglicus,
+plague-of-1563,Elizabethan Plague,1563,1564,Plague & Bacterial,London Plague 1563,
+great-plague-of-milan,Great Plague of Milan,1629,1631,Plague & Bacterial,Italian Plague of 1629|Plague of Manzoni,Great_Plague_of_Milan
+great-plague-of-seville,Great Plague of Seville,1647,1652,Plague & Bacterial,Andalusian Plague of 1647,Great_Plague_of_Seville
+great-plague-of-london,Great Plague of London,1665,1666,Plague & Bacterial,London Plague of 1665|Great Plague,Great_Plague_of_London
+great-plague-of-marseille,Great Plague of Marseille,1720,1722,Plague & Bacterial,Plague of Provence|Last Major Plague of Europe,Great_Plague_of_Marseille
+aztec-smallpox,Aztec Smallpox Epidemic,1519,1520,Smallpox & Viral,New World Smallpox|Smallpox of the Conquest,
+american-smallpox,American Smallpox Epidemics,1633,1634,Smallpox & Viral,New England Smallpox|Colonial Smallpox,
+boston-smallpox,Boston Smallpox Epidemic,1721,1722,Smallpox & Viral,New England Smallpox 1721,
+first-cholera,First Cholera Pandemic,1817,1824,Cholera,Cholera Pandemic 1817|Asiatic Cholera 1817,
+second-cholera,Second Cholera Pandemic,1829,1851,Cholera,Cholera Pandemic 1829|Asiatic Cholera 1829,
+third-cholera,Third Cholera Pandemic,1852,1860,Cholera,Cholera Pandemic 1852,
+fourth-cholera,Fourth Cholera Pandemic,1863,1875,Cholera,Cholera Pandemic 1863,
+fifth-cholera,Fifth Cholera Pandemic,1881,1896,Cholera,Cholera Pandemic 1881|Cholera 1881,
+sixth-cholera,Sixth Cholera Pandemic,1899,1923,Cholera,Cholera Pandemic 1899,
+seventh-cholera,Seventh Cholera Pandemic,1961,,Cholera,El Tor Cholera Pandemic|Cholera Pandemic 1961,
+russian-flu-1889,Russian Flu,1889,1890,Influenza,Asiatic Flu|Influenza Pandemic 1889,Russian_Flu
+spanish-flu,Spanish Flu,1918,1920,Influenza,1918 Influenza Pandemic|H1N1 1918|Great Influenza,Spanish_Flu
+asian-flu,Asian Flu,1957,1958,Influenza,Influenza Pandemic 1957|H2N2 Pandemic,Asian_Flu
+hong-kong-flu,Hong Kong Flu,1968,1969,Influenza,Influenza Pandemic 1968|H3N2 Pandemic,Hong_Kong_Flu
+swine-flu-2009,Swine Flu,2009,2010,Influenza,2009 Influenza Pandemic|H1N1 2009|Swine Influenza,Swine_Flu
+hiv-aids,HIV/AIDS,1981,,Other Viral,AIDS Pandemic|Human Immunodeficiency Virus Epidemic,HIV/AIDS
+sars,SARS,2002,2004,Other Viral,Severe Acute Respiratory Syndrome|SARS-CoV-1,SARS
+west-africa-ebola,West Africa Ebola Epidemic,2014,2016,Other Viral,Ebola Epidemic 2014|Ebola Virus Disease Outbreak,
+covid-19,COVID-19,2019,,Other Viral,Coronavirus Pandemic|SARS-CoV-2 Pandemic|COVID Pandemic,COVID-19
+polio-epidemic,Polio Epidemics,1916,1955,Other Viral,Poliomyelitis Epidemics|Infantile Paralysis,

@@ -2,32 +2,39 @@
 /**
  * Generate Wikipedia slug guesses for all quiz CSVs.
  *
- * Strategy: for each entity, generate a ranked list of slug candidates
- * (type-specific heuristics), then validate each against the Wikipedia
- * REST API until one hits. Write the first valid slug to the CSV.
+ * Strategy:
+ * 1. Collect all candidate slugs across all CSVs (small set, ~20K)
+ * 2. Stream through the Wikipedia titles dump once, marking which candidates exist
+ * 3. For each entity, pick the first valid candidate and write it to the CSV
+ *
+ * Prerequisites:
+ *   Download the titles dump:
+ *   curl -o ~/Downloads/enwiki-latest-all-titles-in-ns0.gz \
+ *     https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-all-titles-in-ns0.gz
  *
  * Usage:
  *   node scripts/generateWikipediaSlugs.mjs              # generate + validate + write
  *   node scripts/generateWikipediaSlugs.mjs --dry-run     # validate only, don't write
- *   node scripts/generateWikipediaSlugs.mjs --check-only  # just check existing wikipedia columns
  *   node scripts/generateWikipediaSlugs.mjs --file borders/world-borders.csv  # single file
  */
 
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
+import readline from 'readline';
+import os from 'os';
 
 const DATA_DIR = path.resolve('public/data');
 const DRY_RUN = process.argv.includes('--dry-run');
-const CHECK_ONLY = process.argv.includes('--check-only');
 const FILE_FILTER = (() => {
   const idx = process.argv.indexOf('--file');
   return idx >= 0 ? process.argv[idx + 1] : null;
 })();
 
+const TITLES_DUMP = path.join(os.homedir(), 'Downloads', 'enwiki-latest-all-titles-in-ns0.gz');
+
 // ─── CSV config ───────────────────────────────────────────────────────────────
 
-// Each entry: { nameColumn, type, extraColumns? }
-// type determines which slug-candidate strategy to use
 const CSV_CONFIG = {
   'bones-3d/bones.csv': { nameColumn: 'name', type: 'bone' },
   'borders/world-borders.csv': { nameColumn: 'name', type: 'country' },
@@ -55,22 +62,16 @@ const CSV_CONFIG = {
   'rivers/world-rivers.csv': { nameColumn: 'name', type: 'river' },
   'science/biology/human-bones.csv': { nameColumn: 'name', type: 'bone' },
   'science/chemistry/periodic-table.csv': { nameColumn: 'name', type: 'element' },
-  'subdivisions/brazil.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'Brazil' },
-  'subdivisions/china.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'China' },
-  'subdivisions/india.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'India' },
-  'subdivisions/indonesia.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'Indonesia' },
-  'subdivisions/japan.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'Japan' },
-  'subdivisions/mexico.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'Mexico' },
-  'subdivisions/nigeria.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'Nigeria' },
-  'subdivisions/russia.csv': { nameColumn: 'name', type: 'subdivision', extraColumns: [], country: 'Russia' },
+  'subdivisions/brazil.csv': { nameColumn: 'name', type: 'subdivision', country: 'Brazil' },
+  'subdivisions/china.csv': { nameColumn: 'name', type: 'subdivision', country: 'China' },
+  'subdivisions/india.csv': { nameColumn: 'name', type: 'subdivision', country: 'India' },
+  'subdivisions/indonesia.csv': { nameColumn: 'name', type: 'subdivision', country: 'Indonesia' },
+  'subdivisions/japan.csv': { nameColumn: 'name', type: 'subdivision', country: 'Japan' },
+  'subdivisions/mexico.csv': { nameColumn: 'name', type: 'subdivision', country: 'Mexico' },
+  'subdivisions/nigeria.csv': { nameColumn: 'name', type: 'subdivision', country: 'Nigeria' },
+  'subdivisions/russia.csv': { nameColumn: 'name', type: 'subdivision', country: 'Russia' },
   'subdivisions/united-states.csv': { nameColumn: 'name', type: 'us-state' },
 };
-
-const SKIP = new Set([
-  'lakes/large-lakes.csv',
-  'lakes/medium-lakes.csv',
-  'rivers/world-lakes-debug.csv',
-]);
 
 // ─── CSV parsing ──────────────────────────────────────────────────────────────
 
@@ -139,23 +140,78 @@ function objectsToCSV(headers, objects) {
 
 function slug(s) { return s.replace(/ /g, '_'); }
 
+/**
+ * Strip side designation and numbers from bone names to get the generic article.
+ * "Parietal bone (right)" → "Parietal bone"
+ * "Cervical vertebra (C3)" → "Cervical vertebrae"
+ * "Rib 5 (right)" → "Rib"
+ * "Metatarsal 3 (left)" → "Metatarsal bones"
+ */
+function boneCandidates(name) {
+  const s = slug(name);
+  const candidates = [s + '_(bone)', s + '_(anatomy)', s];
+
+  // Strip (left)/(right) and try base name
+  const sideStripped = name.replace(/\s*\((left|right)\)\s*$/i, '').trim();
+  if (sideStripped !== name) {
+    const base = slug(sideStripped);
+    candidates.push(base + '_(bone)', base + '_(anatomy)', base);
+  }
+
+  // Strip numbered parts: "Cervical vertebra (C3)" → "Cervical vertebrae"
+  const numberedMatch = name.match(/^(.+?)\s*\([A-Z]?\d+\)\s*$/);
+  if (numberedMatch) {
+    const base = slug(numberedMatch[1]);
+    candidates.push(base, base + 'e', base + 's'); // try singular + plural
+  }
+
+  // Strip trailing numbers: "Metatarsal 3 (left)" → "Metatarsal"
+  const trailingNum = sideStripped.match(/^(.+?)\s+\d+$/);
+  if (trailingNum) {
+    const base = slug(trailingNum[1]);
+    candidates.push(base + '_bones', base + '_(bone)', base + '_(anatomy)', base);
+  }
+
+  // For teeth: "Upper medial incisor (right)" → "Incisor"
+  const toothMatch = sideStripped.match(/(?:Upper|Lower)\s+(?:medial|lateral|first|second|third)?\s*(incisor|canine|premolar|molar)/i);
+  if (toothMatch) {
+    const toothType = slug(toothMatch[1].charAt(0).toUpperCase() + toothMatch[1].slice(1));
+    candidates.push(toothType + '_(tooth)', toothType);
+  }
+
+  // For phalanges: "Proximal phalanx of toe 3 (left)" → "Phalanx_bone"
+  if (name.includes('phalanx')) {
+    candidates.push('Phalanx_bone');
+  }
+
+  return [...new Set(candidates)]; // deduplicate
+}
+
 function generateCandidates(name, type, row, config) {
   const s = slug(name);
   switch (type) {
     case 'country':
       return [s, s + '_(country)'];
-    case 'city':
-      return [s, s + ',_' + slug(row?.['country'] ?? ''), s + '_(city)'];
+    case 'city': {
+      const country = slug(row?.['country'] ?? '');
+      // Also try just the city name without province suffix (Chinese cities like "Ji nan Shandong")
+      const cityOnly = name.split(' ').length > 2 ? slug(name.split(' ').slice(0, -1).join(' ')) : null;
+      const candidates = [s, s + ',_' + country, s + '_(city)', s + '_(' + country + ')'];
+      if (cityOnly) candidates.push(cityOnly, cityOnly + ',_' + country, cityOnly + '_(city)');
+      return candidates;
+    }
     case 'river':
-      return [s + '_River', s + '_(river)', s];
+      return [s + '_River', s + '_(river)', s, s + '_river'];
     case 'bone':
-      return [s + '_(bone)', s + '_(anatomy)', s];
+      return boneCandidates(name);
     case 'element':
       return [s, s + '_(element)'];
     case 'us-state':
       return [s, s + '_(U.S._state)', s + '_(state)'];
-    case 'subdivision':
-      return [s, s + '_(' + slug(config?.country ?? '') + ')'];
+    case 'subdivision': {
+      const country = slug(config?.country ?? '');
+      return [s, s + '_(' + country + ')', s + '_(state)', s + '_(province)'];
+    }
     case 'empire':
       return [s, s + '_(empire)'];
     case 'person':
@@ -170,151 +226,156 @@ function generateCandidates(name, type, row, config) {
   }
 }
 
-// ─── Wikipedia API ────────────────────────────────────────────────────────────
-
-const CONCURRENCY = 3;
-const DELAY_MS = 300;
-
-async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-async function checkSlug(slugStr, retries = 2) {
-  if (!slugStr) return { valid: false };
-  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slugStr)}`;
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const res = await fetch(url, { headers: { 'User-Agent': 'QuizApp/1.0 (educational)' } });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.type === 'disambiguation') {
-          return { valid: false, disambiguation: true, resolvedTitle: data.title };
-        }
-        return { valid: true, resolvedTitle: data.title };
-      }
-      if (res.status === 429 || res.status >= 500) {
-        await sleep(2000 * (attempt + 1));
-        continue;
-      }
-      return { valid: false };
-    } catch {
-      if (attempt < retries) { await sleep(1000 * (attempt + 1)); continue; }
-      return { valid: false };
-    }
-  }
-  return { valid: false };
-}
-
-/**
- * Try each candidate slug in order; return the first valid one.
- */
-async function findValidSlug(candidates) {
-  for (const candidate of candidates) {
-    if (!candidate || candidate.includes('undefined')) continue;
-    const result = await checkSlug(candidate);
-    if (result.valid) return { slug: candidate, resolvedTitle: result.resolvedTitle };
-  }
-  return null;
-}
-
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  let totalValid = 0;
-  let totalInvalid = 0;
-  const allMisses = [];
+  if (!fs.existsSync(TITLES_DUMP)) {
+    console.error(`Wikipedia titles dump not found at ${TITLES_DUMP}`);
+    console.error('Download: curl -o ~/Downloads/enwiki-latest-all-titles-in-ns0.gz https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-all-titles-in-ns0.gz');
+    process.exit(1);
+  }
+
+  // Phase 1: Collect all candidate slugs across all CSVs
+  console.log('Phase 1: Collecting candidate slugs from all CSVs...');
+
+  /** @type {Map<string, {csvRelPath: string, headers: string[], objects: object[], parsed: string[][]}>} */
+  const csvData = new Map();
+  /** Set of all candidate slugs + existing slugs to check */
+  const allCandidates = new Set();
+  /** Map: candidate slug → array of { csvRelPath, idx, priority } */
+  const candidateIndex = new Map();
 
   for (const [csvRelPath, config] of Object.entries(CSV_CONFIG)) {
-    if (SKIP.has(csvRelPath)) continue;
     if (FILE_FILTER && csvRelPath !== FILE_FILTER) continue;
     const csvPath = path.join(DATA_DIR, csvRelPath);
-    if (!fs.existsSync(csvPath)) { console.log(`⚠ Skipping missing: ${csvRelPath}`); continue; }
-
-    console.log(`\n━━━ ${csvRelPath} ━━━`);
+    if (!fs.existsSync(csvPath)) continue;
 
     const text = fs.readFileSync(csvPath, 'utf-8');
     const parsed = parseCSV(text);
     const headers = parsed[0];
     const objects = csvToObjects(parsed);
     const hasWikipediaColumn = headers.includes('wikipedia');
+    csvData.set(csvRelPath, { headers, objects, parsed, config, hasWikipediaColumn });
 
-    if (CHECK_ONLY && !hasWikipediaColumn) { console.log('  No wikipedia column — skip'); continue; }
-
-    // Build work items
-    const items = objects.map((row, idx) => {
+    for (let idx = 0; idx < objects.length; idx++) {
+      const row = objects[idx];
       const name = row[config.nameColumn] ?? '';
+      if (!name) continue;
+
+      // Check existing slug
       const existing = hasWikipediaColumn ? row['wikipedia'] : '';
-      return { idx, name, existing, row };
-    });
+      if (existing) {
+        allCandidates.add(existing);
+        if (!candidateIndex.has(existing)) candidateIndex.set(existing, []);
+        candidateIndex.get(existing).push({ csvRelPath, idx, priority: -1 }); // -1 = existing
+      }
 
-    // For CHECK_ONLY, validate existing; otherwise generate candidates for items without a valid slug
-    const toValidate = CHECK_ONLY
-      ? items.filter(it => it.existing)
-      : items;
+      // Generate candidates
+      const candidates = generateCandidates(name, config.type, row, config);
+      for (let p = 0; p < candidates.length; p++) {
+        const c = candidates[p];
+        if (!c || c.includes('undefined')) continue;
+        allCandidates.add(c);
+        if (!candidateIndex.has(c)) candidateIndex.set(c, []);
+        candidateIndex.get(c).push({ csvRelPath, idx, priority: p });
+      }
+    }
+  }
 
-    console.log(`  Processing ${toValidate.length} entries...`);
+  console.log(`  ${allCandidates.size} unique candidate slugs to check`);
+
+  // Phase 2: Stream through titles dump, marking which candidates exist
+  console.log('Phase 2: Streaming Wikipedia titles dump...');
+  const validTitles = new Set();
+  const gunzip = zlib.createGunzip();
+  const stream = fs.createReadStream(TITLES_DUMP).pipe(gunzip);
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+
+  let lineCount = 0;
+  let matchCount = 0;
+  let skippedHeader = false;
+  for await (const line of rl) {
+    if (!skippedHeader) { skippedHeader = true; continue; }
+    lineCount++;
+    if (allCandidates.has(line)) {
+      validTitles.add(line);
+      matchCount++;
+    }
+    if (lineCount % 2_000_000 === 0) {
+      process.stderr.write(`\r  ${(lineCount / 1_000_000).toFixed(0)}M titles scanned, ${matchCount} matches`);
+    }
+  }
+  process.stderr.write(`\r  ${(lineCount / 1_000_000).toFixed(1)}M titles scanned, ${matchCount} matches\n`);
+
+  // Phase 3: Resolve slugs and write CSVs
+  console.log('Phase 3: Resolving slugs and writing CSVs...');
+
+  let totalValid = 0;
+  let totalInvalid = 0;
+  const allMisses = [];
+
+  for (const [csvRelPath, { headers, objects, config, hasWikipediaColumn }] of csvData) {
+    console.log(`\n--- ${csvRelPath} ---`);
 
     let valid = 0;
     let invalid = 0;
-    const results = new Map(); // idx → resolvedSlug
+    const results = new Map();
 
-    for (let i = 0; i < toValidate.length; i += CONCURRENCY) {
-      const batch = toValidate.slice(i, i + CONCURRENCY);
-      const batchResults = await Promise.all(batch.map(async (item) => {
-        // If we already have a valid slug from a previous run, just validate it
-        if (item.existing && !CHECK_ONLY) {
-          const check = await checkSlug(item.existing);
-          if (check.valid) return { item, resolvedSlug: check.resolvedTitle.replace(/ /g, '_') };
-        }
+    for (let idx = 0; idx < objects.length; idx++) {
+      const row = objects[idx];
+      const name = row[config.nameColumn] ?? '';
+      if (!name) continue;
 
-        if (CHECK_ONLY) {
-          const check = await checkSlug(item.existing);
-          return { item, resolvedSlug: check.valid ? check.resolvedTitle.replace(/ /g, '_') : null };
-        }
+      // Check existing slug first
+      const existing = hasWikipediaColumn ? row['wikipedia'] : '';
+      if (existing && validTitles.has(existing)) {
+        results.set(idx, existing);
+        valid++;
+        continue;
+      }
 
-        // Generate candidates and try each
-        const candidates = generateCandidates(item.name, config.type, item.row, config);
-        const found = await findValidSlug(candidates);
-        return { item, resolvedSlug: found ? found.resolvedTitle.replace(/ /g, '_') : null };
-      }));
-
-      for (const { item, resolvedSlug } of batchResults) {
-        if (resolvedSlug) {
-          results.set(item.idx, resolvedSlug);
-          valid++;
-        } else {
-          invalid++;
-          const candidates = generateCandidates(item.name, config.type, item.row, config);
-          allMisses.push({ file: csvRelPath, name: item.name, tried: candidates.join(', ') });
+      // Try candidates in priority order
+      const candidates = generateCandidates(name, config.type, row, config);
+      let found = null;
+      for (const c of candidates) {
+        if (!c || c.includes('undefined')) continue;
+        if (validTitles.has(c)) {
+          found = c;
+          break;
         }
       }
 
-      const done = Math.min(i + CONCURRENCY, toValidate.length);
-      process.stderr.write(`\r  ${done}/${toValidate.length} (${valid} valid)`);
-      if (i + CONCURRENCY < toValidate.length) await sleep(DELAY_MS);
+      if (found) {
+        results.set(idx, found);
+        valid++;
+      } else {
+        invalid++;
+        allMisses.push({ file: csvRelPath, name, tried: candidates.join(', ') });
+      }
     }
-    process.stderr.write('\n');
-    console.log(`  ✓ ${valid} valid, ✗ ${invalid} invalid`);
+
+    console.log(`  ${valid} valid, ${invalid} invalid`);
     totalValid += valid;
     totalInvalid += invalid;
 
-    // Write CSV
-    if (!DRY_RUN && !CHECK_ONLY) {
+    if (!DRY_RUN) {
       const updatedHeaders = hasWikipediaColumn ? headers : [...headers, 'wikipedia'];
       for (let idx = 0; idx < objects.length; idx++) {
         const resolved = results.get(idx);
         if (resolved) {
           objects[idx]['wikipedia'] = resolved;
         } else if (!objects[idx]['wikipedia']) {
-          // Leave empty for misses so we can fill them later
           objects[idx]['wikipedia'] = '';
         }
       }
+      const csvPath = path.join(DATA_DIR, csvRelPath);
       const csvOut = objectsToCSV(updatedHeaders, objects);
       fs.writeFileSync(csvPath, csvOut);
       console.log(`  Wrote ${csvPath}`);
     }
   }
 
-  console.log(`\n━━━ Summary ━━━`);
+  console.log(`\n=== Summary ===`);
   console.log(`Valid: ${totalValid}, Invalid: ${totalInvalid}`);
 
   if (allMisses.length > 0) {
@@ -322,7 +383,6 @@ async function main() {
     for (const miss of allMisses) {
       console.log(`  ${miss.file}: "${miss.name}" [tried: ${miss.tried}]`);
     }
-    // Write misses to a file for the AI agent to process
     const missesPath = path.resolve('scripts/wikipedia-misses.json');
     fs.writeFileSync(missesPath, JSON.stringify(allMisses, null, 2));
     console.log(`\nMisses written to ${missesPath}`);

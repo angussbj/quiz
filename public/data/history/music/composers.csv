@@ -1,71 +1,71 @@
-id,composer,start_year,end_year,continent,composer_alternates
-johann-sebastian-bach,Johann Sebastian Bach,1685,1750,Europe,Bach|J.S. Bach
-wolfgang-amadeus-mozart,Wolfgang Amadeus Mozart,1756,1791,Europe,Mozart|W.A. Mozart
-ludwig-van-beethoven,Ludwig van Beethoven,1770,1827,Europe,Beethoven
-johannes-brahms,Johannes Brahms,1833,1897,Europe,Brahms
-pyotr-ilyich-tchaikovsky,Pyotr Ilyich Tchaikovsky,1840,1893,Europe,Tchaikovsky|Peter Tchaikovsky|Чайковский
-claude-debussy,Claude Debussy,1862,1918,Europe,Debussy
-igor-stravinsky,Igor Stravinsky,1882,1971,Europe,Stravinsky|Игорь Стравинский
-dmitri-shostakovich,Dmitri Shostakovich,1906,1975,Europe,Shostakovich|Дмитрий Шостакович
-gustav-mahler,Gustav Mahler,1860,1911,Europe,Mahler
-franz-schubert,Franz Schubert,1797,1828,Europe,Schubert
-george-frideric-handel,George Frideric Handel,1685,1759,Europe,Handel|Georg Friedrich Händel
-antonio-vivaldi,Antonio Vivaldi,1678,1741,Europe,Vivaldi|The Red Priest
-frederic-chopin,Frédéric Chopin,1810,1849,Europe,Chopin|Fryderyk Chopin
-richard-wagner,Richard Wagner,1813,1883,Europe,Wagner
-giuseppe-verdi,Giuseppe Verdi,1813,1901,Europe,Verdi
-sergei-rachmaninoff,Sergei Rachmaninoff,1873,1943,Europe,Rachmaninov|Рахманинов
-bela-bartok,Béla Bartók,1881,1945,Europe,Bartok
-antonin-dvorak,Antonín Dvořák,1841,1904,Europe,Dvorak
-jean-sibelius,Jean Sibelius,1865,1957,Europe,Sibelius
-edvard-grieg,Edvard Grieg,1843,1907,Europe,Grieg
-claudio-monteverdi,Claudio Monteverdi,1567,1643,Europe,Monteverdi
-henry-purcell,Henry Purcell,1659,1695,Europe,Purcell
-camille-saint-saens,Camille Saint-Saëns,1835,1921,Europe,Saint-Saens
-leos-janacek,Leoš Janáček,1854,1928,Europe,Janacek
-olivier-messiaen,Olivier Messiaen,1908,1992,Europe,Messiaen
-heitor-villa-lobos,Heitor Villa-Lobos,1887,1959,South America,Villa-Lobos
-astor-piazzolla,Astor Piazzolla,1921,1992,South America,Piazzolla
-carlos-chavez,Carlos Chávez,1899,1978,North America,Chavez
-alberto-ginastera,Alberto Ginastera,1916,1983,South America,Ginastera
-amadeo-roldan,Amadeo Roldán,1900,1939,South America,Roldan
-silvestre-revueltas,Silvestre Revueltas,1899,1940,North America,Revueltas
-juan-morel-campos,Juan Morel Campos,1857,1896,North America,Morel Campos
-manuel-ponce,Manuel Ponce,1882,1948,North America,Ponce
-aaron-copland,Aaron Copland,1900,1990,North America,Copland
-leonard-bernstein,Leonard Bernstein,1918,1990,North America,Bernstein
-duke-ellington,Duke Ellington,1899,1974,North America,Ellington|Edward Kennedy Ellington
-scott-joplin,Scott Joplin,1868,1917,North America,Joplin|King of Ragtime
-tansen,Tansen,1493,1586,Asia,Miyan Tansen|Ramtanu Pandey
-vishnu-narayan-bhatkhande,Vishnu Narayan Bhatkhande,1860,1936,Asia,Bhatkhande
-ravi-shankar,Ravi Shankar,1920,2012,Asia,Shankar|Robindro Shaunkor Chowdhury
-tyagaraja,Tyagaraja,1767,1847,Asia,Thyagaraja|Kakarla Tyagabrahmam
-muthuswami-dikshitar,Muthuswami Dikshitar,1775,1835,Asia,Dikshitar|Muttusvami Dikshitar
-syama-sastri,Syama Sastri,1762,1827,Asia,Shyama Shastri
-liu-tianhua,Liu Tianhua,1895,1932,Asia,刘天华
-xian-xinghai,Xian Xinghai,1905,1945,Asia,冼星海|Hsien Hsing-hai
-he-lvting,He Lvting,1903,1999,Asia,贺绿汀|Ho Luting
-toru-takemitsu,Tōru Takemitsu,1930,1996,Asia,Takemitsu|武満徹
-michio-miyagi,Michio Miyagi,1894,1956,Asia,宮城道雄|Miyagi Michio
-kineya-rokusaburo,Kineya Rokusaburō IV,1779,1848,Asia,杵屋六三郎
-isang-yun,Isang Yun,1917,1995,Asia,尹伊桑|Yun Isang
-hwang-byungki,Hwang Byungki,1936,2018,Asia,황병기
-kim-chang-jo,Kim Chang-jo,1865,1919,Asia,김창조
-ali-naqi-vaziri,Ali-Naqi Vaziri,1887,1979,Middle East,وزیری|Vaziri
-udi-hrant,Udi Hrant,1901,1978,Middle East,Hrant Kenkulian|أودي هرانت
-hammamizade-ismail-dede-efendi,Hammamizade İsmail Dede Efendi,1778,1846,Middle East,Dede Efendi|حمامي‌زاده اسماعيل دده افندي
-itri,Buhurizade Mustafa Itri,1640,1712,Middle East,İtri|Hafız Post
-abu-bakr-khusrau-khan,Abu Bakr Khusrau Khan,1879,1940,Middle East,Khusrau Khan
-riyad-al-sunbati,Riyad al-Sunbati,1906,1981,Middle East,رياض السنباطي|Sunbati
-farid-al-atrash,Farid al-Atrash,1917,1974,Middle East,فريد الأطرش
-ziryab,Ziryab,789,857,Middle East,Abū l-Ḥasan ʿAlī ibn Nāfiʿ|زرياب
-sayed-darwish,Sayed Darwish,1892,1923,Middle East,سيد درويش|Sheikh Sayed Darwish
-umm-kulthum,Umm Kulthum,1898,1975,Middle East,أم كلثوم|Om Kolthoum
-francis-bebey,Francis Bebey,1929,2001,Africa,Bebey
-fela-sowande,Fela Sowande,1905,1987,Africa,Olufela Obafunmilayo Sowande
-akin-euba,Akin Euba,1935,2020,Africa,
-ephraim-amu,Ephraim Amu,1899,1995,Africa,
-stephen-osadebe,Stephen Osadebe,1936,2007,Africa,Chief Stephen Osita Osadebe
-joshua-uzoigwe,Joshua Uzoigwe,1946,2005,Africa,
-michael-gbeho,Philip Gbeho,1905,1976,Africa,
-nketia,J.H. Kwabena Nketia,1921,2019,Africa,Kwabena Nketia
+id,composer,start_year,end_year,continent,composer_alternates,wikipedia
+johann-sebastian-bach,Johann Sebastian Bach,1685,1750,Europe,Bach|J.S. Bach,Johann_Sebastian_Bach
+wolfgang-amadeus-mozart,Wolfgang Amadeus Mozart,1756,1791,Europe,Mozart|W.A. Mozart,Wolfgang_Amadeus_Mozart
+ludwig-van-beethoven,Ludwig van Beethoven,1770,1827,Europe,Beethoven,Ludwig_van_Beethoven
+johannes-brahms,Johannes Brahms,1833,1897,Europe,Brahms,Johannes_Brahms
+pyotr-ilyich-tchaikovsky,Pyotr Ilyich Tchaikovsky,1840,1893,Europe,Tchaikovsky|Peter Tchaikovsky|Чайковский,Pyotr_Ilyich_Tchaikovsky
+claude-debussy,Claude Debussy,1862,1918,Europe,Debussy,Claude_Debussy
+igor-stravinsky,Igor Stravinsky,1882,1971,Europe,Stravinsky|Игорь Стравинский,Igor_Stravinsky
+dmitri-shostakovich,Dmitri Shostakovich,1906,1975,Europe,Shostakovich|Дмитрий Шостакович,Dmitri_Shostakovich
+gustav-mahler,Gustav Mahler,1860,1911,Europe,Mahler,Gustav_Mahler
+franz-schubert,Franz Schubert,1797,1828,Europe,Schubert,Franz_Schubert
+george-frideric-handel,George Frideric Handel,1685,1759,Europe,Handel|Georg Friedrich Händel,George_Frideric_Handel
+antonio-vivaldi,Antonio Vivaldi,1678,1741,Europe,Vivaldi|The Red Priest,Antonio_Vivaldi
+frederic-chopin,Frédéric Chopin,1810,1849,Europe,Chopin|Fryderyk Chopin,Frédéric_Chopin
+richard-wagner,Richard Wagner,1813,1883,Europe,Wagner,Richard_Wagner
+giuseppe-verdi,Giuseppe Verdi,1813,1901,Europe,Verdi,Giuseppe_Verdi
+sergei-rachmaninoff,Sergei Rachmaninoff,1873,1943,Europe,Rachmaninov|Рахманинов,Sergei_Rachmaninoff
+bela-bartok,Béla Bartók,1881,1945,Europe,Bartok,Béla_Bartók
+antonin-dvorak,Antonín Dvořák,1841,1904,Europe,Dvorak,Antonín_Dvořák
+jean-sibelius,Jean Sibelius,1865,1957,Europe,Sibelius,Jean_Sibelius
+edvard-grieg,Edvard Grieg,1843,1907,Europe,Grieg,Edvard_Grieg
+claudio-monteverdi,Claudio Monteverdi,1567,1643,Europe,Monteverdi,Claudio_Monteverdi
+henry-purcell,Henry Purcell,1659,1695,Europe,Purcell,Henry_Purcell
+camille-saint-saens,Camille Saint-Saëns,1835,1921,Europe,Saint-Saens,Camille_Saint-Saëns
+leos-janacek,Leoš Janáček,1854,1928,Europe,Janacek,Leoš_Janáček
+olivier-messiaen,Olivier Messiaen,1908,1992,Europe,Messiaen,Olivier_Messiaen
+heitor-villa-lobos,Heitor Villa-Lobos,1887,1959,South America,Villa-Lobos,Heitor_Villa-Lobos
+astor-piazzolla,Astor Piazzolla,1921,1992,South America,Piazzolla,Astor_Piazzolla
+carlos-chavez,Carlos Chávez,1899,1978,North America,Chavez,Carlos_Chávez
+alberto-ginastera,Alberto Ginastera,1916,1983,South America,Ginastera,Alberto_Ginastera
+amadeo-roldan,Amadeo Roldán,1900,1939,South America,Roldan,Amadeo_Roldán
+silvestre-revueltas,Silvestre Revueltas,1899,1940,North America,Revueltas,Silvestre_Revueltas
+juan-morel-campos,Juan Morel Campos,1857,1896,North America,Morel Campos,Juan_Morel_Campos
+manuel-ponce,Manuel Ponce,1882,1948,North America,Ponce,Manuel_Ponce
+aaron-copland,Aaron Copland,1900,1990,North America,Copland,Aaron_Copland
+leonard-bernstein,Leonard Bernstein,1918,1990,North America,Bernstein,Leonard_Bernstein
+duke-ellington,Duke Ellington,1899,1974,North America,Ellington|Edward Kennedy Ellington,Duke_Ellington
+scott-joplin,Scott Joplin,1868,1917,North America,Joplin|King of Ragtime,Scott_Joplin
+tansen,Tansen,1493,1586,Asia,Miyan Tansen|Ramtanu Pandey,Tansen
+vishnu-narayan-bhatkhande,Vishnu Narayan Bhatkhande,1860,1936,Asia,Bhatkhande,Vishnu_Narayan_Bhatkhande
+ravi-shankar,Ravi Shankar,1920,2012,Asia,Shankar|Robindro Shaunkor Chowdhury,Ravi_Shankar
+tyagaraja,Tyagaraja,1767,1847,Asia,Thyagaraja|Kakarla Tyagabrahmam,Tyagaraja
+muthuswami-dikshitar,Muthuswami Dikshitar,1775,1835,Asia,Dikshitar|Muttusvami Dikshitar,Muthuswami_Dikshitar
+syama-sastri,Syama Sastri,1762,1827,Asia,Shyama Shastri,Syama_Sastri
+liu-tianhua,Liu Tianhua,1895,1932,Asia,刘天华,Liu_Tianhua
+xian-xinghai,Xian Xinghai,1905,1945,Asia,冼星海|Hsien Hsing-hai,Xian_Xinghai
+he-lvting,He Lvting,1903,1999,Asia,贺绿汀|Ho Luting,He_Lvting
+toru-takemitsu,Tōru Takemitsu,1930,1996,Asia,Takemitsu|武満徹,Tōru_Takemitsu
+michio-miyagi,Michio Miyagi,1894,1956,Asia,宮城道雄|Miyagi Michio,Michio_Miyagi
+kineya-rokusaburo,Kineya Rokusaburō IV,1779,1848,Asia,杵屋六三郎,
+isang-yun,Isang Yun,1917,1995,Asia,尹伊桑|Yun Isang,Isang_Yun
+hwang-byungki,Hwang Byungki,1936,2018,Asia,황병기,Hwang_Byungki
+kim-chang-jo,Kim Chang-jo,1865,1919,Asia,김창조,
+ali-naqi-vaziri,Ali-Naqi Vaziri,1887,1979,Middle East,وزیری|Vaziri,Ali-Naqi_Vaziri
+udi-hrant,Udi Hrant,1901,1978,Middle East,Hrant Kenkulian|أودي هرانت,Udi_Hrant
+hammamizade-ismail-dede-efendi,Hammamizade İsmail Dede Efendi,1778,1846,Middle East,Dede Efendi|حمامي‌زاده اسماعيل دده افندي,Hammamizade_İsmail_Dede_Efendi
+itri,Buhurizade Mustafa Itri,1640,1712,Middle East,İtri|Hafız Post,Buhurizade_Mustafa_Itri
+abu-bakr-khusrau-khan,Abu Bakr Khusrau Khan,1879,1940,Middle East,Khusrau Khan,
+riyad-al-sunbati,Riyad al-Sunbati,1906,1981,Middle East,رياض السنباطي|Sunbati,
+farid-al-atrash,Farid al-Atrash,1917,1974,Middle East,فريد الأطرش,Farid_al-Atrash
+ziryab,Ziryab,789,857,Middle East,Abū l-Ḥasan ʿAlī ibn Nāfiʿ|زرياب,Ziryab
+sayed-darwish,Sayed Darwish,1892,1923,Middle East,سيد درويش|Sheikh Sayed Darwish,Sayed_Darwish
+umm-kulthum,Umm Kulthum,1898,1975,Middle East,أم كلثوم|Om Kolthoum,Umm_Kulthum
+francis-bebey,Francis Bebey,1929,2001,Africa,Bebey,Francis_Bebey
+fela-sowande,Fela Sowande,1905,1987,Africa,Olufela Obafunmilayo Sowande,Fela_Sowande
+akin-euba,Akin Euba,1935,2020,Africa,,Akin_Euba
+ephraim-amu,Ephraim Amu,1899,1995,Africa,,Ephraim_Amu
+stephen-osadebe,Stephen Osadebe,1936,2007,Africa,Chief Stephen Osita Osadebe,
+joshua-uzoigwe,Joshua Uzoigwe,1946,2005,Africa,,Joshua_Uzoigwe
+michael-gbeho,Philip Gbeho,1905,1976,Africa,,Philip_Gbeho
+nketia,J.H. Kwabena Nketia,1921,2019,Africa,Kwabena Nketia,J.H._Kwabena_Nketia

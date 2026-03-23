@@ -1,61 +1,61 @@
-id,discovery,start_year,end_year,field,discovery_alternates
-euclidean-geometry,Euclidean Geometry,-300,,Mathematics,Elements of Euclid|Euclid's Elements|Axiomatic Geometry
-archimedean-physics,Archimedes' Principles,-250,,Physics & Astronomy,Archimedes' Buoyancy|Law of the Lever|Archimedes' Screw Principle
-eratosthenes-earth-circumference,Measurement of Earth's Circumference,-240,,Earth & Climate,Eratosthenes' Earth Measurement|Circumference of the Earth
-ptolemaic-astronomy,Ptolemy's Almagest,150,,Physics & Astronomy,Ptolemaic System|Geocentric Model|Almagest
-hindu-arabic-numerals,Hindu-Arabic Numeral System,628,,Mathematics,Decimal Numeral System|Brahmasphutasiddhanta|Positional Notation
-al-khwarizmi-algebra,Al-Khwarizmi's Algebra,830,,Mathematics,The Compendious Book on Calculation|Al-Jabr|Foundation of Algebra
-ibn-al-haytham-optics,Ibn al-Haytham's Book of Optics,1021,,Physics & Astronomy,Kitab al-Manazir|Book of Optics|Intromission Theory of Vision
-compass-declination,Discovery of Magnetic Declination,1088,,Earth & Climate,Shen Kuo's Compass|Dream Pool Essays|Magnetic Compass Science
-copernican-heliocentrism,Copernican Heliocentrism,1543,,Physics & Astronomy,De Revolutionibus|Heliocentric Model|Copernican Revolution
-vesalius-anatomy,Vesalius' Human Anatomy,1543,,Biology & Medicine,De Humani Corporis Fabrica|Vesalius Anatomy|Modern Anatomy
-galileo-telescope,Galileo's Telescopic Observations,1609,,Physics & Astronomy,Sidereus Nuncius|Galileo's Telescope|Moons of Jupiter
-harvey-circulation,Harvey's Theory of Blood Circulation,1628,,Biology & Medicine,De Motu Cordis|Circulation of the Blood|Harvey's Circulation
-newtons-principia,Newton's Principia Mathematica,1687,,Physics & Astronomy,Principia|Law of Universal Gravitation|Newton's Laws of Motion
-calculus,Invention of Calculus,1666,,Mathematics,Differential Calculus|Integral Calculus|Newton-Leibniz Calculus
-newtons-optics,Newton's Opticks,1704,,Physics & Astronomy,Newton's Theory of Light|Opticks|Corpuscular Theory of Light
-linnaeus-taxonomy,Linnaean Taxonomy,1735,,Biology & Medicine,Systema Naturae|Linnaean Classification|Binomial Nomenclature
-franklin-electricity,Franklin's Electrical Experiments,1752,,Physics & Astronomy,Kite Experiment|Lightning Rod|Franklin's Electricity
-lavoisier-oxygen,Lavoisier's Theory of Combustion,1789,,Chemistry,Law of Conservation of Mass|Oxygen Theory|Traité Élémentaire de Chimie
-smallpox-vaccine,Smallpox Vaccination,1796,,Biology & Medicine,Jenner's Vaccine|Cowpox Inoculation|Vaccination
-dalton-atomic-theory,Dalton's Atomic Theory,1808,,Chemistry,A New System of Chemical Philosophy|Dalton's Atoms|Law of Multiple Proportions
-avogadro-hypothesis,Avogadro's Hypothesis,1811,,Chemistry,Avogadro's Law|Molecular Hypothesis|Avogadro's Number
-faraday-electromagnetism,Faraday's Electromagnetic Induction,1831,,Physics & Astronomy,Electromagnetic Induction|Faraday's Law|Faraday's Experiments
-cell-theory,Cell Theory,1838,,Biology & Medicine,Schleiden-Schwann Cell Theory|All Life from Cells|Omnis cellula e cellula
-doppler-effect,Doppler Effect,1842,,Physics & Astronomy,Doppler's Principle|Christian Doppler Effect|Acoustic Doppler Effect
-darwin-evolution,On the Origin of Species,1859,,Biology & Medicine,Darwin's Theory of Evolution|Natural Selection|Theory of Evolution by Natural Selection
-kirchhoff-spectroscopy,Kirchhoff's Spectroscopy,1859,,Physics & Astronomy,Spectral Analysis|Kirchhoff-Bunsen Spectroscopy|Fraunhofer Lines Theory
-maxwell-equations,Maxwell's Equations,1865,,Physics & Astronomy,Electromagnetic Theory|Treatise on Electricity and Magnetism|Maxwell's Theory of Light
-mendel-genetics,Mendel's Laws of Inheritance,1866,,Biology & Medicine,Mendelian Inheritance|Pea Plant Experiments|Laws of Heredity
-mendeleev-periodic-table,Mendeleev's Periodic Table,1869,,Chemistry,Periodic Table of Elements|Periodic Law|Mendeleev's Classification
-germ-theory,Germ Theory of Disease,1876,,Biology & Medicine,Pasteur-Koch Germ Theory|Microbial Disease Theory|Pasteur's Germ Theory
-evolution-by-natural-selection,Wallace-Darwin Natural Selection,1858,,Biology & Medicine,Darwin-Wallace Theory|Joint Natural Selection Paper|Ternate Paper
-hertz-radio-waves,Discovery of Radio Waves,1887,,Physics & Astronomy,Hertzian Waves|Electromagnetic Waves Discovery|Hertz's Experiments
-x-rays,Discovery of X-Rays,1895,,Physics & Astronomy,Roentgen Rays|Wilhelm Röntgen X-Rays|X-Radiation
-radioactivity,Discovery of Radioactivity,1896,,Physics & Astronomy,Becquerel Radioactivity|Natural Radioactivity|Uranium Radiation
-electron-discovery,Discovery of the Electron,1897,,Physics & Astronomy,Thomson's Electron|Cathode Ray Particle|J.J. Thomson Electron
-marie-curie-polonium-radium,Discovery of Polonium and Radium,1898,,Chemistry,Curie's Radioactive Elements|Polonium Discovery|Radium Discovery
-planck-quantum,Planck's Quantum Theory,1900,,Physics & Astronomy,Planck's Constant|Quantum Hypothesis|Blackbody Radiation Theory
-einstein-special-relativity,Special Theory of Relativity,1905,,Physics & Astronomy,Einstein's Special Relativity|E=mc²|Annus Mirabilis Papers
-pavlov-conditioning,Pavlov's Classical Conditioning,1906,,Neuroscience & Psychology,Pavlovian Conditioning|Conditioned Reflex|Classical Conditioning
-einstein-general-relativity,General Theory of Relativity,1915,,Physics & Astronomy,Einstein's General Relativity|Curved Spacetime|Gravitational Field Equations
-freud-psychoanalysis,Freud's Psychoanalytic Theory,1900,,Neuroscience & Psychology,Interpretation of Dreams|Psychoanalysis|Unconscious Mind Theory
-bohr-atomic-model,Bohr Model of the Atom,1913,,Physics & Astronomy,Bohr's Atomic Model|Quantised Electron Orbits|Bohr-Rutherford Model
-continental-drift,Continental Drift Theory,1912,,Earth & Climate,Wegener's Continental Drift|Pangaea Theory|Plate Drift Hypothesis
-quantum-mechanics,Quantum Mechanics,1925,,Physics & Astronomy,Heisenberg-Schrödinger Quantum Theory|Wave Mechanics|Matrix Mechanics
-big-bang-theory,Big Bang Theory,1927,,Physics & Astronomy,Lemaître's Hypothesis|Primeval Atom|Expanding Universe Theory
-penicillin-discovery,Discovery of Penicillin,1928,,Biology & Medicine,Fleming's Penicillin|Penicillium notatum|Antibiotic Discovery
-hubble-expanding-universe,Hubble's Expanding Universe,1929,,Physics & Astronomy,Hubble's Law|Galactic Recession|Hubble-Lemaître Law
-turing-machine,Turing Machine and Computability,1936,,Mathematics,Turing's Computability Theory|On Computable Numbers|Theoretical Computer Science
-nuclear-fission,Nuclear Fission,1938,,Physics & Astronomy,Hahn-Strassmann Fission|Splitting the Atom|Atomic Fission
-dna-as-genetic-material,DNA as Genetic Material,1944,,Biology & Medicine,Avery-MacLeod-McCarty Experiment|Transforming Principle|DNA Hereditary Role
-plate-tectonics,Plate Tectonics Theory,1960,,Earth & Climate,Sea-Floor Spreading|Tectonic Plate Theory|Vine-Matthews-Morley Hypothesis
-dna-double-helix,DNA Double Helix Structure,1953,,Biology & Medicine,Watson-Crick Model|DNA Structure|Double Helix
-standard-model,Standard Model of Particle Physics,1973,,Physics & Astronomy,Standard Model|Quantum Field Theory|Quark Model
-hiv-discovery,Discovery of HIV,1983,,Biology & Medicine,Human Immunodeficiency Virus|AIDS Virus Discovery|Montagnier-Gallo HIV
-world-wide-web,World Wide Web,1991,,Mathematics,Tim Berners-Lee Web|HTTP and HTML|Internet Web System
-higgs-boson,Discovery of the Higgs Boson,2012,,Physics & Astronomy,God Particle|Higgs Field Confirmation|LHC Higgs Discovery
-crispr-cas9,CRISPR-Cas9 Gene Editing,2012,,Biology & Medicine,CRISPR Gene Editing|Cas9 Genome Editing|Doudna-Charpentier CRISPR
-gravitational-waves,Detection of Gravitational Waves,2016,,Physics & Astronomy,LIGO Gravitational Waves|Einstein Wave Detection|Binary Black Hole Merger Waves
-first-black-hole-image,First Image of a Black Hole,2019,,Physics & Astronomy,Event Horizon Telescope Image|M87 Black Hole|Black Hole Shadow
-mrna-vaccine-technology,mRNA Vaccine Technology,2020,,Biology & Medicine,Karikó-Weissman mRNA Vaccines|COVID-19 mRNA Vaccine|Messenger RNA Immunisation
+id,discovery,start_year,end_year,field,discovery_alternates,wikipedia
+euclidean-geometry,Euclidean Geometry,-300,,Mathematics,Elements of Euclid|Euclid's Elements|Axiomatic Geometry,Euclidean_Geometry
+archimedean-physics,Archimedes' Principles,-250,,Physics & Astronomy,Archimedes' Buoyancy|Law of the Lever|Archimedes' Screw Principle,
+eratosthenes-earth-circumference,Measurement of Earth's Circumference,-240,,Earth & Climate,Eratosthenes' Earth Measurement|Circumference of the Earth,
+ptolemaic-astronomy,Ptolemy's Almagest,150,,Physics & Astronomy,Ptolemaic System|Geocentric Model|Almagest,
+hindu-arabic-numerals,Hindu-Arabic Numeral System,628,,Mathematics,Decimal Numeral System|Brahmasphutasiddhanta|Positional Notation,
+al-khwarizmi-algebra,Al-Khwarizmi's Algebra,830,,Mathematics,The Compendious Book on Calculation|Al-Jabr|Foundation of Algebra,Al-Khwarizmi's_Algebra
+ibn-al-haytham-optics,Ibn al-Haytham's Book of Optics,1021,,Physics & Astronomy,Kitab al-Manazir|Book of Optics|Intromission Theory of Vision,
+compass-declination,Discovery of Magnetic Declination,1088,,Earth & Climate,Shen Kuo's Compass|Dream Pool Essays|Magnetic Compass Science,
+copernican-heliocentrism,Copernican Heliocentrism,1543,,Physics & Astronomy,De Revolutionibus|Heliocentric Model|Copernican Revolution,
+vesalius-anatomy,Vesalius' Human Anatomy,1543,,Biology & Medicine,De Humani Corporis Fabrica|Vesalius Anatomy|Modern Anatomy,
+galileo-telescope,Galileo's Telescopic Observations,1609,,Physics & Astronomy,Sidereus Nuncius|Galileo's Telescope|Moons of Jupiter,
+harvey-circulation,Harvey's Theory of Blood Circulation,1628,,Biology & Medicine,De Motu Cordis|Circulation of the Blood|Harvey's Circulation,
+newtons-principia,Newton's Principia Mathematica,1687,,Physics & Astronomy,Principia|Law of Universal Gravitation|Newton's Laws of Motion,
+calculus,Invention of Calculus,1666,,Mathematics,Differential Calculus|Integral Calculus|Newton-Leibniz Calculus,
+newtons-optics,Newton's Opticks,1704,,Physics & Astronomy,Newton's Theory of Light|Opticks|Corpuscular Theory of Light,
+linnaeus-taxonomy,Linnaean Taxonomy,1735,,Biology & Medicine,Systema Naturae|Linnaean Classification|Binomial Nomenclature,
+franklin-electricity,Franklin's Electrical Experiments,1752,,Physics & Astronomy,Kite Experiment|Lightning Rod|Franklin's Electricity,
+lavoisier-oxygen,Lavoisier's Theory of Combustion,1789,,Chemistry,Law of Conservation of Mass|Oxygen Theory|Traité Élémentaire de Chimie,
+smallpox-vaccine,Smallpox Vaccination,1796,,Biology & Medicine,Jenner's Vaccine|Cowpox Inoculation|Vaccination,
+dalton-atomic-theory,Dalton's Atomic Theory,1808,,Chemistry,A New System of Chemical Philosophy|Dalton's Atoms|Law of Multiple Proportions,
+avogadro-hypothesis,Avogadro's Hypothesis,1811,,Chemistry,Avogadro's Law|Molecular Hypothesis|Avogadro's Number,Avogadro's_Hypothesis
+faraday-electromagnetism,Faraday's Electromagnetic Induction,1831,,Physics & Astronomy,Electromagnetic Induction|Faraday's Law|Faraday's Experiments,
+cell-theory,Cell Theory,1838,,Biology & Medicine,Schleiden-Schwann Cell Theory|All Life from Cells|Omnis cellula e cellula,Cell_Theory
+doppler-effect,Doppler Effect,1842,,Physics & Astronomy,Doppler's Principle|Christian Doppler Effect|Acoustic Doppler Effect,Doppler_Effect
+darwin-evolution,On the Origin of Species,1859,,Biology & Medicine,Darwin's Theory of Evolution|Natural Selection|Theory of Evolution by Natural Selection,On_the_Origin_of_Species
+kirchhoff-spectroscopy,Kirchhoff's Spectroscopy,1859,,Physics & Astronomy,Spectral Analysis|Kirchhoff-Bunsen Spectroscopy|Fraunhofer Lines Theory,
+maxwell-equations,Maxwell's Equations,1865,,Physics & Astronomy,Electromagnetic Theory|Treatise on Electricity and Magnetism|Maxwell's Theory of Light,Maxwell's_Equations
+mendel-genetics,Mendel's Laws of Inheritance,1866,,Biology & Medicine,Mendelian Inheritance|Pea Plant Experiments|Laws of Heredity,Mendel's_Laws_of_Inheritance
+mendeleev-periodic-table,Mendeleev's Periodic Table,1869,,Chemistry,Periodic Table of Elements|Periodic Law|Mendeleev's Classification,
+germ-theory,Germ Theory of Disease,1876,,Biology & Medicine,Pasteur-Koch Germ Theory|Microbial Disease Theory|Pasteur's Germ Theory,Germ_Theory_of_Disease
+evolution-by-natural-selection,Wallace-Darwin Natural Selection,1858,,Biology & Medicine,Darwin-Wallace Theory|Joint Natural Selection Paper|Ternate Paper,
+hertz-radio-waves,Discovery of Radio Waves,1887,,Physics & Astronomy,Hertzian Waves|Electromagnetic Waves Discovery|Hertz's Experiments,
+x-rays,Discovery of X-Rays,1895,,Physics & Astronomy,Roentgen Rays|Wilhelm Röntgen X-Rays|X-Radiation,
+radioactivity,Discovery of Radioactivity,1896,,Physics & Astronomy,Becquerel Radioactivity|Natural Radioactivity|Uranium Radiation,
+electron-discovery,Discovery of the Electron,1897,,Physics & Astronomy,Thomson's Electron|Cathode Ray Particle|J.J. Thomson Electron,
+marie-curie-polonium-radium,Discovery of Polonium and Radium,1898,,Chemistry,Curie's Radioactive Elements|Polonium Discovery|Radium Discovery,
+planck-quantum,Planck's Quantum Theory,1900,,Physics & Astronomy,Planck's Constant|Quantum Hypothesis|Blackbody Radiation Theory,
+einstein-special-relativity,Special Theory of Relativity,1905,,Physics & Astronomy,Einstein's Special Relativity|E=mc²|Annus Mirabilis Papers,Special_Theory_of_Relativity
+pavlov-conditioning,Pavlov's Classical Conditioning,1906,,Neuroscience & Psychology,Pavlovian Conditioning|Conditioned Reflex|Classical Conditioning,
+einstein-general-relativity,General Theory of Relativity,1915,,Physics & Astronomy,Einstein's General Relativity|Curved Spacetime|Gravitational Field Equations,General_Theory_of_Relativity
+freud-psychoanalysis,Freud's Psychoanalytic Theory,1900,,Neuroscience & Psychology,Interpretation of Dreams|Psychoanalysis|Unconscious Mind Theory,
+bohr-atomic-model,Bohr Model of the Atom,1913,,Physics & Astronomy,Bohr's Atomic Model|Quantised Electron Orbits|Bohr-Rutherford Model,
+continental-drift,Continental Drift Theory,1912,,Earth & Climate,Wegener's Continental Drift|Pangaea Theory|Plate Drift Hypothesis,
+quantum-mechanics,Quantum Mechanics,1925,,Physics & Astronomy,Heisenberg-Schrödinger Quantum Theory|Wave Mechanics|Matrix Mechanics,Quantum_Mechanics
+big-bang-theory,Big Bang Theory,1927,,Physics & Astronomy,Lemaître's Hypothesis|Primeval Atom|Expanding Universe Theory,Big_Bang_Theory
+penicillin-discovery,Discovery of Penicillin,1928,,Biology & Medicine,Fleming's Penicillin|Penicillium notatum|Antibiotic Discovery,
+hubble-expanding-universe,Hubble's Expanding Universe,1929,,Physics & Astronomy,Hubble's Law|Galactic Recession|Hubble-Lemaître Law,
+turing-machine,Turing Machine and Computability,1936,,Mathematics,Turing's Computability Theory|On Computable Numbers|Theoretical Computer Science,
+nuclear-fission,Nuclear Fission,1938,,Physics & Astronomy,Hahn-Strassmann Fission|Splitting the Atom|Atomic Fission,Nuclear_Fission
+dna-as-genetic-material,DNA as Genetic Material,1944,,Biology & Medicine,Avery-MacLeod-McCarty Experiment|Transforming Principle|DNA Hereditary Role,
+plate-tectonics,Plate Tectonics Theory,1960,,Earth & Climate,Sea-Floor Spreading|Tectonic Plate Theory|Vine-Matthews-Morley Hypothesis,
+dna-double-helix,DNA Double Helix Structure,1953,,Biology & Medicine,Watson-Crick Model|DNA Structure|Double Helix,
+standard-model,Standard Model of Particle Physics,1973,,Physics & Astronomy,Standard Model|Quantum Field Theory|Quark Model,Standard_Model_of_Particle_Physics
+hiv-discovery,Discovery of HIV,1983,,Biology & Medicine,Human Immunodeficiency Virus|AIDS Virus Discovery|Montagnier-Gallo HIV,
+world-wide-web,World Wide Web,1991,,Mathematics,Tim Berners-Lee Web|HTTP and HTML|Internet Web System,World_Wide_Web
+higgs-boson,Discovery of the Higgs Boson,2012,,Physics & Astronomy,God Particle|Higgs Field Confirmation|LHC Higgs Discovery,
+crispr-cas9,CRISPR-Cas9 Gene Editing,2012,,Biology & Medicine,CRISPR Gene Editing|Cas9 Genome Editing|Doudna-Charpentier CRISPR,
+gravitational-waves,Detection of Gravitational Waves,2016,,Physics & Astronomy,LIGO Gravitational Waves|Einstein Wave Detection|Binary Black Hole Merger Waves,
+first-black-hole-image,First Image of a Black Hole,2019,,Physics & Astronomy,Event Horizon Telescope Image|M87 Black Hole|Black Hole Shadow,
+mrna-vaccine-technology,mRNA Vaccine Technology,2020,,Biology & Medicine,Karikó-Weissman mRNA Vaccines|COVID-19 mRNA Vaccine|Messenger RNA Immunisation,

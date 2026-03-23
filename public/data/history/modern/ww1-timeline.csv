@@ -1,57 +1,57 @@
-id,event,start_year,start_month,start_day,end_year,end_month,end_day,front,event_alternates
-assassination-of-franz-ferdinand,Assassination of Franz Ferdinand,1914,6,28,,,,Diplomatic & Political,Murder of Archduke Franz Ferdinand|Sarajevo Assassination
-austro-hungarian-ultimatum-to-serbia,Austro-Hungarian Ultimatum to Serbia,1914,7,23,,,,Diplomatic & Political,July Ultimatum|Habsburg Ultimatum to Serbia
-austria-hungary-declares-war-on-serbia,Austria-Hungary Declares War on Serbia,1914,7,28,,,,Diplomatic & Political,Austria Declares War on Serbia|Austro-Hungarian Declaration of War
-german-ultimatum-to-russia,German Ultimatum to Russia,1914,7,31,,,,Diplomatic & Political,German Ultimatum to Tsar
-germany-declares-war-on-russia,Germany Declares War on Russia,1914,8,1,,,,Diplomatic & Political,German Declaration of War on Russia
-germany-declares-war-on-france,Germany Declares War on France,1914,8,3,,,,Diplomatic & Political,German Declaration of War on France
-german-invasion-of-belgium,German Invasion of Belgium,1914,8,4,,,,Western Front,Violation of Belgian Neutrality
-britain-declares-war-on-germany,Britain Declares War on Germany,1914,8,4,,,,Diplomatic & Political,UK Entry into World War I
-battle-of-liege,Battle of Liège,1914,8,5,1914,8,16,Western Front,Siege of Liège
-battle-of-the-frontiers,Battle of the Frontiers,1914,8,7,1914,8,23,Western Front,Frontier Battles|Battles of the Frontiers
-battle-of-tannenberg,Battle of Tannenberg,1914,8,26,1914,8,30,Eastern Front,Encirclement of the Russian Second Army
-battle-of-the-marne,First Battle of the Marne,1914,9,5,1914,9,12,Western Front,Battle of the Marne|Miracle of the Marne
-race-to-the-sea,Race to the Sea,1914,9,17,1914,10,19,Western Front,Race to the Sea 1914|Flanking Manoeuvres
-first-battle-of-ypres,First Battle of Ypres,1914,10,19,1914,11,22,Western Front,First Ypres
-ottoman-empire-enters-war,Ottoman Empire Enters the War,1914,10,29,,,,Diplomatic & Political,Turkey Enters World War I|Ottoman Entry into WWI
-battle-of-the-falkland-islands,Battle of the Falkland Islands,1914,12,8,,,,Naval & Air,Falkland Islands Naval Battle|Battle of the Falklands
-christmas-truce,Christmas Truce,1914,12,24,1914,12,26,Western Front,Christmas Ceasefire 1914
-second-battle-of-masurian-lakes,Second Battle of the Masurian Lakes,1915,2,7,1915,2,22,Eastern Front,Winter Battle in Masuria
-gallipoli-campaign,Gallipoli Campaign,1915,2,19,1916,1,9,Middle East & Africa,Dardanelles Campaign|ANZAC Campaign
-sinking-of-the-lusitania,Sinking of the Lusitania,1915,5,7,,,,Naval & Air,RMS Lusitania
-italy-enters-the-war,Italy Enters the War,1915,5,23,,,,Diplomatic & Political,Italian Declaration of War|Italy Joins the Entente
-second-battle-of-ypres,Second Battle of Ypres,1915,4,22,1915,5,25,Western Front,Second Ypres|First Use of Poison Gas
-great-german-offensive-in-the-east,Gorlice-Tarnow Offensive,1915,5,2,1915,9,19,Eastern Front,Great Retreat of the Russian Army
-battle-of-loos,Battle of Loos,1915,9,25,1915,10,14,Western Front,Loos
-bulgarian-entry-into-the-war,Bulgaria Enters the War,1915,10,14,,,,Diplomatic & Political,Bulgaria Joins the Central Powers
-battle-of-verdun,Battle of Verdun,1916,2,21,1916,12,18,Western Front,Verdun
-battle-of-jutland,Battle of Jutland,1916,5,31,1916,6,1,Naval & Air,Skagerrak Battle
-arab-revolt,Arab Revolt,1916,6,5,1918,10,25,Middle East & Africa,Great Arab Revolt|Hashemite Revolt
-brusilov-offensive,Brusilov Offensive,1916,6,4,1916,9,20,Eastern Front,Brusilov's Offensive|Russian Summer Offensive 1916
-battle-of-the-somme,Battle of the Somme,1916,7,1,1916,11,18,Western Front,Somme|First Battle of the Somme
-romania-enters-the-war,Romania Enters the War,1916,8,27,,,,Diplomatic & Political,Romanian Declaration of War
-battle-of-arras,Battle of Arras,1917,4,9,1917,5,16,Western Front,Arras Offensive
-nivelle-offensive,Nivelle Offensive,1917,4,16,1917,5,9,Western Front,Second Battle of the Aisne|Chemin des Dames Offensive
-french-army-mutinies,French Army Mutinies,1917,4,29,1917,6,10,Home Front & Society,French Mutinies 1917|Collective Indiscipline in the French Army
-zimmermann-telegram,Zimmermann Telegram,1917,1,16,,,,Diplomatic & Political,Zimmermann Note
-unrestricted-submarine-warfare-resumed,Germany Resumes Unrestricted Submarine Warfare,1917,2,1,,,,Naval & Air,Unrestricted U-boat Campaign 1917
-united-states-enters-the-war,United States Enters the War,1917,4,6,,,,Diplomatic & Political,US Declaration of War|American Entry into World War I
-february-revolution-russia,Russian February Revolution,1917,3,8,1917,3,12,Home Front & Society,February Revolution|Fall of Tsar Nicholas II
-third-battle-of-ypres,Third Battle of Ypres,1917,7,31,1917,11,10,Western Front,Passchendaele|Battle of Passchendaele
-battle-of-caporetto,Battle of Caporetto,1917,10,24,1917,11,19,Italian Front,Battle of Karfreit|Twelfth Battle of the Isonzo
-october-revolution-russia,Russian October Revolution,1917,11,7,1917,11,8,Home Front & Society,Bolshevik Revolution|Red October
-tank-battle-of-cambrai,Battle of Cambrai,1917,11,20,1917,12,7,Western Front,First Mass Tank Battle
-balfour-declaration,Balfour Declaration,1917,11,2,,,,Diplomatic & Political,Balfour Letter|British Support for Jewish Homeland
-capture-of-jerusalem,Capture of Jerusalem,1917,12,9,,,,Middle East & Africa,Fall of Jerusalem|Allenby Enters Jerusalem
-treaty-of-brest-litovsk,Treaty of Brest-Litovsk,1918,3,3,,,,Diplomatic & Political,Russo-German Peace Treaty|Eastern Armistice
-german-spring-offensive,German Spring Offensive,1918,3,21,1918,7,18,Western Front,Operation Michael|Kaiserschlacht|Ludendorff Offensive
-second-battle-of-the-marne,Second Battle of the Marne,1918,7,15,1918,8,6,Western Front,Battle of the Marne 1918
-hundred-days-offensive,Hundred Days Offensive,1918,8,8,1918,11,11,Western Front,Allied Hundred Days Offensive|Final Allied Offensive
-battle-of-amiens,Battle of Amiens,1918,8,8,1918,8,12,Western Front,Black Day of the German Army
-bulgarian-armistice,Armistice with Bulgaria,1918,9,29,,,,Diplomatic & Political,Bulgarian Armistice|Salonika Armistice
-ottoman-armistice,Armistice with the Ottoman Empire,1918,10,30,,,,Diplomatic & Political,Armistice of Mudros|Ottoman Armistice
-austro-hungarian-armistice,Armistice with Austria-Hungary,1918,11,3,,,,Diplomatic & Political,Villa Giusti Armistice
-german-revolution,German Revolution,1918,11,3,1918,11,9,Home Front & Society,Kiel Mutiny|November Revolution|German Imperial Collapse
-armistice-of-11-november,Armistice of 11 November,1918,11,11,,,,Diplomatic & Political,Armistice Day|End of World War I|November Armistice
-paris-peace-conference,Paris Peace Conference,1919,1,18,1919,6,28,Diplomatic & Political,Versailles Peace Conference
-treaty-of-versailles,Treaty of Versailles,1919,6,28,,,,Diplomatic & Political,Versailles Peace Treaty|German Peace Treaty
+id,event,start_year,start_month,start_day,end_year,end_month,end_day,front,event_alternates,wikipedia
+assassination-of-franz-ferdinand,Assassination of Franz Ferdinand,1914,6,28,,,,Diplomatic & Political,Murder of Archduke Franz Ferdinand|Sarajevo Assassination,Assassination_of_Franz_Ferdinand
+austro-hungarian-ultimatum-to-serbia,Austro-Hungarian Ultimatum to Serbia,1914,7,23,,,,Diplomatic & Political,July Ultimatum|Habsburg Ultimatum to Serbia,
+austria-hungary-declares-war-on-serbia,Austria-Hungary Declares War on Serbia,1914,7,28,,,,Diplomatic & Political,Austria Declares War on Serbia|Austro-Hungarian Declaration of War,
+german-ultimatum-to-russia,German Ultimatum to Russia,1914,7,31,,,,Diplomatic & Political,German Ultimatum to Tsar,
+germany-declares-war-on-russia,Germany Declares War on Russia,1914,8,1,,,,Diplomatic & Political,German Declaration of War on Russia,
+germany-declares-war-on-france,Germany Declares War on France,1914,8,3,,,,Diplomatic & Political,German Declaration of War on France,
+german-invasion-of-belgium,German Invasion of Belgium,1914,8,4,,,,Western Front,Violation of Belgian Neutrality,German_Invasion_of_Belgium
+britain-declares-war-on-germany,Britain Declares War on Germany,1914,8,4,,,,Diplomatic & Political,UK Entry into World War I,
+battle-of-liege,Battle of Liège,1914,8,5,1914,8,16,Western Front,Siege of Liège,Battle_of_Liège
+battle-of-the-frontiers,Battle of the Frontiers,1914,8,7,1914,8,23,Western Front,Frontier Battles|Battles of the Frontiers,Battle_of_the_Frontiers
+battle-of-tannenberg,Battle of Tannenberg,1914,8,26,1914,8,30,Eastern Front,Encirclement of the Russian Second Army,Battle_of_Tannenberg
+battle-of-the-marne,First Battle of the Marne,1914,9,5,1914,9,12,Western Front,Battle of the Marne|Miracle of the Marne,First_Battle_of_the_Marne
+race-to-the-sea,Race to the Sea,1914,9,17,1914,10,19,Western Front,Race to the Sea 1914|Flanking Manoeuvres,Race_to_the_Sea
+first-battle-of-ypres,First Battle of Ypres,1914,10,19,1914,11,22,Western Front,First Ypres,First_Battle_of_Ypres
+ottoman-empire-enters-war,Ottoman Empire Enters the War,1914,10,29,,,,Diplomatic & Political,Turkey Enters World War I|Ottoman Entry into WWI,
+battle-of-the-falkland-islands,Battle of the Falkland Islands,1914,12,8,,,,Naval & Air,Falkland Islands Naval Battle|Battle of the Falklands,Battle_of_the_Falkland_Islands
+christmas-truce,Christmas Truce,1914,12,24,1914,12,26,Western Front,Christmas Ceasefire 1914,Christmas_Truce
+second-battle-of-masurian-lakes,Second Battle of the Masurian Lakes,1915,2,7,1915,2,22,Eastern Front,Winter Battle in Masuria,Second_Battle_of_the_Masurian_Lakes
+gallipoli-campaign,Gallipoli Campaign,1915,2,19,1916,1,9,Middle East & Africa,Dardanelles Campaign|ANZAC Campaign,Gallipoli_Campaign
+sinking-of-the-lusitania,Sinking of the Lusitania,1915,5,7,,,,Naval & Air,RMS Lusitania,Sinking_of_the_Lusitania
+italy-enters-the-war,Italy Enters the War,1915,5,23,,,,Diplomatic & Political,Italian Declaration of War|Italy Joins the Entente,
+second-battle-of-ypres,Second Battle of Ypres,1915,4,22,1915,5,25,Western Front,Second Ypres|First Use of Poison Gas,Second_Battle_of_Ypres
+great-german-offensive-in-the-east,Gorlice-Tarnow Offensive,1915,5,2,1915,9,19,Eastern Front,Great Retreat of the Russian Army,Gorlice-Tarnow_Offensive
+battle-of-loos,Battle of Loos,1915,9,25,1915,10,14,Western Front,Loos,Battle_of_Loos
+bulgarian-entry-into-the-war,Bulgaria Enters the War,1915,10,14,,,,Diplomatic & Political,Bulgaria Joins the Central Powers,
+battle-of-verdun,Battle of Verdun,1916,2,21,1916,12,18,Western Front,Verdun,Battle_of_Verdun
+battle-of-jutland,Battle of Jutland,1916,5,31,1916,6,1,Naval & Air,Skagerrak Battle,Battle_of_Jutland
+arab-revolt,Arab Revolt,1916,6,5,1918,10,25,Middle East & Africa,Great Arab Revolt|Hashemite Revolt,Arab_Revolt
+brusilov-offensive,Brusilov Offensive,1916,6,4,1916,9,20,Eastern Front,Brusilov's Offensive|Russian Summer Offensive 1916,Brusilov_Offensive
+battle-of-the-somme,Battle of the Somme,1916,7,1,1916,11,18,Western Front,Somme|First Battle of the Somme,Battle_of_the_Somme
+romania-enters-the-war,Romania Enters the War,1916,8,27,,,,Diplomatic & Political,Romanian Declaration of War,
+battle-of-arras,Battle of Arras,1917,4,9,1917,5,16,Western Front,Arras Offensive,Battle_of_Arras
+nivelle-offensive,Nivelle Offensive,1917,4,16,1917,5,9,Western Front,Second Battle of the Aisne|Chemin des Dames Offensive,Nivelle_Offensive
+french-army-mutinies,French Army Mutinies,1917,4,29,1917,6,10,Home Front & Society,French Mutinies 1917|Collective Indiscipline in the French Army,French_Army_Mutinies
+zimmermann-telegram,Zimmermann Telegram,1917,1,16,,,,Diplomatic & Political,Zimmermann Note,Zimmermann_Telegram
+unrestricted-submarine-warfare-resumed,Germany Resumes Unrestricted Submarine Warfare,1917,2,1,,,,Naval & Air,Unrestricted U-boat Campaign 1917,
+united-states-enters-the-war,United States Enters the War,1917,4,6,,,,Diplomatic & Political,US Declaration of War|American Entry into World War I,
+february-revolution-russia,Russian February Revolution,1917,3,8,1917,3,12,Home Front & Society,February Revolution|Fall of Tsar Nicholas II,Russian_February_Revolution
+third-battle-of-ypres,Third Battle of Ypres,1917,7,31,1917,11,10,Western Front,Passchendaele|Battle of Passchendaele,Third_Battle_of_Ypres
+battle-of-caporetto,Battle of Caporetto,1917,10,24,1917,11,19,Italian Front,Battle of Karfreit|Twelfth Battle of the Isonzo,Battle_of_Caporetto
+october-revolution-russia,Russian October Revolution,1917,11,7,1917,11,8,Home Front & Society,Bolshevik Revolution|Red October,Russian_October_Revolution
+tank-battle-of-cambrai,Battle of Cambrai,1917,11,20,1917,12,7,Western Front,First Mass Tank Battle,Battle_of_Cambrai
+balfour-declaration,Balfour Declaration,1917,11,2,,,,Diplomatic & Political,Balfour Letter|British Support for Jewish Homeland,Balfour_Declaration
+capture-of-jerusalem,Capture of Jerusalem,1917,12,9,,,,Middle East & Africa,Fall of Jerusalem|Allenby Enters Jerusalem,Capture_of_Jerusalem
+treaty-of-brest-litovsk,Treaty of Brest-Litovsk,1918,3,3,,,,Diplomatic & Political,Russo-German Peace Treaty|Eastern Armistice,Treaty_of_Brest-Litovsk
+german-spring-offensive,German Spring Offensive,1918,3,21,1918,7,18,Western Front,Operation Michael|Kaiserschlacht|Ludendorff Offensive,German_Spring_Offensive
+second-battle-of-the-marne,Second Battle of the Marne,1918,7,15,1918,8,6,Western Front,Battle of the Marne 1918,Second_Battle_of_the_Marne
+hundred-days-offensive,Hundred Days Offensive,1918,8,8,1918,11,11,Western Front,Allied Hundred Days Offensive|Final Allied Offensive,Hundred_Days_Offensive
+battle-of-amiens,Battle of Amiens,1918,8,8,1918,8,12,Western Front,Black Day of the German Army,Battle_of_Amiens
+bulgarian-armistice,Armistice with Bulgaria,1918,9,29,,,,Diplomatic & Political,Bulgarian Armistice|Salonika Armistice,Armistice_with_Bulgaria
+ottoman-armistice,Armistice with the Ottoman Empire,1918,10,30,,,,Diplomatic & Political,Armistice of Mudros|Ottoman Armistice,
+austro-hungarian-armistice,Armistice with Austria-Hungary,1918,11,3,,,,Diplomatic & Political,Villa Giusti Armistice,
+german-revolution,German Revolution,1918,11,3,1918,11,9,Home Front & Society,Kiel Mutiny|November Revolution|German Imperial Collapse,German_Revolution
+armistice-of-11-november,Armistice of 11 November,1918,11,11,,,,Diplomatic & Political,Armistice Day|End of World War I|November Armistice,Armistice_of_11_November
+paris-peace-conference,Paris Peace Conference,1919,1,18,1919,6,28,Diplomatic & Political,Versailles Peace Conference,Paris_Peace_Conference
+treaty-of-versailles,Treaty of Versailles,1919,6,28,,,,Diplomatic & Political,Versailles Peace Treaty|German Peace Treaty,Treaty_of_Versailles

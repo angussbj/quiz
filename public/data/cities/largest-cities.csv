@@ -1,835 +1,835 @@
-id,city,country,country_code,latitude,longitude,population,growth_rate,rank,region,subregion,city_alternates,label_position
-tokyo,Tokyo,Japan,jp,35.6895,139.6917,36953600,-0.00223,1,Asia,Eastern Asia,"Tōkyō|Tokio",
-delhi,Delhi,India,in,28.652,77.2315,35518400,0.0246,2,Asia,Southern Asia,"New Delhi|Nai Dilli",left
-shanghai,Shanghai,China,cn,31.2304,121.4737,31049800,0.01862,3,Asia,Eastern Asia,,
-dhaka,Dhaka,Bangladesh,bd,23.7842,89.9286,25359100,0.02865,4,Asia,Southern Asia,Dacca,
-cairo,Cairo,Egypt,eg,30.0626,31.2497,23534600,0.01995,5,Africa,Northern Africa,,
-sao-paulo,São Paulo,Brazil,br,-23.5505,-46.6333,23168700,0.00777,6,Americas,South America,"Sao Paulo|San Pablo",right
-mexico-city,Mexico City,Mexico,mx,19.4285,-99.1277,23016800,0.01162,7,Americas,North America,,above
-beijing,Beijing,China,cn,39.9075,116.3972,22983400,0.01712,8,Asia,Eastern Asia,Peking,left
-mumbai,Mumbai,India,in,19.0728,72.8826,22539300,0.02039,9,Asia,Southern Asia,Bombay,left
-osaka,Osaka,Japan,jp,34.6937,135.5022,18873900,-0.00252,10,Asia,Eastern Asia,,left
-kinshasa,Kinshasa,DR Congo,cd,-4.3276,15.3136,18552800,0.04355,11,Africa,Middle Africa,,below
-chongqing,Chongqing,China,cn,29.563,106.5516,18531600,0.01983,12,Asia,Eastern Asia,,
-karachi,Karachi,Pakistan,pk,24.8608,67.0104,18520100,0.02452,13,Asia,Southern Asia,,left
-lagos,Lagos,Nigeria,ng,6.4541,3.3947,17803700,0.03773,14,Africa,Western Africa,,left
-istanbul,Istanbul,Turkey,tr,41.0054,28.6825,16419100,0.01123,15,Asia,Western Asia,Constantinople,left
-kolkata,Kolkata,India,in,22.5411,88.3378,16151400,0.01932,16,Asia,Southern Asia,Calcutta,
-buenos-aires,Buenos Aires,Argentina,ar,-34.6037,-58.3816,15890600,0.00878,17,Americas,South America,,left
-manila,Manila,Philippines,ph,14.5995,120.9842,15531900,0.01978,18,Asia,South-Eastern Asia,,
-lahore,Lahore,Pakistan,pk,31.558,74.3507,15237800,0.02779,19,Asia,Southern Asia,,left
-guangzhou,Guangzhou,China,cn,23.1302,113.2593,15147900,0.01809,20,Asia,Eastern Asia,Canton,
-tianjin,Tianjin,China,cn,39.3434,117.3616,14933500,0.0156,21,Asia,Eastern Asia,,
-bangalore,Bangalore,India,in,12.9716,77.5946,14771700,0.02614,22,Asia,Southern Asia,Bengaluru,left
-rio-de-janeiro,Rio de Janeiro,Brazil,br,-22.9201,-43.3307,14023100,0.00718,23,Americas,South America,,
-shenzhen,Shenzhen,China,cn,22.5446,114.0545,13770000,0.01658,24,Asia,Eastern Asia,,
-moscow,Moscow,Russia,ru,55.7522,37.6156,12756500,0.0015,25,Europe,Eastern Europe,,
-chennai,Chennai,India,in,13.0878,80.2785,12623100,0.02327,26,Asia,Southern Asia,Madras,
-bogota,Bogota,Colombia,co,4.711,-74.0721,11922100,0.01071,27,Americas,South America,Bogotá,
-jakarta,Jakarta,Indonesia,id,-6.2088,106.8456,11840000,0.0177,28,Asia,South-Eastern Asia,,left
-lima,Lima,Peru,pe,-12.0432,-77.0282,11670700,0.01332,29,Americas,South America,,
-hyderabad-in,Hyderabad,India,in,17.384,78.4564,11608400,0.02386,30,Asia,Southern Asia,,left
-bangkok,Bangkok,Thailand,th,13.754,100.5014,11543900,0.01336,31,Asia,South-Eastern Asia,,left
-paris,Paris,France,fr,48.8534,2.3486,11418300,0.0063,32,Europe,Western Europe,,
-luanda,Luanda,Angola,ao,-8.8368,13.2343,10421300,0.03923,33,Africa,Middle Africa,,left
-nanjing,Nanjing,China,cn,32.0617,118.7778,10380200,0.02018,34,Asia,Eastern Asia,,left
-chengdu,Chengdu,China,cn,30.6599,104.0633,10163400,0.01645,35,Asia,Eastern Asia,,left
-ho-chi-minh-city,Ho Chi Minh City,Vietnam,vn,10.8231,106.6297,10065700,0.0254,36,Asia,South-Eastern Asia,"Saigon|HCMC",
-seoul,Seoul,South Korea,kr,37.566,126.9784,10050200,0.00243,37,Asia,Eastern Asia,,
-london,London,United Kingdom,gb,51.5085,-0.1257,9927020,0.00877,38,Europe,Northern Europe,,left
-tehran,Tehran,Iran,ir,35.6944,51.4215,9840100,0.01134,39,Asia,Southern Asia,,
-nagoya,Nagoya,Japan,jp,35.1815,136.9064,9511730,-0.00242,40,Asia,Eastern Asia,,left
-xi-an,Xi'an,China,cn,34.2658,108.9541,9409700,0.02034,41,Asia,Eastern Asia,"Xi'an|Xian|Chang'an",
-ahmedabad,Ahmedabad,India,in,23.0258,72.5873,9272670,0.02327,42,Asia,Southern Asia,,left
-kuala-lumpur,Kuala Lumpur,Malaysia,my,3.1412,101.6865,9175810,0.0195,43,Asia,South-Eastern Asia,,
-wuhan,Wuhan,China,cn,30.5951,114.2999,9121840,0.01506,44,Asia,Eastern Asia,,
-dar-es-salaam,Dar es Salaam,Tanzania,tz,-6.7924,39.2083,8976930,0.04852,45,Africa,Eastern Africa,Dar-es-Salaam,
-surat,Surat,India,in,21.178,72.8119,8820660,0.02784,46,Asia,Southern Asia,,left
-suzhou,Suzhou,China,cn,33.6482,116.9588,8802000,0.02434,47,Asia,Eastern Asia,,left
-hangzhou,Hangzhou,China,cn,30.249,120.2052,8749670,0.01846,48,Asia,Eastern Asia,,
-baghdad,Baghdad,Iraq,iq,33.3406,44.4009,8370410,0.02816,49,Asia,Western Asia,,left
-new-york,New York,United States,us,40.7128,-74.006,8346955,-0.0076,50,Americas,North America,,left
-shenyang,Shenyang,China,cn,41.8026,123.4279,8110930,0.01714,51,Asia,Eastern Asia,,
-riyadh,Riyadh,Saudi Arabia,sa,24.6877,46.7219,8079940,0.01598,52,Asia,Western Asia,,left
-foshan,Foshan,China,cn,23.024,113.116,7930870,0.01455,53,Asia,Eastern Asia,,left
-dongguan,Dongguan,China,cn,23.0184,113.7452,7876240,0.0133,54,Asia,Eastern Asia,,
-hong-kong,Hong Kong,Hong Kong,hk,22.3193,114.1694,7813300,0.00577,55,Asia,Eastern Asia,,
-pune,Pune,India,in,18.5196,73.8554,7706270,0.02399,56,Asia,Southern Asia,,
-harbin,Harbin,China,cn,45.75,126.65,7188910,0.01727,57,Asia,Eastern Asia,"Harbin|Ha-erh-pin",left
-santiago,Santiago,Chile,cl,-33.4569,-70.6483,7048620,0.00702,58,Americas,South America,,below
-khartoum,Khartoum,Sudan,sd,15.5518,32.5324,6980600,0.03352,59,Africa,Northern Africa,,
-madrid,Madrid,Spain,es,40.4165,-3.7026,6834320,0.00349,60,Europe,Southern Europe,,left
-johannesburg,Johannesburg,South Africa,za,-26.2023,28.0436,6559190,0.01778,61,Africa,Southern Africa,,below
-toronto,Toronto,Canada,ca,43.7001,-79.4163,6551460,0.00927,62,Americas,North America,,
-dalian,Dalian,China,cn,39.7403,122.2558,6467000,0.01885,63,Asia,Eastern Asia,,left
-belo-horizonte,Belo Horizonte,Brazil,br,-19.9167,-43.9333,6401500,0.00784,64,Americas,South America,,left
-qingdao,Qingdao,China,cn,36.0663,120.3778,6325350,0.01727,65,Asia,Eastern Asia,,
-zhengzhou,Zhengzhou,China,cn,34.7473,113.6193,6282970,0.0206,66,Asia,Eastern Asia,,left
-abidjan,Abidjan,Ivory Coast,ci,5.3097,-4.0127,6256340,0.03293,67,Africa,Western Africa,,left
-addis-ababa,Addis Ababa,Ethiopia,et,9.025,38.7469,6219080,0.04405,68,Africa,Eastern Africa,,left
-singapore,Singapore,Singapore,sg,1.2897,103.8501,6195860,0.00627,69,Asia,South-Eastern Asia,,left
-ji-nan-shandong,Ji nan Shandong,China,cn,36.6512,116.9986,6180880,0.01896,70,Asia,Eastern Asia,,left
-nairobi,Nairobi,Kenya,ke,-1.2833,36.8167,6002290,0.0408,71,Africa,Eastern Africa,,
-alexandria,Alexandria,Egypt,eg,31.2018,29.9158,5921200,0.01966,72,Africa,Northern Africa,,left
-yangon,Yangon,Myanmar,mm,16.8053,96.1561,5920850,0.01852,73,Asia,South-Eastern Asia,Rangoon,
-chittagong,Chittagong,Bangladesh,bd,22.4875,91.9633,5797810,0.02553,74,Asia,Southern Asia,,
-hanoi,Hanoi,Vietnam,vn,21.0285,105.8542,5764980,0.02906,75,Asia,South-Eastern Asia,,left
-barcelona,Barcelona,Spain,es,41.3888,2.159,5752150,0.0033,76,Europe,Southern Europe,,
-guadalajara,Guadalajara,Mexico,mx,20.6767,-103.3475,5656180,0.01391,77,Americas,North America,,left
-ankara,Ankara,Turkey,tr,39.9034,32.4331,5618890,0.01232,78,Asia,Western Asia,,
-saint-petersburg,Saint Petersburg,Russia,ru,59.9386,30.3141,5608910,0.00207,79,Europe,Eastern Europe,,
-melbourne,Melbourne,Australia,au,-37.814,144.9633,5464920,0.01354,80,Oceania,Australia and New Zealand,,
-fukuoka,Fukuoka,Japan,jp,33.6,130.4167,5453200,-0.00233,81,Asia,Eastern Asia,Hakata,left
-monterrey,Monterrey,Mexico,mx,25.6751,-100.3185,5347400,0.01423,82,Americas,North America,,
-sydney,Sydney,Australia,au,-33.8678,151.2073,5312640,0.01216,83,Oceania,Australia and New Zealand,,
-urumqi,Urumqi,China,cn,43.8244,87.6139,5243920,0.02177,84,Asia,Eastern Asia,,
-changsha,Changsha,China,cn,28.1451,113.2384,5221630,0.0182,85,Asia,Eastern Asia,,left
-cape-town,Cape Town,South Africa,za,-33.9258,18.4232,5147500,0.01657,86,Africa,Southern Africa,,left
-jeddah,Jeddah,Saudi Arabia,sa,21.5433,39.1728,5098230,0.01526,87,Asia,Western Asia,"Jeddah|Jedda",left
-kunming,Kunming,China,cn,25.0363,102.7086,5044260,0.01787,88,Asia,Eastern Asia,,
-brasilia,Brasilia,Brazil,br,-15.7975,-47.8919,5040720,0.00998,89,Americas,South America,,
-kabul,Kabul,Afghanistan,af,34.5281,69.1723,5034110,0.03221,90,Asia,Southern Asia,,left
-yaounde,Yaounde,Cameroon,cm,3.848,11.5021,5027120,0.03561,91,Africa,Middle Africa,,
-changchun,Changchun,China,cn,43.8844,125.3181,4975060,0.01718,92,Asia,Eastern Asia,,left
-hefei,Hefei,China,cn,31.8666,117.2814,4924050,0.01944,93,Asia,Eastern Asia,,left
-ningbo,Ningbo,China,cn,29.8622,121.6204,4869300,0.02075,94,Asia,Eastern Asia,,
-shantou,Shantou,China,cn,23.3564,116.6776,4815660,0.01648,95,Asia,Eastern Asia,,
-kano,Kano,Nigeria,ng,12.0001,8.5167,4810810,0.03563,96,Africa,Western Africa,,above
-tel-aviv,Tel Aviv,Israel,il,32.0853,34.7818,4639650,0.01557,97,Asia,Western Asia,,left
-shijiazhuang,Shijiazhuang,China,cn,38.043,114.5088,4612020,0.01699,98,Asia,Eastern Asia,,left
-new-taipei-city,New Taipei City,Taiwan,tw,25.012,121.4654,4591080,0.00597,99,Asia,Eastern Asia,,
-kozhikode,Kozhikode,India,in,11.2588,75.7804,4520410,0.03031,100,Asia,Southern Asia,,left
-jaipur,Jaipur,India,in,27,76,4514920,0.02353,101,Asia,Southern Asia,,left
-douala,Douala,Cameroon,cm,4.0483,9.7043,4493090,0.03375,102,Africa,Middle Africa,,left
-kampala,Kampala,Uganda,ug,0.3163,32.5822,4491110,0.05298,103,Africa,Eastern Africa,,
-malappuram,Malappuram,India,in,11.051,76.0711,4487920,0.03315,104,Asia,Southern Asia,,left
-nanning,Nanning,China,cn,22.8193,108.3627,4467920,0.01924,105,Asia,Eastern Asia,,left
-montreal,Montreal,Canada,ca,45.5017,-73.5673,4414640,0.00853,106,Americas,North America,,
-antananarivo,Antananarivo,Madagascar,mg,-18.8792,47.5079,4413150,0.04355,107,Africa,Eastern Africa,,
-abuja,Abuja,Nigeria,ng,9.0579,7.4951,4392360,0.04333,108,Africa,Western Africa,,left
-recife,Recife,Brazil,br,-8.0539,-34.8811,4380780,0.00846,109,Americas,South America,,
-taiyuan-shanxi,Taiyuan Shanxi,China,cn,37.8706,112.5489,4379660,0.01727,110,Asia,Eastern Asia,,left
-rome,Rome,Italy,it,41.8919,12.5113,4361370,0.00328,111,Europe,Southern Europe,,left
-ekurhuleni,Ekurhuleni,South Africa,za,-26.1496,28.3122,4332140,0.01643,112,Africa,Southern Africa,,
-fortaleza,Fortaleza,Brazil,br,-3.7172,-38.5431,4320440,0.0084,113,Americas,South America,,
-porto-alegre,Porto Alegre,Brazil,br,-30.0328,-51.2302,4298730,0.00697,114,Americas,South America,,
-ibadan,Ibadan,Nigeria,ng,7.3776,3.9059,4293160,0.03596,115,Africa,Western Africa,,left
-changzhou,Changzhou,China,cn,31.7736,119.954,4265190,0.02037,116,Asia,Eastern Asia,,
-lucknow,Lucknow,India,in,26.8393,80.9231,4228750,0.02325,117,Asia,Southern Asia,,
-medellin,Medellin,Colombia,co,6.2442,-75.5812,4208280,0.0085,118,Americas,South America,,left
-nanchang,Nanchang,China,cn,28.6472,116.0348,4184360,0.01955,119,Asia,Eastern Asia,,
-wenzhou,Wenzhou,China,cn,27.9964,120.6953,4170240,0.01883,120,Asia,Eastern Asia,,left
-kumasi,Kumasi,Ghana,gh,6.6885,-1.6244,4166880,0.03237,121,Africa,Western Africa,,left
-xiamen,Xiamen,China,cn,24.5439,118.0768,4145340,0.01657,122,Asia,Eastern Asia,,left
-fuzhou-fujian,Fuzhou Fujian,China,cn,26.0745,119.2965,4142350,0.01717,123,Asia,Eastern Asia,,
-tangshan-hebei,Tangshan Hebei,China,cn,39.6292,118.1742,4111790,0.02177,124,Asia,Eastern Asia,,
-casablanca,Casablanca,Morocco,ma,33.5884,-7.5578,4077410,0.01623,125,Africa,Northern Africa,,left
-salvador,Salvador,Brazil,br,-12.9711,-38.5108,4063170,0.00825,126,Americas,South America,,
-bekasi,Bekasi,Indonesia,id,-6.2349,106.9896,4015740,0.02284,127,Asia,South-Eastern Asia,,
-faisalabad,Faisalabad,Pakistan,pk,31.4155,73.0897,3988600,0.0246,128,Asia,Southern Asia,,left
-port-harcourt,Port Harcourt,Nigeria,ng,4.75,7,3951670,0.04162,129,Africa,Western Africa,,left
-curitiba,Curitiba,Brazil,br,-25.4278,-49.2731,3923290,0.00878,130,Americas,South America,,left
-los-angeles,Los Angeles,United States,us,34.0522,-118.2437,3869891,-0.0011,131,Americas,North America,,
-thrissur,Thrissur,India,in,10.5276,76.2144,3827760,0.02897,132,Asia,Southern Asia,,left
-guiyang,Guiyang,China,cn,26.65,106.6246,3806320,0.01862,133,Asia,Eastern Asia,,
-dakar,Dakar,Senegal,sn,14.6937,-17.4441,3783530,0.03414,134,Africa,Western Africa,,
-santo-domingo,Santo Domingo,Dominican Republic,do,18.4719,-69.8923,3706050,0.01588,135,Americas,Caribbean,,below
-kochi,Kochi,India,in,9.9312,76.2673,3699150,0.02624,136,Asia,Southern Asia,,left
-ouagadougou,Ouagadougou,Burkina Faso,bf,12.3657,-1.5339,3689330,0.04786,137,Africa,Western Africa,,
-asuncion,Asuncion,Paraguay,py,-25.2867,-57.647,3685660,0.01611,138,Americas,South America,,
-sanaa,Sanaa,Yemen,ye,15.3547,44.2067,3650950,0.03502,139,Asia,Western Asia,,
-lusaka,Lusaka,Zambia,zm,-15.4067,28.2871,3621320,0.04335,140,Africa,Eastern Africa,,
-wuxi,Wuxi,China,cn,31.57,120.29,3617260,0.01636,141,Asia,Eastern Asia,,
-berlin,Berlin,Germany,de,52.5244,13.4105,3584240,0.00113,142,Europe,Western Europe,,
-indore,Indore,India,in,22.6667,75.75,3570830,0.02527,143,Asia,Southern Asia,,
-campinas,Campinas,Brazil,br,-22.9056,-47.0608,3522400,0.00883,144,Americas,South America,,above
-mashhad,Mashhad,Iran,ir,36.3156,59.568,3503160,0.01228,145,Asia,Southern Asia,,
-busan,Busan,South Korea,kr,35.1017,129.03,3492730,0.00238,146,Asia,Eastern Asia,,
-lanzhou,Lanzhou,China,cn,36.4744,103.7332,3491820,0.01776,147,Asia,Eastern Asia,,
-puebla,Puebla,Mexico,mx,19.0379,-98.2035,3491350,0.01396,148,Americas,North America,,below
-kuwait-city,Kuwait City,Kuwait,kw,29.3697,47.9783,3452520,0.01396,149,Asia,Western Asia,,
-kanpur,Kanpur,India,in,26.4652,80.3498,3410920,0.01959,150,Asia,Southern Asia,,left
-durban,Durban,South Africa,za,-29.8579,31.0292,3343940,0.01298,151,Africa,Southern Africa,,
-bamako,Bamako,Mali,ml,12.65,-8,3318010,0.04329,152,Africa,Western Africa,,
-guatemala-city,Guatemala City,Guatemala,gt,14.6407,-90.5133,3304800,0.02324,153,Americas,Central America,,left
-mbuji-mayi,Mbuji-Mayi,DR Congo,cd,-6.15,23.6,3298080,0.04424,154,Africa,Middle Africa,Mbujimayi,
-guayaquil,Guayaquil,Ecuador,ec,-2.1962,-79.8862,3296860,0.01606,155,Americas,South America,,
-depok,Depok,Indonesia,id,-6.4,106.8186,3296680,0.02436,156,Asia,South-Eastern Asia,,left
-nagpur,Nagpur,India,in,21.1463,79.0849,3237750,0.02131,157,Asia,Southern Asia,,left
-pyongyang,Pyongyang,North Korea,kp,39.0339,125.7543,3235960,0.00831,158,Asia,Eastern Asia,,
-coimbatore,Coimbatore,India,in,10.8,77.09,3234160,0.02388,159,Asia,Southern Asia,,
-handan,Handan,China,cn,36.6108,114.4857,3224510,0.02073,160,Asia,Eastern Asia,,left
-huaian,Huaian,China,cn,33.501,119.023,3223170,0.02256,161,Asia,Eastern Asia,,
-port-au-prince,Port-au-Prince,Haiti,ht,18.5392,-72.335,3205770,0.0232,162,Americas,Caribbean,,left
-lubumbashi,Lubumbashi,DR Congo,cd,-11.6609,27.4794,3193860,0.04329,163,Africa,Middle Africa,,left
-surabaya,Surabaya,Indonesia,id,-7.2492,112.7508,3189960,0.01668,164,Asia,South-Eastern Asia,,
-izmir,Izmir,Turkey,tr,38.4192,27.1287,3184030,0.01013,165,Asia,Western Asia,,
-milan,Milan,Italy,it,45.4643,9.1895,3174960,0.00237,166,Europe,Southern Europe,,left
-thiruvananthapuram,Thiruvananthapuram,India,in,8.5241,76.9366,3156950,0.02748,167,Asia,Southern Asia,,
-athens,Athens,Greece,gr,37.9838,23.7278,3156620,0.00041,168,Europe,Southern Europe,,left
-dubai,Dubai,United Arab Emirates,ae,25.0657,55.1713,3138550,0.01419,169,Asia,Western Asia,,left
-zhongshan,Zhongshan,China,cn,26.5779,104.8407,3137750,0.01418,170,Asia,Eastern Asia,,left
-weifang,Weifang,China,cn,36.7072,119.1557,3127020,0.02047,171,Asia,Eastern Asia,,
-algiers,Algiers,Algeria,dz,36.7323,3.0875,3056970,0.01759,172,Africa,Northern Africa,,
-caracas,Caracas,Venezuela,ve,10.5,-66.9333,3041600,0.00879,173,Americas,South America,,above
-lisbon,Lisbon,Portugal,pt,38.7263,-9.1484,3040920,0.00418,174,Europe,Southern Europe,,
-kiev,Kiev,Ukraine,ua,50.4547,30.5238,3015780,-0.00079,175,Europe,Eastern Europe,Kyiv,
-pretoria,Pretoria,South Africa,za,-25.7449,28.1878,3015320,0.02027,176,Africa,Southern Africa,,left
-shaoxing,Shaoxing,China,cn,29.9992,120.5769,3013160,0.02095,177,Asia,Eastern Asia,,
-mogadishu,Mogadishu,Somalia,so,2.0371,45.3438,2969320,0.04318,178,Africa,Eastern Africa,,
-goiania,Goiania,Brazil,br,-16.6869,-49.2648,2959070,0.01093,179,Americas,South America,,left
-yantai,Yantai,China,cn,37.4619,121.4425,2956420,0.01999,180,Asia,Eastern Asia,,
-huizhou,Huizhou,China,cn,29.9222,118.0969,2948280,0.01986,181,Asia,Eastern Asia,,left
-cali,Cali,Colombia,co,3.4103,-76.581,2942690,0.00888,182,Americas,South America,,
-zibo,Zibo,China,cn,36.813,118.0488,2922540,0.01612,183,Asia,Eastern Asia,,
-damascus,Damascus,Syria,sy,33.5102,36.2913,2921710,0.04348,184,Asia,Western Asia,,
-shizuoka,Shizuoka,Japan,jp,34.9833,138.3833,2921450,-0.00298,185,Asia,Eastern Asia,,below
-brazzaville,Brazzaville,Republic of the Congo,cg,-4.2661,15.2832,2904570,0.03238,186,Africa,Middle Africa,,above
-incheon,Incheon,South Korea,kr,37.4565,126.7052,2884820,0.00387,187,Asia,Eastern Asia,,left
-accra,Accra,Ghana,gh,5.556,-0.1969,2861000,0.02604,188,Africa,Western Africa,,left
-manchester,Manchester,United Kingdom,gb,53.4167,-2.25,2853370,0.00734,189,Europe,Northern Europe,,below
-bandung,Bandung,Indonesia,id,-6.9222,107.6069,2804750,0.01691,190,Asia,South-Eastern Asia,,
-taipei,Taipei,Taiwan,tw,25.0478,121.5319,2792490,0.00478,191,Asia,Eastern Asia,,
-luoyang,Luoyang,China,cn,34.6197,112.4477,2779070,0.01963,192,Asia,Eastern Asia,,left
-toluca-de-lerdo,Toluca de Lerdo,Mexico,mx,19.2826,-99.6557,2762050,0.01564,193,Americas,North America,,left
-bhopal,Bhopal,India,in,23.2547,77.4029,2748760,0.02326,194,Asia,Southern Asia,,
-patna,Patna,India,in,25.4167,85.1667,2748390,0.02188,195,Asia,Southern Asia,,
-vancouver,Vancouver,Canada,ca,49.2497,-123.1193,2733340,0.00939,196,Americas,North America,,
-birmingham,Birmingham,United Kingdom,gb,52.4814,-1.8998,2724410,0.00732,197,Europe,Northern Europe,,left
-chicago,Chicago,United States,us,41.85,-87.65,2709364,-0.0022,198,Americas,North America,,
-tashkent,Tashkent,Uzbekistan,uz,41.2647,69.2163,2697410,0.01213,199,Asia,Central Asia,,left
-tangerang,Tangerang,Indonesia,id,-6.2,106.4667,2680800,0.02063,200,Asia,South-Eastern Asia,,left
-nantong,Nantong,China,cn,32.0303,120.8747,2666220,0.02007,201,Asia,Eastern Asia,,
-sapporo,Sapporo,Japan,jp,43.0619,141.3543,2645940,-0.00288,202,Asia,Eastern Asia,,
-peshawar,Peshawar,Pakistan,pk,34.008,71.5785,2617160,0.02677,203,Asia,Southern Asia,,left
-gujranwala,Gujranwala,Pakistan,pk,32.1557,74.1871,2608940,0.02571,204,Asia,Southern Asia,,left
-brisbane,Brisbane,Australia,au,-27.4679,153.0281,2599740,0.01229,205,Oceania,Australia and New Zealand,,left
-tunis,Tunis,Tunisia,tn,36.819,10.1658,2578460,0.01314,206,Africa,Northern Africa,,
-medan,Medan,Indonesia,id,3.5833,98.6667,2565940,0.01759,207,Asia,South-Eastern Asia,,left
-aleppo,Aleppo,Syria,sy,36.2012,37.1612,2560190,0.04991,208,Asia,Western Asia,,
-hohhot,Hohhot,China,cn,40.8185,111.6602,2552380,0.02057,209,Asia,Eastern Asia,,left
-rawalpindi,Rawalpindi,Pakistan,pk,33.5973,73.0479,2545590,0.02374,210,Asia,Southern Asia,,left
-agra,Agra,India,in,27.1833,78.0167,2535490,0.02306,211,Asia,Southern Asia,,left
-baku,Baku,Azerbaijan,az,40.3777,49.892,2529070,0.01305,212,Asia,Western Asia,,
-kannur,Kannur,India,in,11.8745,75.3704,2524680,0.02415,213,Asia,Southern Asia,,left
-phnom-penh,Phnom Penh,Cambodia,kh,11.5625,104.916,2498640,0.03003,214,Asia,South-Eastern Asia,,left
-visakhapatnam,Visakhapatnam,India,in,17.6801,83.2016,2496820,0.02311,215,Asia,Southern Asia,,
-liuzhou,Liuzhou,China,cn,25.001,109.3414,2493840,0.01888,216,Asia,Eastern Asia,,left
-vadodara,Vadodara,India,in,22.2994,73.2081,2478540,0.02211,217,Asia,Southern Asia,,
-belem,Belem,Brazil,br,-1.4558,-48.5044,2474300,0.00835,218,Americas,South America,,
-baotou,Baotou,China,cn,40.6175,109.9449,2467750,0.01734,219,Asia,Eastern Asia,,
-maracaibo,Maracaibo,Venezuela,ve,10.6666,-71.6124,2462670,0.01243,220,Americas,South America,,above
-manaus,Manaus,Brazil,br,-3.0436,-60.0128,2459370,0.01016,221,Americas,South America,,
-houston,Houston,United States,us,29.7633,-95.3633,2435715,0.0097,222,Americas,North America,,
-san-juan,San Juan,Puerto Rico,pr,18.4632,-66.1148,2430740,-0.00121,223,Americas,Caribbean,,
-barranquilla,Barranquilla,Colombia,co,10.9685,-74.7813,2418670,0.00929,224,Americas,South America,,left
-xuzhou,Xuzhou,China,cn,28.5869,104.7187,2417200,0.01732,225,Asia,Eastern Asia,,left
-vijayawada,Vijayawada,India,in,16.5075,80.6466,2409770,0.02513,226,Asia,Southern Asia,,
-nashik,Nashik,India,in,19.9973,73.791,2408010,0.02419,227,Asia,Southern Asia,,left
-taoyuan,Taoyuan,Taiwan,tw,24.895,121.2461,2372680,0.00682,228,Asia,Eastern Asia,,
-putian,Putian,China,cn,25.4966,118.8501,2371140,0.02424,229,Asia,Eastern Asia,,
-tijuana,Tijuana,Mexico,mx,32.5022,-116.9721,2367770,0.01481,230,Americas,North America,,left
-beirut,Beirut,Lebanon,lb,33.8933,35.5016,2359130,-0.00849,231,Asia,Western Asia,,left
-isfahan,Isfahan,Iran,ir,32.2667,52.45,2358700,0.01319,232,Asia,Southern Asia,"Isfahan|Esfahan",
-sendai,Sendai,Japan,jp,38.2667,140.8667,2330920,-0.00285,233,Asia,Eastern Asia,,
-conakry,Conakry,Guinea,gn,9.538,-13.6773,2329710,0.0347,234,Africa,Western Africa,,left
-kollam,Kollam,India,in,8.8932,76.6141,2317980,0.02922,235,Asia,Southern Asia,,
-multan,Multan,Pakistan,pk,30.1968,71.4782,2313390,0.02436,236,Asia,Southern Asia,,left
-wuhu-anhui,Wuhu Anhui,China,cn,31.334,118.3622,2310960,0.02381,237,Asia,Eastern Asia,,left
-amman,Amman,Jordan,jo,31.9552,35.945,2295250,0.00968,238,Asia,Western Asia,,below
-yangzhou,Yangzhou,China,cn,32.3972,119.4358,2255980,0.01767,239,Asia,Eastern Asia,,left
-mecca,Mecca,Saudi Arabia,sa,21.4266,39.8256,2252000,0.01506,240,Asia,Western Asia,,
-grande-vitoria,Grande Vitoria,Brazil,br,-20.3155,-40.3128,2242010,0.00966,241,Americas,South America,,
-taizhou-zhejiang,Taizhou Zhejiang,China,cn,28.6583,121.4221,2240910,0.01927,242,Asia,Eastern Asia,,
-baoding,Baoding,China,cn,38.858,115.4907,2228190,0.01741,243,Asia,Eastern Asia,,left
-rajkot,Rajkot,India,in,22.3333,70.8333,2203310,0.02464,244,Asia,Southern Asia,,left
-linyi-shandong,Linyi Shandong,China,cn,35.1042,118.3564,2200140,0.01791,245,Asia,Eastern Asia,,
-perth,Perth,Australia,au,-31.9522,115.8614,2195090,0.01194,246,Oceania,Australia and New Zealand,,
-naples,Naples,Italy,it,40.8522,14.2681,2185610,0.00158,247,Europe,Southern Europe,,
-daegu,Daegu,South Korea,kr,35.8703,128.5911,2184070,0.00137,248,Asia,Eastern Asia,,left
-lome,Lome,Togo,tg,6.1375,1.2123,2179210,0.03342,249,Africa,Western Africa,,left
-bursa,Bursa,Turkey,tr,40.1885,29.061,2168130,0.01192,250,Asia,Western Asia,,left
-havana,Havana,Cuba,cu,23.133,-82.383,2160390,0.00187,251,Americas,Caribbean,,
-brussels,Brussels,Belgium,be,50.8505,4.3488,2150320,0.00411,252,Europe,Western Europe,,below
-haikou,Haikou,China,cn,20.0462,110.1957,2132010,0.01746,253,Asia,Eastern Asia,,
-daqing,Daqing,China,cn,46.324,124.5598,2123650,0.01831,254,Asia,Eastern Asia,,left
-lianyungang,Lianyungang,China,cn,34.5966,119.2216,2121860,0.01973,255,Asia,Eastern Asia,,
-benin-city,Benin City,Nigeria,ng,6.3382,5.6258,2120460,0.03708,256,Africa,Western Africa,,left
-yancheng-jiangsu,Yancheng Jiangsu,China,cn,33.3477,120.1631,2109830,0.01765,257,Asia,Eastern Asia,,
-hyderabad-pk,Hyderabad,Pakistan,pk,25.3924,68.3737,2107790,0.02383,258,Asia,Southern Asia,,
-panama-city,Panama City,Panama,pa,8.9936,-79.5197,2093270,0.01885,259,Americas,Central America,,
-semarang,Semarang,Indonesia,id,-6.9931,110.4208,2091480,0.01904,260,Asia,South-Eastern Asia,,
-davao-city,Davao City,Philippines,ph,7.2542,125.1214,2077050,0.02117,261,Asia,South-Eastern Asia,,
-minsk,Minsk,Belarus,by,53.9,27.5667,2075900,0.0024,262,Europe,Eastern Europe,,
-ludhiana,Ludhiana,India,in,30.912,75.8538,2071490,0.0211,263,Asia,Southern Asia,,
-can-tho,Can Tho,Vietnam,vn,10.0333,105.7833,2071270,0.03177,264,Asia,South-Eastern Asia,,left
-almaty,Almaty,Kazakhstan,kz,43.2567,76.9286,2068030,0.01273,265,Asia,Central Asia,,
-matola,Matola,Mozambique,mz,-25.9622,32.4589,2060790,0.03836,266,Africa,Eastern Africa,,left
-rabat,Rabat,Morocco,ma,34.0133,-6.8325,2054190,0.01644,267,Africa,Northern Africa,,above
-valencia-ve,Valencia,Venezuela,ve,10.162,-68.0076,2054030,0.01144,268,Americas,South America,,below
-hiroshima,Hiroshima,Japan,jp,34.4,132.45,2053290,-0.00238,269,Asia,Eastern Asia,,
-quito,Quito,Ecuador,ec,-0.2298,-78.5249,2048670,0.01557,270,Americas,South America,,
-la-paz,La Paz,Bolivia,bo,-16.5,-68.15,2030730,0.0167,271,Americas,South America,,
-vienna,Vienna,Austria,at,48.2085,16.3721,2020320,0.00739,272,Europe,Central Europe,,left
-quanzhou,Quanzhou,China,cn,25.1902,118.3387,2007700,0.02088,273,Asia,Eastern Asia,,left
-zhuhai,Zhuhai,China,cn,22.2737,113.5721,2004290,0.01812,274,Asia,Eastern Asia,,
-baixada-santista,Baixada Santista,Brazil,br,-23.9608,-46.3336,1997810,0.00808,275,Americas,South America,,below
-datong,Datong,China,cn,32.6388,117.0376,1986680,0.01806,276,Asia,Eastern Asia,,left
-leon-de-los-aldamas,Leon de los Aldamas,Mexico,mx,21.1221,-101.6811,1976380,0.01333,277,Americas,North America,,left
-raipur,Raipur,India,in,21.2562,81.6902,1974130,0.02635,278,Asia,Southern Asia,,
-west-yorkshire,West Yorkshire,United Kingdom,gb,53.7997,-1.5491,1970570,0.00721,279,Europe,Northern Europe,,left
-mosul,Mosul,Iraq,iq,36.335,43.1189,1961360,0.03005,280,Asia,Western Asia,,left
-madurai,Madurai,India,in,9.89,78.03,1953270,0.02177,281,Asia,Southern Asia,,
-sharjah,Sharjah,United Arab Emirates,ae,25.3374,55.4121,1944620,0.01816,282,Asia,Western Asia,,
-cixi,Cixi,China,cn,30.173,121.2623,1926680,0.0216,283,Asia,Eastern Asia,,
-santa-cruz,Santa Cruz,Bolivia,bo,-17.7833,-63.1821,1926610,0.01871,284,Americas,South America,,
-palembang,Palembang,Indonesia,id,-2.9167,104.7458,1923140,0.01877,285,Asia,South-Eastern Asia,,
-meerut,Meerut,India,in,28.9167,77.6833,1916080,0.02197,286,Asia,Southern Asia,,
-batam,Batam,Indonesia,id,1.1494,104.0249,1906820,0.02577,287,Asia,South-Eastern Asia,,
-la-laguna,La Laguna,Mexico,mx,25.5428,-103.4068,1902430,0.01921,288,Americas,North America,,left
-adana,Adana,Turkey,tr,36.9976,35.1233,1896710,0.0106,289,Asia,Western Asia,,above
-kananga,Kananga,DR Congo,cd,-5.8963,22.4167,1895450,0.04389,290,Africa,Middle Africa,,above
-gaziantep,Gaziantep,Turkey,tr,37.0662,37.3833,1882390,0.01274,291,Asia,Western Asia,,
-varanasi,Varanasi,India,in,25.3167,83.0104,1865080,0.0214,292,Asia,Southern Asia,,below
-monrovia,Monrovia,Liberia,lr,6.3005,-10.7969,1855880,0.03412,293,Africa,Western Africa,,
-jiangmen,Jiangmen,China,cn,22.5817,113.0761,1855070,0.01563,294,Asia,Eastern Asia,,left
-onitsha,Onitsha,Nigeria,ng,6.1498,6.7857,1839880,0.04118,295,Africa,Western Africa,,left
-yichang,Yichang,China,cn,30.6941,111.2804,1838240,0.02101,296,Asia,Eastern Asia,,left
-tiruppur,Tiruppur,India,in,11.1154,77.3546,1833070,0.02768,297,Asia,Southern Asia,,
-xiangyang,Xiangyang,China,cn,32.009,112.122,1830460,0.01593,298,Asia,Eastern Asia,,left
-yinchuan,Yinchuan,China,cn,38.4852,106.2262,1830390,0.01933,299,Asia,Eastern Asia,,left
-suqian,Suqian,China,cn,33.9333,118.2833,1825160,0.0256,300,Asia,Eastern Asia,,
-srinagar,Srinagar,India,in,34.0857,74.8056,1818570,0.02304,301,Asia,Southern Asia,,
-turin,Turin,Italy,it,45.0705,7.6868,1814300,0.00246,302,Europe,Southern Europe,,left
-aurangabad,Aurangabad,India,in,19.8847,75.3399,1809600,0.02392,303,Asia,Southern Asia,,
-jamshedpur,Jamshedpur,India,in,22.8028,86.1855,1806600,0.02197,304,Asia,Southern Asia,,left
-warsaw,Warsaw,Poland,pl,52.2298,21.0118,1800190,-0.00002,305,Europe,Central Europe,,
-lyon,Lyon,France,fr,45.7485,4.8467,1799720,0.00699,306,Europe,Western Europe,,
-qinhuangdao,Qinhuangdao,China,cn,39.9396,119.5894,1798180,0.02006,307,Asia,Eastern Asia,,
-montevideo,Montevideo,Uruguay,uy,-34.9033,-56.1882,1794810,0.00371,308,Americas,South America,,
-n-djamena,N'Djamena,Chad,td,12.1348,15.0557,1793990,0.04133,309,Africa,Middle Africa,"N'Djamena|Ndjamena",
-hamburg,Hamburg,Germany,de,53.5753,10.0153,1788890,0.00066,310,Europe,Western Europe,,left
-shiraz,Shiraz,Iran,ir,29.6103,52.5311,1784280,0.01155,311,Asia,Southern Asia,,
-budapest,Budapest,Hungary,hu,47.4984,19.0405,1783650,0.00079,312,Europe,Central Europe,,
-anyang,Anyang,China,cn,35.9901,114.5097,1778260,0.0228,313,Asia,Eastern Asia,,left
-xining,Xining,China,cn,36.8245,101.4408,1773780,0.01891,314,Asia,Eastern Asia,,left
-hengyang,Hengyang,China,cn,26.8971,112.5666,1772860,0.01944,315,Asia,Eastern Asia,,left
-makassar,Makassar,Indonesia,id,-5.1486,119.4319,1770180,0.01887,316,Asia,South-Eastern Asia,,
-anshan,Anshan,China,cn,40.8222,122.8275,1763740,0.01456,317,Asia,Eastern Asia,,left
-stockholm,Stockholm,Sweden,se,59.3326,18.0649,1754720,0.00976,318,Europe,Northern Europe,,
-bucharest,Bucharest,Romania,ro,44.4323,26.1063,1749920,-0.00499,319,Europe,Southeast Europe,,
-ulaanbaatar,Ulaanbaatar,Mongolia,mn,47.8915,106.7367,1749380,0.0142,320,Asia,Eastern Asia,,
-jilin,Jilin,China,cn,43.835,126.5439,1744980,0.01493,321,Asia,Eastern Asia,,
-glasgow,Glasgow,United Kingdom,gb,55.8652,-4.2576,1730280,0.0066,322,Europe,Northern Europe,,left
-muscat,Muscat,Oman,om,23.5841,58.4078,1730080,0.01619,323,Asia,Western Asia,,
-auckland,Auckland,New Zealand,nz,-36.8485,174.7635,1728480,0.01014,324,Oceania,Australia and New Zealand,,
-kathmandu,Kathmandu,Nepal,np,27.709,85.2849,1724800,0.03102,325,Asia,Southern Asia,,left
-qiqihar,Qiqihar,China,cn,47.35,123.9667,1715900,0.01569,326,Asia,Eastern Asia,Qiqihar,left
-tabriz,Tabriz,Iran,ir,38.08,46.2919,1713390,0.01045,327,Asia,Southern Asia,,
-novosibirsk,Novosibirsk,Russia,ru,55.0415,82.9346,1710440,0.00221,328,Europe,Eastern Europe,,
-calgary,Calgary,Canada,ca,51.0501,-114.0853,1708630,0.01228,329,Americas,North America,,
-jodhpur,Jodhpur,India,in,26.75,72.75,1703860,0.0237,330,Asia,Southern Asia,,left
-phoenix,Phoenix,United States,us,33.4484,-112.074,1703449,0.0092,331,Americas,North America,,
-tegucigalpa,Tegucigalpa,Honduras,hn,14.0818,-87.2068,1691030,0.02469,332,Americas,Central America,,
-nouakchott,Nouakchott,Mauritania,mr,18.0735,-15.9582,1674250,0.03801,333,Africa,Western Africa,,
-harare,Harare,Zimbabwe,zw,-17.8277,31.0534,1667410,0.02106,334,Africa,Eastern Africa,,
-ranchi,Ranchi,India,in,23.3432,85.3094,1659720,0.02343,335,Asia,Southern Asia,,left
-cordoba,Cordoba,Argentina,ar,-31.4135,-64.1811,1655500,0.00908,336,Americas,South America,,
-marseille,Marseille,France,fr,43.297,5.3811,1654100,0.00577,337,Europe,Western Europe,,left
-medina,Medina,Saudi Arabia,sa,24.4686,39.6142,1649680,0.0154,338,Asia,Western Asia,,
-rosario,Rosario,Argentina,ar,-32.9468,-60.6393,1648320,0.01056,339,Americas,South America,,
-jining-shandong,Jining Shandong,China,cn,35.4,116.5867,1647990,0.01585,340,Asia,Eastern Asia,,left
-ciudad-juarez,Ciudad Juarez,Mexico,mx,31.6904,-106.4245,1647840,0.01344,341,Americas,North America,,
-abu-dhabi,Abu Dhabi,United Arab Emirates,ae,24.4136,54.433,1643560,0.01533,342,Asia,Western Asia,,left
-kota,Kota,India,in,25.1751,75.8441,1639630,0.02519,343,Asia,Southern Asia,,left
-niamey,Niamey,Niger,ne,13.5136,2.1089,1633200,0.04592,344,Africa,Western Africa,,left
-homs,Homs,Syria,sy,34.7268,36.7234,1631590,0.04348,345,Asia,Western Asia,,
-karaj,Karaj,Iran,ir,35.8327,50.9915,1627960,0.00824,346,Asia,Southern Asia,,
-zhangjiakou,Zhangjiakou,China,cn,40.8171,114.8783,1626900,0.01779,347,Asia,Eastern Asia,,left
-mandalay,Mandalay,Myanmar,mm,21.9747,96.0836,1625870,0.0198,348,Asia,South-Eastern Asia,,
-jabalpur,Jabalpur,India,in,23.16,79.95,1615460,0.02102,349,Asia,Southern Asia,,
-mombasa,Mombasa,Kenya,ke,-4.0547,39.6636,1614940,0.03958,350,Africa,Eastern Africa,,
-kisangani,Kisangani,DR Congo,cd,0.5153,25.191,1612770,0.04272,351,Africa,Middle Africa,,
-edmonton,Edmonton,Canada,ca,53.5501,-113.4687,1607720,0.01204,352,Americas,North America,,
-asansol,Asansol,India,in,23.6833,86.9667,1598450,0.02118,353,Asia,Southern Asia,,left
-yiwu,Yiwu,China,cn,29.3065,120.075,1597590,0.02159,354,Asia,Eastern Asia,,left
-munich,Munich,Germany,de,48.1374,11.5755,1596050,0.00324,355,Europe,Western Europe,,
-natal,Natal,Brazil,br,-5.8101,-35.2267,1591510,0.01045,356,Americas,South America,,
-daejon,Daejon,South Korea,kr,36.3504,127.3845,1590840,0.00294,357,Asia,Eastern Asia,,
-huainan,Huainan,China,cn,32.5867,117.013,1589370,0.01601,358,Asia,Eastern Asia,,left
-ganzhou,Ganzhou,China,cn,25.831,114.933,1587450,0.02379,359,Asia,Eastern Asia,,
-gwalior,Gwalior,India,in,26.2298,78.1734,1578940,0.02296,360,Asia,Southern Asia,,left
-kaohsiung,Kaohsiung,Taiwan,tw,22.6273,120.3014,1573030,0.00458,361,Asia,Eastern Asia,Kaohsiung,
-san-antonio,San Antonio,United States,us,29.4241,-98.4936,1570314,0.0146,362,Americas,North America,,left
-chaozhou,Chaozhou,China,cn,23.6566,116.6204,1569150,0.01558,363,Asia,Eastern Asia,,
-basra,Basra,Iraq,iq,30.5085,47.7804,1566370,0.02736,364,Asia,Western Asia,,left
-philadelphia,Philadelphia,United States,us,39.9523,-75.1638,1560480,-0.0042,365,Americas,North America,,left
-grande-sao-luis,Grande Sao Luis,Brazil,br,-2.5297,-44.2826,1560150,0.00771,366,Americas,South America,,left
-allahabad,Allahabad,India,in,25.45,81.85,1555900,0.02115,367,Asia,Southern Asia,,left
-jiaxing,Jiaxing,China,cn,30.7474,120.7511,1546760,0.02336,368,Asia,Eastern Asia,,
-hai-phong,Hai Phong,Vietnam,vn,20.8449,106.6881,1543660,0.02643,369,Asia,South-Eastern Asia,,left
-amritsar,Amritsar,India,in,31.67,74.84,1543480,0.02142,370,Asia,Southern Asia,,above
-gwangju,Gwangju,South Korea,kr,35.1547,126.9156,1540890,0.00271,371,Asia,Eastern Asia,,left
-yekaterinburg,Yekaterinburg,Russia,ru,56.8519,60.6122,1540000,0.00195,372,Europe,Eastern Europe,,left
-taizhou-jiangsu,Taizhou Jiangsu,China,cn,32.4906,119.9148,1533860,0.01803,373,Asia,Eastern Asia,,
-weihai,Weihai,China,cn,37.5121,122.1153,1529560,0.02014,374,Asia,Eastern Asia,,
-san-jose-cr,San Jose,Costa Rica,cr,9.9281,-84.0907,1522380,0.01314,375,Americas,Central America,,
-uyo,Uyo,Nigeria,ng,5.0513,7.9335,1520020,0.04324,376,Africa,Western Africa,,
-mwanza,Mwanza,Tanzania,tz,-2.5167,32.9,1518810,0.04938,377,Africa,Eastern Africa,,
-liuyang,Liuyang,China,cn,28.2179,113.7002,1516590,0.02724,378,Asia,Eastern Asia,,
-chon-buri,Chon Buri,Thailand,th,13.3611,100.9847,1509580,0.01234,379,Asia,South-Eastern Asia,,
-liuan,Liuan,China,cn,31.7556,116.5139,1508410,0.02526,380,Asia,Eastern Asia,,left
-kaifeng,Kaifeng,China,cn,34.6042,114.4972,1497220,0.02028,381,Asia,Eastern Asia,,left
-taian-shandong,Taian Shandong,China,cn,36.2,117.0867,1491450,0.01656,382,Asia,Eastern Asia,,
-cochabamba,Cochabamba,Bolivia,bo,-17.3895,-66.1568,1489160,0.01978,383,Americas,South America,,left
-rizhao,Rizhao,China,cn,35.4179,119.5214,1488120,0.02004,384,Asia,Eastern Asia,,
-queretaro,Queretaro,Mexico,mx,20.5888,-100.3899,1480860,0.01478,385,Americas,North America,,
-ottawa,Ottawa,Canada,ca,45.4112,-75.6981,1479860,0.00961,386,Americas,North America,,left
-nanchong,Nanchong,China,cn,31.2102,106.2317,1473860,0.0201,387,Asia,Eastern Asia,,
-dhanbad,Dhanbad,India,in,23.802,86.4432,1471280,0.02045,388,Asia,Southern Asia,,above
-pointe-noire,Pointe-Noire,Republic of the Congo,cg,-4.7761,11.8635,1469190,0.032,389,Africa,Middle Africa,,left
-konya,Konya,Turkey,tr,37.8746,32.4932,1468750,0.01283,390,Asia,Western Asia,,left
-dongying,Dongying,China,cn,37.4335,118.6689,1467100,0.01876,391,Asia,Eastern Asia,,
-zurich,Zurich,Switzerland,ch,47.3769,8.5417,1466850,0.00808,392,Europe,Western Europe,,left
-zunyi,Zunyi,China,cn,27.6913,106.9156,1460060,0.01815,393,Asia,Eastern Asia,,
-joao-pessoa,Joao Pessoa,Brazil,br,-7.1195,-34.845,1459810,0.00831,394,Americas,South America,,
-lilongwe,Lilongwe,Malawi,mw,-13.9669,33.7873,1456310,0.04544,395,Africa,Eastern Africa,,
-zhanjiang,Zhanjiang,China,cn,21.2737,110.3548,1450230,0.01736,396,Asia,Eastern Asia,,left
-bareilly,Bareilly,India,in,28.4167,79.3833,1446270,0.02336,397,Asia,Southern Asia,,
-shiyan,Shiyan,China,cn,32.4527,110.5608,1445920,0.01966,398,Asia,Eastern Asia,,left
-abomey-calavi,Abomey-Calavi,Benin,bj,6.4499,2.3553,1434110,0.04282,399,Africa,Western Africa,,above
-bukavu,Bukavu,DR Congo,cd,-2.4908,28.8428,1431660,0.04544,400,Africa,Middle Africa,,left
-freetown,Freetown,Sierra Leone,sl,8.4871,-13.2356,1428520,0.02967,401,Africa,Western Africa,,
-bujumbura,Bujumbura,Burundi,bi,-3.3819,29.3614,1426040,0.05621,402,Africa,Eastern Africa,,
-tengzhou,Tengzhou,China,cn,35.114,117.16,1424880,0.0216,403,Asia,Eastern Asia,,
-bucaramanga,Bucaramanga,Colombia,co,7.1254,-73.1198,1424660,0.00967,404,Americas,South America,,left
-mianyang-sichuan,Mianyang Sichuan,China,cn,31.4679,104.6791,1424240,0.0167,405,Asia,Eastern Asia,,left
-nnewi,Nnewi,Nigeria,ng,6.0196,6.9173,1421790,0.04402,406,Africa,Western Africa,,
-belgrade,Belgrade,Serbia,rs,44.8176,20.4569,1415010,0.00146,407,Europe,Southeast Europe,,
-antalya,Antalya,Turkey,tr,36.8981,30.5533,1414400,0.0142,408,Asia,Western Asia,,left
-san-diego,San Diego,United States,us,32.7157,-117.1647,1414266,0.0035,409,Americas,North America,,left
-kharkiv,Kharkiv,Ukraine,ua,49.9808,36.2527,1413760,-0.00145,410,Europe,Eastern Europe,,
-aligarh,Aligarh,India,in,27.8333,78.1667,1413060,0.02428,411,Asia,Southern Asia,,
-yingkou,Yingkou,China,cn,40.6747,122.2358,1412510,0.01959,412,Asia,Eastern Asia,,left
-tangier,Tangier,Morocco,ma,35.7673,-5.7998,1411470,0.02189,413,Africa,Northern Africa,"Tangier|Tanger",
-samut-prakan,Samut Prakan,Thailand,th,13.599,100.5998,1410600,0.01234,414,Asia,South-Eastern Asia,,left
-copenhagen,Copenhagen,Denmark,dk,55.6761,12.5683,1409680,0.00638,415,Europe,Northern Europe,,
-qom,Qom,Iran,ir,34.6401,50.8764,1409610,0.01245,416,Asia,Southern Asia,,left
-adelaide,Adelaide,Australia,au,-34.9287,138.5986,1407600,0.01052,417,Oceania,Australia and New Zealand,,
-moradabad,Moradabad,India,in,28.8525,78.797,1403580,0.0246,418,Asia,Southern Asia,,
-taichung,Taichung,Taiwan,tw,24.1477,120.6736,1403220,0.0072,419,Asia,Eastern Asia,Taichung,
-maceio,Maceio,Brazil,br,-9.6658,-35.735,1399310,0.00821,420,Americas,South America,,
-ad-dammam,Ad-Dammam,Saudi Arabia,sa,26.4207,50.0888,1397440,0.01588,421,Asia,Western Asia,,left
-suweon,Suweon,South Korea,kr,37.2636,127.0286,1397440,0.00622,422,Asia,Eastern Asia,,
-pekan-baru,Pekan Baru,Indonesia,id,1.4667,102.1333,1393650,0.02126,423,Asia,South-Eastern Asia,,left
-maoming,Maoming,China,cn,21.6657,110.921,1387590,0.01888,424,Asia,Eastern Asia,,left
-joinville,Joinville,Brazil,br,-26.3044,-48.8456,1386480,0.00862,425,Americas,South America,,
-jieyang,Jieyang,China,cn,23.5532,116.368,1385020,0.02221,426,Asia,Eastern Asia,,
-astana,Astana,Kazakhstan,kz,51.1801,71.446,1377290,0.01828,427,Asia,Central Asia,,
-mysore,Mysore,India,in,12.2958,76.6394,1375940,0.02246,428,Asia,Southern Asia,,left
-kigali,Kigali,Rwanda,rw,-1.9499,30.0589,1373440,0.03279,429,Africa,Eastern Africa,,right
-ruian,Ruian,China,cn,27.7767,120.6553,1372060,0.0202,430,Asia,Eastern Asia,,left
-helsinki,Helsinki,Finland,fi,60.1695,24.9355,1362160,0.00537,431,Europe,Northern Europe,,
-fez,Fez,Morocco,ma,34.04,-4.87,1360790,0.01782,432,Africa,Northern Africa,Fez,
-jinhua,Jinhua,China,cn,29.108,119.6486,1359810,0.02242,433,Asia,Eastern Asia,,left
-bhubaneswar,Bhubaneswar,India,in,20.2724,85.8339,1352660,0.02404,434,Asia,Southern Asia,,
-port-elizabeth,Port Elizabeth,South Africa,za,-33.9611,25.6149,1349290,0.01412,435,Africa,Southern Africa,,left
-fushun-liaoning,Fushun Liaoning,China,cn,41.8708,123.8864,1348770,0.01238,436,Asia,Eastern Asia,,
-durg-bhilainagar,Durg-Bhilainagar,India,in,21.1904,81.2849,1342780,0.02087,437,Asia,Southern Asia,,
-baoji,Baoji,China,cn,34.361,107.2322,1342270,0.01892,438,Asia,Eastern Asia,,left
-liupanshui,Liupanshui,China,cn,26.5964,104.828,1341760,0.02437,439,Asia,Eastern Asia,,left
-ahvaz,Ahvaz,Iran,ir,31.319,48.6842,1339790,0.01131,440,Asia,Southern Asia,,
-porto,Porto,Portugal,pt,41.1496,-8.611,1339000,0.0036,441,Europe,Southern Europe,,
-pingdingshan-henan,Pingdingshan Henan,China,cn,33.7659,113.1927,1337760,0.01897,442,Asia,Eastern Asia,,left
-dallas,Dallas,United States,us,32.7831,-96.8067,1337417,0.0043,443,Americas,North America,,
-florianopolis,Florianopolis,Brazil,br,-27.5954,-48.548,1336500,0.00956,444,Americas,South America,,
-islamabad,Islamabad,Pakistan,pk,33.7215,73.0433,1335550,0.02645,445,Asia,Southern Asia,,left
-prague,Prague,Czechia,cz,50.088,14.4208,1335350,0.00256,446,Europe,Central Europe,,
-puning,Puning,China,cn,23.3107,116.1687,1334000,0.01877,447,Asia,Eastern Asia,,
-tasikmalaya,Tasikmalaya,Indonesia,id,-7.3274,108.2207,1333470,0.02741,448,Asia,South-Eastern Asia,,
-san-luis-potosi,San Luis Potosi,Mexico,mx,22.1565,-100.9855,1328980,0.01393,449,Americas,North America,,above
-chifeng,Chifeng,China,cn,43.2565,118.9759,1328870,0.01822,450,Asia,Eastern Asia,,left
-xiongan,Xiongan,China,cn,39.038,115.993,1328660,0.03112,451,Asia,Eastern Asia,,left
-aba,Aba,Nigeria,ng,5.1066,7.3667,1321630,0.03675,452,Africa,Western Africa,,left
-zhenjiang-jiangsu,Zhenjiang Jiangsu,China,cn,32.1872,119.4249,1321590,0.01729,453,Asia,Eastern Asia,,left
-zhuzhou,Zhuzhou,China,cn,27.0498,113.5509,1320890,0.01648,454,Asia,Eastern Asia,,
-da-nang,Da Nang,Vietnam,vn,16.0544,108.2022,1318810,0.02551,455,Asia,South-Eastern Asia,,
-huaibei,Huaibei,China,cn,33.9566,116.7929,1315880,0.01892,456,Asia,Eastern Asia,,left
-dublin,Dublin,Ireland,ie,53.3331,-6.2489,1313820,0.01132,457,Europe,Northern Europe,,left
-pizhou,Pizhou,China,cn,34.3403,118.0068,1312740,0.02376,458,Asia,Eastern Asia,,
-luohe,Luohe,China,cn,33.5827,114.0107,1311020,0.02522,459,Asia,Eastern Asia,,left
-bogor,Bogor,Indonesia,id,-6.5944,106.7892,1305840,0.01938,460,Asia,South-Eastern Asia,,left
-bobo-dioulasso,Bobo-Dioulasso,Burkina Faso,bf,11.1833,-4.2917,1304020,0.04864,461,Africa,Western Africa,,left
-bazhong,Bazhong,China,cn,32.0402,107.0623,1303820,0.02818,462,Asia,Eastern Asia,,left
-kaduna,Kaduna,Nigeria,ng,10.5264,7.4388,1302330,0.03364,463,Africa,Western Africa,,left
-kazan,Kazan,Russia,ru,55.7887,49.1221,1302070,0.00192,464,Europe,Eastern Europe,,
-nanyang-henan,Nanyang Henan,China,cn,32.9987,112.5283,1297420,0.01788,465,Asia,Eastern Asia,,left
-tiruchirappalli,Tiruchirappalli,India,in,10.97,78.65,1296500,0.02095,466,Asia,Southern Asia,,
-xiangtan-hunan,Xiangtan Hunan,China,cn,27.8293,112.944,1296230,0.0178,467,Asia,Eastern Asia,,left
-barquisimeto,Barquisimeto,Venezuela,ve,10.0647,-69.357,1295700,0.0109,468,Americas,South America,,left
-chandigarh,Chandigarh,India,in,30.7363,76.7884,1293580,0.02178,469,Asia,Southern Asia,,
-binzhou,Binzhou,China,cn,45.7528,127.4799,1290440,0.0212,470,Asia,Eastern Asia,,
-quetta,Quetta,Pakistan,pk,30.1841,67.0014,1285220,0.02562,471,Asia,Southern Asia,,
-sofia,Sofia,Bulgaria,bg,42.6975,23.3242,1284870,-0.00124,472,Europe,Southeast Europe,,
-maracay,Maracay,Venezuela,ve,10.2354,-67.5911,1284200,0.01093,473,Americas,South America,,
-jinzhou,Jinzhou,China,cn,37.9775,115.0723,1281950,0.01689,474,Asia,Eastern Asia,,left
-hargeysa,Hargeysa,Somalia,so,9.56,44.065,1280190,0.04282,475,Africa,Eastern Africa,Hargeisa,
-benxi,Benxi,China,cn,41.1769,124.1574,1278180,0.01594,476,Asia,Eastern Asia,,
-merida,Merida,Mexico,mx,20.9674,-89.5926,1276270,0.01434,477,Americas,North America,,left
-saharanpur,Saharanpur,India,in,29.9,77.6833,1275830,0.02683,478,Asia,Southern Asia,,
-maputo,Maputo,Mozambique,mz,-25.9655,32.5832,1272640,0.03461,479,Africa,Eastern Africa,,
-mendoza,Mendoza,Argentina,ar,-32.8908,-68.8272,1271120,0.01109,480,Americas,South America,,
-chiang-mai,Chiang Mai,Thailand,th,18.7904,98.9847,1259540,0.01234,481,Asia,South-Eastern Asia,,
-guilin,Guilin,China,cn,25.278,110.2911,1259140,0.0163,482,Asia,Eastern Asia,,left
-hubli-dharwad,Hubli-Dharwad,India,in,15.3647,75.124,1257820,0.02177,483,Asia,Southern Asia,,left
-yueqing,Yueqing,China,cn,28.1178,120.9796,1255540,0.0208,484,Asia,Eastern Asia,,
-guwahati,Guwahati,India,in,26.1844,91.7458,1250320,0.02136,485,Asia,Southern Asia,,
-nizhniy-novgorod,Nizhniy Novgorod,Russia,ru,56.3287,44.002,1249590,-0.00014,486,Europe,Eastern Europe,,left
-ikorodu,Ikorodu,Nigeria,ng,6.6153,3.5069,1248110,0.04286,487,Africa,Western Africa,,left
-chelyabinsk,Chelyabinsk,Russia,ru,55.154,61.4292,1248010,0.00144,488,Europe,Eastern Europe,,
-salem,Salem,India,in,11.6537,77.9982,1247700,0.02211,489,Asia,Southern Asia,,
-tshikapa,Tshikapa,DR Congo,cd,-6.4162,20.8,1241230,0.04664,490,Africa,Middle Africa,,left
-bandar-lampung,Bandar Lampung,Indonesia,id,-5.45,105.2667,1233990,0.01966,491,Asia,South-Eastern Asia,,left
-mexicali,Mexicali,Mexico,mx,32.5051,-115.1477,1232480,0.01439,492,Americas,North America,,left
-shimkent,Shimkent,Kazakhstan,kz,42.3,69.6,1224160,0.01684,493,Asia,Central Asia,,
-siliguri,Siliguri,India,in,26.71,88.4285,1222520,0.02612,494,Asia,Southern Asia,,
-tripoli,Tripoli,Libya,ly,32.8874,13.1873,1215850,0.01035,495,Africa,Northern Africa,,left
-haifa,Haifa,Israel,il,32.8184,34.9885,1214740,0.0123,496,Asia,Western Asia,,left
-aguascalientes,Aguascalientes,Mexico,mx,21.8833,-102.3,1213800,0.01423,497,Americas,North America,,left
-wenling,Wenling,China,cn,28.3762,121.3808,1208220,0.01968,498,Asia,Eastern Asia,,
-bien-hoa,Bien Hoa,Vietnam,vn,10.95,106.8167,1206020,0.02662,499,Asia,South-Eastern Asia,,
-xinxiang,Xinxiang,China,cn,35.3086,114.0511,1200000,0.0163,500,Asia,Eastern Asia,,left
-sekondi-takoradi,Sekondi Takoradi,Ghana,gh,4.934,-1.7137,1198860,0.0337,501,Africa,Western Africa,,below
-amsterdam,Amsterdam,Netherlands,nl,52.374,4.8897,1196130,0.00583,502,Europe,Western Europe,,
-aden,Aden,Yemen,ye,12.7794,45.0367,1194160,0.03443,503,Asia,Western Asia,,
-asmara,Asmara,Eritrea,er,15.3381,38.9318,1193890,0.0362,504,Africa,Eastern Africa,,above
-jalandhar,Jalandhar,India,in,31.4167,75.6167,1193480,0.02217,505,Asia,Southern Asia,,
-fuyang,Fuyang,China,cn,30.0533,119.9519,1192260,0.01882,506,Asia,Eastern Asia,,left
-yichun-jiangxi,Yichun Jiangxi,China,cn,27.8043,114.4163,1190980,0.02725,507,Asia,Eastern Asia,,
-nyala,Nyala,Sudan,sd,12.0489,24.8807,1190050,0.03881,508,Africa,Northern Africa,,
-ma-anshan,Ma'anshan,China,cn,31.6886,118.5074,1188600,0.01974,509,Asia,Eastern Asia,,left
-zaozhuang,Zaozhuang,China,cn,34.8109,117.3179,1186080,0.01505,510,Asia,Eastern Asia,,
-fuzhou-jiangxi,Fuzhou Jiangxi,China,cn,27.9598,116.3581,1184980,0.02159,511,Asia,Eastern Asia,,
-panjin,Panjin,China,cn,41.1796,122.0524,1183560,0.01716,512,Asia,Eastern Asia,,left
-krasnoyarsk,Krasnoyarsk,Russia,ru,56.0184,92.8672,1181270,0.00291,513,Europe,Eastern Europe,,
-omsk,Omsk,Russia,ru,54.9924,73.3686,1181100,0.00024,514,Europe,Eastern Europe,,
-samarinda,Samarinda,Indonesia,id,-0.4917,117.1458,1180100,0.02194,515,Asia,South-Eastern Asia,,
-chenzhou,Chenzhou,China,cn,25.7734,113.0094,1177330,0.02329,516,Asia,Eastern Asia,,
-bishkek,Bishkek,Kyrgyzstan,kg,42.87,74.59,1175290,0.02091,517,Asia,Central Asia,,left
-shangrao,Shangrao,China,cn,28.7436,117.4054,1174700,0.01829,518,Asia,Eastern Asia,,left
-cuernavaca,Cuernavaca,Mexico,mx,18.9553,-99.24,1172340,0.01382,519,Americas,North America,,left
-zhaoqing,Zhaoqing,China,cn,23.0502,112.4604,1171700,0.01844,520,Asia,Eastern Asia,,left
-chihuahua,Chihuahua,Mexico,mx,28.632,-106.0691,1170910,0.01506,521,Americas,North America,,
-leshan,Leshan,China,cn,29.2233,103.5966,1166520,0.02069,522,Asia,Eastern Asia,,left
-yongin,Yongin,South Korea,kr,37.2411,127.1776,1165920,0.00691,523,Asia,Eastern Asia,,
-blantyre-limbe,Blantyre-Limbe,Malawi,mw,-15.7667,35.0167,1161420,0.04248,524,Africa,Eastern Africa,,left
-kirkuk,Kirkuk,Iraq,iq,35.4681,44.3922,1158040,0.02646,525,Asia,Western Asia,,
-cologne,Cologne,Germany,de,50.9333,6.95,1156690,0.003,526,Europe,Western Europe,,left
-dezhou,Dezhou,China,cn,37.4364,116.3534,1156460,0.02014,527,Asia,Eastern Asia,,
-samara,Samara,Russia,ru,53.2001,50.15,1153400,-0.00027,528,Europe,Eastern Europe,,
-ufa,Ufa,Russia,ru,54.7431,55.9678,1149690,0.00112,529,Europe,Eastern Europe,,
-changshu,Changshu,China,cn,31.6573,120.7481,1149590,0.02319,530,Asia,Eastern Asia,,
-johor-bahru,Johor Bahru,Malaysia,my,1.4655,103.7578,1147660,0.01786,531,Asia,South-Eastern Asia,,left
-jingzhou-hubei,Jingzhou Hubei,China,cn,30.3267,112.2391,1144000,0.01579,532,Asia,Eastern Asia,,left
-san-salvador,San Salvador,El Salvador,sv,13.6894,-89.1872,1142860,0.00922,533,Americas,Central America,,left
-diyarbakir,Diyarbakir,Turkey,tr,37.9144,40.2306,1142330,0.01238,534,Asia,Western Asia,,
-rostov-on-don,Rostov-on-Don,Russia,ru,47.2357,39.7015,1141080,0.00061,535,Europe,Eastern Europe,,
-xuchang,Xuchang,China,cn,34.1478,113.7147,1139910,0.02042,536,Asia,Eastern Asia,,left
-ilorin,Ilorin,Nigeria,ng,8.4966,4.5421,1138890,0.03539,537,Africa,Western Africa,,left
-managua,Managua,Nicaragua,ni,12.1328,-86.2504,1135770,0.01327,538,Americas,Central America,,
-huzhou,Huzhou,China,cn,30.8943,120.0851,1135190,0.01868,539,Asia,Eastern Asia,,left
-kermanshah,Kermanshah,Iran,ir,34.3142,47.065,1131900,0.01301,540,Asia,Southern Asia,,
-solapur,Solapur,India,in,17.75,75.5,1130210,0.01988,541,Asia,Southern Asia,,left
-oslo,Oslo,Norway,no,59.9127,10.7461,1130110,0.01302,542,Europe,Northern Europe,,
-goyang,Goyang,South Korea,kr,37.6564,126.835,1127620,0.00551,543,Asia,Eastern Asia,,left
-hamah,Hamah,Syria,sy,35.1318,36.7519,1125550,0.04348,544,Asia,Western Asia,,left
-warri,Warri,Nigeria,ng,5.5174,5.7501,1120980,0.04169,545,Africa,Western Africa,,left
-denpasar,Denpasar,Indonesia,id,-8.65,115.2167,1119120,0.01988,546,Asia,South-Eastern Asia,,
-qujing,Qujing,China,cn,25.7199,103.9861,1114880,0.02077,547,Asia,Eastern Asia,,left
-cartagena,Cartagena,Colombia,co,10.391,-75.4794,1114720,0.0083,548,Americas,South America,,left
-guiping,Guiping,China,cn,23.3934,110.0744,1113720,0.02462,549,Asia,Eastern Asia,,left
-mersin,Mersin,Turkey,tr,36.7429,34.3641,1112360,0.01212,550,Asia,Western Asia,,below
-warangal,Warangal,India,in,18,79.8333,1105740,0.02337,551,Asia,Southern Asia,,
-owerri,Owerri,Nigeria,ng,5.4836,7.0333,1105500,0.03932,552,Africa,Western Africa,,left
-marrakech,Marrakech,Morocco,ma,31.6362,-8.0104,1103930,0.01714,553,Africa,Northern Africa,,
-nampula,Nampula,Mozambique,mz,-15.1165,39.2666,1103460,0.04367,554,Africa,Eastern Africa,,
-yerevan,Yerevan,Armenia,am,40.1811,44.5136,1102920,0.00244,555,Asia,Western Asia,,
-lille,Lille,France,fr,50.633,3.0586,1098220,0.00607,556,Europe,Western Europe,,left
-yueyang,Yueyang,China,cn,29.0607,113.3487,1095900,0.01474,557,Asia,Eastern Asia,,left
-xintai,Xintai,China,cn,35.9095,117.762,1094420,0.01991,558,Asia,Eastern Asia,,
-lubango,Lubango,Angola,ao,-14.9172,13.4925,1092900,0.04303,559,Africa,Middle Africa,,
-tampico,Tampico,Mexico,mx,22.2951,-97.9359,1092680,0.01386,560,Americas,North America,,
-padang,Padang,Indonesia,id,-0.9492,100.3543,1092560,0.01865,561,Asia,South-Eastern Asia,,
-aracaju,Aracaju,Brazil,br,-10.9823,-37.1033,1092540,0.00981,562,Americas,South America,,
-tbilisi,Tbilisi,Georgia,ge,41.6941,44.8337,1089860,0.00261,563,Asia,Western Asia,,
-toulouse,Toulouse,France,fr,43.6043,1.4437,1088900,0.00807,564,Europe,Western Europe,,left
-voronezh,Voronezh,Russia,ru,51.672,39.1843,1087730,0.00159,565,Europe,Eastern Europe,,
-perm,Perm,Russia,ru,58.0105,56.2502,1087440,0.00134,566,Europe,Eastern Europe,,
-cancun,Cancun,Mexico,mx,21.1619,-86.8515,1083950,0.01741,567,Americas,North America,,
-cebu-city,Cebu City,Philippines,ph,10.3789,123.7637,1081840,0.01905,568,Asia,South-Eastern Asia,,
-saltillo,Saltillo,Mexico,mx,25.4232,-101.0053,1081410,0.01436,569,Americas,North America,,below
-teresina,Teresina,Brazil,br,-5.1025,-42.7407,1077110,0.00801,570,Americas,South America,,
-chengde,Chengde,China,cn,40.9507,117.9567,1076600,0.02307,571,Asia,Eastern Asia,,left
-jos,Jos,Nigeria,ng,9.9285,8.8921,1071590,0.03526,572,Africa,Western Africa,,left
-leiyang,Leiyang,China,cn,26.4255,112.8546,1069680,0.02501,573,Asia,Eastern Asia,,left
-antwerp,Antwerp,Belgium,be,51.2194,4.4025,1068660,0.00356,574,Europe,Western Europe,,left
-dushanbe,Dushanbe,Tajikistan,tj,38.5367,68.78,1068240,0.02725,575,Asia,Central Asia,,
-zhucheng,Zhucheng,China,cn,35.9957,119.4041,1067660,0.02162,576,Asia,Eastern Asia,,
-dehradun,Dehradun,India,in,30.33,78.06,1065870,0.02383,577,Asia,Southern Asia,,
-sylhet,Sylhet,Bangladesh,bd,24.8919,91.7355,1065150,0.03114,578,Asia,Southern Asia,,
-san-miguel-de-tucuman,San Miguel de Tucuman,Argentina,ar,-26.8083,-65.2176,1062270,0.01068,579,Americas,South America,,
-pingxiang-jiangxi,Pingxiang Jiangxi,China,cn,27.6167,113.85,1061200,0.01831,580,Asia,Eastern Asia,,
-acapulco-de-juarez,Acapulco de Juarez,Mexico,mx,16.8636,-99.8825,1060660,0.01333,581,Americas,North America,,left
-san-pedro-sula,San Pedro Sula,Honduras,hn,15.5,-88.0333,1059930,0.02488,582,Americas,Central America,,
-changwon,Changwon,South Korea,kr,35.2281,128.6811,1059130,0.00203,583,Asia,Eastern Asia,,left
-misratah,Misratah,Libya,ly,32.3754,15.0925,1055320,0.01995,584,Africa,Northern Africa,,
-laiwu,Laiwu,China,cn,36.215,117.6698,1051310,0.01926,585,Asia,Eastern Asia,,left
-fort-worth,Fort Worth,United States,us,32.7254,-97.3208,1050336,0.0217,586,Americas,North America,,left
-bangui,Bangui,Central African Republic,cf,4.3612,18.555,1048770,0.0321,587,Africa,Middle Africa,,
-kayseri,Kayseri,Turkey,tr,38.7236,35.3054,1048660,0.011,588,Asia,Western Asia,,
-najaf,Najaf,Iraq,iq,32.0259,44.3463,1048010,0.02982,589,Asia,Western Asia,,left
-taiz,Taiz,Yemen,ye,13.5789,44.0209,1045310,0.03552,590,Asia,Western Asia,,left
-songkhla,Songkhla,Thailand,th,7.1897,100.5954,1043260,0.01233,591,Asia,South-Eastern Asia,,
-jiujiang,Jiujiang,China,cn,31.3525,117.9601,1043180,0.0183,592,Asia,Eastern Asia,,left
-jixi-heilongjiang,Jixi Heilongjiang,China,cn,45.2956,130.9694,1040760,0.01541,593,Asia,Eastern Asia,,
-nonthaburi,Nonthaburi,Thailand,th,13.8591,100.5217,1039050,0.01233,594,Asia,South-Eastern Asia,,left
-jacksonville,Jacksonville,United States,us,30.3322,-81.6556,1038787,0.0147,595,Americas,North America,,
-agadir,Agadir,Morocco,ma,30.4202,-9.5981,1035770,0.01843,596,Africa,Northern Africa,,
-cabinda,Cabinda,Angola,ao,-5.55,12.2,1033860,0.04357,597,Africa,Middle Africa,,
-umuahia,Umuahia,Nigeria,ng,5.5249,7.4946,1033090,0.04306,598,Africa,Western Africa,,
-valparaiso,Valparaiso,Chile,cl,-33.0472,-71.6127,1032140,0.00753,599,Americas,South America,,left
-rajshahi,Rajshahi,Bangladesh,bd,24.4207,88.296,1031570,0.02438,600,Asia,Southern Asia,,
-guigang,Guigang,China,cn,23.3594,110.0413,1030910,0.01919,601,Asia,Eastern Asia,,left
-hengshui,Hengshui,China,cn,37.7364,115.6677,1030900,0.02196,602,Asia,Eastern Asia,,
-rotterdam,Rotterdam,Netherlands,nl,51.9225,4.4792,1030820,0.00445,603,Europe,Western Europe,,left
-morelia,Morelia,Mexico,mx,19.7008,-101.1844,1029940,0.01349,604,Americas,North America,,left
-bordeaux,Bordeaux,France,fr,44.8404,-0.5805,1025990,0.00778,605,Europe,Western Europe,,
-liling,Liling,China,cn,27.6529,113.4355,1025700,0.02528,606,Asia,Eastern Asia,,left
-mudanjiang,Mudanjiang,China,cn,44.635,130.0134,1025590,0.01618,607,Asia,Eastern Asia,,
-xinyu,Xinyu,China,cn,27.8536,114.8867,1025140,0.02148,608,Asia,Eastern Asia,,
-linfen,Linfen,China,cn,36.0881,111.519,1024140,0.02137,609,Asia,Eastern Asia,,left
-zhangzhou,Zhangzhou,China,cn,24.2388,117.4524,1022670,0.02017,610,Asia,Eastern Asia,,
-krasnodar,Krasnodar,Russia,ru,45.0448,38.976,1022480,0.00486,611,Europe,Eastern Europe,,
-tianmen,Tianmen,China,cn,30.666,113.1606,1020930,0.0202,612,Asia,Eastern Asia,,left
-bogra,Bogra,Bangladesh,bd,24.8297,89.026,1014990,0.03441,613,Asia,Southern Asia,,
-zamboanga-city,Zamboanga City,Philippines,ph,6.9214,122.079,1014070,0.01914,614,Asia,South-Eastern Asia,,left
-yangjiang,Yangjiang,China,cn,22.0958,111.7831,1014020,0.01812,615,Asia,Eastern Asia,,left
-antipolo,Antipolo,Philippines,ph,14.6655,121.0809,1011440,0.0218,616,Asia,South-Eastern Asia,,
-jerusalem,Jerusalem,Israel,il,31.769,35.2163,1010670,0.01398,617,Asia,Western Asia,,
-austin,Austin,United States,us,30.2672,-97.7431,1007435,0.007,618,Americas,North America,,left
-odesa,Odesa,Ukraine,ua,46.4775,30.7326,1006580,-0.00012,619,Europe,Eastern Europe,,
-baishan,Baishan,China,cn,41.9369,126.4184,1005740,0.02312,620,Asia,Eastern Asia,,
-deyang,Deyang,China,cn,31.1244,104.3901,1004890,0.02011,621,Asia,Eastern Asia,,left
-ciudad-guayana,Ciudad Guayana,Venezuela,ve,8.3512,-62.641,1003920,0.01264,622,Americas,South America,,
-jiangyin,Jiangyin,China,cn,31.911,120.263,1003350,0.02116,623,Asia,Eastern Asia,,
-khulna,Khulna,Bangladesh,bd,22.3535,88.8341,998460,0.01863,624,Asia,Southern Asia,,
-reynosa,Reynosa,Mexico,mx,26.0806,-98.2883,997908,0.01504,625,Americas,North America,,
-arequipa,Arequipa,Peru,pe,-16.3989,-71.535,996218,0.01271,626,Americas,South America,,left
-bahawalpur,Bahawalpur,Pakistan,pk,29.3978,71.6752,995494,0.0262,627,Asia,Southern Asia,,
-veracruz,Veracruz,Mexico,mx,19.181,-96.1429,994102,0.01328,628,Americas,North America,,
-volgograd,Volgograd,Russia,ru,48.7,44.4833,991693,-0.00058,629,Europe,Eastern Europe,,
-san-jose-us,San Jose,United States,us,37.3394,-121.895,991209,-0.0031,630,Americas,North America,,
-cucuta,Cucuta,Colombia,co,7.8939,-72.5078,990634,0.00911,631,Americas,South America,,
-bengbu,Bengbu,China,cn,32.9176,117.3826,990361,0.01556,632,Asia,Eastern Asia,,left
-villahermosa,Villahermosa,Mexico,mx,17.9869,-92.9303,986249,0.01427,633,Americas,North America,,
-pathum-thani,Pathum Thani,Thailand,th,14.0208,100.525,986213,0.01234,634,Asia,South-Eastern Asia,,left
-guntur,Guntur,India,in,16.2997,80.4573,984920,0.0234,635,Asia,Southern Asia,,
-oran,Oran,Algeria,dz,35.6991,-0.6359,982784,0.01685,636,Africa,Northern Africa,,
-charlotte,Charlotte,United States,us,35.2271,-80.8431,977740,0.0187,637,Americas,North America,,
-west-rand,West Rand,South Africa,za,-26.1667,27.65,975882,0.01483,638,Africa,Southern Africa,,left
-lokoja,Lokoja,Nigeria,ng,7.7969,6.7405,974767,0.04691,639,Africa,Western Africa,,
-southampton,Southampton,United Kingdom,gb,50.9167,-1.3833,974131,0.00764,640,Europe,Northern Europe,,left
-changzhi,Changzhi,China,cn,36.183,113.0993,966677,0.0183,641,Asia,Eastern Asia,,left
-erbil,Erbil,Iraq,iq,36.1833,44.0119,965261,0.02626,642,Asia,Western Asia,,left
-firozabad,Firozabad,India,in,27.2007,78.4287,965089,0.02477,643,Asia,Southern Asia,,
-malang,Malang,Indonesia,id,-7.9797,112.6304,964677,0.01698,644,Asia,South-Eastern Asia,,left
-bhiwandi,Bhiwandi,India,in,19.3002,73.0588,964215,0.0215,645,Asia,Southern Asia,,left
-puducherry,Puducherry,India,in,11.9338,79.8298,962874,0.02334,646,Asia,Southern Asia,,
-dandong,Dandong,China,cn,40.5791,124.4407,962140,0.01546,647,Asia,Eastern Asia,,
-nice,Nice,France,fr,43.7031,7.2661,961174,0.00521,648,Europe,Western Europe,,
-ashgabat,Ashgabat,Turkmenistan,tm,37.95,58.3833,960880,0.02099,649,Asia,Central Asia,,
-cherthala,Cherthala,India,in,9.6846,76.3389,958336,0.02935,650,Asia,Southern Asia,,left
-hermosillo,Hermosillo,Mexico,mx,29.1026,-110.9773,958204,0.01467,651,Americas,North America,,left
-korla,Korla,China,cn,41.6732,85.7162,957409,0.02505,652,Asia,Eastern Asia,Korla,
-changde,Changde,China,cn,29.0346,111.6929,955997,0.01888,653,Asia,Eastern Asia,,left
-quzhou,Quzhou,China,cn,36.7699,114.9585,953084,0.02507,654,Asia,Eastern Asia,,left
-shangqiu,Shangqiu,China,cn,34.4168,115.6507,952787,0.01894,655,Asia,Eastern Asia,,left
-campo-grande,Campo Grande,Brazil,br,-20.4428,-54.6464,951238,0.0084,656,Americas,South America,,left
-londrina,Londrina,Brazil,br,-23.3103,-51.1628,951206,0.00928,657,Americas,South America,,left
-columbus,Columbus,United States,us,39.9612,-82.9988,946661,0.0073,658,Americas,North America,,
-liaoyang,Liaoyang,China,cn,41.2743,123.1696,946597,0.01607,659,Asia,Eastern Asia,,
-seongnam,Seongnam,South Korea,kr,37.4386,127.1378,945296,0.00195,660,Asia,Eastern Asia,,
-bunia,Bunia,DR Congo,cd,1.5594,30.2522,944205,0.04871,661,Africa,Middle Africa,,
-la-plata,La Plata,Argentina,ar,-34.703,-58.6799,942456,0.00993,662,Americas,South America,,left
-tuxtla-gutierrez,Tuxtla Gutierrez,Mexico,mx,16.7528,-93.115,941756,0.01509,663,Americas,North America,,
-trujillo,Trujillo,Peru,pe,-8.116,-79.03,941574,0.01333,664,Americas,South America,,
-enugu,Enugu,Nigeria,ng,6.4413,7.4988,939642,0.03638,665,Africa,Western Africa,,left
-concepcion,Concepcion,Chile,cl,-36.827,-73.0503,937267,0.00851,666,Americas,South America,,
-xingtai,Xingtai,China,cn,37.0617,114.4997,937021,0.01738,667,Asia,Eastern Asia,,left
-liverpool,Liverpool,United Kingdom,gb,53.4106,-2.9779,935328,0.00681,668,Europe,Northern Europe,,left
-soshanguve,Soshanguve,South Africa,za,-25.4869,28.0869,933800,0.01528,669,Africa,Southern Africa,,left
-tyumen,Tyumen,Russia,ru,57.1522,65.5272,933297,0.00732,670,Europe,Eastern Europe,,
-culiacan,Culiacan,Mexico,mx,24.7994,-107.3879,932385,0.01512,671,Americas,North America,,left
-maiduguri,Maiduguri,Nigeria,ng,11.8469,13.1571,929408,0.03436,672,Africa,Western Africa,,left
-bergamo,Bergamo,Italy,it,45.696,9.6672,927164,0.00427,673,Europe,Southern Europe,,
-dnipro,Dnipro,Ukraine,ua,48.4593,35.0386,926488,-0.00512,674,Europe,Eastern Europe,,left
-huangshi,Huangshi,China,cn,30.2025,115.0334,924002,0.01665,675,Asia,Eastern Asia,,
-yongzhou,Yongzhou,China,cn,25.7813,111.698,922631,0.02057,676,Asia,Eastern Asia,,left
-xinghua,Xinghua,China,cn,32.9392,119.8342,919964,0.01954,677,Asia,Eastern Asia,,
-ulsan,Ulsan,South Korea,kr,35.5372,129.3167,918482,0.00245,678,Asia,Eastern Asia,,
-fuxin,Fuxin,China,cn,42.3303,122.0153,917396,0.01524,679,Asia,Eastern Asia,,left
-libreville,Libreville,Gabon,ga,0.3924,9.4536,915590,0.0182,680,Africa,Middle Africa,,
-zanzibar,Zanzibar,Tanzania,tz,-6.1639,39.1979,914351,0.04619,681,Africa,Eastern Africa,,
-kottayam,Kottayam,India,in,9.5916,76.5222,914278,0.03262,682,Asia,Southern Asia,,
-benguela,Benguela,Angola,ao,-12.5763,13.4055,913769,0.04073,683,Africa,Middle Africa,,left
-yibin,Yibin,China,cn,28.5869,104.7187,912745,0.01699,684,Asia,Eastern Asia,,left
-huaihua,Huaihua,China,cn,27.6595,110.1435,912663,0.02257,685,Asia,Eastern Asia,,left
-al-hofuf,Al-Hofuf,Saudi Arabia,sa,25.3648,49.5879,909904,0.01409,686,Asia,Western Asia,"Al-Hofuf|Hofuf",left
-xinyang,Xinyang,China,cn,32.075,114.8533,906367,0.01796,687,Asia,Eastern Asia,,left
-xiaogan,Xiaogan,China,cn,31.1764,113.9224,904876,0.01907,688,Asia,Eastern Asia,,left
-ipoh,Ipoh,Malaysia,my,4.5841,101.0829,902958,0.01718,689,Asia,South-Eastern Asia,,
-yangquan,Yangquan,China,cn,38.0936,113.5266,902484,0.01793,690,Asia,Eastern Asia,,left
-malanje,Malanje,Angola,ao,-9.5401,16.341,900002,0.04484,691,Africa,Middle Africa,,
-luzhou,Luzhou,China,cn,28.8717,105.4423,897355,0.01505,692,Asia,Eastern Asia,,
-bozhou,Bozhou,China,cn,33.8491,115.7731,896567,0.02223,693,Asia,Eastern Asia,,
-tianshui,Tianshui,China,cn,34.6539,105.8004,895618,0.01999,694,Asia,Eastern Asia,,left
-indianapolis,Indianapolis,United States,us,39.7684,-86.158,893619,0.0012,695,Americas,North America,,left
-banghazi,Banghazi,Libya,ly,32.1167,20.0667,893370,0.01301,696,Africa,Northern Africa,,
-kunshan,Kunshan,China,cn,31.3869,120.9765,893198,0.02239,697,Asia,Eastern Asia,,
-tainan,Tainan,Taiwan,tw,22.9908,120.2133,886039,0.00587,698,Asia,Eastern Asia,,
-zhuji,Zhuji,China,cn,29.7188,120.2423,885148,0.01807,699,Asia,Eastern Asia,,left
-ibb,Ibb,Yemen,ye,13.9667,44.1833,883243,0.04236,700,Asia,Western Asia,,
-jincheng,Jincheng,China,cn,35.4913,112.8454,882169,0.02188,701,Asia,Eastern Asia,,left
-nellore,Nellore,India,in,14.0833,79.5833,879934,0.02455,702,Asia,Southern Asia,,
-bikaner,Bikaner,India,in,28.0176,73.315,872688,0.02204,703,Asia,Southern Asia,,left
-eskisehir,Eskisehir,Turkey,tr,39.7767,30.5206,871917,0.01325,704,Asia,Western Asia,,
-urmia,Urmia,Iran,ir,37.5527,45.0761,871090,0.0127,705,Asia,Southern Asia,"Urmia|Orumiyeh",left
-zhumadian,Zhumadian,China,cn,33.0116,114.0165,870712,0.02269,706,Asia,Eastern Asia,,left
-sulaimaniya,Sulaimaniya,Iraq,iq,35.5575,45.4348,870677,0.02854,707,Asia,Western Asia,,
-donetsk,Donetsk,Ukraine,ua,48.023,37.8022,870629,-0.0062,708,Europe,Eastern Europe,,left
-anqiu,Anqiu,China,cn,36.4795,119.213,869644,0.026,709,Asia,Eastern Asia,,
-quebec-city,Quebec City,Canada,ca,46.8139,-71.208,865632,0.00865,710,Americas,North America,,
-winnipeg,Winnipeg,Canada,ca,49.8844,-97.147,865461,0.00944,711,Americas,North America,,
-huludao,Huludao,China,cn,40.7515,120.8405,865357,0.01668,712,Asia,Eastern Asia,,left
-taixing,Taixing,China,cn,32.1685,120.0165,864646,0.01917,713,Asia,Eastern Asia,,
-heze,Heze,China,cn,35.2477,115.4465,864086,0.01481,714,Asia,Eastern Asia,,left
-merca,Merca,Somalia,so,1.7089,44.7728,863517,0.04288,715,Africa,Eastern Africa,Marka,left
-langfang,Langfang,China,cn,39.5302,116.6926,863203,0.01981,716,Asia,Eastern Asia,,
-kayamkulam,Kayamkulam,India,in,9.1747,76.501,862900,0.02865,717,Asia,Southern Asia,,left
-haicheng,Haicheng,China,cn,40.8516,122.7475,861388,0.01563,718,Asia,Eastern Asia,,left
-liaocheng,Liaocheng,China,cn,36.4442,115.9642,860764,0.01763,719,Asia,Eastern Asia,,left
-gaomi,Gaomi,China,cn,36.3654,119.8005,860282,0.02182,720,Asia,Eastern Asia,,
-gebze,Gebze,Turkey,tr,40.8028,29.4307,860277,0.01587,721,Asia,Western Asia,,
-muzaffarnagar,Muzaffarnagar,India,in,29.45,77.5833,858867,0.02613,722,Asia,Southern Asia,,left
-goma,Goma,DR Congo,cd,-1.6741,29.2285,858217,0.04679,723,Africa,Middle Africa,,above
-hanchuan,Hanchuan,China,cn,30.65,113.7667,857519,0.0217,724,Asia,Eastern Asia,,left
-dasmarinas,Dasmarinas,Philippines,ph,14.3294,120.9367,857393,0.02176,725,Asia,South-Eastern Asia,,left
-kitwe,Kitwe,Zambia,zm,-12.8024,28.2132,856727,0.04019,726,Africa,Eastern Africa,,
-barcelona-puerto-la-cruz,Barcelona Puerto La Cruz,Venezuela,ve,10.1222,-64.6868,855661,0.01163,727,Americas,South America,,
-cagayan-de-oro-city,Cagayan de Oro City,Philippines,ph,8.4822,124.6472,855270,0.02104,728,Asia,South-Eastern Asia,,
-meishan,Meishan,China,cn,29.9867,103.779,854648,0.02068,729,Asia,Eastern Asia,,left
-palermo,Palermo,Italy,it,37.8167,13.5833,852768,0.00175,730,Europe,Southern Europe,,
-oshogbo,Oshogbo,Nigeria,ng,7.7827,4.5418,851304,0.03502,731,Africa,Western Africa,,left
-gaza,Gaza,Palestine,ps,31.5017,34.4674,846506,0.02805,732,Asia,Western Asia,,left
-danyang,Danyang,China,cn,32.011,119.6013,846219,0.02043,733,Asia,Eastern Asia,,left
-xalapa,Xalapa,Mexico,mx,19.5438,-96.9102,846129,0.01384,734,Americas,North America,,left
-ar-rayyan,Ar-Rayyan,Qatar,qa,25.2919,51.4244,846071,0.01729,735,Asia,Western Asia,,
-valencia-es,Valencia,Spain,es,39.4698,-0.3774,843071,0.00204,736,Europe,Southern Europe,,
-amravati,Amravati,India,in,20.9333,77.75,842613,0.02139,737,Asia,Southern Asia,,left
-newcastle-upon-tyne,Newcastle upon Tyne,United Kingdom,gb,55,-1.6667,839947,0.00684,738,Europe,Northern Europe,,
-saratov,Saratov,Russia,ru,51.5406,46.0086,837212,-0.00013,739,Europe,Eastern Europe,,
-sorocaba,Sorocaba,Brazil,br,-23.5017,-47.4581,836189,0.00861,740,Americas,South America,,left
-zaria,Zaria,Nigeria,ng,11.1113,7.7227,835966,0.0325,741,Africa,Western Africa,,left
-akure,Akure,Nigeria,ng,7.2526,5.1931,834009,0.03854,742,Africa,Western Africa,,
-gorakhpur,Gorakhpur,India,in,29.4477,75.6721,832937,0.02002,743,Asia,Southern Asia,,left
-yan-an,Yan'an,China,cn,36.6028,109.4874,832565,0.02331,744,Asia,Eastern Asia,,left
-jiaozuo,Jiaozuo,China,cn,35.1375,113.1439,832142,0.01473,745,Asia,Eastern Asia,,left
-nakhon-ratchasima,Nakhon Ratchasima,Thailand,th,14.9799,102.0978,831016,0.01197,746,Asia,South-Eastern Asia,,
-linhai,Linhai,China,cn,28.8554,121.1447,830096,0.02003,747,Asia,Eastern Asia,,
-bucheon,Bucheon,South Korea,kr,37.4989,126.7831,828905,0.00157,748,Asia,Eastern Asia,,left
-ordos,Ordos,China,cn,39.6086,109.7814,828599,0.02014,749,Asia,Eastern Asia,"Ordos|Eerduosi",left
-anqing,Anqing,China,cn,30.6592,116.6303,826123,0.01794,750,Asia,Eastern Asia,,left
-nottingham,Nottingham,United Kingdom,gb,52.9536,-1.1505,825506,0.00753,751,Europe,Northern Europe,,
-port-said,Port Said,Egypt,eg,31.2653,32.3019,823820,0.01944,752,Africa,Northern Africa,Port Said,below
-vereeniging,Vereeniging,South Africa,za,-26.6736,27.9318,823757,0.01334,753,Africa,Southern Africa,,left
-dengzhou,Dengzhou,China,cn,32.6881,112.0819,822678,0.02299,754,Asia,Eastern Asia,,left
-bologna,Bologna,Italy,it,44.4667,11.4333,821709,0.00294,755,Europe,Southern Europe,,
-cuttack,Cuttack,India,in,20.5,86.25,821467,0.02056,756,Asia,Southern Asia,,
-tirupati,Tirupati,India,in,13.6355,79.4199,818428,0.0265,757,Asia,Southern Asia,,left
-malegaon,Malegaon,India,in,20.5497,74.5346,817947,0.02281,758,Asia,Southern Asia,,
-belgaum,Belgaum,India,in,15.8497,74.4977,817205,0.02185,759,Asia,Southern Asia,,left
-shaoguan,Shaoguan,China,cn,24.8309,113.8155,816261,0.01389,760,Asia,Eastern Asia,,
-thessaloniki,Thessaloniki,Greece,gr,40.6401,22.9444,816014,0.00066,761,Europe,Southern Europe,,left
-yuncheng,Yuncheng,China,cn,22.892,112.1526,814924,0.02217,762,Asia,Eastern Asia,,left
-nay-pyi-taw,Nay Pyi Taw,Myanmar,mm,19.7633,96.0785,814596,0.03344,763,Asia,South-Eastern Asia,,left
-banjarmasin,Banjarmasin,Indonesia,id,-3.3199,114.5908,814539,0.01855,764,Asia,South-Eastern Asia,,
-yuxi,Yuxi,China,cn,24.3511,102.527,814376,0.02341,765,Asia,Eastern Asia,,left
-al-hudaydah,Al-Hudaydah,Yemen,ye,14.7979,42.9544,811673,0.03417,766,Asia,Western Asia,,left
-tamale,Tamale,Ghana,gh,9.4008,-0.8393,810622,0.0334,767,Africa,Western Africa,,
-sialkot,Sialkot,Pakistan,pk,32.4927,74.5313,808547,0.02427,768,Asia,Southern Asia,,
-yanji,Yanji,China,cn,42.9075,129.5078,808147,0.01953,769,Asia,Eastern Asia,,
-frankfurt,Frankfurt,Germany,de,50.1109,8.6821,806365,0.00324,770,Europe,Western Europe,,
-huambo,Huambo,Angola,ao,-12.7761,15.7392,805507,0.03624,771,Africa,Middle Africa,,
-shaoyang,Shaoyang,China,cn,26.9443,110.9631,804759,0.01741,772,Asia,Eastern Asia,,left
-san-francisco,San Francisco,United States,us,37.7749,-122.4194,803876,-0.014,773,Americas,North America,,left
-zigong,Zigong,China,cn,29.2996,104.6928,803465,0.01502,774,Asia,Eastern Asia,,
-maturin,Maturin,Venezuela,ve,9.7456,-63.1836,802927,0.01647,775,Americas,South America,,below
-tongliao,Tongliao,China,cn,43.6152,122.2601,802817,0.01836,776,Asia,Eastern Asia,,left
-qingyuan,Qingyuan,China,cn,23.6833,113.0506,802697,0.01518,777,Asia,Eastern Asia,,left
-amara,Amara,Iraq,iq,31.835,47.15,802360,0.03124,778,Asia,Western Asia,,left
-seattle,Seattle,United States,us,47.6062,-122.3321,801192,0.0132,779,Americas,North America,,
-dazhou,Dazhou,China,cn,31.3451,107.6507,800986,0.02021,780,Asia,Eastern Asia,,
-lattakia,Lattakia,Syria,sy,35.5317,35.7917,800908,0.04348,781,Asia,Western Asia,,left
-hempstead,Hempstead,United States,us,40.7062,-73.6187,800777,0.0022,782,Americas,North America,,
-tongling,Tongling,China,cn,30.9058,117.6141,800729,0.01874,783,Asia,Eastern Asia,,left
-hamilton,Hamilton,Canada,ca,43.2501,-79.8496,799692,0.00833,784,Americas,North America,,left
-wuzhou,Wuzhou,China,cn,23.5715,111.0139,798828,0.01857,785,Asia,Eastern Asia,,left
-uvira,Uvira,DR Congo,cd,-3.3953,29.1378,796343,0.04664,786,Africa,Middle Africa,,left
-mangalore,Mangalore,India,in,12.9141,74.856,795066,0.02104,787,Asia,Southern Asia,,left
-suining-sichuan,Suining Sichuan,China,cn,30.5333,105.5928,794833,0.01792,788,Asia,Eastern Asia,,left
-sargodha,Sargodha,Pakistan,pk,32.0859,72.6742,793255,0.02343,789,Asia,Southern Asia,,left
-zhangjiagang,Zhangjiagang,China,cn,31.8783,120.5515,792546,0.02223,790,Asia,Eastern Asia,,
-niigata,Niigata,Japan,jp,37.8864,139.0059,791952,-0.00255,791,Asia,Eastern Asia,,left
-bacoor,Bacoor,Philippines,ph,14.4161,120.9276,791335,0.02209,792,Asia,South-Eastern Asia,,left
-nanded-waghala,Nanded Waghala,India,in,19.1383,77.321,790788,0.02302,793,Asia,Southern Asia,,
-sokoto,Sokoto,Nigeria,ng,13.0627,5.2432,789726,0.0373,794,Africa,Western Africa,,above
-dongtai,Dongtai,China,cn,32.8706,120.3154,788212,0.01964,795,Asia,Eastern Asia,,
-jiamusi,Jiamusi,China,cn,47.0216,132.0441,786151,0.01554,796,Asia,Eastern Asia,,
-ankang,Ankang,China,cn,32.7065,109.0178,784537,0.02366,797,Asia,Eastern Asia,,left
-kurnool,Kurnool,India,in,15.5833,78.3333,784461,0.02501,798,Asia,Southern Asia,,left
-bhavnagar,Bhavnagar,India,in,21.7629,72.1533,783199,0.02127,799,Asia,Southern Asia,,left
-herat,Herat,Afghanistan,af,34.3529,62.204,781380,0.03781,800,Asia,Southern Asia,,
-taicang,Taicang,China,cn,31.459,121.1265,781306,0.0214,801,Asia,Eastern Asia,,
-cotonou,Cotonou,Benin,bj,6.3654,2.4183,780456,0.02964,802,Africa,Western Africa,,left
-xianyang-shaanxi,Xianyang Shaanxi,China,cn,34.3456,108.7147,777105,0.01483,803,Asia,Eastern Asia,,left
-vientiane,Vientiane,Laos,la,17.9667,102.6,775494,0.02587,804,Asia,South-Eastern Asia,,
-panzhihua,Panzhihua,China,cn,26.586,101.7179,773386,0.01527,805,Asia,Eastern Asia,,left
-ansan,Ansan,South Korea,kr,37.3219,126.8309,773315,0.00296,806,Asia,Eastern Asia,,left
-yuyao,Yuyao,China,cn,30.05,121.1494,772356,0.01803,807,Asia,Eastern Asia,,
-sao-jose-dos-campos,Sao Jose dos Campos,Brazil,br,-23.1794,-45.8869,771320,0.00892,808,Americas,South America,,left
-miluo,Miluo,China,cn,28.8101,113.0613,771063,0.02609,809,Asia,Eastern Asia,,left
-krakow,Krakow,Poland,pl,50.0647,19.945,769354,-0.00003,810,Europe,Central Europe,,
-gulbarga,Gulbarga,India,in,17.3297,76.8343,768923,0.02277,811,Asia,Southern Asia,,left
-bali,Bali,Indonesia,id,-8.6705,115.2126,768520,0.01942,812,Asia,South-Eastern Asia,,
-oaxaca-de-juarez,Oaxaca de Juarez,Mexico,mx,17.0732,-96.7266,767709,0.01376,813,Americas,North America,,left
-buffalo-city,Buffalo City,South Africa,za,-32.9872,27.8716,767529,0.01457,814,Africa,Southern Africa,,
-hezhou,Hezhou,China,cn,24.3705,111.3591,766890,0.02329,815,Asia,Eastern Asia,,
-rasht,Rasht,Iran,ir,37.2761,49.5886,766257,0.01121,816,Asia,Southern Asia,,
-jammu,Jammu,India,in,32.75,74.8333,766223,0.01956,817,Asia,Southern Asia,,
-yulin-shaanxi,Yulin Shaanxi,China,cn,38.2655,109.7344,766185,0.01576,818,Asia,Eastern Asia,,left
-zarqa,Zarqa,Jordan,jo,32.0728,36.088,765303,0.00845,819,Asia,Western Asia,,
-longyan,Longyan,China,cn,25.0767,117.0123,764708,0.01599,820,Asia,Eastern Asia,,left
-ribeirao-preto,Ribeirao Preto,Brazil,br,-21.1775,-47.8103,764455,0.00904,821,Americas,South America,,
-loudi,Loudi,China,cn,27.6995,111.9891,763088,0.0214,822,Asia,Eastern Asia,,left
-bijie,Bijie,China,cn,27.215,105.2152,762945,0.02154,823,Asia,Eastern Asia,,
-gold-coast,Gold Coast,Australia,au,-28.0167,153.4,762290,0.01292,824,Oceania,Australia and New Zealand,,
-sheffield,Sheffield,United Kingdom,gb,53.383,-1.4659,762277,0.00726,825,Europe,Northern Europe,,
-renqiu,Renqiu,China,cn,38.7064,116.1062,761689,0.02115,826,Asia,Eastern Asia,,
-tongxiang,Tongxiang,China,cn,30.6317,120.561,761595,0.02233,827,Asia,Eastern Asia,,
-zhoukou,Zhoukou,China,cn,33.8083,114.9119,760893,0.02001,828,Asia,Eastern Asia,,left
-manama,Manama,Bahrain,bh,26.2279,50.5857,759306,0.02186,829,Asia,Western Asia,,
-durgapur,Durgapur,India,in,23.55,87.32,756574,0.02139,830,Asia,Southern Asia,,below
-abakaliki,Abakaliki,Nigeria,ng,6.3249,8.1137,753507,0.0421,831,Africa,Western Africa,,
-buraydah,Buraydah,Saudi Arabia,sa,26.326,43.975,752796,0.0165,832,Asia,Western Asia,,
-bauchi,Bauchi,Nigeria,ng,10.3103,9.8439,751900,0.03881,833,Africa,Western Africa,,
-longhai,Longhai,China,cn,24.3469,117.5396,751850,0.02124,834,Asia,Eastern Asia,,left
+id,city,country,country_code,latitude,longitude,population,growth_rate,rank,region,subregion,city_alternates,label_position,wikipedia
+tokyo,Tokyo,Japan,jp,35.6895,139.6917,36953600,-0.00223,1,Asia,Eastern Asia,Tōkyō|Tokio,,Tokyo
+delhi,Delhi,India,in,28.652,77.2315,35518400,0.0246,2,Asia,Southern Asia,New Delhi|Nai Dilli,left,Delhi
+shanghai,Shanghai,China,cn,31.2304,121.4737,31049800,0.01862,3,Asia,Eastern Asia,,,Shanghai
+dhaka,Dhaka,Bangladesh,bd,23.7842,89.9286,25359100,0.02865,4,Asia,Southern Asia,Dacca,,Dhaka
+cairo,Cairo,Egypt,eg,30.0626,31.2497,23534600,0.01995,5,Africa,Northern Africa,,,Cairo
+sao-paulo,São Paulo,Brazil,br,-23.5505,-46.6333,23168700,0.00777,6,Americas,South America,Sao Paulo|San Pablo,right,São_Paulo
+mexico-city,Mexico City,Mexico,mx,19.4285,-99.1277,23016800,0.01162,7,Americas,North America,,above,Mexico_City
+beijing,Beijing,China,cn,39.9075,116.3972,22983400,0.01712,8,Asia,Eastern Asia,Peking,left,Beijing
+mumbai,Mumbai,India,in,19.0728,72.8826,22539300,0.02039,9,Asia,Southern Asia,Bombay,left,Mumbai
+osaka,Osaka,Japan,jp,34.6937,135.5022,18873900,-0.00252,10,Asia,Eastern Asia,,left,Osaka
+kinshasa,Kinshasa,DR Congo,cd,-4.3276,15.3136,18552800,0.04355,11,Africa,Middle Africa,,below,Kinshasa
+chongqing,Chongqing,China,cn,29.563,106.5516,18531600,0.01983,12,Asia,Eastern Asia,,,Chongqing
+karachi,Karachi,Pakistan,pk,24.8608,67.0104,18520100,0.02452,13,Asia,Southern Asia,,left,Karachi
+lagos,Lagos,Nigeria,ng,6.4541,3.3947,17803700,0.03773,14,Africa,Western Africa,,left,Lagos
+istanbul,Istanbul,Turkey,tr,41.0054,28.6825,16419100,0.01123,15,Asia,Western Asia,Constantinople,left,Istanbul
+kolkata,Kolkata,India,in,22.5411,88.3378,16151400,0.01932,16,Asia,Southern Asia,Calcutta,,Kolkata
+buenos-aires,Buenos Aires,Argentina,ar,-34.6037,-58.3816,15890600,0.00878,17,Americas,South America,,left,Buenos_Aires
+manila,Manila,Philippines,ph,14.5995,120.9842,15531900,0.01978,18,Asia,South-Eastern Asia,,,Manila
+lahore,Lahore,Pakistan,pk,31.558,74.3507,15237800,0.02779,19,Asia,Southern Asia,,left,Lahore
+guangzhou,Guangzhou,China,cn,23.1302,113.2593,15147900,0.01809,20,Asia,Eastern Asia,Canton,,Guangzhou
+tianjin,Tianjin,China,cn,39.3434,117.3616,14933500,0.0156,21,Asia,Eastern Asia,,,Tianjin
+bangalore,Bangalore,India,in,12.9716,77.5946,14771700,0.02614,22,Asia,Southern Asia,Bengaluru,left,Bangalore
+rio-de-janeiro,Rio de Janeiro,Brazil,br,-22.9201,-43.3307,14023100,0.00718,23,Americas,South America,,,Rio_de_Janeiro
+shenzhen,Shenzhen,China,cn,22.5446,114.0545,13770000,0.01658,24,Asia,Eastern Asia,,,Shenzhen
+moscow,Moscow,Russia,ru,55.7522,37.6156,12756500,0.0015,25,Europe,Eastern Europe,,,Moscow
+chennai,Chennai,India,in,13.0878,80.2785,12623100,0.02327,26,Asia,Southern Asia,Madras,,Chennai
+bogota,Bogota,Colombia,co,4.711,-74.0721,11922100,0.01071,27,Americas,South America,Bogotá,,Bogota
+jakarta,Jakarta,Indonesia,id,-6.2088,106.8456,11840000,0.0177,28,Asia,South-Eastern Asia,,left,Jakarta
+lima,Lima,Peru,pe,-12.0432,-77.0282,11670700,0.01332,29,Americas,South America,,,Lima
+hyderabad-in,Hyderabad,India,in,17.384,78.4564,11608400,0.02386,30,Asia,Southern Asia,,left,Hyderabad
+bangkok,Bangkok,Thailand,th,13.754,100.5014,11543900,0.01336,31,Asia,South-Eastern Asia,,left,Bangkok
+paris,Paris,France,fr,48.8534,2.3486,11418300,0.0063,32,Europe,Western Europe,,,Paris
+luanda,Luanda,Angola,ao,-8.8368,13.2343,10421300,0.03923,33,Africa,Middle Africa,,left,Luanda
+nanjing,Nanjing,China,cn,32.0617,118.7778,10380200,0.02018,34,Asia,Eastern Asia,,left,Nanjing
+chengdu,Chengdu,China,cn,30.6599,104.0633,10163400,0.01645,35,Asia,Eastern Asia,,left,Chengdu
+ho-chi-minh-city,Ho Chi Minh City,Vietnam,vn,10.8231,106.6297,10065700,0.0254,36,Asia,South-Eastern Asia,Saigon|HCMC,,Ho_Chi_Minh_City
+seoul,Seoul,South Korea,kr,37.566,126.9784,10050200,0.00243,37,Asia,Eastern Asia,,,Seoul
+london,London,United Kingdom,gb,51.5085,-0.1257,9927020,0.00877,38,Europe,Northern Europe,,left,London
+tehran,Tehran,Iran,ir,35.6944,51.4215,9840100,0.01134,39,Asia,Southern Asia,,,Tehran
+nagoya,Nagoya,Japan,jp,35.1815,136.9064,9511730,-0.00242,40,Asia,Eastern Asia,,left,Nagoya
+xi-an,Xi'an,China,cn,34.2658,108.9541,9409700,0.02034,41,Asia,Eastern Asia,Xi'an|Xian|Chang'an,,Xi'an
+ahmedabad,Ahmedabad,India,in,23.0258,72.5873,9272670,0.02327,42,Asia,Southern Asia,,left,Ahmedabad
+kuala-lumpur,Kuala Lumpur,Malaysia,my,3.1412,101.6865,9175810,0.0195,43,Asia,South-Eastern Asia,,,Kuala_Lumpur
+wuhan,Wuhan,China,cn,30.5951,114.2999,9121840,0.01506,44,Asia,Eastern Asia,,,Wuhan
+dar-es-salaam,Dar es Salaam,Tanzania,tz,-6.7924,39.2083,8976930,0.04852,45,Africa,Eastern Africa,Dar-es-Salaam,,Dar_es_Salaam
+surat,Surat,India,in,21.178,72.8119,8820660,0.02784,46,Asia,Southern Asia,,left,Surat
+suzhou,Suzhou,China,cn,33.6482,116.9588,8802000,0.02434,47,Asia,Eastern Asia,,left,Suzhou
+hangzhou,Hangzhou,China,cn,30.249,120.2052,8749670,0.01846,48,Asia,Eastern Asia,,,Hangzhou
+baghdad,Baghdad,Iraq,iq,33.3406,44.4009,8370410,0.02816,49,Asia,Western Asia,,left,Baghdad
+new-york,New York,United States,us,40.7128,-74.006,8346955,-0.0076,50,Americas,North America,,left,New_York
+shenyang,Shenyang,China,cn,41.8026,123.4279,8110930,0.01714,51,Asia,Eastern Asia,,,Shenyang
+riyadh,Riyadh,Saudi Arabia,sa,24.6877,46.7219,8079940,0.01598,52,Asia,Western Asia,,left,Riyadh
+foshan,Foshan,China,cn,23.024,113.116,7930870,0.01455,53,Asia,Eastern Asia,,left,Foshan
+dongguan,Dongguan,China,cn,23.0184,113.7452,7876240,0.0133,54,Asia,Eastern Asia,,,Dongguan
+hong-kong,Hong Kong,Hong Kong,hk,22.3193,114.1694,7813300,0.00577,55,Asia,Eastern Asia,,,Hong_Kong
+pune,Pune,India,in,18.5196,73.8554,7706270,0.02399,56,Asia,Southern Asia,,,Pune
+harbin,Harbin,China,cn,45.75,126.65,7188910,0.01727,57,Asia,Eastern Asia,Harbin|Ha-erh-pin,left,Harbin
+santiago,Santiago,Chile,cl,-33.4569,-70.6483,7048620,0.00702,58,Americas,South America,,below,Santiago
+khartoum,Khartoum,Sudan,sd,15.5518,32.5324,6980600,0.03352,59,Africa,Northern Africa,,,Khartoum
+madrid,Madrid,Spain,es,40.4165,-3.7026,6834320,0.00349,60,Europe,Southern Europe,,left,Madrid
+johannesburg,Johannesburg,South Africa,za,-26.2023,28.0436,6559190,0.01778,61,Africa,Southern Africa,,below,Johannesburg
+toronto,Toronto,Canada,ca,43.7001,-79.4163,6551460,0.00927,62,Americas,North America,,,Toronto
+dalian,Dalian,China,cn,39.7403,122.2558,6467000,0.01885,63,Asia,Eastern Asia,,left,Dalian
+belo-horizonte,Belo Horizonte,Brazil,br,-19.9167,-43.9333,6401500,0.00784,64,Americas,South America,,left,Belo_Horizonte
+qingdao,Qingdao,China,cn,36.0663,120.3778,6325350,0.01727,65,Asia,Eastern Asia,,,Qingdao
+zhengzhou,Zhengzhou,China,cn,34.7473,113.6193,6282970,0.0206,66,Asia,Eastern Asia,,left,Zhengzhou
+abidjan,Abidjan,Ivory Coast,ci,5.3097,-4.0127,6256340,0.03293,67,Africa,Western Africa,,left,Abidjan
+addis-ababa,Addis Ababa,Ethiopia,et,9.025,38.7469,6219080,0.04405,68,Africa,Eastern Africa,,left,Addis_Ababa
+singapore,Singapore,Singapore,sg,1.2897,103.8501,6195860,0.00627,69,Asia,South-Eastern Asia,,left,Singapore
+ji-nan-shandong,Ji nan Shandong,China,cn,36.6512,116.9986,6180880,0.01896,70,Asia,Eastern Asia,,left,
+nairobi,Nairobi,Kenya,ke,-1.2833,36.8167,6002290,0.0408,71,Africa,Eastern Africa,,,Nairobi
+alexandria,Alexandria,Egypt,eg,31.2018,29.9158,5921200,0.01966,72,Africa,Northern Africa,,left,Alexandria
+yangon,Yangon,Myanmar,mm,16.8053,96.1561,5920850,0.01852,73,Asia,South-Eastern Asia,Rangoon,,Yangon
+chittagong,Chittagong,Bangladesh,bd,22.4875,91.9633,5797810,0.02553,74,Asia,Southern Asia,,,Chittagong
+hanoi,Hanoi,Vietnam,vn,21.0285,105.8542,5764980,0.02906,75,Asia,South-Eastern Asia,,left,Hanoi
+barcelona,Barcelona,Spain,es,41.3888,2.159,5752150,0.0033,76,Europe,Southern Europe,,,Barcelona
+guadalajara,Guadalajara,Mexico,mx,20.6767,-103.3475,5656180,0.01391,77,Americas,North America,,left,Guadalajara
+ankara,Ankara,Turkey,tr,39.9034,32.4331,5618890,0.01232,78,Asia,Western Asia,,,Ankara
+saint-petersburg,Saint Petersburg,Russia,ru,59.9386,30.3141,5608910,0.00207,79,Europe,Eastern Europe,,,Saint_Petersburg
+melbourne,Melbourne,Australia,au,-37.814,144.9633,5464920,0.01354,80,Oceania,Australia and New Zealand,,,Melbourne
+fukuoka,Fukuoka,Japan,jp,33.6,130.4167,5453200,-0.00233,81,Asia,Eastern Asia,Hakata,left,Fukuoka
+monterrey,Monterrey,Mexico,mx,25.6751,-100.3185,5347400,0.01423,82,Americas,North America,,,Monterrey
+sydney,Sydney,Australia,au,-33.8678,151.2073,5312640,0.01216,83,Oceania,Australia and New Zealand,,,Sydney
+urumqi,Urumqi,China,cn,43.8244,87.6139,5243920,0.02177,84,Asia,Eastern Asia,,,Urumqi
+changsha,Changsha,China,cn,28.1451,113.2384,5221630,0.0182,85,Asia,Eastern Asia,,left,Changsha
+cape-town,Cape Town,South Africa,za,-33.9258,18.4232,5147500,0.01657,86,Africa,Southern Africa,,left,Cape_Town
+jeddah,Jeddah,Saudi Arabia,sa,21.5433,39.1728,5098230,0.01526,87,Asia,Western Asia,Jeddah|Jedda,left,Jeddah
+kunming,Kunming,China,cn,25.0363,102.7086,5044260,0.01787,88,Asia,Eastern Asia,,,Kunming
+brasilia,Brasilia,Brazil,br,-15.7975,-47.8919,5040720,0.00998,89,Americas,South America,,,Brasilia
+kabul,Kabul,Afghanistan,af,34.5281,69.1723,5034110,0.03221,90,Asia,Southern Asia,,left,Kabul
+yaounde,Yaounde,Cameroon,cm,3.848,11.5021,5027120,0.03561,91,Africa,Middle Africa,,,Yaounde
+changchun,Changchun,China,cn,43.8844,125.3181,4975060,0.01718,92,Asia,Eastern Asia,,left,Changchun
+hefei,Hefei,China,cn,31.8666,117.2814,4924050,0.01944,93,Asia,Eastern Asia,,left,Hefei
+ningbo,Ningbo,China,cn,29.8622,121.6204,4869300,0.02075,94,Asia,Eastern Asia,,,Ningbo
+shantou,Shantou,China,cn,23.3564,116.6776,4815660,0.01648,95,Asia,Eastern Asia,,,Shantou
+kano,Kano,Nigeria,ng,12.0001,8.5167,4810810,0.03563,96,Africa,Western Africa,,above,Kano
+tel-aviv,Tel Aviv,Israel,il,32.0853,34.7818,4639650,0.01557,97,Asia,Western Asia,,left,Tel_Aviv
+shijiazhuang,Shijiazhuang,China,cn,38.043,114.5088,4612020,0.01699,98,Asia,Eastern Asia,,left,Shijiazhuang
+new-taipei-city,New Taipei City,Taiwan,tw,25.012,121.4654,4591080,0.00597,99,Asia,Eastern Asia,,,New_Taipei_City
+kozhikode,Kozhikode,India,in,11.2588,75.7804,4520410,0.03031,100,Asia,Southern Asia,,left,Kozhikode
+jaipur,Jaipur,India,in,27,76,4514920,0.02353,101,Asia,Southern Asia,,left,Jaipur
+douala,Douala,Cameroon,cm,4.0483,9.7043,4493090,0.03375,102,Africa,Middle Africa,,left,Douala
+kampala,Kampala,Uganda,ug,0.3163,32.5822,4491110,0.05298,103,Africa,Eastern Africa,,,Kampala
+malappuram,Malappuram,India,in,11.051,76.0711,4487920,0.03315,104,Asia,Southern Asia,,left,Malappuram
+nanning,Nanning,China,cn,22.8193,108.3627,4467920,0.01924,105,Asia,Eastern Asia,,left,Nanning
+montreal,Montreal,Canada,ca,45.5017,-73.5673,4414640,0.00853,106,Americas,North America,,,Montreal
+antananarivo,Antananarivo,Madagascar,mg,-18.8792,47.5079,4413150,0.04355,107,Africa,Eastern Africa,,,Antananarivo
+abuja,Abuja,Nigeria,ng,9.0579,7.4951,4392360,0.04333,108,Africa,Western Africa,,left,Abuja
+recife,Recife,Brazil,br,-8.0539,-34.8811,4380780,0.00846,109,Americas,South America,,,Recife
+taiyuan-shanxi,Taiyuan Shanxi,China,cn,37.8706,112.5489,4379660,0.01727,110,Asia,Eastern Asia,,left,
+rome,Rome,Italy,it,41.8919,12.5113,4361370,0.00328,111,Europe,Southern Europe,,left,Rome
+ekurhuleni,Ekurhuleni,South Africa,za,-26.1496,28.3122,4332140,0.01643,112,Africa,Southern Africa,,,Ekurhuleni
+fortaleza,Fortaleza,Brazil,br,-3.7172,-38.5431,4320440,0.0084,113,Americas,South America,,,Fortaleza
+porto-alegre,Porto Alegre,Brazil,br,-30.0328,-51.2302,4298730,0.00697,114,Americas,South America,,,Porto_Alegre
+ibadan,Ibadan,Nigeria,ng,7.3776,3.9059,4293160,0.03596,115,Africa,Western Africa,,left,Ibadan
+changzhou,Changzhou,China,cn,31.7736,119.954,4265190,0.02037,116,Asia,Eastern Asia,,,Changzhou
+lucknow,Lucknow,India,in,26.8393,80.9231,4228750,0.02325,117,Asia,Southern Asia,,,Lucknow
+medellin,Medellin,Colombia,co,6.2442,-75.5812,4208280,0.0085,118,Americas,South America,,left,Medellin
+nanchang,Nanchang,China,cn,28.6472,116.0348,4184360,0.01955,119,Asia,Eastern Asia,,,Nanchang
+wenzhou,Wenzhou,China,cn,27.9964,120.6953,4170240,0.01883,120,Asia,Eastern Asia,,left,Wenzhou
+kumasi,Kumasi,Ghana,gh,6.6885,-1.6244,4166880,0.03237,121,Africa,Western Africa,,left,Kumasi
+xiamen,Xiamen,China,cn,24.5439,118.0768,4145340,0.01657,122,Asia,Eastern Asia,,left,Xiamen
+fuzhou-fujian,Fuzhou Fujian,China,cn,26.0745,119.2965,4142350,0.01717,123,Asia,Eastern Asia,,,
+tangshan-hebei,Tangshan Hebei,China,cn,39.6292,118.1742,4111790,0.02177,124,Asia,Eastern Asia,,,
+casablanca,Casablanca,Morocco,ma,33.5884,-7.5578,4077410,0.01623,125,Africa,Northern Africa,,left,Casablanca
+salvador,Salvador,Brazil,br,-12.9711,-38.5108,4063170,0.00825,126,Americas,South America,,,Salvador
+bekasi,Bekasi,Indonesia,id,-6.2349,106.9896,4015740,0.02284,127,Asia,South-Eastern Asia,,,Bekasi
+faisalabad,Faisalabad,Pakistan,pk,31.4155,73.0897,3988600,0.0246,128,Asia,Southern Asia,,left,Faisalabad
+port-harcourt,Port Harcourt,Nigeria,ng,4.75,7,3951670,0.04162,129,Africa,Western Africa,,left,Port_Harcourt
+curitiba,Curitiba,Brazil,br,-25.4278,-49.2731,3923290,0.00878,130,Americas,South America,,left,Curitiba
+los-angeles,Los Angeles,United States,us,34.0522,-118.2437,3869891,-0.0011,131,Americas,North America,,,Los_Angeles
+thrissur,Thrissur,India,in,10.5276,76.2144,3827760,0.02897,132,Asia,Southern Asia,,left,Thrissur
+guiyang,Guiyang,China,cn,26.65,106.6246,3806320,0.01862,133,Asia,Eastern Asia,,,Guiyang
+dakar,Dakar,Senegal,sn,14.6937,-17.4441,3783530,0.03414,134,Africa,Western Africa,,,Dakar
+santo-domingo,Santo Domingo,Dominican Republic,do,18.4719,-69.8923,3706050,0.01588,135,Americas,Caribbean,,below,Santo_Domingo
+kochi,Kochi,India,in,9.9312,76.2673,3699150,0.02624,136,Asia,Southern Asia,,left,Kochi
+ouagadougou,Ouagadougou,Burkina Faso,bf,12.3657,-1.5339,3689330,0.04786,137,Africa,Western Africa,,,Ouagadougou
+asuncion,Asuncion,Paraguay,py,-25.2867,-57.647,3685660,0.01611,138,Americas,South America,,,Asuncion
+sanaa,Sanaa,Yemen,ye,15.3547,44.2067,3650950,0.03502,139,Asia,Western Asia,,,Sanaa
+lusaka,Lusaka,Zambia,zm,-15.4067,28.2871,3621320,0.04335,140,Africa,Eastern Africa,,,Lusaka
+wuxi,Wuxi,China,cn,31.57,120.29,3617260,0.01636,141,Asia,Eastern Asia,,,Wuxi
+berlin,Berlin,Germany,de,52.5244,13.4105,3584240,0.00113,142,Europe,Western Europe,,,Berlin
+indore,Indore,India,in,22.6667,75.75,3570830,0.02527,143,Asia,Southern Asia,,,Indore
+campinas,Campinas,Brazil,br,-22.9056,-47.0608,3522400,0.00883,144,Americas,South America,,above,Campinas
+mashhad,Mashhad,Iran,ir,36.3156,59.568,3503160,0.01228,145,Asia,Southern Asia,,,Mashhad
+busan,Busan,South Korea,kr,35.1017,129.03,3492730,0.00238,146,Asia,Eastern Asia,,,Busan
+lanzhou,Lanzhou,China,cn,36.4744,103.7332,3491820,0.01776,147,Asia,Eastern Asia,,,Lanzhou
+puebla,Puebla,Mexico,mx,19.0379,-98.2035,3491350,0.01396,148,Americas,North America,,below,Puebla
+kuwait-city,Kuwait City,Kuwait,kw,29.3697,47.9783,3452520,0.01396,149,Asia,Western Asia,,,Kuwait_City
+kanpur,Kanpur,India,in,26.4652,80.3498,3410920,0.01959,150,Asia,Southern Asia,,left,Kanpur
+durban,Durban,South Africa,za,-29.8579,31.0292,3343940,0.01298,151,Africa,Southern Africa,,,Durban
+bamako,Bamako,Mali,ml,12.65,-8,3318010,0.04329,152,Africa,Western Africa,,,Bamako
+guatemala-city,Guatemala City,Guatemala,gt,14.6407,-90.5133,3304800,0.02324,153,Americas,Central America,,left,Guatemala_City
+mbuji-mayi,Mbuji-Mayi,DR Congo,cd,-6.15,23.6,3298080,0.04424,154,Africa,Middle Africa,Mbujimayi,,Mbuji-Mayi
+guayaquil,Guayaquil,Ecuador,ec,-2.1962,-79.8862,3296860,0.01606,155,Americas,South America,,,Guayaquil
+depok,Depok,Indonesia,id,-6.4,106.8186,3296680,0.02436,156,Asia,South-Eastern Asia,,left,Depok
+nagpur,Nagpur,India,in,21.1463,79.0849,3237750,0.02131,157,Asia,Southern Asia,,left,Nagpur
+pyongyang,Pyongyang,North Korea,kp,39.0339,125.7543,3235960,0.00831,158,Asia,Eastern Asia,,,Pyongyang
+coimbatore,Coimbatore,India,in,10.8,77.09,3234160,0.02388,159,Asia,Southern Asia,,,Coimbatore
+handan,Handan,China,cn,36.6108,114.4857,3224510,0.02073,160,Asia,Eastern Asia,,left,Handan
+huaian,Huaian,China,cn,33.501,119.023,3223170,0.02256,161,Asia,Eastern Asia,,,Huaian
+port-au-prince,Port-au-Prince,Haiti,ht,18.5392,-72.335,3205770,0.0232,162,Americas,Caribbean,,left,Port-au-Prince
+lubumbashi,Lubumbashi,DR Congo,cd,-11.6609,27.4794,3193860,0.04329,163,Africa,Middle Africa,,left,Lubumbashi
+surabaya,Surabaya,Indonesia,id,-7.2492,112.7508,3189960,0.01668,164,Asia,South-Eastern Asia,,,Surabaya
+izmir,Izmir,Turkey,tr,38.4192,27.1287,3184030,0.01013,165,Asia,Western Asia,,,Izmir
+milan,Milan,Italy,it,45.4643,9.1895,3174960,0.00237,166,Europe,Southern Europe,,left,Milan
+thiruvananthapuram,Thiruvananthapuram,India,in,8.5241,76.9366,3156950,0.02748,167,Asia,Southern Asia,,,Thiruvananthapuram
+athens,Athens,Greece,gr,37.9838,23.7278,3156620,0.00041,168,Europe,Southern Europe,,left,Athens
+dubai,Dubai,United Arab Emirates,ae,25.0657,55.1713,3138550,0.01419,169,Asia,Western Asia,,left,Dubai
+zhongshan,Zhongshan,China,cn,26.5779,104.8407,3137750,0.01418,170,Asia,Eastern Asia,,left,Zhongshan
+weifang,Weifang,China,cn,36.7072,119.1557,3127020,0.02047,171,Asia,Eastern Asia,,,Weifang
+algiers,Algiers,Algeria,dz,36.7323,3.0875,3056970,0.01759,172,Africa,Northern Africa,,,Algiers
+caracas,Caracas,Venezuela,ve,10.5,-66.9333,3041600,0.00879,173,Americas,South America,,above,Caracas
+lisbon,Lisbon,Portugal,pt,38.7263,-9.1484,3040920,0.00418,174,Europe,Southern Europe,,,Lisbon
+kiev,Kiev,Ukraine,ua,50.4547,30.5238,3015780,-0.00079,175,Europe,Eastern Europe,Kyiv,,Kiev
+pretoria,Pretoria,South Africa,za,-25.7449,28.1878,3015320,0.02027,176,Africa,Southern Africa,,left,Pretoria
+shaoxing,Shaoxing,China,cn,29.9992,120.5769,3013160,0.02095,177,Asia,Eastern Asia,,,Shaoxing
+mogadishu,Mogadishu,Somalia,so,2.0371,45.3438,2969320,0.04318,178,Africa,Eastern Africa,,,Mogadishu
+goiania,Goiania,Brazil,br,-16.6869,-49.2648,2959070,0.01093,179,Americas,South America,,left,Goiania
+yantai,Yantai,China,cn,37.4619,121.4425,2956420,0.01999,180,Asia,Eastern Asia,,,Yantai
+huizhou,Huizhou,China,cn,29.9222,118.0969,2948280,0.01986,181,Asia,Eastern Asia,,left,Huizhou
+cali,Cali,Colombia,co,3.4103,-76.581,2942690,0.00888,182,Americas,South America,,,Cali
+zibo,Zibo,China,cn,36.813,118.0488,2922540,0.01612,183,Asia,Eastern Asia,,,Zibo
+damascus,Damascus,Syria,sy,33.5102,36.2913,2921710,0.04348,184,Asia,Western Asia,,,Damascus
+shizuoka,Shizuoka,Japan,jp,34.9833,138.3833,2921450,-0.00298,185,Asia,Eastern Asia,,below,Shizuoka
+brazzaville,Brazzaville,Republic of the Congo,cg,-4.2661,15.2832,2904570,0.03238,186,Africa,Middle Africa,,above,Brazzaville
+incheon,Incheon,South Korea,kr,37.4565,126.7052,2884820,0.00387,187,Asia,Eastern Asia,,left,Incheon
+accra,Accra,Ghana,gh,5.556,-0.1969,2861000,0.02604,188,Africa,Western Africa,,left,Accra
+manchester,Manchester,United Kingdom,gb,53.4167,-2.25,2853370,0.00734,189,Europe,Northern Europe,,below,Manchester
+bandung,Bandung,Indonesia,id,-6.9222,107.6069,2804750,0.01691,190,Asia,South-Eastern Asia,,,Bandung
+taipei,Taipei,Taiwan,tw,25.0478,121.5319,2792490,0.00478,191,Asia,Eastern Asia,,,Taipei
+luoyang,Luoyang,China,cn,34.6197,112.4477,2779070,0.01963,192,Asia,Eastern Asia,,left,Luoyang
+toluca-de-lerdo,Toluca de Lerdo,Mexico,mx,19.2826,-99.6557,2762050,0.01564,193,Americas,North America,,left,Toluca_de_Lerdo
+bhopal,Bhopal,India,in,23.2547,77.4029,2748760,0.02326,194,Asia,Southern Asia,,,Bhopal
+patna,Patna,India,in,25.4167,85.1667,2748390,0.02188,195,Asia,Southern Asia,,,Patna
+vancouver,Vancouver,Canada,ca,49.2497,-123.1193,2733340,0.00939,196,Americas,North America,,,Vancouver
+birmingham,Birmingham,United Kingdom,gb,52.4814,-1.8998,2724410,0.00732,197,Europe,Northern Europe,,left,Birmingham
+chicago,Chicago,United States,us,41.85,-87.65,2709364,-0.0022,198,Americas,North America,,,Chicago
+tashkent,Tashkent,Uzbekistan,uz,41.2647,69.2163,2697410,0.01213,199,Asia,Central Asia,,left,Tashkent
+tangerang,Tangerang,Indonesia,id,-6.2,106.4667,2680800,0.02063,200,Asia,South-Eastern Asia,,left,Tangerang
+nantong,Nantong,China,cn,32.0303,120.8747,2666220,0.02007,201,Asia,Eastern Asia,,,Nantong
+sapporo,Sapporo,Japan,jp,43.0619,141.3543,2645940,-0.00288,202,Asia,Eastern Asia,,,Sapporo
+peshawar,Peshawar,Pakistan,pk,34.008,71.5785,2617160,0.02677,203,Asia,Southern Asia,,left,Peshawar
+gujranwala,Gujranwala,Pakistan,pk,32.1557,74.1871,2608940,0.02571,204,Asia,Southern Asia,,left,Gujranwala
+brisbane,Brisbane,Australia,au,-27.4679,153.0281,2599740,0.01229,205,Oceania,Australia and New Zealand,,left,Brisbane
+tunis,Tunis,Tunisia,tn,36.819,10.1658,2578460,0.01314,206,Africa,Northern Africa,,,Tunis
+medan,Medan,Indonesia,id,3.5833,98.6667,2565940,0.01759,207,Asia,South-Eastern Asia,,left,Medan
+aleppo,Aleppo,Syria,sy,36.2012,37.1612,2560190,0.04991,208,Asia,Western Asia,,,Aleppo
+hohhot,Hohhot,China,cn,40.8185,111.6602,2552380,0.02057,209,Asia,Eastern Asia,,left,Hohhot
+rawalpindi,Rawalpindi,Pakistan,pk,33.5973,73.0479,2545590,0.02374,210,Asia,Southern Asia,,left,Rawalpindi
+agra,Agra,India,in,27.1833,78.0167,2535490,0.02306,211,Asia,Southern Asia,,left,Agra
+baku,Baku,Azerbaijan,az,40.3777,49.892,2529070,0.01305,212,Asia,Western Asia,,,Baku
+kannur,Kannur,India,in,11.8745,75.3704,2524680,0.02415,213,Asia,Southern Asia,,left,Kannur
+phnom-penh,Phnom Penh,Cambodia,kh,11.5625,104.916,2498640,0.03003,214,Asia,South-Eastern Asia,,left,Phnom_Penh
+visakhapatnam,Visakhapatnam,India,in,17.6801,83.2016,2496820,0.02311,215,Asia,Southern Asia,,,Visakhapatnam
+liuzhou,Liuzhou,China,cn,25.001,109.3414,2493840,0.01888,216,Asia,Eastern Asia,,left,Liuzhou
+vadodara,Vadodara,India,in,22.2994,73.2081,2478540,0.02211,217,Asia,Southern Asia,,,Vadodara
+belem,Belem,Brazil,br,-1.4558,-48.5044,2474300,0.00835,218,Americas,South America,,,Belem
+baotou,Baotou,China,cn,40.6175,109.9449,2467750,0.01734,219,Asia,Eastern Asia,,,Baotou
+maracaibo,Maracaibo,Venezuela,ve,10.6666,-71.6124,2462670,0.01243,220,Americas,South America,,above,Maracaibo
+manaus,Manaus,Brazil,br,-3.0436,-60.0128,2459370,0.01016,221,Americas,South America,,,Manaus
+houston,Houston,United States,us,29.7633,-95.3633,2435715,0.0097,222,Americas,North America,,,Houston
+san-juan,San Juan,Puerto Rico,pr,18.4632,-66.1148,2430740,-0.00121,223,Americas,Caribbean,,,San_Juan
+barranquilla,Barranquilla,Colombia,co,10.9685,-74.7813,2418670,0.00929,224,Americas,South America,,left,Barranquilla
+xuzhou,Xuzhou,China,cn,28.5869,104.7187,2417200,0.01732,225,Asia,Eastern Asia,,left,Xuzhou
+vijayawada,Vijayawada,India,in,16.5075,80.6466,2409770,0.02513,226,Asia,Southern Asia,,,Vijayawada
+nashik,Nashik,India,in,19.9973,73.791,2408010,0.02419,227,Asia,Southern Asia,,left,Nashik
+taoyuan,Taoyuan,Taiwan,tw,24.895,121.2461,2372680,0.00682,228,Asia,Eastern Asia,,,Taoyuan
+putian,Putian,China,cn,25.4966,118.8501,2371140,0.02424,229,Asia,Eastern Asia,,,Putian
+tijuana,Tijuana,Mexico,mx,32.5022,-116.9721,2367770,0.01481,230,Americas,North America,,left,Tijuana
+beirut,Beirut,Lebanon,lb,33.8933,35.5016,2359130,-0.00849,231,Asia,Western Asia,,left,Beirut
+isfahan,Isfahan,Iran,ir,32.2667,52.45,2358700,0.01319,232,Asia,Southern Asia,Isfahan|Esfahan,,Isfahan
+sendai,Sendai,Japan,jp,38.2667,140.8667,2330920,-0.00285,233,Asia,Eastern Asia,,,Sendai
+conakry,Conakry,Guinea,gn,9.538,-13.6773,2329710,0.0347,234,Africa,Western Africa,,left,Conakry
+kollam,Kollam,India,in,8.8932,76.6141,2317980,0.02922,235,Asia,Southern Asia,,,Kollam
+multan,Multan,Pakistan,pk,30.1968,71.4782,2313390,0.02436,236,Asia,Southern Asia,,left,Multan
+wuhu-anhui,Wuhu Anhui,China,cn,31.334,118.3622,2310960,0.02381,237,Asia,Eastern Asia,,left,
+amman,Amman,Jordan,jo,31.9552,35.945,2295250,0.00968,238,Asia,Western Asia,,below,Amman
+yangzhou,Yangzhou,China,cn,32.3972,119.4358,2255980,0.01767,239,Asia,Eastern Asia,,left,Yangzhou
+mecca,Mecca,Saudi Arabia,sa,21.4266,39.8256,2252000,0.01506,240,Asia,Western Asia,,,Mecca
+grande-vitoria,Grande Vitoria,Brazil,br,-20.3155,-40.3128,2242010,0.00966,241,Americas,South America,,,
+taizhou-zhejiang,Taizhou Zhejiang,China,cn,28.6583,121.4221,2240910,0.01927,242,Asia,Eastern Asia,,,
+baoding,Baoding,China,cn,38.858,115.4907,2228190,0.01741,243,Asia,Eastern Asia,,left,Baoding
+rajkot,Rajkot,India,in,22.3333,70.8333,2203310,0.02464,244,Asia,Southern Asia,,left,Rajkot
+linyi-shandong,Linyi Shandong,China,cn,35.1042,118.3564,2200140,0.01791,245,Asia,Eastern Asia,,,
+perth,Perth,Australia,au,-31.9522,115.8614,2195090,0.01194,246,Oceania,Australia and New Zealand,,,Perth
+naples,Naples,Italy,it,40.8522,14.2681,2185610,0.00158,247,Europe,Southern Europe,,,Naples
+daegu,Daegu,South Korea,kr,35.8703,128.5911,2184070,0.00137,248,Asia,Eastern Asia,,left,Daegu
+lome,Lome,Togo,tg,6.1375,1.2123,2179210,0.03342,249,Africa,Western Africa,,left,Lome
+bursa,Bursa,Turkey,tr,40.1885,29.061,2168130,0.01192,250,Asia,Western Asia,,left,Bursa
+havana,Havana,Cuba,cu,23.133,-82.383,2160390,0.00187,251,Americas,Caribbean,,,Havana
+brussels,Brussels,Belgium,be,50.8505,4.3488,2150320,0.00411,252,Europe,Western Europe,,below,Brussels
+haikou,Haikou,China,cn,20.0462,110.1957,2132010,0.01746,253,Asia,Eastern Asia,,,Haikou
+daqing,Daqing,China,cn,46.324,124.5598,2123650,0.01831,254,Asia,Eastern Asia,,left,Daqing
+lianyungang,Lianyungang,China,cn,34.5966,119.2216,2121860,0.01973,255,Asia,Eastern Asia,,,Lianyungang
+benin-city,Benin City,Nigeria,ng,6.3382,5.6258,2120460,0.03708,256,Africa,Western Africa,,left,Benin_City
+yancheng-jiangsu,Yancheng Jiangsu,China,cn,33.3477,120.1631,2109830,0.01765,257,Asia,Eastern Asia,,,
+hyderabad-pk,Hyderabad,Pakistan,pk,25.3924,68.3737,2107790,0.02383,258,Asia,Southern Asia,,,Hyderabad
+panama-city,Panama City,Panama,pa,8.9936,-79.5197,2093270,0.01885,259,Americas,Central America,,,Panama_City
+semarang,Semarang,Indonesia,id,-6.9931,110.4208,2091480,0.01904,260,Asia,South-Eastern Asia,,,Semarang
+davao-city,Davao City,Philippines,ph,7.2542,125.1214,2077050,0.02117,261,Asia,South-Eastern Asia,,,Davao_City
+minsk,Minsk,Belarus,by,53.9,27.5667,2075900,0.0024,262,Europe,Eastern Europe,,,Minsk
+ludhiana,Ludhiana,India,in,30.912,75.8538,2071490,0.0211,263,Asia,Southern Asia,,,Ludhiana
+can-tho,Can Tho,Vietnam,vn,10.0333,105.7833,2071270,0.03177,264,Asia,South-Eastern Asia,,left,Can_Tho
+almaty,Almaty,Kazakhstan,kz,43.2567,76.9286,2068030,0.01273,265,Asia,Central Asia,,,Almaty
+matola,Matola,Mozambique,mz,-25.9622,32.4589,2060790,0.03836,266,Africa,Eastern Africa,,left,Matola
+rabat,Rabat,Morocco,ma,34.0133,-6.8325,2054190,0.01644,267,Africa,Northern Africa,,above,Rabat
+valencia-ve,Valencia,Venezuela,ve,10.162,-68.0076,2054030,0.01144,268,Americas,South America,,below,Valencia
+hiroshima,Hiroshima,Japan,jp,34.4,132.45,2053290,-0.00238,269,Asia,Eastern Asia,,,Hiroshima
+quito,Quito,Ecuador,ec,-0.2298,-78.5249,2048670,0.01557,270,Americas,South America,,,Quito
+la-paz,La Paz,Bolivia,bo,-16.5,-68.15,2030730,0.0167,271,Americas,South America,,,La_Paz
+vienna,Vienna,Austria,at,48.2085,16.3721,2020320,0.00739,272,Europe,Central Europe,,left,Vienna
+quanzhou,Quanzhou,China,cn,25.1902,118.3387,2007700,0.02088,273,Asia,Eastern Asia,,left,Quanzhou
+zhuhai,Zhuhai,China,cn,22.2737,113.5721,2004290,0.01812,274,Asia,Eastern Asia,,,Zhuhai
+baixada-santista,Baixada Santista,Brazil,br,-23.9608,-46.3336,1997810,0.00808,275,Americas,South America,,below,Baixada_Santista
+datong,Datong,China,cn,32.6388,117.0376,1986680,0.01806,276,Asia,Eastern Asia,,left,Datong
+leon-de-los-aldamas,Leon de los Aldamas,Mexico,mx,21.1221,-101.6811,1976380,0.01333,277,Americas,North America,,left,
+raipur,Raipur,India,in,21.2562,81.6902,1974130,0.02635,278,Asia,Southern Asia,,,Raipur
+west-yorkshire,West Yorkshire,United Kingdom,gb,53.7997,-1.5491,1970570,0.00721,279,Europe,Northern Europe,,left,West_Yorkshire
+mosul,Mosul,Iraq,iq,36.335,43.1189,1961360,0.03005,280,Asia,Western Asia,,left,Mosul
+madurai,Madurai,India,in,9.89,78.03,1953270,0.02177,281,Asia,Southern Asia,,,Madurai
+sharjah,Sharjah,United Arab Emirates,ae,25.3374,55.4121,1944620,0.01816,282,Asia,Western Asia,,,Sharjah
+cixi,Cixi,China,cn,30.173,121.2623,1926680,0.0216,283,Asia,Eastern Asia,,,Cixi
+santa-cruz,Santa Cruz,Bolivia,bo,-17.7833,-63.1821,1926610,0.01871,284,Americas,South America,,,Santa_Cruz
+palembang,Palembang,Indonesia,id,-2.9167,104.7458,1923140,0.01877,285,Asia,South-Eastern Asia,,,Palembang
+meerut,Meerut,India,in,28.9167,77.6833,1916080,0.02197,286,Asia,Southern Asia,,,Meerut
+batam,Batam,Indonesia,id,1.1494,104.0249,1906820,0.02577,287,Asia,South-Eastern Asia,,,Batam
+la-laguna,La Laguna,Mexico,mx,25.5428,-103.4068,1902430,0.01921,288,Americas,North America,,left,La_Laguna
+adana,Adana,Turkey,tr,36.9976,35.1233,1896710,0.0106,289,Asia,Western Asia,,above,Adana
+kananga,Kananga,DR Congo,cd,-5.8963,22.4167,1895450,0.04389,290,Africa,Middle Africa,,above,Kananga
+gaziantep,Gaziantep,Turkey,tr,37.0662,37.3833,1882390,0.01274,291,Asia,Western Asia,,,Gaziantep
+varanasi,Varanasi,India,in,25.3167,83.0104,1865080,0.0214,292,Asia,Southern Asia,,below,Varanasi
+monrovia,Monrovia,Liberia,lr,6.3005,-10.7969,1855880,0.03412,293,Africa,Western Africa,,,Monrovia
+jiangmen,Jiangmen,China,cn,22.5817,113.0761,1855070,0.01563,294,Asia,Eastern Asia,,left,Jiangmen
+onitsha,Onitsha,Nigeria,ng,6.1498,6.7857,1839880,0.04118,295,Africa,Western Africa,,left,Onitsha
+yichang,Yichang,China,cn,30.6941,111.2804,1838240,0.02101,296,Asia,Eastern Asia,,left,Yichang
+tiruppur,Tiruppur,India,in,11.1154,77.3546,1833070,0.02768,297,Asia,Southern Asia,,,Tiruppur
+xiangyang,Xiangyang,China,cn,32.009,112.122,1830460,0.01593,298,Asia,Eastern Asia,,left,Xiangyang
+yinchuan,Yinchuan,China,cn,38.4852,106.2262,1830390,0.01933,299,Asia,Eastern Asia,,left,Yinchuan
+suqian,Suqian,China,cn,33.9333,118.2833,1825160,0.0256,300,Asia,Eastern Asia,,,Suqian
+srinagar,Srinagar,India,in,34.0857,74.8056,1818570,0.02304,301,Asia,Southern Asia,,,Srinagar
+turin,Turin,Italy,it,45.0705,7.6868,1814300,0.00246,302,Europe,Southern Europe,,left,Turin
+aurangabad,Aurangabad,India,in,19.8847,75.3399,1809600,0.02392,303,Asia,Southern Asia,,,Aurangabad
+jamshedpur,Jamshedpur,India,in,22.8028,86.1855,1806600,0.02197,304,Asia,Southern Asia,,left,Jamshedpur
+warsaw,Warsaw,Poland,pl,52.2298,21.0118,1800190,-0.00002,305,Europe,Central Europe,,,Warsaw
+lyon,Lyon,France,fr,45.7485,4.8467,1799720,0.00699,306,Europe,Western Europe,,,Lyon
+qinhuangdao,Qinhuangdao,China,cn,39.9396,119.5894,1798180,0.02006,307,Asia,Eastern Asia,,,Qinhuangdao
+montevideo,Montevideo,Uruguay,uy,-34.9033,-56.1882,1794810,0.00371,308,Americas,South America,,,Montevideo
+n-djamena,N'Djamena,Chad,td,12.1348,15.0557,1793990,0.04133,309,Africa,Middle Africa,N'Djamena|Ndjamena,,N'Djamena
+hamburg,Hamburg,Germany,de,53.5753,10.0153,1788890,0.00066,310,Europe,Western Europe,,left,Hamburg
+shiraz,Shiraz,Iran,ir,29.6103,52.5311,1784280,0.01155,311,Asia,Southern Asia,,,Shiraz
+budapest,Budapest,Hungary,hu,47.4984,19.0405,1783650,0.00079,312,Europe,Central Europe,,,Budapest
+anyang,Anyang,China,cn,35.9901,114.5097,1778260,0.0228,313,Asia,Eastern Asia,,left,Anyang
+xining,Xining,China,cn,36.8245,101.4408,1773780,0.01891,314,Asia,Eastern Asia,,left,Xining
+hengyang,Hengyang,China,cn,26.8971,112.5666,1772860,0.01944,315,Asia,Eastern Asia,,left,Hengyang
+makassar,Makassar,Indonesia,id,-5.1486,119.4319,1770180,0.01887,316,Asia,South-Eastern Asia,,,Makassar
+anshan,Anshan,China,cn,40.8222,122.8275,1763740,0.01456,317,Asia,Eastern Asia,,left,Anshan
+stockholm,Stockholm,Sweden,se,59.3326,18.0649,1754720,0.00976,318,Europe,Northern Europe,,,Stockholm
+bucharest,Bucharest,Romania,ro,44.4323,26.1063,1749920,-0.00499,319,Europe,Southeast Europe,,,Bucharest
+ulaanbaatar,Ulaanbaatar,Mongolia,mn,47.8915,106.7367,1749380,0.0142,320,Asia,Eastern Asia,,,Ulaanbaatar
+jilin,Jilin,China,cn,43.835,126.5439,1744980,0.01493,321,Asia,Eastern Asia,,,Jilin
+glasgow,Glasgow,United Kingdom,gb,55.8652,-4.2576,1730280,0.0066,322,Europe,Northern Europe,,left,Glasgow
+muscat,Muscat,Oman,om,23.5841,58.4078,1730080,0.01619,323,Asia,Western Asia,,,Muscat
+auckland,Auckland,New Zealand,nz,-36.8485,174.7635,1728480,0.01014,324,Oceania,Australia and New Zealand,,,Auckland
+kathmandu,Kathmandu,Nepal,np,27.709,85.2849,1724800,0.03102,325,Asia,Southern Asia,,left,Kathmandu
+qiqihar,Qiqihar,China,cn,47.35,123.9667,1715900,0.01569,326,Asia,Eastern Asia,Qiqihar,left,Qiqihar
+tabriz,Tabriz,Iran,ir,38.08,46.2919,1713390,0.01045,327,Asia,Southern Asia,,,Tabriz
+novosibirsk,Novosibirsk,Russia,ru,55.0415,82.9346,1710440,0.00221,328,Europe,Eastern Europe,,,Novosibirsk
+calgary,Calgary,Canada,ca,51.0501,-114.0853,1708630,0.01228,329,Americas,North America,,,Calgary
+jodhpur,Jodhpur,India,in,26.75,72.75,1703860,0.0237,330,Asia,Southern Asia,,left,Jodhpur
+phoenix,Phoenix,United States,us,33.4484,-112.074,1703449,0.0092,331,Americas,North America,,,Phoenix
+tegucigalpa,Tegucigalpa,Honduras,hn,14.0818,-87.2068,1691030,0.02469,332,Americas,Central America,,,Tegucigalpa
+nouakchott,Nouakchott,Mauritania,mr,18.0735,-15.9582,1674250,0.03801,333,Africa,Western Africa,,,Nouakchott
+harare,Harare,Zimbabwe,zw,-17.8277,31.0534,1667410,0.02106,334,Africa,Eastern Africa,,,Harare
+ranchi,Ranchi,India,in,23.3432,85.3094,1659720,0.02343,335,Asia,Southern Asia,,left,Ranchi
+cordoba,Cordoba,Argentina,ar,-31.4135,-64.1811,1655500,0.00908,336,Americas,South America,,,Cordoba
+marseille,Marseille,France,fr,43.297,5.3811,1654100,0.00577,337,Europe,Western Europe,,left,Marseille
+medina,Medina,Saudi Arabia,sa,24.4686,39.6142,1649680,0.0154,338,Asia,Western Asia,,,Medina
+rosario,Rosario,Argentina,ar,-32.9468,-60.6393,1648320,0.01056,339,Americas,South America,,,Rosario
+jining-shandong,Jining Shandong,China,cn,35.4,116.5867,1647990,0.01585,340,Asia,Eastern Asia,,left,
+ciudad-juarez,Ciudad Juarez,Mexico,mx,31.6904,-106.4245,1647840,0.01344,341,Americas,North America,,,Ciudad_Juarez
+abu-dhabi,Abu Dhabi,United Arab Emirates,ae,24.4136,54.433,1643560,0.01533,342,Asia,Western Asia,,left,Abu_Dhabi
+kota,Kota,India,in,25.1751,75.8441,1639630,0.02519,343,Asia,Southern Asia,,left,Kota
+niamey,Niamey,Niger,ne,13.5136,2.1089,1633200,0.04592,344,Africa,Western Africa,,left,Niamey
+homs,Homs,Syria,sy,34.7268,36.7234,1631590,0.04348,345,Asia,Western Asia,,,Homs
+karaj,Karaj,Iran,ir,35.8327,50.9915,1627960,0.00824,346,Asia,Southern Asia,,,Karaj
+zhangjiakou,Zhangjiakou,China,cn,40.8171,114.8783,1626900,0.01779,347,Asia,Eastern Asia,,left,Zhangjiakou
+mandalay,Mandalay,Myanmar,mm,21.9747,96.0836,1625870,0.0198,348,Asia,South-Eastern Asia,,,Mandalay
+jabalpur,Jabalpur,India,in,23.16,79.95,1615460,0.02102,349,Asia,Southern Asia,,,Jabalpur
+mombasa,Mombasa,Kenya,ke,-4.0547,39.6636,1614940,0.03958,350,Africa,Eastern Africa,,,Mombasa
+kisangani,Kisangani,DR Congo,cd,0.5153,25.191,1612770,0.04272,351,Africa,Middle Africa,,,Kisangani
+edmonton,Edmonton,Canada,ca,53.5501,-113.4687,1607720,0.01204,352,Americas,North America,,,Edmonton
+asansol,Asansol,India,in,23.6833,86.9667,1598450,0.02118,353,Asia,Southern Asia,,left,Asansol
+yiwu,Yiwu,China,cn,29.3065,120.075,1597590,0.02159,354,Asia,Eastern Asia,,left,Yiwu
+munich,Munich,Germany,de,48.1374,11.5755,1596050,0.00324,355,Europe,Western Europe,,,Munich
+natal,Natal,Brazil,br,-5.8101,-35.2267,1591510,0.01045,356,Americas,South America,,,Natal
+daejon,Daejon,South Korea,kr,36.3504,127.3845,1590840,0.00294,357,Asia,Eastern Asia,,,Daejon
+huainan,Huainan,China,cn,32.5867,117.013,1589370,0.01601,358,Asia,Eastern Asia,,left,Huainan
+ganzhou,Ganzhou,China,cn,25.831,114.933,1587450,0.02379,359,Asia,Eastern Asia,,,Ganzhou
+gwalior,Gwalior,India,in,26.2298,78.1734,1578940,0.02296,360,Asia,Southern Asia,,left,Gwalior
+kaohsiung,Kaohsiung,Taiwan,tw,22.6273,120.3014,1573030,0.00458,361,Asia,Eastern Asia,Kaohsiung,,Kaohsiung
+san-antonio,San Antonio,United States,us,29.4241,-98.4936,1570314,0.0146,362,Americas,North America,,left,San_Antonio
+chaozhou,Chaozhou,China,cn,23.6566,116.6204,1569150,0.01558,363,Asia,Eastern Asia,,,Chaozhou
+basra,Basra,Iraq,iq,30.5085,47.7804,1566370,0.02736,364,Asia,Western Asia,,left,Basra
+philadelphia,Philadelphia,United States,us,39.9523,-75.1638,1560480,-0.0042,365,Americas,North America,,left,Philadelphia
+grande-sao-luis,Grande Sao Luis,Brazil,br,-2.5297,-44.2826,1560150,0.00771,366,Americas,South America,,left,
+allahabad,Allahabad,India,in,25.45,81.85,1555900,0.02115,367,Asia,Southern Asia,,left,Allahabad
+jiaxing,Jiaxing,China,cn,30.7474,120.7511,1546760,0.02336,368,Asia,Eastern Asia,,,Jiaxing
+hai-phong,Hai Phong,Vietnam,vn,20.8449,106.6881,1543660,0.02643,369,Asia,South-Eastern Asia,,left,Hai_Phong
+amritsar,Amritsar,India,in,31.67,74.84,1543480,0.02142,370,Asia,Southern Asia,,above,Amritsar
+gwangju,Gwangju,South Korea,kr,35.1547,126.9156,1540890,0.00271,371,Asia,Eastern Asia,,left,Gwangju
+yekaterinburg,Yekaterinburg,Russia,ru,56.8519,60.6122,1540000,0.00195,372,Europe,Eastern Europe,,left,Yekaterinburg
+taizhou-jiangsu,Taizhou Jiangsu,China,cn,32.4906,119.9148,1533860,0.01803,373,Asia,Eastern Asia,,,
+weihai,Weihai,China,cn,37.5121,122.1153,1529560,0.02014,374,Asia,Eastern Asia,,,Weihai
+san-jose-cr,San Jose,Costa Rica,cr,9.9281,-84.0907,1522380,0.01314,375,Americas,Central America,,,San_Jose
+uyo,Uyo,Nigeria,ng,5.0513,7.9335,1520020,0.04324,376,Africa,Western Africa,,,Uyo
+mwanza,Mwanza,Tanzania,tz,-2.5167,32.9,1518810,0.04938,377,Africa,Eastern Africa,,,Mwanza
+liuyang,Liuyang,China,cn,28.2179,113.7002,1516590,0.02724,378,Asia,Eastern Asia,,,Liuyang
+chon-buri,Chon Buri,Thailand,th,13.3611,100.9847,1509580,0.01234,379,Asia,South-Eastern Asia,,,Chon_Buri
+liuan,Liuan,China,cn,31.7556,116.5139,1508410,0.02526,380,Asia,Eastern Asia,,left,Liuan
+kaifeng,Kaifeng,China,cn,34.6042,114.4972,1497220,0.02028,381,Asia,Eastern Asia,,left,Kaifeng
+taian-shandong,Taian Shandong,China,cn,36.2,117.0867,1491450,0.01656,382,Asia,Eastern Asia,,,
+cochabamba,Cochabamba,Bolivia,bo,-17.3895,-66.1568,1489160,0.01978,383,Americas,South America,,left,Cochabamba
+rizhao,Rizhao,China,cn,35.4179,119.5214,1488120,0.02004,384,Asia,Eastern Asia,,,Rizhao
+queretaro,Queretaro,Mexico,mx,20.5888,-100.3899,1480860,0.01478,385,Americas,North America,,,Queretaro
+ottawa,Ottawa,Canada,ca,45.4112,-75.6981,1479860,0.00961,386,Americas,North America,,left,Ottawa
+nanchong,Nanchong,China,cn,31.2102,106.2317,1473860,0.0201,387,Asia,Eastern Asia,,,Nanchong
+dhanbad,Dhanbad,India,in,23.802,86.4432,1471280,0.02045,388,Asia,Southern Asia,,above,Dhanbad
+pointe-noire,Pointe-Noire,Republic of the Congo,cg,-4.7761,11.8635,1469190,0.032,389,Africa,Middle Africa,,left,Pointe-Noire
+konya,Konya,Turkey,tr,37.8746,32.4932,1468750,0.01283,390,Asia,Western Asia,,left,Konya
+dongying,Dongying,China,cn,37.4335,118.6689,1467100,0.01876,391,Asia,Eastern Asia,,,Dongying
+zurich,Zurich,Switzerland,ch,47.3769,8.5417,1466850,0.00808,392,Europe,Western Europe,,left,Zurich
+zunyi,Zunyi,China,cn,27.6913,106.9156,1460060,0.01815,393,Asia,Eastern Asia,,,Zunyi
+joao-pessoa,Joao Pessoa,Brazil,br,-7.1195,-34.845,1459810,0.00831,394,Americas,South America,,,Joao_Pessoa
+lilongwe,Lilongwe,Malawi,mw,-13.9669,33.7873,1456310,0.04544,395,Africa,Eastern Africa,,,Lilongwe
+zhanjiang,Zhanjiang,China,cn,21.2737,110.3548,1450230,0.01736,396,Asia,Eastern Asia,,left,Zhanjiang
+bareilly,Bareilly,India,in,28.4167,79.3833,1446270,0.02336,397,Asia,Southern Asia,,,Bareilly
+shiyan,Shiyan,China,cn,32.4527,110.5608,1445920,0.01966,398,Asia,Eastern Asia,,left,Shiyan
+abomey-calavi,Abomey-Calavi,Benin,bj,6.4499,2.3553,1434110,0.04282,399,Africa,Western Africa,,above,Abomey-Calavi
+bukavu,Bukavu,DR Congo,cd,-2.4908,28.8428,1431660,0.04544,400,Africa,Middle Africa,,left,Bukavu
+freetown,Freetown,Sierra Leone,sl,8.4871,-13.2356,1428520,0.02967,401,Africa,Western Africa,,,Freetown
+bujumbura,Bujumbura,Burundi,bi,-3.3819,29.3614,1426040,0.05621,402,Africa,Eastern Africa,,,Bujumbura
+tengzhou,Tengzhou,China,cn,35.114,117.16,1424880,0.0216,403,Asia,Eastern Asia,,,Tengzhou
+bucaramanga,Bucaramanga,Colombia,co,7.1254,-73.1198,1424660,0.00967,404,Americas,South America,,left,Bucaramanga
+mianyang-sichuan,Mianyang Sichuan,China,cn,31.4679,104.6791,1424240,0.0167,405,Asia,Eastern Asia,,left,
+nnewi,Nnewi,Nigeria,ng,6.0196,6.9173,1421790,0.04402,406,Africa,Western Africa,,,Nnewi
+belgrade,Belgrade,Serbia,rs,44.8176,20.4569,1415010,0.00146,407,Europe,Southeast Europe,,,Belgrade
+antalya,Antalya,Turkey,tr,36.8981,30.5533,1414400,0.0142,408,Asia,Western Asia,,left,Antalya
+san-diego,San Diego,United States,us,32.7157,-117.1647,1414266,0.0035,409,Americas,North America,,left,San_Diego
+kharkiv,Kharkiv,Ukraine,ua,49.9808,36.2527,1413760,-0.00145,410,Europe,Eastern Europe,,,Kharkiv
+aligarh,Aligarh,India,in,27.8333,78.1667,1413060,0.02428,411,Asia,Southern Asia,,,Aligarh
+yingkou,Yingkou,China,cn,40.6747,122.2358,1412510,0.01959,412,Asia,Eastern Asia,,left,Yingkou
+tangier,Tangier,Morocco,ma,35.7673,-5.7998,1411470,0.02189,413,Africa,Northern Africa,Tangier|Tanger,,Tangier
+samut-prakan,Samut Prakan,Thailand,th,13.599,100.5998,1410600,0.01234,414,Asia,South-Eastern Asia,,left,Samut_Prakan
+copenhagen,Copenhagen,Denmark,dk,55.6761,12.5683,1409680,0.00638,415,Europe,Northern Europe,,,Copenhagen
+qom,Qom,Iran,ir,34.6401,50.8764,1409610,0.01245,416,Asia,Southern Asia,,left,Qom
+adelaide,Adelaide,Australia,au,-34.9287,138.5986,1407600,0.01052,417,Oceania,Australia and New Zealand,,,Adelaide
+moradabad,Moradabad,India,in,28.8525,78.797,1403580,0.0246,418,Asia,Southern Asia,,,Moradabad
+taichung,Taichung,Taiwan,tw,24.1477,120.6736,1403220,0.0072,419,Asia,Eastern Asia,Taichung,,Taichung
+maceio,Maceio,Brazil,br,-9.6658,-35.735,1399310,0.00821,420,Americas,South America,,,Maceio
+ad-dammam,Ad-Dammam,Saudi Arabia,sa,26.4207,50.0888,1397440,0.01588,421,Asia,Western Asia,,left,Ad-Dammam
+suweon,Suweon,South Korea,kr,37.2636,127.0286,1397440,0.00622,422,Asia,Eastern Asia,,,Suweon
+pekan-baru,Pekan Baru,Indonesia,id,1.4667,102.1333,1393650,0.02126,423,Asia,South-Eastern Asia,,left,Pekan_Baru
+maoming,Maoming,China,cn,21.6657,110.921,1387590,0.01888,424,Asia,Eastern Asia,,left,Maoming
+joinville,Joinville,Brazil,br,-26.3044,-48.8456,1386480,0.00862,425,Americas,South America,,,Joinville
+jieyang,Jieyang,China,cn,23.5532,116.368,1385020,0.02221,426,Asia,Eastern Asia,,,Jieyang
+astana,Astana,Kazakhstan,kz,51.1801,71.446,1377290,0.01828,427,Asia,Central Asia,,,Astana
+mysore,Mysore,India,in,12.2958,76.6394,1375940,0.02246,428,Asia,Southern Asia,,left,Mysore
+kigali,Kigali,Rwanda,rw,-1.9499,30.0589,1373440,0.03279,429,Africa,Eastern Africa,,right,Kigali
+ruian,Ruian,China,cn,27.7767,120.6553,1372060,0.0202,430,Asia,Eastern Asia,,left,Ruian
+helsinki,Helsinki,Finland,fi,60.1695,24.9355,1362160,0.00537,431,Europe,Northern Europe,,,Helsinki
+fez,Fez,Morocco,ma,34.04,-4.87,1360790,0.01782,432,Africa,Northern Africa,Fez,,Fez
+jinhua,Jinhua,China,cn,29.108,119.6486,1359810,0.02242,433,Asia,Eastern Asia,,left,Jinhua
+bhubaneswar,Bhubaneswar,India,in,20.2724,85.8339,1352660,0.02404,434,Asia,Southern Asia,,,Bhubaneswar
+port-elizabeth,Port Elizabeth,South Africa,za,-33.9611,25.6149,1349290,0.01412,435,Africa,Southern Africa,,left,Port_Elizabeth
+fushun-liaoning,Fushun Liaoning,China,cn,41.8708,123.8864,1348770,0.01238,436,Asia,Eastern Asia,,,
+durg-bhilainagar,Durg-Bhilainagar,India,in,21.1904,81.2849,1342780,0.02087,437,Asia,Southern Asia,,,Durg-Bhilainagar
+baoji,Baoji,China,cn,34.361,107.2322,1342270,0.01892,438,Asia,Eastern Asia,,left,Baoji
+liupanshui,Liupanshui,China,cn,26.5964,104.828,1341760,0.02437,439,Asia,Eastern Asia,,left,Liupanshui
+ahvaz,Ahvaz,Iran,ir,31.319,48.6842,1339790,0.01131,440,Asia,Southern Asia,,,Ahvaz
+porto,Porto,Portugal,pt,41.1496,-8.611,1339000,0.0036,441,Europe,Southern Europe,,,Porto
+pingdingshan-henan,Pingdingshan Henan,China,cn,33.7659,113.1927,1337760,0.01897,442,Asia,Eastern Asia,,left,
+dallas,Dallas,United States,us,32.7831,-96.8067,1337417,0.0043,443,Americas,North America,,,Dallas
+florianopolis,Florianopolis,Brazil,br,-27.5954,-48.548,1336500,0.00956,444,Americas,South America,,,Florianopolis
+islamabad,Islamabad,Pakistan,pk,33.7215,73.0433,1335550,0.02645,445,Asia,Southern Asia,,left,Islamabad
+prague,Prague,Czechia,cz,50.088,14.4208,1335350,0.00256,446,Europe,Central Europe,,,Prague
+puning,Puning,China,cn,23.3107,116.1687,1334000,0.01877,447,Asia,Eastern Asia,,,Puning
+tasikmalaya,Tasikmalaya,Indonesia,id,-7.3274,108.2207,1333470,0.02741,448,Asia,South-Eastern Asia,,,Tasikmalaya
+san-luis-potosi,San Luis Potosi,Mexico,mx,22.1565,-100.9855,1328980,0.01393,449,Americas,North America,,above,San_Luis_Potosi
+chifeng,Chifeng,China,cn,43.2565,118.9759,1328870,0.01822,450,Asia,Eastern Asia,,left,Chifeng
+xiongan,Xiongan,China,cn,39.038,115.993,1328660,0.03112,451,Asia,Eastern Asia,,left,Xiongan
+aba,Aba,Nigeria,ng,5.1066,7.3667,1321630,0.03675,452,Africa,Western Africa,,left,Aba
+zhenjiang-jiangsu,Zhenjiang Jiangsu,China,cn,32.1872,119.4249,1321590,0.01729,453,Asia,Eastern Asia,,left,
+zhuzhou,Zhuzhou,China,cn,27.0498,113.5509,1320890,0.01648,454,Asia,Eastern Asia,,,Zhuzhou
+da-nang,Da Nang,Vietnam,vn,16.0544,108.2022,1318810,0.02551,455,Asia,South-Eastern Asia,,,Da_Nang
+huaibei,Huaibei,China,cn,33.9566,116.7929,1315880,0.01892,456,Asia,Eastern Asia,,left,Huaibei
+dublin,Dublin,Ireland,ie,53.3331,-6.2489,1313820,0.01132,457,Europe,Northern Europe,,left,Dublin
+pizhou,Pizhou,China,cn,34.3403,118.0068,1312740,0.02376,458,Asia,Eastern Asia,,,Pizhou
+luohe,Luohe,China,cn,33.5827,114.0107,1311020,0.02522,459,Asia,Eastern Asia,,left,Luohe
+bogor,Bogor,Indonesia,id,-6.5944,106.7892,1305840,0.01938,460,Asia,South-Eastern Asia,,left,Bogor
+bobo-dioulasso,Bobo-Dioulasso,Burkina Faso,bf,11.1833,-4.2917,1304020,0.04864,461,Africa,Western Africa,,left,Bobo-Dioulasso
+bazhong,Bazhong,China,cn,32.0402,107.0623,1303820,0.02818,462,Asia,Eastern Asia,,left,Bazhong
+kaduna,Kaduna,Nigeria,ng,10.5264,7.4388,1302330,0.03364,463,Africa,Western Africa,,left,Kaduna
+kazan,Kazan,Russia,ru,55.7887,49.1221,1302070,0.00192,464,Europe,Eastern Europe,,,Kazan
+nanyang-henan,Nanyang Henan,China,cn,32.9987,112.5283,1297420,0.01788,465,Asia,Eastern Asia,,left,
+tiruchirappalli,Tiruchirappalli,India,in,10.97,78.65,1296500,0.02095,466,Asia,Southern Asia,,,Tiruchirappalli
+xiangtan-hunan,Xiangtan Hunan,China,cn,27.8293,112.944,1296230,0.0178,467,Asia,Eastern Asia,,left,
+barquisimeto,Barquisimeto,Venezuela,ve,10.0647,-69.357,1295700,0.0109,468,Americas,South America,,left,Barquisimeto
+chandigarh,Chandigarh,India,in,30.7363,76.7884,1293580,0.02178,469,Asia,Southern Asia,,,Chandigarh
+binzhou,Binzhou,China,cn,45.7528,127.4799,1290440,0.0212,470,Asia,Eastern Asia,,,Binzhou
+quetta,Quetta,Pakistan,pk,30.1841,67.0014,1285220,0.02562,471,Asia,Southern Asia,,,Quetta
+sofia,Sofia,Bulgaria,bg,42.6975,23.3242,1284870,-0.00124,472,Europe,Southeast Europe,,,Sofia
+maracay,Maracay,Venezuela,ve,10.2354,-67.5911,1284200,0.01093,473,Americas,South America,,,Maracay
+jinzhou,Jinzhou,China,cn,37.9775,115.0723,1281950,0.01689,474,Asia,Eastern Asia,,left,Jinzhou
+hargeysa,Hargeysa,Somalia,so,9.56,44.065,1280190,0.04282,475,Africa,Eastern Africa,Hargeisa,,Hargeysa
+benxi,Benxi,China,cn,41.1769,124.1574,1278180,0.01594,476,Asia,Eastern Asia,,,Benxi
+merida,Merida,Mexico,mx,20.9674,-89.5926,1276270,0.01434,477,Americas,North America,,left,Merida
+saharanpur,Saharanpur,India,in,29.9,77.6833,1275830,0.02683,478,Asia,Southern Asia,,,Saharanpur
+maputo,Maputo,Mozambique,mz,-25.9655,32.5832,1272640,0.03461,479,Africa,Eastern Africa,,,Maputo
+mendoza,Mendoza,Argentina,ar,-32.8908,-68.8272,1271120,0.01109,480,Americas,South America,,,Mendoza
+chiang-mai,Chiang Mai,Thailand,th,18.7904,98.9847,1259540,0.01234,481,Asia,South-Eastern Asia,,,Chiang_Mai
+guilin,Guilin,China,cn,25.278,110.2911,1259140,0.0163,482,Asia,Eastern Asia,,left,Guilin
+hubli-dharwad,Hubli-Dharwad,India,in,15.3647,75.124,1257820,0.02177,483,Asia,Southern Asia,,left,Hubli-Dharwad
+yueqing,Yueqing,China,cn,28.1178,120.9796,1255540,0.0208,484,Asia,Eastern Asia,,,Yueqing
+guwahati,Guwahati,India,in,26.1844,91.7458,1250320,0.02136,485,Asia,Southern Asia,,,Guwahati
+nizhniy-novgorod,Nizhniy Novgorod,Russia,ru,56.3287,44.002,1249590,-0.00014,486,Europe,Eastern Europe,,left,Nizhniy_Novgorod
+ikorodu,Ikorodu,Nigeria,ng,6.6153,3.5069,1248110,0.04286,487,Africa,Western Africa,,left,Ikorodu
+chelyabinsk,Chelyabinsk,Russia,ru,55.154,61.4292,1248010,0.00144,488,Europe,Eastern Europe,,,Chelyabinsk
+salem,Salem,India,in,11.6537,77.9982,1247700,0.02211,489,Asia,Southern Asia,,,Salem
+tshikapa,Tshikapa,DR Congo,cd,-6.4162,20.8,1241230,0.04664,490,Africa,Middle Africa,,left,Tshikapa
+bandar-lampung,Bandar Lampung,Indonesia,id,-5.45,105.2667,1233990,0.01966,491,Asia,South-Eastern Asia,,left,Bandar_Lampung
+mexicali,Mexicali,Mexico,mx,32.5051,-115.1477,1232480,0.01439,492,Americas,North America,,left,Mexicali
+shimkent,Shimkent,Kazakhstan,kz,42.3,69.6,1224160,0.01684,493,Asia,Central Asia,,,Shimkent
+siliguri,Siliguri,India,in,26.71,88.4285,1222520,0.02612,494,Asia,Southern Asia,,,Siliguri
+tripoli,Tripoli,Libya,ly,32.8874,13.1873,1215850,0.01035,495,Africa,Northern Africa,,left,Tripoli
+haifa,Haifa,Israel,il,32.8184,34.9885,1214740,0.0123,496,Asia,Western Asia,,left,Haifa
+aguascalientes,Aguascalientes,Mexico,mx,21.8833,-102.3,1213800,0.01423,497,Americas,North America,,left,Aguascalientes
+wenling,Wenling,China,cn,28.3762,121.3808,1208220,0.01968,498,Asia,Eastern Asia,,,Wenling
+bien-hoa,Bien Hoa,Vietnam,vn,10.95,106.8167,1206020,0.02662,499,Asia,South-Eastern Asia,,,Bien_Hoa
+xinxiang,Xinxiang,China,cn,35.3086,114.0511,1200000,0.0163,500,Asia,Eastern Asia,,left,Xinxiang
+sekondi-takoradi,Sekondi Takoradi,Ghana,gh,4.934,-1.7137,1198860,0.0337,501,Africa,Western Africa,,below,Sekondi_Takoradi
+amsterdam,Amsterdam,Netherlands,nl,52.374,4.8897,1196130,0.00583,502,Europe,Western Europe,,,Amsterdam
+aden,Aden,Yemen,ye,12.7794,45.0367,1194160,0.03443,503,Asia,Western Asia,,,Aden
+asmara,Asmara,Eritrea,er,15.3381,38.9318,1193890,0.0362,504,Africa,Eastern Africa,,above,Asmara
+jalandhar,Jalandhar,India,in,31.4167,75.6167,1193480,0.02217,505,Asia,Southern Asia,,,Jalandhar
+fuyang,Fuyang,China,cn,30.0533,119.9519,1192260,0.01882,506,Asia,Eastern Asia,,left,Fuyang
+yichun-jiangxi,Yichun Jiangxi,China,cn,27.8043,114.4163,1190980,0.02725,507,Asia,Eastern Asia,,,
+nyala,Nyala,Sudan,sd,12.0489,24.8807,1190050,0.03881,508,Africa,Northern Africa,,,Nyala
+ma-anshan,Ma'anshan,China,cn,31.6886,118.5074,1188600,0.01974,509,Asia,Eastern Asia,,left,Ma'anshan
+zaozhuang,Zaozhuang,China,cn,34.8109,117.3179,1186080,0.01505,510,Asia,Eastern Asia,,,Zaozhuang
+fuzhou-jiangxi,Fuzhou Jiangxi,China,cn,27.9598,116.3581,1184980,0.02159,511,Asia,Eastern Asia,,,
+panjin,Panjin,China,cn,41.1796,122.0524,1183560,0.01716,512,Asia,Eastern Asia,,left,Panjin
+krasnoyarsk,Krasnoyarsk,Russia,ru,56.0184,92.8672,1181270,0.00291,513,Europe,Eastern Europe,,,Krasnoyarsk
+omsk,Omsk,Russia,ru,54.9924,73.3686,1181100,0.00024,514,Europe,Eastern Europe,,,Omsk
+samarinda,Samarinda,Indonesia,id,-0.4917,117.1458,1180100,0.02194,515,Asia,South-Eastern Asia,,,Samarinda
+chenzhou,Chenzhou,China,cn,25.7734,113.0094,1177330,0.02329,516,Asia,Eastern Asia,,,Chenzhou
+bishkek,Bishkek,Kyrgyzstan,kg,42.87,74.59,1175290,0.02091,517,Asia,Central Asia,,left,Bishkek
+shangrao,Shangrao,China,cn,28.7436,117.4054,1174700,0.01829,518,Asia,Eastern Asia,,left,Shangrao
+cuernavaca,Cuernavaca,Mexico,mx,18.9553,-99.24,1172340,0.01382,519,Americas,North America,,left,Cuernavaca
+zhaoqing,Zhaoqing,China,cn,23.0502,112.4604,1171700,0.01844,520,Asia,Eastern Asia,,left,Zhaoqing
+chihuahua,Chihuahua,Mexico,mx,28.632,-106.0691,1170910,0.01506,521,Americas,North America,,,Chihuahua
+leshan,Leshan,China,cn,29.2233,103.5966,1166520,0.02069,522,Asia,Eastern Asia,,left,Leshan
+yongin,Yongin,South Korea,kr,37.2411,127.1776,1165920,0.00691,523,Asia,Eastern Asia,,,Yongin
+blantyre-limbe,Blantyre-Limbe,Malawi,mw,-15.7667,35.0167,1161420,0.04248,524,Africa,Eastern Africa,,left,Blantyre-Limbe
+kirkuk,Kirkuk,Iraq,iq,35.4681,44.3922,1158040,0.02646,525,Asia,Western Asia,,,Kirkuk
+cologne,Cologne,Germany,de,50.9333,6.95,1156690,0.003,526,Europe,Western Europe,,left,Cologne
+dezhou,Dezhou,China,cn,37.4364,116.3534,1156460,0.02014,527,Asia,Eastern Asia,,,Dezhou
+samara,Samara,Russia,ru,53.2001,50.15,1153400,-0.00027,528,Europe,Eastern Europe,,,Samara
+ufa,Ufa,Russia,ru,54.7431,55.9678,1149690,0.00112,529,Europe,Eastern Europe,,,Ufa
+changshu,Changshu,China,cn,31.6573,120.7481,1149590,0.02319,530,Asia,Eastern Asia,,,Changshu
+johor-bahru,Johor Bahru,Malaysia,my,1.4655,103.7578,1147660,0.01786,531,Asia,South-Eastern Asia,,left,Johor_Bahru
+jingzhou-hubei,Jingzhou Hubei,China,cn,30.3267,112.2391,1144000,0.01579,532,Asia,Eastern Asia,,left,
+san-salvador,San Salvador,El Salvador,sv,13.6894,-89.1872,1142860,0.00922,533,Americas,Central America,,left,San_Salvador
+diyarbakir,Diyarbakir,Turkey,tr,37.9144,40.2306,1142330,0.01238,534,Asia,Western Asia,,,Diyarbakir
+rostov-on-don,Rostov-on-Don,Russia,ru,47.2357,39.7015,1141080,0.00061,535,Europe,Eastern Europe,,,Rostov-on-Don
+xuchang,Xuchang,China,cn,34.1478,113.7147,1139910,0.02042,536,Asia,Eastern Asia,,left,Xuchang
+ilorin,Ilorin,Nigeria,ng,8.4966,4.5421,1138890,0.03539,537,Africa,Western Africa,,left,Ilorin
+managua,Managua,Nicaragua,ni,12.1328,-86.2504,1135770,0.01327,538,Americas,Central America,,,Managua
+huzhou,Huzhou,China,cn,30.8943,120.0851,1135190,0.01868,539,Asia,Eastern Asia,,left,Huzhou
+kermanshah,Kermanshah,Iran,ir,34.3142,47.065,1131900,0.01301,540,Asia,Southern Asia,,,Kermanshah
+solapur,Solapur,India,in,17.75,75.5,1130210,0.01988,541,Asia,Southern Asia,,left,Solapur
+oslo,Oslo,Norway,no,59.9127,10.7461,1130110,0.01302,542,Europe,Northern Europe,,,Oslo
+goyang,Goyang,South Korea,kr,37.6564,126.835,1127620,0.00551,543,Asia,Eastern Asia,,left,Goyang
+hamah,Hamah,Syria,sy,35.1318,36.7519,1125550,0.04348,544,Asia,Western Asia,,left,Hamah
+warri,Warri,Nigeria,ng,5.5174,5.7501,1120980,0.04169,545,Africa,Western Africa,,left,Warri
+denpasar,Denpasar,Indonesia,id,-8.65,115.2167,1119120,0.01988,546,Asia,South-Eastern Asia,,,Denpasar
+qujing,Qujing,China,cn,25.7199,103.9861,1114880,0.02077,547,Asia,Eastern Asia,,left,Qujing
+cartagena,Cartagena,Colombia,co,10.391,-75.4794,1114720,0.0083,548,Americas,South America,,left,Cartagena
+guiping,Guiping,China,cn,23.3934,110.0744,1113720,0.02462,549,Asia,Eastern Asia,,left,Guiping
+mersin,Mersin,Turkey,tr,36.7429,34.3641,1112360,0.01212,550,Asia,Western Asia,,below,Mersin
+warangal,Warangal,India,in,18,79.8333,1105740,0.02337,551,Asia,Southern Asia,,,Warangal
+owerri,Owerri,Nigeria,ng,5.4836,7.0333,1105500,0.03932,552,Africa,Western Africa,,left,Owerri
+marrakech,Marrakech,Morocco,ma,31.6362,-8.0104,1103930,0.01714,553,Africa,Northern Africa,,,Marrakech
+nampula,Nampula,Mozambique,mz,-15.1165,39.2666,1103460,0.04367,554,Africa,Eastern Africa,,,Nampula
+yerevan,Yerevan,Armenia,am,40.1811,44.5136,1102920,0.00244,555,Asia,Western Asia,,,Yerevan
+lille,Lille,France,fr,50.633,3.0586,1098220,0.00607,556,Europe,Western Europe,,left,Lille
+yueyang,Yueyang,China,cn,29.0607,113.3487,1095900,0.01474,557,Asia,Eastern Asia,,left,Yueyang
+xintai,Xintai,China,cn,35.9095,117.762,1094420,0.01991,558,Asia,Eastern Asia,,,Xintai
+lubango,Lubango,Angola,ao,-14.9172,13.4925,1092900,0.04303,559,Africa,Middle Africa,,,Lubango
+tampico,Tampico,Mexico,mx,22.2951,-97.9359,1092680,0.01386,560,Americas,North America,,,Tampico
+padang,Padang,Indonesia,id,-0.9492,100.3543,1092560,0.01865,561,Asia,South-Eastern Asia,,,Padang
+aracaju,Aracaju,Brazil,br,-10.9823,-37.1033,1092540,0.00981,562,Americas,South America,,,Aracaju
+tbilisi,Tbilisi,Georgia,ge,41.6941,44.8337,1089860,0.00261,563,Asia,Western Asia,,,Tbilisi
+toulouse,Toulouse,France,fr,43.6043,1.4437,1088900,0.00807,564,Europe,Western Europe,,left,Toulouse
+voronezh,Voronezh,Russia,ru,51.672,39.1843,1087730,0.00159,565,Europe,Eastern Europe,,,Voronezh
+perm,Perm,Russia,ru,58.0105,56.2502,1087440,0.00134,566,Europe,Eastern Europe,,,Perm
+cancun,Cancun,Mexico,mx,21.1619,-86.8515,1083950,0.01741,567,Americas,North America,,,Cancun
+cebu-city,Cebu City,Philippines,ph,10.3789,123.7637,1081840,0.01905,568,Asia,South-Eastern Asia,,,Cebu_City
+saltillo,Saltillo,Mexico,mx,25.4232,-101.0053,1081410,0.01436,569,Americas,North America,,below,Saltillo
+teresina,Teresina,Brazil,br,-5.1025,-42.7407,1077110,0.00801,570,Americas,South America,,,Teresina
+chengde,Chengde,China,cn,40.9507,117.9567,1076600,0.02307,571,Asia,Eastern Asia,,left,Chengde
+jos,Jos,Nigeria,ng,9.9285,8.8921,1071590,0.03526,572,Africa,Western Africa,,left,Jos
+leiyang,Leiyang,China,cn,26.4255,112.8546,1069680,0.02501,573,Asia,Eastern Asia,,left,Leiyang
+antwerp,Antwerp,Belgium,be,51.2194,4.4025,1068660,0.00356,574,Europe,Western Europe,,left,Antwerp
+dushanbe,Dushanbe,Tajikistan,tj,38.5367,68.78,1068240,0.02725,575,Asia,Central Asia,,,Dushanbe
+zhucheng,Zhucheng,China,cn,35.9957,119.4041,1067660,0.02162,576,Asia,Eastern Asia,,,Zhucheng
+dehradun,Dehradun,India,in,30.33,78.06,1065870,0.02383,577,Asia,Southern Asia,,,Dehradun
+sylhet,Sylhet,Bangladesh,bd,24.8919,91.7355,1065150,0.03114,578,Asia,Southern Asia,,,Sylhet
+san-miguel-de-tucuman,San Miguel de Tucuman,Argentina,ar,-26.8083,-65.2176,1062270,0.01068,579,Americas,South America,,,San_Miguel_de_Tucuman
+pingxiang-jiangxi,Pingxiang Jiangxi,China,cn,27.6167,113.85,1061200,0.01831,580,Asia,Eastern Asia,,,
+acapulco-de-juarez,Acapulco de Juarez,Mexico,mx,16.8636,-99.8825,1060660,0.01333,581,Americas,North America,,left,Acapulco_de_Juarez
+san-pedro-sula,San Pedro Sula,Honduras,hn,15.5,-88.0333,1059930,0.02488,582,Americas,Central America,,,San_Pedro_Sula
+changwon,Changwon,South Korea,kr,35.2281,128.6811,1059130,0.00203,583,Asia,Eastern Asia,,left,Changwon
+misratah,Misratah,Libya,ly,32.3754,15.0925,1055320,0.01995,584,Africa,Northern Africa,,,Misratah
+laiwu,Laiwu,China,cn,36.215,117.6698,1051310,0.01926,585,Asia,Eastern Asia,,left,Laiwu
+fort-worth,Fort Worth,United States,us,32.7254,-97.3208,1050336,0.0217,586,Americas,North America,,left,Fort_Worth
+bangui,Bangui,Central African Republic,cf,4.3612,18.555,1048770,0.0321,587,Africa,Middle Africa,,,Bangui
+kayseri,Kayseri,Turkey,tr,38.7236,35.3054,1048660,0.011,588,Asia,Western Asia,,,Kayseri
+najaf,Najaf,Iraq,iq,32.0259,44.3463,1048010,0.02982,589,Asia,Western Asia,,left,Najaf
+taiz,Taiz,Yemen,ye,13.5789,44.0209,1045310,0.03552,590,Asia,Western Asia,,left,Taiz
+songkhla,Songkhla,Thailand,th,7.1897,100.5954,1043260,0.01233,591,Asia,South-Eastern Asia,,,Songkhla
+jiujiang,Jiujiang,China,cn,31.3525,117.9601,1043180,0.0183,592,Asia,Eastern Asia,,left,Jiujiang
+jixi-heilongjiang,Jixi Heilongjiang,China,cn,45.2956,130.9694,1040760,0.01541,593,Asia,Eastern Asia,,,
+nonthaburi,Nonthaburi,Thailand,th,13.8591,100.5217,1039050,0.01233,594,Asia,South-Eastern Asia,,left,Nonthaburi
+jacksonville,Jacksonville,United States,us,30.3322,-81.6556,1038787,0.0147,595,Americas,North America,,,Jacksonville
+agadir,Agadir,Morocco,ma,30.4202,-9.5981,1035770,0.01843,596,Africa,Northern Africa,,,Agadir
+cabinda,Cabinda,Angola,ao,-5.55,12.2,1033860,0.04357,597,Africa,Middle Africa,,,Cabinda
+umuahia,Umuahia,Nigeria,ng,5.5249,7.4946,1033090,0.04306,598,Africa,Western Africa,,,Umuahia
+valparaiso,Valparaiso,Chile,cl,-33.0472,-71.6127,1032140,0.00753,599,Americas,South America,,left,Valparaiso
+rajshahi,Rajshahi,Bangladesh,bd,24.4207,88.296,1031570,0.02438,600,Asia,Southern Asia,,,Rajshahi
+guigang,Guigang,China,cn,23.3594,110.0413,1030910,0.01919,601,Asia,Eastern Asia,,left,Guigang
+hengshui,Hengshui,China,cn,37.7364,115.6677,1030900,0.02196,602,Asia,Eastern Asia,,,Hengshui
+rotterdam,Rotterdam,Netherlands,nl,51.9225,4.4792,1030820,0.00445,603,Europe,Western Europe,,left,Rotterdam
+morelia,Morelia,Mexico,mx,19.7008,-101.1844,1029940,0.01349,604,Americas,North America,,left,Morelia
+bordeaux,Bordeaux,France,fr,44.8404,-0.5805,1025990,0.00778,605,Europe,Western Europe,,,Bordeaux
+liling,Liling,China,cn,27.6529,113.4355,1025700,0.02528,606,Asia,Eastern Asia,,left,Liling
+mudanjiang,Mudanjiang,China,cn,44.635,130.0134,1025590,0.01618,607,Asia,Eastern Asia,,,Mudanjiang
+xinyu,Xinyu,China,cn,27.8536,114.8867,1025140,0.02148,608,Asia,Eastern Asia,,,Xinyu
+linfen,Linfen,China,cn,36.0881,111.519,1024140,0.02137,609,Asia,Eastern Asia,,left,Linfen
+zhangzhou,Zhangzhou,China,cn,24.2388,117.4524,1022670,0.02017,610,Asia,Eastern Asia,,,Zhangzhou
+krasnodar,Krasnodar,Russia,ru,45.0448,38.976,1022480,0.00486,611,Europe,Eastern Europe,,,Krasnodar
+tianmen,Tianmen,China,cn,30.666,113.1606,1020930,0.0202,612,Asia,Eastern Asia,,left,Tianmen
+bogra,Bogra,Bangladesh,bd,24.8297,89.026,1014990,0.03441,613,Asia,Southern Asia,,,Bogra
+zamboanga-city,Zamboanga City,Philippines,ph,6.9214,122.079,1014070,0.01914,614,Asia,South-Eastern Asia,,left,Zamboanga_City
+yangjiang,Yangjiang,China,cn,22.0958,111.7831,1014020,0.01812,615,Asia,Eastern Asia,,left,Yangjiang
+antipolo,Antipolo,Philippines,ph,14.6655,121.0809,1011440,0.0218,616,Asia,South-Eastern Asia,,,Antipolo
+jerusalem,Jerusalem,Israel,il,31.769,35.2163,1010670,0.01398,617,Asia,Western Asia,,,Jerusalem
+austin,Austin,United States,us,30.2672,-97.7431,1007435,0.007,618,Americas,North America,,left,Austin
+odesa,Odesa,Ukraine,ua,46.4775,30.7326,1006580,-0.00012,619,Europe,Eastern Europe,,,Odesa
+baishan,Baishan,China,cn,41.9369,126.4184,1005740,0.02312,620,Asia,Eastern Asia,,,Baishan
+deyang,Deyang,China,cn,31.1244,104.3901,1004890,0.02011,621,Asia,Eastern Asia,,left,Deyang
+ciudad-guayana,Ciudad Guayana,Venezuela,ve,8.3512,-62.641,1003920,0.01264,622,Americas,South America,,,Ciudad_Guayana
+jiangyin,Jiangyin,China,cn,31.911,120.263,1003350,0.02116,623,Asia,Eastern Asia,,,Jiangyin
+khulna,Khulna,Bangladesh,bd,22.3535,88.8341,998460,0.01863,624,Asia,Southern Asia,,,Khulna
+reynosa,Reynosa,Mexico,mx,26.0806,-98.2883,997908,0.01504,625,Americas,North America,,,Reynosa
+arequipa,Arequipa,Peru,pe,-16.3989,-71.535,996218,0.01271,626,Americas,South America,,left,Arequipa
+bahawalpur,Bahawalpur,Pakistan,pk,29.3978,71.6752,995494,0.0262,627,Asia,Southern Asia,,,Bahawalpur
+veracruz,Veracruz,Mexico,mx,19.181,-96.1429,994102,0.01328,628,Americas,North America,,,Veracruz
+volgograd,Volgograd,Russia,ru,48.7,44.4833,991693,-0.00058,629,Europe,Eastern Europe,,,Volgograd
+san-jose-us,San Jose,United States,us,37.3394,-121.895,991209,-0.0031,630,Americas,North America,,,San_Jose
+cucuta,Cucuta,Colombia,co,7.8939,-72.5078,990634,0.00911,631,Americas,South America,,,Cucuta
+bengbu,Bengbu,China,cn,32.9176,117.3826,990361,0.01556,632,Asia,Eastern Asia,,left,Bengbu
+villahermosa,Villahermosa,Mexico,mx,17.9869,-92.9303,986249,0.01427,633,Americas,North America,,,Villahermosa
+pathum-thani,Pathum Thani,Thailand,th,14.0208,100.525,986213,0.01234,634,Asia,South-Eastern Asia,,left,Pathum_Thani
+guntur,Guntur,India,in,16.2997,80.4573,984920,0.0234,635,Asia,Southern Asia,,,Guntur
+oran,Oran,Algeria,dz,35.6991,-0.6359,982784,0.01685,636,Africa,Northern Africa,,,Oran
+charlotte,Charlotte,United States,us,35.2271,-80.8431,977740,0.0187,637,Americas,North America,,,Charlotte
+west-rand,West Rand,South Africa,za,-26.1667,27.65,975882,0.01483,638,Africa,Southern Africa,,left,West_Rand
+lokoja,Lokoja,Nigeria,ng,7.7969,6.7405,974767,0.04691,639,Africa,Western Africa,,,Lokoja
+southampton,Southampton,United Kingdom,gb,50.9167,-1.3833,974131,0.00764,640,Europe,Northern Europe,,left,Southampton
+changzhi,Changzhi,China,cn,36.183,113.0993,966677,0.0183,641,Asia,Eastern Asia,,left,Changzhi
+erbil,Erbil,Iraq,iq,36.1833,44.0119,965261,0.02626,642,Asia,Western Asia,,left,Erbil
+firozabad,Firozabad,India,in,27.2007,78.4287,965089,0.02477,643,Asia,Southern Asia,,,Firozabad
+malang,Malang,Indonesia,id,-7.9797,112.6304,964677,0.01698,644,Asia,South-Eastern Asia,,left,Malang
+bhiwandi,Bhiwandi,India,in,19.3002,73.0588,964215,0.0215,645,Asia,Southern Asia,,left,Bhiwandi
+puducherry,Puducherry,India,in,11.9338,79.8298,962874,0.02334,646,Asia,Southern Asia,,,Puducherry
+dandong,Dandong,China,cn,40.5791,124.4407,962140,0.01546,647,Asia,Eastern Asia,,,Dandong
+nice,Nice,France,fr,43.7031,7.2661,961174,0.00521,648,Europe,Western Europe,,,Nice
+ashgabat,Ashgabat,Turkmenistan,tm,37.95,58.3833,960880,0.02099,649,Asia,Central Asia,,,Ashgabat
+cherthala,Cherthala,India,in,9.6846,76.3389,958336,0.02935,650,Asia,Southern Asia,,left,Cherthala
+hermosillo,Hermosillo,Mexico,mx,29.1026,-110.9773,958204,0.01467,651,Americas,North America,,left,Hermosillo
+korla,Korla,China,cn,41.6732,85.7162,957409,0.02505,652,Asia,Eastern Asia,Korla,,Korla
+changde,Changde,China,cn,29.0346,111.6929,955997,0.01888,653,Asia,Eastern Asia,,left,Changde
+quzhou,Quzhou,China,cn,36.7699,114.9585,953084,0.02507,654,Asia,Eastern Asia,,left,Quzhou
+shangqiu,Shangqiu,China,cn,34.4168,115.6507,952787,0.01894,655,Asia,Eastern Asia,,left,Shangqiu
+campo-grande,Campo Grande,Brazil,br,-20.4428,-54.6464,951238,0.0084,656,Americas,South America,,left,Campo_Grande
+londrina,Londrina,Brazil,br,-23.3103,-51.1628,951206,0.00928,657,Americas,South America,,left,Londrina
+columbus,Columbus,United States,us,39.9612,-82.9988,946661,0.0073,658,Americas,North America,,,Columbus
+liaoyang,Liaoyang,China,cn,41.2743,123.1696,946597,0.01607,659,Asia,Eastern Asia,,,Liaoyang
+seongnam,Seongnam,South Korea,kr,37.4386,127.1378,945296,0.00195,660,Asia,Eastern Asia,,,Seongnam
+bunia,Bunia,DR Congo,cd,1.5594,30.2522,944205,0.04871,661,Africa,Middle Africa,,,Bunia
+la-plata,La Plata,Argentina,ar,-34.703,-58.6799,942456,0.00993,662,Americas,South America,,left,La_Plata
+tuxtla-gutierrez,Tuxtla Gutierrez,Mexico,mx,16.7528,-93.115,941756,0.01509,663,Americas,North America,,,Tuxtla_Gutierrez
+trujillo,Trujillo,Peru,pe,-8.116,-79.03,941574,0.01333,664,Americas,South America,,,Trujillo
+enugu,Enugu,Nigeria,ng,6.4413,7.4988,939642,0.03638,665,Africa,Western Africa,,left,Enugu
+concepcion,Concepcion,Chile,cl,-36.827,-73.0503,937267,0.00851,666,Americas,South America,,,Concepcion
+xingtai,Xingtai,China,cn,37.0617,114.4997,937021,0.01738,667,Asia,Eastern Asia,,left,Xingtai
+liverpool,Liverpool,United Kingdom,gb,53.4106,-2.9779,935328,0.00681,668,Europe,Northern Europe,,left,Liverpool
+soshanguve,Soshanguve,South Africa,za,-25.4869,28.0869,933800,0.01528,669,Africa,Southern Africa,,left,Soshanguve
+tyumen,Tyumen,Russia,ru,57.1522,65.5272,933297,0.00732,670,Europe,Eastern Europe,,,Tyumen
+culiacan,Culiacan,Mexico,mx,24.7994,-107.3879,932385,0.01512,671,Americas,North America,,left,Culiacan
+maiduguri,Maiduguri,Nigeria,ng,11.8469,13.1571,929408,0.03436,672,Africa,Western Africa,,left,Maiduguri
+bergamo,Bergamo,Italy,it,45.696,9.6672,927164,0.00427,673,Europe,Southern Europe,,,Bergamo
+dnipro,Dnipro,Ukraine,ua,48.4593,35.0386,926488,-0.00512,674,Europe,Eastern Europe,,left,Dnipro
+huangshi,Huangshi,China,cn,30.2025,115.0334,924002,0.01665,675,Asia,Eastern Asia,,,Huangshi
+yongzhou,Yongzhou,China,cn,25.7813,111.698,922631,0.02057,676,Asia,Eastern Asia,,left,Yongzhou
+xinghua,Xinghua,China,cn,32.9392,119.8342,919964,0.01954,677,Asia,Eastern Asia,,,Xinghua
+ulsan,Ulsan,South Korea,kr,35.5372,129.3167,918482,0.00245,678,Asia,Eastern Asia,,,Ulsan
+fuxin,Fuxin,China,cn,42.3303,122.0153,917396,0.01524,679,Asia,Eastern Asia,,left,Fuxin
+libreville,Libreville,Gabon,ga,0.3924,9.4536,915590,0.0182,680,Africa,Middle Africa,,,Libreville
+zanzibar,Zanzibar,Tanzania,tz,-6.1639,39.1979,914351,0.04619,681,Africa,Eastern Africa,,,Zanzibar
+kottayam,Kottayam,India,in,9.5916,76.5222,914278,0.03262,682,Asia,Southern Asia,,,Kottayam
+benguela,Benguela,Angola,ao,-12.5763,13.4055,913769,0.04073,683,Africa,Middle Africa,,left,Benguela
+yibin,Yibin,China,cn,28.5869,104.7187,912745,0.01699,684,Asia,Eastern Asia,,left,Yibin
+huaihua,Huaihua,China,cn,27.6595,110.1435,912663,0.02257,685,Asia,Eastern Asia,,left,Huaihua
+al-hofuf,Al-Hofuf,Saudi Arabia,sa,25.3648,49.5879,909904,0.01409,686,Asia,Western Asia,Al-Hofuf|Hofuf,left,Al-Hofuf
+xinyang,Xinyang,China,cn,32.075,114.8533,906367,0.01796,687,Asia,Eastern Asia,,left,Xinyang
+xiaogan,Xiaogan,China,cn,31.1764,113.9224,904876,0.01907,688,Asia,Eastern Asia,,left,Xiaogan
+ipoh,Ipoh,Malaysia,my,4.5841,101.0829,902958,0.01718,689,Asia,South-Eastern Asia,,,Ipoh
+yangquan,Yangquan,China,cn,38.0936,113.5266,902484,0.01793,690,Asia,Eastern Asia,,left,Yangquan
+malanje,Malanje,Angola,ao,-9.5401,16.341,900002,0.04484,691,Africa,Middle Africa,,,Malanje
+luzhou,Luzhou,China,cn,28.8717,105.4423,897355,0.01505,692,Asia,Eastern Asia,,,Luzhou
+bozhou,Bozhou,China,cn,33.8491,115.7731,896567,0.02223,693,Asia,Eastern Asia,,,Bozhou
+tianshui,Tianshui,China,cn,34.6539,105.8004,895618,0.01999,694,Asia,Eastern Asia,,left,Tianshui
+indianapolis,Indianapolis,United States,us,39.7684,-86.158,893619,0.0012,695,Americas,North America,,left,Indianapolis
+banghazi,Banghazi,Libya,ly,32.1167,20.0667,893370,0.01301,696,Africa,Northern Africa,,,Banghazi
+kunshan,Kunshan,China,cn,31.3869,120.9765,893198,0.02239,697,Asia,Eastern Asia,,,Kunshan
+tainan,Tainan,Taiwan,tw,22.9908,120.2133,886039,0.00587,698,Asia,Eastern Asia,,,Tainan
+zhuji,Zhuji,China,cn,29.7188,120.2423,885148,0.01807,699,Asia,Eastern Asia,,left,Zhuji
+ibb,Ibb,Yemen,ye,13.9667,44.1833,883243,0.04236,700,Asia,Western Asia,,,Ibb
+jincheng,Jincheng,China,cn,35.4913,112.8454,882169,0.02188,701,Asia,Eastern Asia,,left,Jincheng
+nellore,Nellore,India,in,14.0833,79.5833,879934,0.02455,702,Asia,Southern Asia,,,Nellore
+bikaner,Bikaner,India,in,28.0176,73.315,872688,0.02204,703,Asia,Southern Asia,,left,Bikaner
+eskisehir,Eskisehir,Turkey,tr,39.7767,30.5206,871917,0.01325,704,Asia,Western Asia,,,Eskisehir
+urmia,Urmia,Iran,ir,37.5527,45.0761,871090,0.0127,705,Asia,Southern Asia,Urmia|Orumiyeh,left,Urmia
+zhumadian,Zhumadian,China,cn,33.0116,114.0165,870712,0.02269,706,Asia,Eastern Asia,,left,Zhumadian
+sulaimaniya,Sulaimaniya,Iraq,iq,35.5575,45.4348,870677,0.02854,707,Asia,Western Asia,,,Sulaimaniya
+donetsk,Donetsk,Ukraine,ua,48.023,37.8022,870629,-0.0062,708,Europe,Eastern Europe,,left,Donetsk
+anqiu,Anqiu,China,cn,36.4795,119.213,869644,0.026,709,Asia,Eastern Asia,,,Anqiu
+quebec-city,Quebec City,Canada,ca,46.8139,-71.208,865632,0.00865,710,Americas,North America,,,Quebec_City
+winnipeg,Winnipeg,Canada,ca,49.8844,-97.147,865461,0.00944,711,Americas,North America,,,Winnipeg
+huludao,Huludao,China,cn,40.7515,120.8405,865357,0.01668,712,Asia,Eastern Asia,,left,Huludao
+taixing,Taixing,China,cn,32.1685,120.0165,864646,0.01917,713,Asia,Eastern Asia,,,Taixing
+heze,Heze,China,cn,35.2477,115.4465,864086,0.01481,714,Asia,Eastern Asia,,left,Heze
+merca,Merca,Somalia,so,1.7089,44.7728,863517,0.04288,715,Africa,Eastern Africa,Marka,left,Merca
+langfang,Langfang,China,cn,39.5302,116.6926,863203,0.01981,716,Asia,Eastern Asia,,,Langfang
+kayamkulam,Kayamkulam,India,in,9.1747,76.501,862900,0.02865,717,Asia,Southern Asia,,left,Kayamkulam
+haicheng,Haicheng,China,cn,40.8516,122.7475,861388,0.01563,718,Asia,Eastern Asia,,left,Haicheng
+liaocheng,Liaocheng,China,cn,36.4442,115.9642,860764,0.01763,719,Asia,Eastern Asia,,left,Liaocheng
+gaomi,Gaomi,China,cn,36.3654,119.8005,860282,0.02182,720,Asia,Eastern Asia,,,Gaomi
+gebze,Gebze,Turkey,tr,40.8028,29.4307,860277,0.01587,721,Asia,Western Asia,,,Gebze
+muzaffarnagar,Muzaffarnagar,India,in,29.45,77.5833,858867,0.02613,722,Asia,Southern Asia,,left,Muzaffarnagar
+goma,Goma,DR Congo,cd,-1.6741,29.2285,858217,0.04679,723,Africa,Middle Africa,,above,Goma
+hanchuan,Hanchuan,China,cn,30.65,113.7667,857519,0.0217,724,Asia,Eastern Asia,,left,Hanchuan
+dasmarinas,Dasmarinas,Philippines,ph,14.3294,120.9367,857393,0.02176,725,Asia,South-Eastern Asia,,left,Dasmarinas
+kitwe,Kitwe,Zambia,zm,-12.8024,28.2132,856727,0.04019,726,Africa,Eastern Africa,,,Kitwe
+barcelona-puerto-la-cruz,Barcelona Puerto La Cruz,Venezuela,ve,10.1222,-64.6868,855661,0.01163,727,Americas,South America,,,
+cagayan-de-oro-city,Cagayan de Oro City,Philippines,ph,8.4822,124.6472,855270,0.02104,728,Asia,South-Eastern Asia,,,Cagayan_de_Oro_City
+meishan,Meishan,China,cn,29.9867,103.779,854648,0.02068,729,Asia,Eastern Asia,,left,Meishan
+palermo,Palermo,Italy,it,37.8167,13.5833,852768,0.00175,730,Europe,Southern Europe,,,Palermo
+oshogbo,Oshogbo,Nigeria,ng,7.7827,4.5418,851304,0.03502,731,Africa,Western Africa,,left,Oshogbo
+gaza,Gaza,Palestine,ps,31.5017,34.4674,846506,0.02805,732,Asia,Western Asia,,left,Gaza
+danyang,Danyang,China,cn,32.011,119.6013,846219,0.02043,733,Asia,Eastern Asia,,left,Danyang
+xalapa,Xalapa,Mexico,mx,19.5438,-96.9102,846129,0.01384,734,Americas,North America,,left,Xalapa
+ar-rayyan,Ar-Rayyan,Qatar,qa,25.2919,51.4244,846071,0.01729,735,Asia,Western Asia,,,
+valencia-es,Valencia,Spain,es,39.4698,-0.3774,843071,0.00204,736,Europe,Southern Europe,,,Valencia
+amravati,Amravati,India,in,20.9333,77.75,842613,0.02139,737,Asia,Southern Asia,,left,Amravati
+newcastle-upon-tyne,Newcastle upon Tyne,United Kingdom,gb,55,-1.6667,839947,0.00684,738,Europe,Northern Europe,,,Newcastle_upon_Tyne
+saratov,Saratov,Russia,ru,51.5406,46.0086,837212,-0.00013,739,Europe,Eastern Europe,,,Saratov
+sorocaba,Sorocaba,Brazil,br,-23.5017,-47.4581,836189,0.00861,740,Americas,South America,,left,Sorocaba
+zaria,Zaria,Nigeria,ng,11.1113,7.7227,835966,0.0325,741,Africa,Western Africa,,left,Zaria
+akure,Akure,Nigeria,ng,7.2526,5.1931,834009,0.03854,742,Africa,Western Africa,,,Akure
+gorakhpur,Gorakhpur,India,in,29.4477,75.6721,832937,0.02002,743,Asia,Southern Asia,,left,Gorakhpur
+yan-an,Yan'an,China,cn,36.6028,109.4874,832565,0.02331,744,Asia,Eastern Asia,,left,Yan'an
+jiaozuo,Jiaozuo,China,cn,35.1375,113.1439,832142,0.01473,745,Asia,Eastern Asia,,left,Jiaozuo
+nakhon-ratchasima,Nakhon Ratchasima,Thailand,th,14.9799,102.0978,831016,0.01197,746,Asia,South-Eastern Asia,,,Nakhon_Ratchasima
+linhai,Linhai,China,cn,28.8554,121.1447,830096,0.02003,747,Asia,Eastern Asia,,,Linhai
+bucheon,Bucheon,South Korea,kr,37.4989,126.7831,828905,0.00157,748,Asia,Eastern Asia,,left,Bucheon
+ordos,Ordos,China,cn,39.6086,109.7814,828599,0.02014,749,Asia,Eastern Asia,Ordos|Eerduosi,left,Ordos
+anqing,Anqing,China,cn,30.6592,116.6303,826123,0.01794,750,Asia,Eastern Asia,,left,Anqing
+nottingham,Nottingham,United Kingdom,gb,52.9536,-1.1505,825506,0.00753,751,Europe,Northern Europe,,,Nottingham
+port-said,Port Said,Egypt,eg,31.2653,32.3019,823820,0.01944,752,Africa,Northern Africa,Port Said,below,Port_Said
+vereeniging,Vereeniging,South Africa,za,-26.6736,27.9318,823757,0.01334,753,Africa,Southern Africa,,left,Vereeniging
+dengzhou,Dengzhou,China,cn,32.6881,112.0819,822678,0.02299,754,Asia,Eastern Asia,,left,Dengzhou
+bologna,Bologna,Italy,it,44.4667,11.4333,821709,0.00294,755,Europe,Southern Europe,,,Bologna
+cuttack,Cuttack,India,in,20.5,86.25,821467,0.02056,756,Asia,Southern Asia,,,Cuttack
+tirupati,Tirupati,India,in,13.6355,79.4199,818428,0.0265,757,Asia,Southern Asia,,left,Tirupati
+malegaon,Malegaon,India,in,20.5497,74.5346,817947,0.02281,758,Asia,Southern Asia,,,Malegaon
+belgaum,Belgaum,India,in,15.8497,74.4977,817205,0.02185,759,Asia,Southern Asia,,left,Belgaum
+shaoguan,Shaoguan,China,cn,24.8309,113.8155,816261,0.01389,760,Asia,Eastern Asia,,,Shaoguan
+thessaloniki,Thessaloniki,Greece,gr,40.6401,22.9444,816014,0.00066,761,Europe,Southern Europe,,left,Thessaloniki
+yuncheng,Yuncheng,China,cn,22.892,112.1526,814924,0.02217,762,Asia,Eastern Asia,,left,Yuncheng
+nay-pyi-taw,Nay Pyi Taw,Myanmar,mm,19.7633,96.0785,814596,0.03344,763,Asia,South-Eastern Asia,,left,Nay_Pyi_Taw
+banjarmasin,Banjarmasin,Indonesia,id,-3.3199,114.5908,814539,0.01855,764,Asia,South-Eastern Asia,,,Banjarmasin
+yuxi,Yuxi,China,cn,24.3511,102.527,814376,0.02341,765,Asia,Eastern Asia,,left,Yuxi
+al-hudaydah,Al-Hudaydah,Yemen,ye,14.7979,42.9544,811673,0.03417,766,Asia,Western Asia,,left,Al-Hudaydah
+tamale,Tamale,Ghana,gh,9.4008,-0.8393,810622,0.0334,767,Africa,Western Africa,,,Tamale
+sialkot,Sialkot,Pakistan,pk,32.4927,74.5313,808547,0.02427,768,Asia,Southern Asia,,,Sialkot
+yanji,Yanji,China,cn,42.9075,129.5078,808147,0.01953,769,Asia,Eastern Asia,,,Yanji
+frankfurt,Frankfurt,Germany,de,50.1109,8.6821,806365,0.00324,770,Europe,Western Europe,,,Frankfurt
+huambo,Huambo,Angola,ao,-12.7761,15.7392,805507,0.03624,771,Africa,Middle Africa,,,Huambo
+shaoyang,Shaoyang,China,cn,26.9443,110.9631,804759,0.01741,772,Asia,Eastern Asia,,left,Shaoyang
+san-francisco,San Francisco,United States,us,37.7749,-122.4194,803876,-0.014,773,Americas,North America,,left,San_Francisco
+zigong,Zigong,China,cn,29.2996,104.6928,803465,0.01502,774,Asia,Eastern Asia,,,Zigong
+maturin,Maturin,Venezuela,ve,9.7456,-63.1836,802927,0.01647,775,Americas,South America,,below,Maturin
+tongliao,Tongliao,China,cn,43.6152,122.2601,802817,0.01836,776,Asia,Eastern Asia,,left,Tongliao
+qingyuan,Qingyuan,China,cn,23.6833,113.0506,802697,0.01518,777,Asia,Eastern Asia,,left,Qingyuan
+amara,Amara,Iraq,iq,31.835,47.15,802360,0.03124,778,Asia,Western Asia,,left,Amara
+seattle,Seattle,United States,us,47.6062,-122.3321,801192,0.0132,779,Americas,North America,,,Seattle
+dazhou,Dazhou,China,cn,31.3451,107.6507,800986,0.02021,780,Asia,Eastern Asia,,,Dazhou
+lattakia,Lattakia,Syria,sy,35.5317,35.7917,800908,0.04348,781,Asia,Western Asia,,left,Lattakia
+hempstead,Hempstead,United States,us,40.7062,-73.6187,800777,0.0022,782,Americas,North America,,,Hempstead
+tongling,Tongling,China,cn,30.9058,117.6141,800729,0.01874,783,Asia,Eastern Asia,,left,Tongling
+hamilton,Hamilton,Canada,ca,43.2501,-79.8496,799692,0.00833,784,Americas,North America,,left,Hamilton
+wuzhou,Wuzhou,China,cn,23.5715,111.0139,798828,0.01857,785,Asia,Eastern Asia,,left,Wuzhou
+uvira,Uvira,DR Congo,cd,-3.3953,29.1378,796343,0.04664,786,Africa,Middle Africa,,left,Uvira
+mangalore,Mangalore,India,in,12.9141,74.856,795066,0.02104,787,Asia,Southern Asia,,left,Mangalore
+suining-sichuan,Suining Sichuan,China,cn,30.5333,105.5928,794833,0.01792,788,Asia,Eastern Asia,,left,
+sargodha,Sargodha,Pakistan,pk,32.0859,72.6742,793255,0.02343,789,Asia,Southern Asia,,left,Sargodha
+zhangjiagang,Zhangjiagang,China,cn,31.8783,120.5515,792546,0.02223,790,Asia,Eastern Asia,,,Zhangjiagang
+niigata,Niigata,Japan,jp,37.8864,139.0059,791952,-0.00255,791,Asia,Eastern Asia,,left,Niigata
+bacoor,Bacoor,Philippines,ph,14.4161,120.9276,791335,0.02209,792,Asia,South-Eastern Asia,,left,Bacoor
+nanded-waghala,Nanded Waghala,India,in,19.1383,77.321,790788,0.02302,793,Asia,Southern Asia,,,Nanded_Waghala
+sokoto,Sokoto,Nigeria,ng,13.0627,5.2432,789726,0.0373,794,Africa,Western Africa,,above,Sokoto
+dongtai,Dongtai,China,cn,32.8706,120.3154,788212,0.01964,795,Asia,Eastern Asia,,,Dongtai
+jiamusi,Jiamusi,China,cn,47.0216,132.0441,786151,0.01554,796,Asia,Eastern Asia,,,Jiamusi
+ankang,Ankang,China,cn,32.7065,109.0178,784537,0.02366,797,Asia,Eastern Asia,,left,Ankang
+kurnool,Kurnool,India,in,15.5833,78.3333,784461,0.02501,798,Asia,Southern Asia,,left,Kurnool
+bhavnagar,Bhavnagar,India,in,21.7629,72.1533,783199,0.02127,799,Asia,Southern Asia,,left,Bhavnagar
+herat,Herat,Afghanistan,af,34.3529,62.204,781380,0.03781,800,Asia,Southern Asia,,,Herat
+taicang,Taicang,China,cn,31.459,121.1265,781306,0.0214,801,Asia,Eastern Asia,,,Taicang
+cotonou,Cotonou,Benin,bj,6.3654,2.4183,780456,0.02964,802,Africa,Western Africa,,left,Cotonou
+xianyang-shaanxi,Xianyang Shaanxi,China,cn,34.3456,108.7147,777105,0.01483,803,Asia,Eastern Asia,,left,
+vientiane,Vientiane,Laos,la,17.9667,102.6,775494,0.02587,804,Asia,South-Eastern Asia,,,Vientiane
+panzhihua,Panzhihua,China,cn,26.586,101.7179,773386,0.01527,805,Asia,Eastern Asia,,left,Panzhihua
+ansan,Ansan,South Korea,kr,37.3219,126.8309,773315,0.00296,806,Asia,Eastern Asia,,left,Ansan
+yuyao,Yuyao,China,cn,30.05,121.1494,772356,0.01803,807,Asia,Eastern Asia,,,Yuyao
+sao-jose-dos-campos,Sao Jose dos Campos,Brazil,br,-23.1794,-45.8869,771320,0.00892,808,Americas,South America,,left,Sao_Jose_dos_Campos
+miluo,Miluo,China,cn,28.8101,113.0613,771063,0.02609,809,Asia,Eastern Asia,,left,Miluo
+krakow,Krakow,Poland,pl,50.0647,19.945,769354,-0.00003,810,Europe,Central Europe,,,Krakow
+gulbarga,Gulbarga,India,in,17.3297,76.8343,768923,0.02277,811,Asia,Southern Asia,,left,Gulbarga
+bali,Bali,Indonesia,id,-8.6705,115.2126,768520,0.01942,812,Asia,South-Eastern Asia,,,Bali
+oaxaca-de-juarez,Oaxaca de Juarez,Mexico,mx,17.0732,-96.7266,767709,0.01376,813,Americas,North America,,left,Oaxaca_de_Juarez
+buffalo-city,Buffalo City,South Africa,za,-32.9872,27.8716,767529,0.01457,814,Africa,Southern Africa,,,Buffalo_City
+hezhou,Hezhou,China,cn,24.3705,111.3591,766890,0.02329,815,Asia,Eastern Asia,,,Hezhou
+rasht,Rasht,Iran,ir,37.2761,49.5886,766257,0.01121,816,Asia,Southern Asia,,,Rasht
+jammu,Jammu,India,in,32.75,74.8333,766223,0.01956,817,Asia,Southern Asia,,,Jammu
+yulin-shaanxi,Yulin Shaanxi,China,cn,38.2655,109.7344,766185,0.01576,818,Asia,Eastern Asia,,left,
+zarqa,Zarqa,Jordan,jo,32.0728,36.088,765303,0.00845,819,Asia,Western Asia,,,Zarqa
+longyan,Longyan,China,cn,25.0767,117.0123,764708,0.01599,820,Asia,Eastern Asia,,left,Longyan
+ribeirao-preto,Ribeirao Preto,Brazil,br,-21.1775,-47.8103,764455,0.00904,821,Americas,South America,,,Ribeirao_Preto
+loudi,Loudi,China,cn,27.6995,111.9891,763088,0.0214,822,Asia,Eastern Asia,,left,Loudi
+bijie,Bijie,China,cn,27.215,105.2152,762945,0.02154,823,Asia,Eastern Asia,,,Bijie
+gold-coast,Gold Coast,Australia,au,-28.0167,153.4,762290,0.01292,824,Oceania,Australia and New Zealand,,,Gold_Coast
+sheffield,Sheffield,United Kingdom,gb,53.383,-1.4659,762277,0.00726,825,Europe,Northern Europe,,,Sheffield
+renqiu,Renqiu,China,cn,38.7064,116.1062,761689,0.02115,826,Asia,Eastern Asia,,,Renqiu
+tongxiang,Tongxiang,China,cn,30.6317,120.561,761595,0.02233,827,Asia,Eastern Asia,,,Tongxiang
+zhoukou,Zhoukou,China,cn,33.8083,114.9119,760893,0.02001,828,Asia,Eastern Asia,,left,Zhoukou
+manama,Manama,Bahrain,bh,26.2279,50.5857,759306,0.02186,829,Asia,Western Asia,,,Manama
+durgapur,Durgapur,India,in,23.55,87.32,756574,0.02139,830,Asia,Southern Asia,,below,Durgapur
+abakaliki,Abakaliki,Nigeria,ng,6.3249,8.1137,753507,0.0421,831,Africa,Western Africa,,,Abakaliki
+buraydah,Buraydah,Saudi Arabia,sa,26.326,43.975,752796,0.0165,832,Asia,Western Asia,,,Buraydah
+bauchi,Bauchi,Nigeria,ng,10.3103,9.8439,751900,0.03881,833,Africa,Western Africa,,,Bauchi
+longhai,Longhai,China,cn,24.3469,117.5396,751850,0.02124,834,Asia,Eastern Asia,,left,Longhai
