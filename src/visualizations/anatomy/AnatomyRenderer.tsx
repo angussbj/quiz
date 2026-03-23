@@ -142,6 +142,8 @@ export function AnatomyRenderer({
         elementStates={elementStates}
         onElementClick={onElementClick}
         onPositionClick={onPositionClick}
+        onElementHoverStart={onElementHoverStart}
+        onElementHoverEnd={onElementHoverEnd}
         targetElementId={targetElementId}
         uniqueGroups={uniqueGroups}
         toggles={toggles}
@@ -157,6 +159,8 @@ interface AnatomyContentProps {
   readonly elementStates: VisualizationRendererProps['elementStates'];
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: VisualizationRendererProps['onPositionClick'];
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
   readonly targetElementId?: string;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly toggles: Readonly<Record<string, boolean>>;
@@ -168,6 +172,8 @@ function AnatomyContent({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   targetElementId,
   uniqueGroups,
   toggles,

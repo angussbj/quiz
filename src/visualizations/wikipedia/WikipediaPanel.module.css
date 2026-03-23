@@ -1,6 +1,6 @@
 .panel {
   position: absolute;
-  bottom: var(--spacing-md);
+  bottom: calc(var(--quiz-controls-height) + var(--spacing-sm));
   left: var(--spacing-md);
   max-width: 360px;
   padding: var(--spacing-sm) var(--spacing-md);

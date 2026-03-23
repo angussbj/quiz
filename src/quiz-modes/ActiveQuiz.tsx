@@ -12,6 +12,10 @@ import { computeGroupCameraPosition } from './computeGroupCameraPosition';
 import { normalizeText, type NormalizeOptions } from './free-recall/matchAnswer';
 import { Timer } from './Timer';
 import { resolveMode } from './resolveMode';
+import { useWikipediaPreview } from '@/visualizations/wikipedia/useWikipediaPreview';
+import { WikipediaPanel } from '@/visualizations/wikipedia/WikipediaPanel';
+import { shouldShowLabel } from '@/visualizations/shouldShowLabel';
+import { elementToggle } from '@/visualizations/elementToggle';
 import styles from './ActiveQuiz.module.css';
 
 /** Values read by the stable FilterAwareRenderer wrapper via ref. */
@@ -22,6 +26,10 @@ interface FilterOverrides {
   readonly filteredBgElementIds: ReadonlySet<string>;
   readonly timeScale: TimeScale | undefined;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly wikipediaOnHoverStart: (elementId: string, slug: string) => void;
+  readonly wikipediaOnHoverEnd: () => void;
+  /** Toggle key that reveals the answer label (e.g. 'showLabels', 'showNames'). */
+  readonly labelToggleKey: string | undefined;
 }
 
 export interface ActiveQuizProps {
@@ -296,6 +304,15 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
   return `(and ${parts.join(' and ')})`;
 }
 
+  // Wikipedia hover preview
+  const { previewState: wikipediaPreviewState, onHoverStart: wikipediaHoverStart, onHoverEnd: wikipediaHoverEnd } = useWikipediaPreview();
+
+  // Find the toggle key that reveals the answer label (for Wikipedia hover gating)
+  const labelToggleKey = useMemo(
+    () => toggleDefinitions.find((t) => t.revealsAnswer)?.key,
+    [toggleDefinitions],
+  );
+
   // Store dynamic override values in a ref so the stable wrapper component
   // can read them without changing React component identity. Changing component
   // identity causes React to unmount/remount the entire subtree — catastrophic
@@ -317,6 +334,9 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
     filteredBgElementIds,
     timeScale,
     elementStateColorOverrides,
+    wikipediaOnHoverStart: wikipediaHoverStart,
+    wikipediaOnHoverEnd: wikipediaHoverEnd,
+    labelToggleKey,
   };
 
   // Create the wrapper component exactly once per Renderer identity.
@@ -325,7 +345,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
     function StableFilterRenderer(props: VisualizationRendererProps) {
       // The ref is always assigned before this component renders, so current is never null.
       // Read values from the ref to avoid changing component identity on every render.
-      const { Renderer: Inner, showFilteredBg: showBg, extendedElements: extEls, filteredBgElementIds: bgIds, timeScale: ts, elementStateColorOverrides: colorOverrides } = filterOverridesRef.current ?? {} as FilterOverrides;
+      const { Renderer: Inner, showFilteredBg: showBg, extendedElements: extEls, filteredBgElementIds: bgIds, timeScale: ts, elementStateColorOverrides: colorOverrides, wikipediaOnHoverStart, wikipediaOnHoverEnd, labelToggleKey: lblKey } = filterOverridesRef.current ?? {} as FilterOverrides;
 
       const mergedStates = useMemo(() => {
         if (!showBg) return props.elementStates;
@@ -355,6 +375,26 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
         return toggles;
       }, [props.elementToggles, showBg, bgIds]);
 
+      // Gated Wikipedia hover handlers: only activate when element's label is visible
+      const handleWikipediaHoverStart = useCallback((elementId: string) => {
+        if (!wikipediaOnHoverStart) return;
+        const elements = extEls ?? props.elements;
+        const element = elements.find((e) => e.id === elementId);
+        if (!element?.wikipediaSlug) return;
+
+        const state = mergedStates[elementId];
+        const toggleVal = lblKey
+          ? elementToggle(mergedToggles, props.toggles, elementId, lblKey)
+          : false;
+        if (!shouldShowLabel(state, toggleVal)) return;
+
+        wikipediaOnHoverStart(elementId, element.wikipediaSlug);
+      }, [extEls, props.elements, mergedStates, mergedToggles, props.toggles, wikipediaOnHoverStart, lblKey]);
+
+      const handleWikipediaHoverEnd = useCallback(() => {
+        wikipediaOnHoverEnd?.();
+      }, [wikipediaOnHoverEnd]);
+
       if (!Inner) return null;
 
       return (
@@ -365,6 +405,8 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           elementToggles={mergedToggles}
           timeScale={ts}
           elementStateColorOverrides={colorOverrides}
+          onElementHoverStart={handleWikipediaHoverStart}
+          onElementHoverEnd={handleWikipediaHoverEnd}
         />
       );
     }
@@ -464,6 +506,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           timeScale={timeScale}
           normalizeOptions={normalizeOptions}
         />
+        <WikipediaPanel state={wikipediaPreviewState} />
       </div>
     </div>
   );
