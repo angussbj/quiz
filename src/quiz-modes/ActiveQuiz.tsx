@@ -304,8 +304,41 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
   return `(and ${parts.join(' and ')})`;
 }
 
-  // Wikipedia hover preview
+  // Wikipedia hover preview + cmd+click
   const { previewState: wikipediaPreviewState, onHoverStart: wikipediaHoverStart, onHoverEnd: wikipediaHoverEnd } = useWikipediaPreview();
+  const hoveredSlugRef = useRef<string | null>(null);
+  const quizAreaRef = useRef<HTMLDivElement>(null);
+
+  // Wrap Wikipedia hover callbacks to track slug for cmd+click
+  const wrappedWikipediaHoverStart = useCallback((elementId: string, slug: string) => {
+    hoveredSlugRef.current = slug;
+    wikipediaHoverStart(elementId, slug);
+  }, [wikipediaHoverStart]);
+
+  const wrappedWikipediaHoverEnd = useCallback(() => {
+    hoveredSlugRef.current = null;
+    wikipediaHoverEnd();
+  }, [wikipediaHoverEnd]);
+
+  // Capture-phase click handler for cmd+click → open Wikipedia
+  useEffect(() => {
+    const el = quizAreaRef.current;
+    if (!el) return;
+    const handler = (e: MouseEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      const slug = hoveredSlugRef.current;
+      if (!slug) return;
+      e.stopPropagation();
+      e.preventDefault();
+      window.open(
+        `https://en.wikipedia.org/wiki/${encodeURIComponent(slug)}`,
+        '_blank',
+        'noopener,noreferrer',
+      );
+    };
+    el.addEventListener('click', handler, true);
+    return () => el.removeEventListener('click', handler, true);
+  }, []);
 
   // Find the toggle key that reveals the answer label (for Wikipedia hover gating)
   const labelToggleKey = useMemo(
@@ -334,8 +367,8 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
     filteredBgElementIds,
     timeScale,
     elementStateColorOverrides,
-    wikipediaOnHoverStart: wikipediaHoverStart,
-    wikipediaOnHoverEnd: wikipediaHoverEnd,
+    wikipediaOnHoverStart: wrappedWikipediaHoverStart,
+    wikipediaOnHoverEnd: wrappedWikipediaHoverEnd,
     labelToggleKey,
   };
 
@@ -482,7 +515,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
         </div>
       )}
 
-      <div className={styles.quizArea}>
+      <div ref={quizAreaRef} className={styles.quizArea}>
         <Mode
           elements={activeElements}
           dataRows={activeDataRows}
