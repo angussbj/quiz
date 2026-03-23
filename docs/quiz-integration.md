@@ -109,3 +109,13 @@ Quiz definitions that share the same visualization type, toggles, and UI structu
 | `region`, `subregion` | Geographic region for filtering |
 | `city_alternates` | Pipe-separated alternate spellings |
 | `label_position` | Label placement: `left`, `right`, `above`, `below` |
+| `wikipedia` | Wikipedia article slug for hover preview (see below) |
+
+### Wikipedia Column Convention
+
+All quiz CSVs should include a `wikipedia` column containing the Wikipedia article slug (e.g., `Paris` for `https://en.wikipedia.org/wiki/Paris`). This powers the hover preview feature in `ActiveQuiz`.
+
+- **Generating slugs**: Run `node scripts/generateWikipediaSlugs.mjs` to auto-populate. Requires the Wikipedia titles dump (`enwiki-latest-all-titles-in-ns0.gz`) in `~/Downloads/`.
+- **Manual fixes**: Add entries to `scripts/wikipedia-fixes.json` and run `node scripts/applyWikipediaFixes.mjs` to validate and apply.
+- **New quizzes**: When adding a new quiz CSV, add its config to `CSV_CONFIG` in `generateWikipediaSlugs.mjs` and re-run the script.
+- **Element building**: Element builders read the `wikipedia` column and set `wikipediaSlug` on `VisualizationElement`. The hover preview in `ActiveQuiz` uses this field.
