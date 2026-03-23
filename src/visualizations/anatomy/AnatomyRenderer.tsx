@@ -67,6 +67,8 @@ function renderBoneElements(
   onElementClick: ((elementId: string) => void) | undefined,
   targetState: ElementVisualState | undefined,
   showGroupColors: boolean,
+  onElementHoverStart?: (elementId: string) => void,
+  onElementHoverEnd?: () => void,
 ) {
   return elements.map((element) => {
     if (!isAnatomyElement(element) || !element.svgPathData) return null;
@@ -103,6 +105,8 @@ function renderBoneElements(
               }
             : undefined
         }
+        onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+        onMouseLeave={onElementHoverEnd}
       />
     );
   });
@@ -113,6 +117,8 @@ export function AnatomyRenderer({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   targetElementId,
   toggles,
   elementToggles,
@@ -136,6 +142,8 @@ export function AnatomyRenderer({
         elementStates={elementStates}
         onElementClick={onElementClick}
         onPositionClick={onPositionClick}
+        onElementHoverStart={onElementHoverStart}
+        onElementHoverEnd={onElementHoverEnd}
         targetElementId={targetElementId}
         uniqueGroups={uniqueGroups}
         toggles={toggles}
@@ -151,6 +159,8 @@ interface AnatomyContentProps {
   readonly elementStates: VisualizationRendererProps['elementStates'];
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: VisualizationRendererProps['onPositionClick'];
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
   readonly targetElementId?: string;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly toggles: Readonly<Record<string, boolean>>;
@@ -162,6 +172,8 @@ function AnatomyContent({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   targetElementId,
   uniqueGroups,
   toggles,
@@ -198,14 +210,14 @@ function AnatomyContent({
       )}
 
       {/* Bone shapes: layered by state for proper z-ordering */}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, undefined, showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'default', showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'missed', showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'incorrect', showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct', showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-second', showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-third', showGroupColors)}
-      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'highlighted', showGroupColors)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, undefined, showGroupColors, onElementHoverStart, onElementHoverEnd)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'default', showGroupColors, onElementHoverStart, onElementHoverEnd)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'missed', showGroupColors, onElementHoverStart, onElementHoverEnd)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'incorrect', showGroupColors, onElementHoverStart, onElementHoverEnd)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct', showGroupColors, onElementHoverStart, onElementHoverEnd)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-second', showGroupColors, onElementHoverStart, onElementHoverEnd)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'correct-third', showGroupColors, onElementHoverStart, onElementHoverEnd)}
+      {renderBoneElements(elements, elementStates, uniqueGroups, onElementClick, 'highlighted', showGroupColors, onElementHoverStart, onElementHoverEnd)}
 
       {/* Bone name labels with leader lines */}
       {elements.map((element) => {

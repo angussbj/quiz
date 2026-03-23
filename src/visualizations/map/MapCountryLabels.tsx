@@ -34,9 +34,12 @@ interface MapCountryLabelsProps {
   readonly showFlags: boolean;
   readonly avoidPoints?: ReadonlyArray<ViewBoxPosition>;
   readonly elementNameToState?: Readonly<Record<string, ElementVisualState | undefined>>;
+  readonly nameToElementId?: Readonly<Record<string, string>>;
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
 }
 
-export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, elementNameToState }: MapCountryLabelsProps) {
+export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, elementNameToState, nameToElementId, onElementHoverStart, onElementHoverEnd }: MapCountryLabelsProps) {
   const { scale } = useZoomPan();
   const quantizedScale = quantizeScale(scale);
 
@@ -63,7 +66,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
   }, [filteredLabels, quantizedScale, showFlags, avoidPoints]);
 
   return (
-    <g className="country-labels" pointerEvents="none">
+    <g className="country-labels">
       {visibleItems.map(({ label, fontSize, flagHeight, gapSize, width, x, y, lines }) => {
         const state = elementNameToState?.[label.name];
         const isAnswered = state === 'correct' || state === 'correct-second'
@@ -77,12 +80,18 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
           ? STATUS_COLORS[state].main
           : 'var(--color-text-secondary)';
         const lineHeight = fontSize * 1.3;
+        const elementId = nameToElementId?.[label.name];
+        const canHover = !!elementId && !!onElementHoverStart;
 
         let textBaseY = y;
         if (labelShowFlag) textBaseY += flagHeight + gapSize;
 
         return (
-          <g key={`country-label-${label.id}`}>
+          <g
+            key={`country-label-${label.id}`}
+            onMouseEnter={canHover ? () => onElementHoverStart(elementId) : undefined}
+            onMouseLeave={canHover ? onElementHoverEnd : undefined}
+          >
             {labelShowFlag && (
               <image
                 href={assetPath(`/flags/${label.code}.svg`)}
@@ -90,6 +99,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                 y={y}
                 width={flagWidth}
                 height={flagHeight}
+                pointerEvents={canHover ? 'auto' : 'none'}
               />
             )}
             {labelShowName && (
@@ -101,6 +111,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                 fontWeight={500}
                 fill={textColor}
                 opacity={0.8}
+                pointerEvents={canHover ? 'auto' : 'none'}
                 style={{
                   userSelect: 'none',
                   paintOrder: 'stroke',

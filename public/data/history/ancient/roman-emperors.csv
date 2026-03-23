@@ -1,32 +1,32 @@
-id,emperor,start_year,end_year,dynasty,emperor_alternates
-augustus,Augustus,-27,14,Julio-Claudian,Octavian|Octavianus|Caesar Augustus|Augustus Caesar
-tiberius,Tiberius,14,37,Julio-Claudian,Tiberius Caesar
-caligula,Caligula,37,41,Julio-Claudian,Gaius|Gaius Caesar|Little Boots
-claudius,Claudius,41,54,Julio-Claudian,Claudius Caesar
-nero,Nero,54,68,Julio-Claudian,Nero Claudius Caesar
-galba,Galba,68,69,Year of Four Emperors,Servius Galba
-otho,Otho,69,69,Year of Four Emperors,Marcus Otho
-vitellius,Vitellius,69,69,Year of Four Emperors,Aulus Vitellius
-vespasian,Vespasian,69,79,Flavian,Titus Flavius Vespasianus
-titus,Titus,79,81,Flavian,Titus Caesar Vespasianus
-domitian,Domitian,81,96,Flavian,Domitian Caesar
-nerva,Nerva,96,98,Nerva-Antonine,
-trajan,Trajan,98,117,Nerva-Antonine,Trajan Caesar|Nerva Traianus
-hadrian,Hadrian,117,138,Nerva-Antonine,Publius Aelius Hadrianus|Hadrian Caesar
-antoninus-pius,Antoninus Pius,138,161,Nerva-Antonine,Pius|Antoninus
-marcus-aurelius,Marcus Aurelius,161,180,Nerva-Antonine,Marcus Aurelius Antoninus|The Philosopher Emperor|Aurelius|Marcus
-commodus,Commodus,177,192,Nerva-Antonine,Lucius Aurelius Commodus
-septimius-severus,Septimius Severus,193,211,Severan,Severus
-caracalla,Caracalla,211,217,Severan,Marcus Aurelius Antoninus
-elagabalus,Elagabalus,218,222,Severan,Heliogabalus
-alexander-severus,Alexander Severus,222,235,Severan,
-maximinus-thrax,Maximinus Thrax,235,238,Crisis of Third Century,Gaius Julius Verus Maximinus
-gordian-iii,Gordian III,238,244,Crisis of Third Century,
-philip-the-arab,Philip the Arab,244,249,Crisis of Third Century,Marcus Julius Philippus
-decius,Decius,249,251,Crisis of Third Century,Gaius Messius Quintus Trajanus Decius
-aurelian,Aurelian,270,275,Crisis of Third Century,Restorer of the World
-diocletian,Diocletian,284,305,Tetrarchy,Gaius Aurelius Valerius Diocletianus
-constantine-i,Constantine I,306,337,Constantinian,Constantine the Great|Constantine
-julian,Julian,361,363,Constantinian,Julian the Apostate
-theodosius-i,Theodosius I,379,395,Theodosian,Theodosius the Great|Theodosius
-romulus-augustulus,Romulus Augustulus,475,476,Western Empire,Romulus Augustus
+id,emperor,start_year,end_year,dynasty,emperor_alternates,wikipedia
+augustus,Augustus,-27,14,Julio-Claudian,Octavian|Octavianus|Caesar Augustus|Augustus Caesar,Augustus
+tiberius,Tiberius,14,37,Julio-Claudian,Tiberius Caesar,Tiberius
+caligula,Caligula,37,41,Julio-Claudian,Gaius|Gaius Caesar|Little Boots,Caligula
+claudius,Claudius,41,54,Julio-Claudian,Claudius Caesar,Claudius
+nero,Nero,54,68,Julio-Claudian,Nero Claudius Caesar,Nero
+galba,Galba,68,69,Year of Four Emperors,Servius Galba,Galba
+otho,Otho,69,69,Year of Four Emperors,Marcus Otho,Otho
+vitellius,Vitellius,69,69,Year of Four Emperors,Aulus Vitellius,Vitellius
+vespasian,Vespasian,69,79,Flavian,Titus Flavius Vespasianus,Vespasian
+titus,Titus,79,81,Flavian,Titus Caesar Vespasianus,Titus
+domitian,Domitian,81,96,Flavian,Domitian Caesar,Domitian
+nerva,Nerva,96,98,Nerva-Antonine,,Nerva
+trajan,Trajan,98,117,Nerva-Antonine,Trajan Caesar|Nerva Traianus,Trajan
+hadrian,Hadrian,117,138,Nerva-Antonine,Publius Aelius Hadrianus|Hadrian Caesar,Hadrian
+antoninus-pius,Antoninus Pius,138,161,Nerva-Antonine,Pius|Antoninus,Antoninus_Pius
+marcus-aurelius,Marcus Aurelius,161,180,Nerva-Antonine,Marcus Aurelius Antoninus|The Philosopher Emperor|Aurelius|Marcus,Marcus_Aurelius
+commodus,Commodus,177,192,Nerva-Antonine,Lucius Aurelius Commodus,Commodus
+septimius-severus,Septimius Severus,193,211,Severan,Severus,Septimius_Severus
+caracalla,Caracalla,211,217,Severan,Marcus Aurelius Antoninus,Caracalla
+elagabalus,Elagabalus,218,222,Severan,Heliogabalus,Elagabalus
+alexander-severus,Alexander Severus,222,235,Severan,,Alexander_Severus
+maximinus-thrax,Maximinus Thrax,235,238,Crisis of Third Century,Gaius Julius Verus Maximinus,Maximinus_Thrax
+gordian-iii,Gordian III,238,244,Crisis of Third Century,,Gordian_III
+philip-the-arab,Philip the Arab,244,249,Crisis of Third Century,Marcus Julius Philippus,Philip_the_Arab
+decius,Decius,249,251,Crisis of Third Century,Gaius Messius Quintus Trajanus Decius,Decius
+aurelian,Aurelian,270,275,Crisis of Third Century,Restorer of the World,Aurelian
+diocletian,Diocletian,284,305,Tetrarchy,Gaius Aurelius Valerius Diocletianus,Diocletian
+constantine-i,Constantine I,306,337,Constantinian,Constantine the Great|Constantine,Constantine_I
+julian,Julian,361,363,Constantinian,Julian the Apostate,Julian
+theodosius-i,Theodosius I,379,395,Theodosian,Theodosius the Great|Theodosius,Theodosius_I
+romulus-augustulus,Romulus Augustulus,475,476,Western Empire,Romulus Augustus,Romulus_Augustulus

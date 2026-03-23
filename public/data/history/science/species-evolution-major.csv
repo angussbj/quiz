@@ -1,33 +1,33 @@
-id,species,start_year,end_year,group,species_alternates
-first-life,First Life,-3800000000,,Microbes & Early Life,Prokaryotes|First Bacteria|LUCA
-photosynthesis,First Photosynthesis,-3500000000,,Microbes & Early Life,Cyanobacteria|Blue-green Algae
-great-oxidation,Great Oxidation Event,-2400000000,-2000000000,Microbes & Early Life,Oxygen Catastrophe|Oxygen Revolution
-first-eukaryotes,First Eukaryotes,-2100000000,,Microbes & Early Life,Eukaryota|Nucleated Cells
-first-multicellular,First Multicellular Life,-600000000,,Microbes & Early Life,Ediacaran Biota
-cambrian-explosion,Cambrian Explosion,-538800000,-485400000,Marine Life,Cambrian Fauna
-first-fish,First Fish,-530000000,,Marine Life,Agnatha|Jawless Fish|Myllokunmingia
-first-land-plants,First Land Plants,-470000000,,Plants,Embryophyta|Liverworts|Mosses
-first-vascular-plants,First Vascular Plants,-430000000,,Plants,Tracheophyta|Cooksonia
-first-insects,First Insects,-400000000,,Land Animals,Insecta|Rhyniognatha
-first-sharks,First Sharks,-450000000,,Marine Life,Chondrichthyes|Cladoselache
-first-amphibians,First Amphibians,-375000000,,Land Animals,Tetrapoda|Tiktaalik|Ichthyostega
-first-ferns,First Ferns,-360000000,,Plants,Pteridophyta|Filicophyta
-first-reptiles,First Reptiles,-312000000,,Reptiles & Dinosaurs,Amniota|Hylonomus
-first-conifers,First Conifers,-300000000,,Plants,Coniferophyta|Cordaitales
-first-mammals,First Mammals,-225000000,,Birds & Mammals,Mammalia|Adelobasileus|Morganucodon
-first-dinosaurs,First Dinosaurs,-230000000,-66000000,Reptiles & Dinosaurs,Dinosauria|Eoraptor|Nyasasaurus
-first-turtles,First Turtles,-220000000,,Reptiles & Dinosaurs,Testudines|Odontochelys
-first-crocodilians,First Crocodilians,-230000000,,Reptiles & Dinosaurs,Crocodilia|Archosauria
-first-birds,First Birds,-150000000,,Birds & Mammals,Avialae|Archaeopteryx
-first-flowering-plants,First Flowering Plants,-130000000,,Plants,Angiosperms|Archaefructus
-kpg-extinction,K-Pg Mass Extinction,-66000000,-66000000,Reptiles & Dinosaurs,Cretaceous-Paleogene Extinction|Chicxulub Impact|Dinosaur Extinction
-first-primates,First Primates,-55000000,,Primates & Humans,Primates|Plesiadapis|Euprimates
-first-whales,First Whales,-50000000,,Birds & Mammals,Cetacea|Pakicetus
-first-horses,First Horses,-55000000,,Birds & Mammals,Equidae|Eohippus|Hyracotherium
-first-elephants,First Elephants,-55000000,,Birds & Mammals,Proboscidea|Eritherium
-first-great-apes,First Great Apes,-15000000,,Primates & Humans,Hominidae|Proconsul|Dryopithecus
-australopithecus,Australopithecus,-4000000,-2000000,Primates & Humans,Australopithecus afarensis|Lucy|Southern Ape
-homo-habilis,Homo habilis,-2500000,-1400000,Primates & Humans,Handy Man|Early Homo
-homo-erectus,Homo erectus,-1900000,-110000,Primates & Humans,Upright Man|Pithecanthropus
-homo-neanderthalensis,Homo neanderthalensis,-400000,-40000,Primates & Humans,Neanderthals|Neanderthal Man
-homo-sapiens,Homo sapiens,-300000,,Primates & Humans,Modern Humans|Anatomically Modern Humans
+id,species,start_year,end_year,group,species_alternates,wikipedia
+first-life,First Life,-3800000000,,Microbes & Early Life,Prokaryotes|First Bacteria|LUCA,First_Life
+photosynthesis,First Photosynthesis,-3500000000,,Microbes & Early Life,Cyanobacteria|Blue-green Algae,Photosynthesis
+great-oxidation,Great Oxidation Event,-2400000000,-2000000000,Microbes & Early Life,Oxygen Catastrophe|Oxygen Revolution,Great_Oxidation_Event
+first-eukaryotes,First Eukaryotes,-2100000000,,Microbes & Early Life,Eukaryota|Nucleated Cells,Eukaryote
+first-multicellular,First Multicellular Life,-600000000,,Microbes & Early Life,Ediacaran Biota,Multicellular_organism
+cambrian-explosion,Cambrian Explosion,-538800000,-485400000,Marine Life,Cambrian Fauna,Cambrian_Explosion
+first-fish,First Fish,-530000000,,Marine Life,Agnatha|Jawless Fish|Myllokunmingia,
+first-land-plants,First Land Plants,-470000000,,Plants,Embryophyta|Liverworts|Mosses,Embryophyta
+first-vascular-plants,First Vascular Plants,-430000000,,Plants,Tracheophyta|Cooksonia,Vascular_plant
+first-insects,First Insects,-400000000,,Land Animals,Insecta|Rhyniognatha,Insect
+first-sharks,First Sharks,-450000000,,Marine Life,Chondrichthyes|Cladoselache,Shark
+first-amphibians,First Amphibians,-375000000,,Land Animals,Tetrapoda|Tiktaalik|Ichthyostega,Amphibian
+first-ferns,First Ferns,-360000000,,Plants,Pteridophyta|Filicophyta,Fern
+first-reptiles,First Reptiles,-312000000,,Reptiles & Dinosaurs,Amniota|Hylonomus,Reptile
+first-conifers,First Conifers,-300000000,,Plants,Coniferophyta|Cordaitales,Conifer
+first-mammals,First Mammals,-225000000,,Birds & Mammals,Mammalia|Adelobasileus|Morganucodon,Mammal
+first-dinosaurs,First Dinosaurs,-230000000,-66000000,Reptiles & Dinosaurs,Dinosauria|Eoraptor|Nyasasaurus,Dinosaur
+first-turtles,First Turtles,-220000000,,Reptiles & Dinosaurs,Testudines|Odontochelys,Turtle
+first-crocodilians,First Crocodilians,-230000000,,Reptiles & Dinosaurs,Crocodilia|Archosauria,Crocodilia
+first-birds,First Birds,-150000000,,Birds & Mammals,Avialae|Archaeopteryx,Bird
+first-flowering-plants,First Flowering Plants,-130000000,,Plants,Angiosperms|Archaefructus,Flowering_plant
+kpg-extinction,K-Pg Mass Extinction,-66000000,-66000000,Reptiles & Dinosaurs,Cretaceous-Paleogene Extinction|Chicxulub Impact|Dinosaur Extinction,Cretaceous–Paleogene_extinction_event
+first-primates,First Primates,-55000000,,Primates & Humans,Primates|Plesiadapis|Euprimates,Primate
+first-whales,First Whales,-50000000,,Birds & Mammals,Cetacea|Pakicetus,Whale
+first-horses,First Horses,-55000000,,Birds & Mammals,Equidae|Eohippus|Hyracotherium,Horse
+first-elephants,First Elephants,-55000000,,Birds & Mammals,Proboscidea|Eritherium,Elephant
+first-great-apes,First Great Apes,-15000000,,Primates & Humans,Hominidae|Proconsul|Dryopithecus,Hominoidea
+australopithecus,Australopithecus,-4000000,-2000000,Primates & Humans,Australopithecus afarensis|Lucy|Southern Ape,Australopithecus
+homo-habilis,Homo habilis,-2500000,-1400000,Primates & Humans,Handy Man|Early Homo,Homo_habilis
+homo-erectus,Homo erectus,-1900000,-110000,Primates & Humans,Upright Man|Pithecanthropus,Homo_erectus
+homo-neanderthalensis,Homo neanderthalensis,-400000,-40000,Primates & Humans,Neanderthals|Neanderthal Man,Homo_neanderthalensis
+homo-sapiens,Homo sapiens,-300000,,Primates & Humans,Modern Humans|Anatomically Modern Humans,Homo_sapiens

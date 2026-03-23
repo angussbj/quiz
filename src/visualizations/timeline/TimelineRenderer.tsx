@@ -43,7 +43,7 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, putInView, timeScale } = props;
+  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, onElementHoverStart, onElementHoverEnd, putInView, timeScale } = props;
   const isLogScale = timeScale === 'log';
 
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
@@ -393,6 +393,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     (element: TimelineElement, event: React.MouseEvent) => {
       hoveredElementRef.current = element;
       lastMousePosRef.current = { x: event.clientX, y: event.clientY };
+      onElementHoverStart?.(element.id);
       if (!shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'))) {
         tooltipTextRef.current = '';
         setTooltip(null);
@@ -402,7 +403,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       tooltipTextRef.current = text;
       setTooltip({ x: event.clientX, y: event.clientY, text });
     },
-    [elementToggles, toggles, elementStates],
+    [elementToggles, toggles, elementStates, onElementHoverStart],
   );
   const handleBarMouseMove = useCallback((event: React.MouseEvent) => {
     lastMousePosRef.current = { x: event.clientX, y: event.clientY };
@@ -413,7 +414,8 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     hoveredElementRef.current = null;
     tooltipTextRef.current = '';
     setTooltip(null);
-  }, []);
+    onElementHoverEnd?.();
+  }, [onElementHoverEnd]);
 
   return (
     <>

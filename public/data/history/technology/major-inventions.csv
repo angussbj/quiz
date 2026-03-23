@@ -1,51 +1,51 @@
-id,invention,start_year,end_year,category,invention_alternates
-stone-tools,Stone Tools,-3300000,,Energy & Materials,Lithic technology|Oldowan tools
-fire-control,Controlled Fire,-1000000,,Energy & Materials,Fire making|Hearth
-bow-and-arrow,Bow and Arrow,-70000,,Weapons,Bow & Arrow|Archery
-sewing-needle,Sewing Needle,-50000,,Energy & Materials,Bone needle
-pottery,Pottery,-20000,,Agriculture & Food,Ceramic vessels|Fired clay pots
-agriculture,Agriculture,-10000,,Agriculture & Food,Farming|Crop cultivation
-irrigation,Irrigation,-6000,,Agriculture & Food,Canal irrigation|Water management
-plough,Plough,-4000,,Agriculture & Food,Plow|Ard
-wheel,Wheel,-3500,,Transport,Cartwheel|Potter's wheel|The Wheel
-writing,Writing,-3200,,Writing & Communication,Cuneiform|Pictographic writing
-sailboat,Sailboat,-3200,,Transport,Sailing|Sail
-bronze,Bronze,-3300,,Energy & Materials,Bronze alloy|Copper-tin alloy
-calendar,Calendar,-3000,,Science & Measurement,Astronomical calendar|Mesoamerican calendar
-papyrus,Papyrus,-3000,,Writing & Communication,Papyrus scroll|Paper reed
-aqueduct,Aqueduct,-800,,Transport,Roman aqueduct|Water conduit
-iron-smelting,Iron Smelting,-1200,,Energy & Materials,Ironworking|Iron metallurgy
-alphabet,Alphabet,-1050,,Writing & Communication,Phoenician alphabet|Alphabetic script
-compass,Compass,-200,,Science & Measurement,Magnetic compass|Lodestone compass
-paper,Paper,105,,Writing & Communication,Chinese paper|Papermaking
-stirrup,Stirrup,300,,Transport,Horse stirrup
-gunpowder,Gunpowder,850,,Weapons,Black powder|Chinese gunpowder
-printing-press,Printing Press,1440,,Writing & Communication,Gutenberg press|Movable type press
-telescope,Telescope,1608,,Science & Measurement,Optical telescope|Refracting telescope
-microscope,Microscope,1590,,Science & Measurement,Optical microscope|Compound microscope
-smallpox-vaccine,Smallpox Vaccine,1796,,Medicine,Vaccination|Jenner's vaccine|Vaccine|Immunization
-steam-engine,Steam Engine,1769,,Transport,Watt steam engine|Steam power
-cotton-gin,Cotton Gin,1793,,Agriculture & Food,Cotton gin machine
-locomotive,Steam Locomotive,1804,,Transport,Steam train|Railway locomotive
-electric-battery,Electric Battery,1800,,Energy & Materials,Voltaic pile|Galvanic battery
-photography,Photography,1826,,Science & Measurement,Daguerreotype|Camera
-telegraph,Telegraph,1837,,Writing & Communication,Electrical telegraph|Morse telegraph
-anaesthesia,Anaesthesia,1846,,Medicine,General anaesthesia|Surgical anaesthesia|Anesthesia
-sewing-machine,Sewing Machine,1846,,Energy & Materials,Stitching machine
-germ-theory,Germ Theory,1861,,Medicine,Pasteurisation|Microbial theory of disease|Pasteurization
-dynamite,Dynamite,1867,,Weapons,Explosive|Nobel's dynamite
-telephone,Telephone,1876,,Writing & Communication,Bell telephone|Electric telephone|Phone
-electric-light-bulb,Electric Light Bulb,1879,,Energy & Materials,Incandescent light bulb|Edison bulb|Light bulb|Lightbulb
-internal-combustion-engine,Internal Combustion Engine,1876,,Transport,Petrol engine|Gasoline engine|Otto cycle engine
-automobile,Automobile,1885,,Transport,Motor car|Car|Motorcar
-radio,Radio,1895,,Writing & Communication,Wireless telegraphy|Radio transmission
-x-ray,X-Ray,1895,,Medicine,Röntgen rays|Roentgen rays
-airplane,Airplane,1903,,Transport,Aeroplane|Aircraft|Flying machine|Wright Flyer
-penicillin,Penicillin,1928,,Medicine,Antibiotics|Fleming's penicillin
-television,Television,1926,,Writing & Communication,TV|Broadcast television
-nuclear-fission,Nuclear Fission,1938,,Energy & Materials,Atomic fission|Nuclear reaction
-transistor,Transistor,1947,,Computing & Electronics,Semiconductor transistor
-dna-structure,DNA Double Helix,1953,,Medicine,DNA structure|Double helix
-integrated-circuit,Integrated Circuit,1958,,Computing & Electronics,Microchip|Silicon chip|IC chip
-internet,Internet,1969,,Computing & Electronics,ARPANET|Computer network|World Wide Web|WWW|Web
-world-wide-web,World Wide Web,1991,,Computing & Electronics,WWW|The Web
+id,invention,start_year,end_year,category,invention_alternates,wikipedia
+stone-tools,Stone Tools,-3300000,,Energy & Materials,Lithic technology|Oldowan tools,Stone_Tools
+fire-control,Controlled Fire,-1000000,,Energy & Materials,Fire making|Hearth,
+bow-and-arrow,Bow and Arrow,-70000,,Weapons,Bow & Arrow|Archery,Bow_and_Arrow
+sewing-needle,Sewing Needle,-50000,,Energy & Materials,Bone needle,
+pottery,Pottery,-20000,,Agriculture & Food,Ceramic vessels|Fired clay pots,Pottery
+agriculture,Agriculture,-10000,,Agriculture & Food,Farming|Crop cultivation,Agriculture
+irrigation,Irrigation,-6000,,Agriculture & Food,Canal irrigation|Water management,Irrigation
+plough,Plough,-4000,,Agriculture & Food,Plow|Ard,Plough
+wheel,Wheel,-3500,,Transport,Cartwheel|Potter's wheel|The Wheel,Wheel
+writing,Writing,-3200,,Writing & Communication,Cuneiform|Pictographic writing,Writing
+sailboat,Sailboat,-3200,,Transport,Sailing|Sail,Sailboat
+bronze,Bronze,-3300,,Energy & Materials,Bronze alloy|Copper-tin alloy,Bronze
+calendar,Calendar,-3000,,Science & Measurement,Astronomical calendar|Mesoamerican calendar,Calendar
+papyrus,Papyrus,-3000,,Writing & Communication,Papyrus scroll|Paper reed,Papyrus
+aqueduct,Aqueduct,-800,,Transport,Roman aqueduct|Water conduit,Aqueduct
+iron-smelting,Iron Smelting,-1200,,Energy & Materials,Ironworking|Iron metallurgy,
+alphabet,Alphabet,-1050,,Writing & Communication,Phoenician alphabet|Alphabetic script,Alphabet
+compass,Compass,-200,,Science & Measurement,Magnetic compass|Lodestone compass,Compass
+paper,Paper,105,,Writing & Communication,Chinese paper|Papermaking,Paper
+stirrup,Stirrup,300,,Transport,Horse stirrup,Stirrup
+gunpowder,Gunpowder,850,,Weapons,Black powder|Chinese gunpowder,Gunpowder
+printing-press,Printing Press,1440,,Writing & Communication,Gutenberg press|Movable type press,Printing_Press
+telescope,Telescope,1608,,Science & Measurement,Optical telescope|Refracting telescope,Telescope
+microscope,Microscope,1590,,Science & Measurement,Optical microscope|Compound microscope,Microscope
+smallpox-vaccine,Smallpox Vaccine,1796,,Medicine,Vaccination|Jenner's vaccine|Vaccine|Immunization,
+steam-engine,Steam Engine,1769,,Transport,Watt steam engine|Steam power,Steam_Engine
+cotton-gin,Cotton Gin,1793,,Agriculture & Food,Cotton gin machine,Cotton_Gin
+locomotive,Steam Locomotive,1804,,Transport,Steam train|Railway locomotive,Steam_Locomotive
+electric-battery,Electric Battery,1800,,Energy & Materials,Voltaic pile|Galvanic battery,
+photography,Photography,1826,,Science & Measurement,Daguerreotype|Camera,Photography
+telegraph,Telegraph,1837,,Writing & Communication,Electrical telegraph|Morse telegraph,Telegraph
+anaesthesia,Anaesthesia,1846,,Medicine,General anaesthesia|Surgical anaesthesia|Anesthesia,Anaesthesia
+sewing-machine,Sewing Machine,1846,,Energy & Materials,Stitching machine,Sewing_Machine
+germ-theory,Germ Theory,1861,,Medicine,Pasteurisation|Microbial theory of disease|Pasteurization,Germ_Theory
+dynamite,Dynamite,1867,,Weapons,Explosive|Nobel's dynamite,Dynamite
+telephone,Telephone,1876,,Writing & Communication,Bell telephone|Electric telephone|Phone,Telephone
+electric-light-bulb,Electric Light Bulb,1879,,Energy & Materials,Incandescent light bulb|Edison bulb|Light bulb|Lightbulb,
+internal-combustion-engine,Internal Combustion Engine,1876,,Transport,Petrol engine|Gasoline engine|Otto cycle engine,Internal_Combustion_Engine
+automobile,Automobile,1885,,Transport,Motor car|Car|Motorcar,Automobile
+radio,Radio,1895,,Writing & Communication,Wireless telegraphy|Radio transmission,Radio
+x-ray,X-Ray,1895,,Medicine,Röntgen rays|Roentgen rays,X-Ray
+airplane,Airplane,1903,,Transport,Aeroplane|Aircraft|Flying machine|Wright Flyer,Airplane
+penicillin,Penicillin,1928,,Medicine,Antibiotics|Fleming's penicillin,Penicillin
+television,Television,1926,,Writing & Communication,TV|Broadcast television,Television
+nuclear-fission,Nuclear Fission,1938,,Energy & Materials,Atomic fission|Nuclear reaction,Nuclear_Fission
+transistor,Transistor,1947,,Computing & Electronics,Semiconductor transistor,Transistor
+dna-structure,DNA Double Helix,1953,,Medicine,DNA structure|Double helix,
+integrated-circuit,Integrated Circuit,1958,,Computing & Electronics,Microchip|Silicon chip|IC chip,Integrated_Circuit
+internet,Internet,1969,,Computing & Electronics,ARPANET|Computer network|World Wide Web|WWW|Web,Internet
+world-wide-web,World Wide Web,1991,,Computing & Electronics,WWW|The Web,World_Wide_Web

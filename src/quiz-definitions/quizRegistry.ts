@@ -265,6 +265,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       label: 'country',
       flag: 'country_code',
       group: 'subregion',
+      wikipedia: 'country',
     },
     dataPath: '/data/capitals/world-capitals.csv',
     supportingDataPaths: [],

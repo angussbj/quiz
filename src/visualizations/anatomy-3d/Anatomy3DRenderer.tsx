@@ -553,6 +553,8 @@ interface SceneProps {
   readonly elementStates: Readonly<Record<string, ElementVisualState>>;
   readonly elementLabels: ReadonlyArray<{ id: string; label: string; state: ElementVisualState | undefined }>;
   readonly onElementClick?: (elementId: string) => void;
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
   readonly animTarget: CameraView | null;
   readonly onAnimDone: () => void;
   readonly labelMode: 'off' | 'hover' | 'on';
@@ -564,6 +566,8 @@ function Scene({
   elementStates,
   elementLabels,
   onElementClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   animTarget,
   onAnimDone,
   labelMode,
@@ -572,6 +576,14 @@ function Scene({
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const { camera } = useThree();
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
+  const handleElementHover = useCallback((elementId: string | null) => {
+    setHoveredElementId(elementId);
+    if (elementId) {
+      onElementHoverStart?.(elementId);
+    } else {
+      onElementHoverEnd?.();
+    }
+  }, [onElementHoverStart, onElementHoverEnd]);
   const [yRange, setYRange] = useState({ yMin: 0, yMax: 1 });
   const [meshCenters, setMeshCenters] = useState<Map<string, MeshCenter>>(new Map());
 
@@ -633,7 +645,7 @@ function Scene({
           meshMap={meshMap}
           elementStates={elementStates}
           onElementClick={onElementClick}
-          onElementHover={setHoveredElementId}
+          onElementHover={handleElementHover}
           onModelReady={handleModelReady}
         />
       </Suspense>
@@ -679,6 +691,8 @@ export function Anatomy3DRenderer({
   elements,
   elementStates,
   onElementClick,
+  onElementHoverStart,
+  onElementHoverEnd,
 }: VisualizationRendererProps) {
   const [views, setViews] = useState<Record<string, CameraView>>({});
   const [modelReady, setModelReady] = useState(false);
@@ -774,6 +788,8 @@ export function Anatomy3DRenderer({
           elementStates={elementStates}
           elementLabels={elementLabels}
           onElementClick={onElementClick}
+          onElementHoverStart={onElementHoverStart}
+          onElementHoverEnd={onElementHoverEnd}
           animTarget={animTarget}
           onAnimDone={() => setAnimTarget(null)}
           labelMode={labelMode}

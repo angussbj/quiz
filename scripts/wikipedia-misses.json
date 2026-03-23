@@ -1,0 +1,742 @@
+[
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Ji nan Shandong",
+    "tried": "Ji_nan_Shandong, Ji_nan_Shandong,_China, Ji_nan_Shandong_(city), Ji_nan_Shandong_(China), Ji_nan, Ji_nan,_China, Ji_nan_(city)"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Grande Vitoria",
+    "tried": "Grande_Vitoria, Grande_Vitoria,_Brazil, Grande_Vitoria_(city), Grande_Vitoria_(Brazil)"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Leon de los Aldamas",
+    "tried": "Leon_de_los_Aldamas, Leon_de_los_Aldamas,_Mexico, Leon_de_los_Aldamas_(city), Leon_de_los_Aldamas_(Mexico), Leon_de_los, Leon_de_los,_Mexico, Leon_de_los_(city)"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Jingzhou Hubei",
+    "tried": "Jingzhou_Hubei, Jingzhou_Hubei,_China, Jingzhou_Hubei_(city), Jingzhou_Hubei_(China)"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Pingxiang Jiangxi",
+    "tried": "Pingxiang_Jiangxi, Pingxiang_Jiangxi,_China, Pingxiang_Jiangxi_(city), Pingxiang_Jiangxi_(China)"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Barcelona Puerto La Cruz",
+    "tried": "Barcelona_Puerto_La_Cruz, Barcelona_Puerto_La_Cruz,_Venezuela, Barcelona_Puerto_La_Cruz_(city), Barcelona_Puerto_La_Cruz_(Venezuela), Barcelona_Puerto_La, Barcelona_Puerto_La,_Venezuela, Barcelona_Puerto_La_(city)"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Ar-Rayyan",
+    "tried": "Ar-Rayyan, Ar-Rayyan,_Qatar, Ar-Rayyan_(city), Ar-Rayyan_(Qatar)"
+  },
+  {
+    "file": "history/music/composers.csv",
+    "name": "Kineya Rokusaburō IV",
+    "tried": "Kineya_Rokusaburō_IV"
+  },
+  {
+    "file": "history/music/composers.csv",
+    "name": "Kim Chang-jo",
+    "tried": "Kim_Chang-jo"
+  },
+  {
+    "file": "history/music/composers.csv",
+    "name": "Abu Bakr Khusrau Khan",
+    "tried": "Abu_Bakr_Khusrau_Khan"
+  },
+  {
+    "file": "history/music/composers.csv",
+    "name": "Riyad al-Sunbati",
+    "tried": "Riyad_al-Sunbati"
+  },
+  {
+    "file": "history/music/composers.csv",
+    "name": "Stephen Osadebe",
+    "tried": "Stephen_Osadebe"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "First Cholera Pandemic",
+    "tried": "First_Cholera_Pandemic"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of Radio Waves",
+    "tried": "Discovery_of_Radio_Waves"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "mRNA Vaccine Technology",
+    "tried": "mRNA_Vaccine_Technology"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Archaea",
+    "tried": "First_Archaea"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Fish",
+    "tried": "First_Fish"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "SpaceShipOne First Private Spaceflight",
+    "tried": "SpaceShipOne_First_Private_Spaceflight"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Huygens Titan Landing",
+    "tried": "Huygens_Titan_Landing"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "New Horizons Launch",
+    "tried": "New_Horizons_Launch"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Kepler Space Telescope Launch",
+    "tried": "Kepler_Space_Telescope_Launch"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Voyager 1 Enters Interstellar Space",
+    "tried": "Voyager_1_Enters_Interstellar_Space"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Chang'e 3 Moon Landing",
+    "tried": "Chang'e_3_Moon_Landing"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Rosetta Comet Orbit",
+    "tried": "Rosetta_Comet_Orbit"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Philae Comet Landing",
+    "tried": "Philae_Comet_Landing"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "SpaceX Falcon 9 First Landing",
+    "tried": "SpaceX_Falcon_9_First_Landing"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Juno Jupiter Orbit",
+    "tried": "Juno_Jupiter_Orbit"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "SpaceX Crew Dragon Demo-2",
+    "tried": "SpaceX_Crew_Dragon_Demo-2"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "James Webb Space Telescope Launch",
+    "tried": "James_Webb_Space_Telescope_Launch"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Perseverance Mars Rover Landing",
+    "tried": "Perseverance_Mars_Rover_Landing"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Ingenuity Mars Helicopter First Flight",
+    "tried": "Ingenuity_Mars_Helicopter_First_Flight"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Artemis 1 Launch",
+    "tried": "Artemis_1_Launch"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Chang'e 5 Moon Sample Return",
+    "tried": "Chang'e_5_Moon_Sample_Return"
+  },
+  {
+    "file": "history/technology/major-inventions.csv",
+    "name": "Controlled Fire",
+    "tried": "Controlled_Fire"
+  },
+  {
+    "file": "history/technology/major-inventions.csv",
+    "name": "Sewing Needle",
+    "tried": "Sewing_Needle"
+  },
+  {
+    "file": "history/technology/major-inventions.csv",
+    "name": "Iron Smelting",
+    "tried": "Iron_Smelting"
+  },
+  {
+    "file": "history/technology/major-inventions.csv",
+    "name": "Smallpox Vaccine",
+    "tried": "Smallpox_Vaccine"
+  },
+  {
+    "file": "history/technology/major-inventions.csv",
+    "name": "Electric Battery",
+    "tried": "Electric_Battery"
+  },
+  {
+    "file": "history/technology/major-inventions.csv",
+    "name": "Electric Light Bulb",
+    "tried": "Electric_Light_Bulb"
+  },
+  {
+    "file": "history/technology/major-inventions.csv",
+    "name": "DNA Double Helix",
+    "tried": "DNA_Double_Helix"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bykovskaya Protoka",
+    "tried": "Bykovskaya_Protoka_River, Bykovskaya_Protoka_(river), Bykovskaya_Protoka, Bykovskaya_Protoka_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Damietta Branch",
+    "tried": "Damietta_Branch_River, Damietta_Branch_(river), Damietta_Branch, Damietta_Branch_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Olenekskaya Protoka",
+    "tried": "Olenekskaya_Protoka_River, Olenekskaya_Protoka_(river), Olenekskaya_Protoka, Olenekskaya_Protoka_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Rosetta Branch",
+    "tried": "Rosetta_Branch_River, Rosetta_Branch_(river), Rosetta_Branch, Rosetta_Branch_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bratul Chillia",
+    "tried": "Bratul_Chillia_River, Bratul_Chillia_(river), Bratul_Chillia, Bratul_Chillia_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Damqogkanbab",
+    "tried": "Damqogkanbab_River, Damqogkanbab_(river), Damqogkanbab, Damqogkanbab_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ideriyn",
+    "tried": "Ideriyn_River, Ideriyn_(river), Ideriyn, Ideriyn_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Braco Menor",
+    "tried": "Braco_Menor_River, Braco_Menor_(river), Braco_Menor, Braco_Menor_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Dnepre",
+    "tried": "Dnepre_River, Dnepre_(river), Dnepre, Dnepre_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Malyy Yenisey",
+    "tried": "Malyy_Yenisey_River, Malyy_Yenisey_(river), Malyy_Yenisey, Malyy_Yenisey_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "São  Francisco",
+    "tried": "São__Francisco_River, São__Francisco_(river), São__Francisco, São__Francisco_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Shishhid Gol",
+    "tried": "Shishhid_Gol_River, Shishhid_Gol_(river), Shishhid_Gol, Shishhid_Gol_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Verkhniy Yenisey",
+    "tried": "Verkhniy_Yenisey_River, Verkhniy_Yenisey_(river), Verkhniy_Yenisey, Verkhniy_Yenisey_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Amu  Darya",
+    "tried": "Amu__Darya_River, Amu__Darya_(river), Amu__Darya, Amu__Darya_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Godävari",
+    "tried": "Godävari_River, Godävari_(river), Godävari, Godävari_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Syr  Darya",
+    "tried": "Syr__Darya_River, Syr__Darya_(river), Syr__Darya, Syr__Darya_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Trofimovskaya Protoka",
+    "tried": "Trofimovskaya_Protoka_River, Trofimovskaya_Protoka_(river), Trofimovskaya_Protoka, Trofimovskaya_Protoka_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tumatskaya Protoka",
+    "tried": "Tumatskaya_Protoka_River, Tumatskaya_Protoka_(river), Tumatskaya_Protoka, Tumatskaya_Protoka_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Anadyr’",
+    "tried": "Anadyr’_River, Anadyr’_(river), Anadyr’, Anadyr’_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ferenc Csatorna",
+    "tried": "Ferenc_Csatorna_River, Ferenc_Csatorna_(river), Ferenc_Csatorna, Ferenc_Csatorna_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Gta lv",
+    "tried": "Gta_lv_River, Gta_lv_(river), Gta_lv, Gta_lv_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Indragi",
+    "tried": "Indragi_River, Indragi_(river), Indragi, Indragi_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ismailiya Canal",
+    "tried": "Ismailiya_Canal_River, Ismailiya_Canal_(river), Ismailiya_Canal, Ismailiya_Canal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kokemenjoki",
+    "tried": "Kokemenjoki_River, Kokemenjoki_(river), Kokemenjoki, Kokemenjoki_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Koukourou",
+    "tried": "Koukourou_River, Koukourou_(river), Koukourou, Koukourou_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mahäna Nadï",
+    "tried": "Mahäna_Nadï_River, Mahäna_Nadï_(river), Mahäna_Nadï, Mahäna_Nadï_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "N. Fork Kuskokwim",
+    "tried": "N._Fork_Kuskokwim_River, N._Fork_Kuskokwim_(river), N._Fork_Kuskokwim, N._Fork_Kuskokwim_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Pend Orielle",
+    "tried": "Pend_Orielle_River, Pend_Orielle_(river), Pend_Orielle, Pend_Orielle_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Pnuco",
+    "tried": "Pnuco_River, Pnuco_(river), Pnuco, Pnuco_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "R. des Outaouais",
+    "tried": "R._des_Outaouais_River, R._des_Outaouais_(river), R._des_Outaouais, R._des_Outaouais_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ro Grande de Santiago",
+    "tried": "Ro_Grande_de_Santiago_River, Ro_Grande_de_Santiago_(river), Ro_Grande_de_Santiago, Ro_Grande_de_Santiago_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S. Branch Potomac",
+    "tried": "S._Branch_Potomac_River, S._Branch_Potomac_(river), S._Branch_Potomac, S._Branch_Potomac_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Soroksari Duna",
+    "tried": "Soroksari_Duna_River, Soroksari_Duna_(river), Soroksari_Duna, Soroksari_Duna_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tom’",
+    "tried": "Tom’_River, Tom’_(river), Tom’, Tom’_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bol’shaya Kuonamka",
+    "tried": "Bol’shaya_Kuonamka_River, Bol’shaya_Kuonamka_(river), Bol’shaya_Kuonamka, Bol’shaya_Kuonamka_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ghäghara",
+    "tried": "Ghäghara_River, Ghäghara_(river), Ghäghara, Ghäghara_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Grande Rivire de la Baleine",
+    "tried": "Grande_Rivire_de_la_Baleine_River, Grande_Rivire_de_la_Baleine_(river), Grande_Rivire_de_la_Baleine, Grande_Rivire_de_la_Baleine_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Hindiyah Channel",
+    "tried": "Hindiyah_Channel_River, Hindiyah_Channel_(river), Hindiyah_Channel, Hindiyah_Channel_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Khopr",
+    "tried": "Khopr_River, Khopr_(river), Khopr, Khopr_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kiz?lirmak",
+    "tried": "Kiz?lirmak_River, Kiz?lirmak_(river), Kiz?lirmak, Kiz?lirmak_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Lule lv",
+    "tried": "Lule_lv_River, Lule_lv_(river), Lule_lv, Lule_lv_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Luwegu",
+    "tried": "Luwegu_River, Luwegu_(river), Luwegu, Luwegu_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Malaya Ob",
+    "tried": "Malaya_Ob_River, Malaya_Ob_(river), Malaya_Ob, Malaya_Ob_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mlzes",
+    "tried": "Mlzes_River, Mlzes_(river), Mlzes, Mlzes_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "ngermanlven",
+    "tried": "ngermanlven_River, ngermanlven_(river), ngermanlven, ngermanlven_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Nizhnyaya Taymyra",
+    "tried": "Nizhnyaya_Taymyra_River, Nizhnyaya_Taymyra_(river), Nizhnyaya_Taymyra, Nizhnyaya_Taymyra_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Olëkma",
+    "tried": "Olëkma_River, Olëkma_(river), Olëkma, Olëkma_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Rio Salinas",
+    "tried": "Rio_Salinas_River, Rio_Salinas_(river), Rio_Salinas, Rio_Salinas_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ro Grande de Matagalpa",
+    "tried": "Ro_Grande_de_Matagalpa_River, Ro_Grande_de_Matagalpa_(river), Ro_Grande_de_Matagalpa, Ro_Grande_de_Matagalpa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sapt",
+    "tried": "Sapt_River, Sapt_(river), Sapt, Sapt_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Shatt al Hillah",
+    "tried": "Shatt_al_Hillah_River, Shatt_al_Hillah_(river), Shatt_al_Hillah, Shatt_al_Hillah_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Shebele",
+    "tried": "Shebele_River, Shebele_(river), Shebele, Shebele_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Skelleftelven",
+    "tried": "Skelleftelven_River, Skelleftelven_(river), Skelleftelven, Skelleftelven_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Stora Lule lv",
+    "tried": "Stora_Lule_lv_River, Stora_Lule_lv_(river), Stora_Lule_lv, Stora_Lule_lv_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tornelven",
+    "tried": "Tornelven_River, Tornelven_(river), Tornelven, Tornelven_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Velhas",
+    "tried": "Velhas_River, Velhas_(river), Velhas, Velhas_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Verkhnyaya Taymyra",
+    "tried": "Verkhnyaya_Taymyra_River, Verkhnyaya_Taymyra_(river), Verkhnyaya_Taymyra, Verkhnyaya_Taymyra_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Zncara",
+    "tried": "Zncara_River, Zncara_(river), Zncara, Zncara_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Amgun’",
+    "tried": "Amgun’_River, Amgun’_(river), Amgun’, Amgun’_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Aoukalé",
+    "tried": "Aoukalé_River, Aoukalé_(river), Aoukalé, Aoukalé_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bol’shoy Anyuy",
+    "tried": "Bol’shoy_Anyuy_River, Bol’shoy_Anyuy_(river), Bol’shoy_Anyuy, Bol’shoy_Anyuy_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bol’shoy Yenisey",
+    "tried": "Bol’shoy_Yenisey_River, Bol’shoy_Yenisey_(river), Bol’shoy_Yenisey, Bol’shoy_Yenisey_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Byk Menderes",
+    "tried": "Byk_Menderes_River, Byk_Menderes_(river), Byk_Menderes, Byk_Menderes_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chaor",
+    "tried": "Chaor_River, Chaor_(river), Chaor, Chaor_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chirrip del Atlntico",
+    "tried": "Chirrip_del_Atlntico_River, Chirrip_del_Atlntico_(river), Chirrip_del_Atlntico, Chirrip_del_Atlntico_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Contas",
+    "tried": "Contas_River, Contas_(river), Contas, Contas_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Di’er Songhua",
+    "tried": "Di’er_Songhua_River, Di’er_Songhua_(river), Di’er_Songhua, Di’er_Songhua_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Iliamna Lake Outlet",
+    "tried": "Iliamna_Lake_Outlet_River, Iliamna_Lake_Outlet_(river), Iliamna_Lake_Outlet, Iliamna_Lake_Outlet_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ivinheima",
+    "tried": "Ivinheima_River, Ivinheima_(river), Ivinheima, Ivinheima_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Klarlven",
+    "tried": "Klarlven_River, Klarlven_(river), Klarlven, Klarlven_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Luhit",
+    "tried": "Luhit_River, Luhit_(river), Luhit, Luhit_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Luirojoki",
+    "tried": "Luirojoki_River, Luirojoki_(river), Luirojoki, Luirojoki_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Motala strm",
+    "tried": "Motala_strm_River, Motala_strm_(river), Motala_strm, Motala_strm_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mukhavyets",
+    "tried": "Mukhavyets_River, Mukhavyets_(river), Mukhavyets, Mukhavyets_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mytinge",
+    "tried": "Mytinge_River, Mytinge_(river), Mytinge, Mytinge_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Nanweng",
+    "tried": "Nanweng_River, Nanweng_(river), Nanweng, Nanweng_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ngun",
+    "tried": "Ngun_River, Ngun_(river), Ngun, Ngun_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Oich",
+    "tried": "Oich_River, Oich_(river), Oich, Oich_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Oued Sebou",
+    "tried": "Oued_Sebou_River, Oued_Sebou_(river), Oued_Sebou, Oued_Sebou_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Patsoyoki",
+    "tried": "Patsoyoki_River, Patsoyoki_(river), Patsoyoki, Patsoyoki_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S. Fork Republican",
+    "tried": "S._Fork_Republican_River, S._Fork_Republican_(river), S._Fork_Republican, S._Fork_Republican_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Santa Mara",
+    "tried": "Santa_Mara_River, Santa_Mara_(river), Santa_Mara, Santa_Mara_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Severnaya Sos’va",
+    "tried": "Severnaya_Sos’va_River, Severnaya_Sos’va_(river), Severnaya_Sos’va, Severnaya_Sos’va_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "St.-Maurice",
+    "tried": "St.-Maurice_River, St.-Maurice_(river), St.-Maurice, St.-Maurice_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Talkeh",
+    "tried": "Talkeh_River, Talkeh_(river), Talkeh, Talkeh_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tao’er",
+    "tried": "Tao’er_River, Tao’er_(river), Tao’er, Tao’er_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tumnin",
+    "tried": "Tumnin_River, Tumnin_(river), Tumnin, Tumnin_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "W. Branch Susquehanna",
+    "tried": "W._Branch_Susquehanna_River, W._Branch_Susquehanna_(river), W._Branch_Susquehanna, W._Branch_Susquehanna_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Za’gya",
+    "tried": "Za’gya_River, Za’gya_(river), Za’gya, Za’gya_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bogcang",
+    "tried": "Bogcang_River, Bogcang_(river), Bogcang, Bogcang_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bol’shoy Yugan",
+    "tried": "Bol’shoy_Yugan_River, Bol’shoy_Yugan_(river), Bol’shoy_Yugan, Bol’shoy_Yugan_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Dongwe",
+    "tried": "Dongwe_River, Dongwe_(river), Dongwe, Dongwe_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Igombe",
+    "tried": "Igombe_River, Igombe_(river), Igombe, Igombe_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ligonha",
+    "tried": "Ligonha_River, Ligonha_(river), Ligonha, Ligonha_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mytitha",
+    "tried": "Mytitha_River, Mytitha_(river), Mytitha, Mytitha_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Notwani",
+    "tried": "Notwani_River, Notwani_(river), Notwani, Notwani_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Oum Er Rbia",
+    "tried": "Oum_Er_Rbia_River, Oum_Er_Rbia_(river), Oum_Er_Rbia, Oum_Er_Rbia_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Punguè",
+    "tried": "Punguè_River, Punguè_(river), Punguè, Punguè_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Purificacin",
+    "tried": "Purificacin_River, Purificacin_(river), Purificacin, Purificacin_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Rio Batepito",
+    "tried": "Rio_Batepito_River, Rio_Batepito_(river), Rio_Batepito, Rio_Batepito_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Rio Rapel",
+    "tried": "Rio_Rapel_River, Rio_Rapel_(river), Rio_Rapel, Rio_Rapel_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S. Fork Kuskokwim",
+    "tried": "S._Fork_Kuskokwim_River, S._Fork_Kuskokwim_(river), S._Fork_Kuskokwim, S._Fork_Kuskokwim_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Yanisyoki",
+    "tried": "Yanisyoki_River, Yanisyoki_(river), Yanisyoki, Yanisyoki_river"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Lateral Cuneiform",
+    "tried": "Lateral_Cuneiform_(bone), Lateral_Cuneiform_(anatomy), Lateral_Cuneiform"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Intermediate Cuneiform",
+    "tried": "Intermediate_Cuneiform_(bone), Intermediate_Cuneiform_(anatomy), Intermediate_Cuneiform"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Medial Cuneiform",
+    "tried": "Medial_Cuneiform_(bone), Medial_Cuneiform_(anatomy), Medial_Cuneiform"
+  },
+  {
+    "file": "subdivisions/russia.csv",
+    "name": "Maga Buryatdan",
+    "tried": "Maga_Buryatdan, Maga_Buryatdan_(Russia), Maga_Buryatdan_(state), Maga_Buryatdan_(province)"
+  },
+  {
+    "file": "subdivisions/russia.csv",
+    "name": "Primor'ye",
+    "tried": "Primor'ye, Primor'ye_(Russia), Primor'ye_(state), Primor'ye_(province)"
+  }
+]

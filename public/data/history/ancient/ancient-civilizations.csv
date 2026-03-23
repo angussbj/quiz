@@ -1,47 +1,47 @@
-id,civilization,start_year,end_year,continent,civilization_alternates
-sumer,Sumer,-3500,-2000,Middle East,Sumerian Civilization|Land of Sumer|Sumerians
-ancient-egypt,Ancient Egypt,-3100,-332,Africa,Kemet|Black Land|Pharaonic Egypt|Land of the Pharaohs
-akkadian-empire,Akkadian Empire,-2334,-2154,Middle East,Empire of Akkad|Akkad
-ur-iii,Ur III,-2112,-2004,Middle East,Third Dynasty of Ur|Neo-Sumerian Empire
-indus-valley,Indus Valley Civilization,-3300,-1300,Asia,Harappan Civilization|Mohenjo-daro Culture|IVC
-babylonia,Babylonia,-1894,-539,Middle East,Babylon|Babylonian Empire|Old Babylonian Empire
-minoan-civilization,Minoan Civilization,-2700,-1450,Europe,Minoans|Bronze Age Crete|Aegean Civilization
-shang-dynasty,Shang Dynasty,-1600,-1046,Asia,Shang China|Yin Dynasty|殷
-hittite-empire,Hittite Empire,-1700,-1200,Middle East,Hittites|Land of Hatti|Hatti
-mycenaean-greece,Mycenaean Greece,-1600,-1100,Europe,Mycenaeans|Bronze Age Greece|Mycenaean Civilization
-olmec,Olmec,-1500,-400,North America,Olmec Civilization|Rubber People
-assyria,Assyria,-2500,-609,Middle East,Assyrian Empire|Neo-Assyrian Empire|Ashur
-zhou-dynasty,Zhou Dynasty,-1046,-256,Asia,Zhou China|Chou Dynasty|Eastern Zhou|Western Zhou
-phoenicia,Phoenicia,-1500,-300,Middle East,Phoenicians|Canaanites|Purple People
-ancient-greece,Ancient Greece,-800,-146,Europe,Hellenic Civilization|Classical Greece|Hellas
-kingdom-of-kush,Kingdom of Kush,-1070,-350,Africa,Kush|Nubia|Kushite Kingdom|Meroe
-vedic-period,Vedic Period,-1500,-500,Asia,Vedic India|Vedic Civilization|Vedic Age
-chavin-culture,Chavin Culture,-900,-200,South America,Chavin Civilization|Chavin de Huantar
-celtic-civilization,Celtic Civilization,-800,400,Europe,Celts|La Tène Culture|Hallstatt Culture|Gauls
-achaemenid-persia,Achaemenid Empire,-550,-330,Middle East,Persian Empire|First Persian Empire|Hakhamanishiya
-moche,Moche,-100,700,South America,Moche Civilization|Mochica
-maurya-empire,Maurya Empire,-322,-185,Asia,Mauryan Empire|Mauryas
-carthage,Carthage,-814,-146,Africa,Carthaginian Empire|Qart-Hadasht|New City
-etruscan-civilization,Etruscan Civilization,-900,-264,Europe,Etruscans|Tyrsenoi|Rasenna
-maya,Maya,-2000,1524,North America,Maya Civilization|Classic Maya|Mayan Civilization
-roman-republic,Roman Republic,-509,-27,Europe,Republic of Rome|SPQR|Senatus Populusque Romanus
-parthian-empire,Parthian Empire,-247,224,Middle East,Parthia|Arsacid Empire|Ashkanian
-roman-empire,Roman Empire,-27,476,Europe,Rome|Imperial Rome|Western Roman Empire
-han-dynasty,Han Dynasty,-206,220,Asia,Han China|Former Han|Later Han|漢
-axum,Axum,100,940,Africa,Aksumite Empire|Aksum|Kingdom of Aksum|Ethiopia
-tiwanaku,Tiwanaku,300,1000,South America,Tiahuanaco|Tiwanaku Empire
-sassanid-empire,Sassanid Empire,224,651,Middle East,Sassanid Persia|Neo-Persian Empire|Eranshahr
-gupta-empire,Gupta Empire,320,550,Asia,Gupta Dynasty|Golden Age of India
-srivijaya,Srivijaya,650,1275,Asia,Srivijayan Empire|Sriwijaya
-maya-classic,Classic Maya,250,900,North America,Classic Period Maya|Maya Classic Period
-tang-dynasty,Tang Dynasty,618,907,Asia,Tang China|唐朝
-khmer-empire,Khmer Empire,802,1431,Asia,Angkor Empire|Khmer Kingdom|Angkor Civilization
-mali-empire,Mali Empire,1235,1600,Africa,Mandingo Empire|Manden Kurufaba
-viking-age,Viking Age,793,1066,Europe,Norse Age|Age of Vikings|Norsemen|Age of the Northmen
-majapahit,Majapahit,1293,1527,Asia,Majapahit Empire|Wilwatikta
-aztec,Aztec,1300,1521,North America,Aztec Empire|Triple Alliance|Mexica|Tenochtitlan
-inca,Inca,1438,1533,South America,Inca Empire|Tawantinsuyu|Incan Empire
-great-zimbabwe,Great Zimbabwe,1100,1450,Africa,Zimbabwe Kingdom|Kingdom of Zimbabwe
-songhai,Songhai,1464,1591,Africa,Songhai Empire|Songhay Empire
-benin-kingdom,Benin Kingdom,1180,1897,Africa,Kingdom of Benin|Benin Empire|Edo Kingdom
-cahokia,Cahokia,600,1400,North America,Cahokian Civilization|Mississippian Culture|Monks Mound Culture
+id,civilization,start_year,end_year,continent,civilization_alternates,wikipedia
+sumer,Sumer,-3500,-2000,Middle East,Sumerian Civilization|Land of Sumer|Sumerians,Sumer
+ancient-egypt,Ancient Egypt,-3100,-332,Africa,Kemet|Black Land|Pharaonic Egypt|Land of the Pharaohs,Ancient_Egypt
+akkadian-empire,Akkadian Empire,-2334,-2154,Middle East,Empire of Akkad|Akkad,Akkadian_Empire
+ur-iii,Ur III,-2112,-2004,Middle East,Third Dynasty of Ur|Neo-Sumerian Empire,Ur_III
+indus-valley,Indus Valley Civilization,-3300,-1300,Asia,Harappan Civilization|Mohenjo-daro Culture|IVC,Indus_Valley_Civilization
+babylonia,Babylonia,-1894,-539,Middle East,Babylon|Babylonian Empire|Old Babylonian Empire,Babylonia
+minoan-civilization,Minoan Civilization,-2700,-1450,Europe,Minoans|Bronze Age Crete|Aegean Civilization,Minoan_Civilization
+shang-dynasty,Shang Dynasty,-1600,-1046,Asia,Shang China|Yin Dynasty|殷,Shang_Dynasty
+hittite-empire,Hittite Empire,-1700,-1200,Middle East,Hittites|Land of Hatti|Hatti,Hittite_Empire
+mycenaean-greece,Mycenaean Greece,-1600,-1100,Europe,Mycenaeans|Bronze Age Greece|Mycenaean Civilization,Mycenaean_Greece
+olmec,Olmec,-1500,-400,North America,Olmec Civilization|Rubber People,Olmec
+assyria,Assyria,-2500,-609,Middle East,Assyrian Empire|Neo-Assyrian Empire|Ashur,Assyria
+zhou-dynasty,Zhou Dynasty,-1046,-256,Asia,Zhou China|Chou Dynasty|Eastern Zhou|Western Zhou,Zhou_Dynasty
+phoenicia,Phoenicia,-1500,-300,Middle East,Phoenicians|Canaanites|Purple People,Phoenicia
+ancient-greece,Ancient Greece,-800,-146,Europe,Hellenic Civilization|Classical Greece|Hellas,Ancient_Greece
+kingdom-of-kush,Kingdom of Kush,-1070,-350,Africa,Kush|Nubia|Kushite Kingdom|Meroe,Kingdom_of_Kush
+vedic-period,Vedic Period,-1500,-500,Asia,Vedic India|Vedic Civilization|Vedic Age,Vedic_Period
+chavin-culture,Chavin Culture,-900,-200,South America,Chavin Civilization|Chavin de Huantar,Chavín_culture
+celtic-civilization,Celtic Civilization,-800,400,Europe,Celts|La Tène Culture|Hallstatt Culture|Gauls,Celtic_Civilization
+achaemenid-persia,Achaemenid Empire,-550,-330,Middle East,Persian Empire|First Persian Empire|Hakhamanishiya,Achaemenid_Empire
+moche,Moche,-100,700,South America,Moche Civilization|Mochica,Moche
+maurya-empire,Maurya Empire,-322,-185,Asia,Mauryan Empire|Mauryas,Maurya_Empire
+carthage,Carthage,-814,-146,Africa,Carthaginian Empire|Qart-Hadasht|New City,Carthage
+etruscan-civilization,Etruscan Civilization,-900,-264,Europe,Etruscans|Tyrsenoi|Rasenna,Etruscan_Civilization
+maya,Maya,-2000,1524,North America,Maya Civilization|Classic Maya|Mayan Civilization,Maya
+roman-republic,Roman Republic,-509,-27,Europe,Republic of Rome|SPQR|Senatus Populusque Romanus,Roman_Republic
+parthian-empire,Parthian Empire,-247,224,Middle East,Parthia|Arsacid Empire|Ashkanian,Parthian_Empire
+roman-empire,Roman Empire,-27,476,Europe,Rome|Imperial Rome|Western Roman Empire,Roman_Empire
+han-dynasty,Han Dynasty,-206,220,Asia,Han China|Former Han|Later Han|漢,Han_Dynasty
+axum,Axum,100,940,Africa,Aksumite Empire|Aksum|Kingdom of Aksum|Ethiopia,Axum
+tiwanaku,Tiwanaku,300,1000,South America,Tiahuanaco|Tiwanaku Empire,Tiwanaku
+sassanid-empire,Sassanid Empire,224,651,Middle East,Sassanid Persia|Neo-Persian Empire|Eranshahr,Sassanid_Empire
+gupta-empire,Gupta Empire,320,550,Asia,Gupta Dynasty|Golden Age of India,Gupta_Empire
+srivijaya,Srivijaya,650,1275,Asia,Srivijayan Empire|Sriwijaya,Srivijaya
+maya-classic,Classic Maya,250,900,North America,Classic Period Maya|Maya Classic Period,Classic_Maya
+tang-dynasty,Tang Dynasty,618,907,Asia,Tang China|唐朝,Tang_Dynasty
+khmer-empire,Khmer Empire,802,1431,Asia,Angkor Empire|Khmer Kingdom|Angkor Civilization,Khmer_Empire
+mali-empire,Mali Empire,1235,1600,Africa,Mandingo Empire|Manden Kurufaba,Mali_Empire
+viking-age,Viking Age,793,1066,Europe,Norse Age|Age of Vikings|Norsemen|Age of the Northmen,Viking_Age
+majapahit,Majapahit,1293,1527,Asia,Majapahit Empire|Wilwatikta,Majapahit
+aztec,Aztec,1300,1521,North America,Aztec Empire|Triple Alliance|Mexica|Tenochtitlan,Aztec
+inca,Inca,1438,1533,South America,Inca Empire|Tawantinsuyu|Incan Empire,Inca
+great-zimbabwe,Great Zimbabwe,1100,1450,Africa,Zimbabwe Kingdom|Kingdom of Zimbabwe,Great_Zimbabwe
+songhai,Songhai,1464,1591,Africa,Songhai Empire|Songhay Empire,Songhai
+benin-kingdom,Benin Kingdom,1180,1897,Africa,Kingdom of Benin|Benin Empire|Edo Kingdom,Benin_Kingdom
+cahokia,Cahokia,600,1400,North America,Cahokian Civilization|Mississippian Culture|Monks Mound Culture,Cahokia

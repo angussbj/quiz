@@ -12,6 +12,7 @@ export function buildAnatomyElements(
 ): ReadonlyArray<AnatomyElement> {
   const labelColumn = columnMappings['label'] ?? 'name';
   const groupColumn = columnMappings['group'];
+  const wikipediaColumn = columnMappings['wikipedia'] ?? 'wikipedia';
 
   return rows.map((row) => {
     const id = row['id'] ?? '';
@@ -38,6 +39,7 @@ export function buildAnatomyElements(
       group: groupColumn ? row[groupColumn] : undefined,
       svgPathData,
       labelPosition,
+      wikipediaSlug: row[wikipediaColumn] || undefined,
     };
   });
 }

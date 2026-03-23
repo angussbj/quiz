@@ -31,6 +31,12 @@
   filter: brightness(1.25);
 }
 
+/* Like interactivePath but without cursor/brightness — just enables pointer-events for hover detection */
+.hoverablePath {
+  stroke-linejoin: round;
+  transition: fill var(--transition-normal), fill-opacity var(--transition-normal), stroke var(--transition-normal);
+}
+
 /* River elements wrap visible paths + a transparent hit-area in a <g>.
    The visible paths have pointer-events: none, so they can't receive :hover
    themselves — the group-level hover triggers brightness on all children. */
@@ -52,6 +58,11 @@
 .interactiveDot:hover {
   transform: scale(1.5);
   filter: brightness(1.25);
+}
+
+/* Like interactiveDot but without visual feedback — just enables pointer-events for hover detection */
+.hoverableDot {
+  pointer-events: auto;
 }
 
 .label {
@@ -84,6 +95,11 @@
   user-select: none;
 }
 
+.cityLabelHoverable {
+  composes: cityLabel;
+  pointer-events: auto;
+}
+
 .riverLabel {
   font-family: var(--font-family);
   font-size: 1px;
@@ -91,6 +107,16 @@
   font-style: italic;
   pointer-events: none;
   user-select: none;
+}
+
+.riverLabelHoverable {
+  composes: riverLabel;
+  pointer-events: auto;
+}
+
+/* Like interactiveGroup but without cursor/brightness — just enables pointer-events for hover detection */
+.hoverableGroup {
+  pointer-events: auto;
 }
 
 .backgroundLabel {

@@ -69,6 +69,10 @@ export interface VisualizationRendererProps {
   readonly elementStates: Readonly<Record<string, ElementVisualState>>;
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: (position: ViewBoxPosition) => void;
+  /** Called when the pointer hovers over an element (for Wikipedia preview). */
+  readonly onElementHoverStart?: (elementId: string) => void;
+  /** Called when the pointer leaves an element (for Wikipedia preview). */
+  readonly onElementHoverEnd?: () => void;
   readonly onClusterClick?: (cluster: ElementCluster) => void;
   readonly toggles: Readonly<Record<string, boolean>>;
   /** Per-element toggle overrides. Renderer checks elementToggles[elementId][toggleKey] ?? toggles[toggleKey]. */

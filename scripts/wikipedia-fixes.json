@@ -1,0 +1,1617 @@
+[
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 1 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 1 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 2 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 2 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 3 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 3 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 4 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 4 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 5 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 5 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 6 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 6 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 7 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 7 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 8 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 8 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 9 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 9 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 10 (right)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Costal cartilage of rib 10 (left)",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Sesamoid bones of hand (right)",
+    "slug": "Sesamoid_bones"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Sesamoid bones of hand (left)",
+    "slug": "Sesamoid_bones"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Sesamoid bones of foot (right)",
+    "slug": "Sesamoid_bones"
+  },
+  {
+    "file": "bones-3d/bones.csv",
+    "name": "Sesamoid bones of foot (left)",
+    "slug": "Sesamoid_bones"
+  },
+  {
+    "file": "borders/world-borders.csv",
+    "name": "Macao S.A.R",
+    "slug": "Macau"
+  },
+  {
+    "file": "borders/world-borders.csv",
+    "name": "South Georgia and the Islands",
+    "slug": "South_Georgia_and_the_South_Sandwich_Islands"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Taiyuan Shanxi",
+    "slug": "Taiyuan"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Fuzhou Fujian",
+    "slug": "Fuzhou"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Tangshan Hebei",
+    "slug": "Tangshan"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Wuhu Anhui",
+    "slug": "Wuhu"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Grande Vitoria",
+    "slug": "Vitória_metropolitan_area"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Taizhou Zhejiang",
+    "slug": "Taizhou"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Linyi Shandong",
+    "slug": "Linyi"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Yancheng Jiangsu",
+    "slug": "Yancheng"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Leon de los Aldamas",
+    "slug": "León_Guanajuato"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Jining Shandong",
+    "slug": "Jining"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Grande Sao Luis",
+    "slug": "São_Luís"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Taizhou Jiangsu",
+    "slug": "Taizhou"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Taian Shandong",
+    "slug": "Taian"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Mianyang Sichuan",
+    "slug": "Mianyang"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Fushun Liaoning",
+    "slug": "Fushun"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Pingdingshan Henan",
+    "slug": "Pingdingshan"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Zhenjiang Jiangsu",
+    "slug": "Zhenjiang"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Nanyang Henan",
+    "slug": "Nanyang"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Xiangtan Hunan",
+    "slug": "Xiangtan"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Yichun Jiangxi",
+    "slug": "Yichun"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Fuzhou Jiangxi",
+    "slug": "Fuzhou"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Jixi Heilongjiang",
+    "slug": "Jixi"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Barcelona Puerto La Cruz",
+    "slug": "Barcelona_Anzoategui"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Ar-Rayyan",
+    "slug": "Ar-Rayyan"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Suining Sichuan",
+    "slug": "Suining"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Xianyang Shaanxi",
+    "slug": "Xianyang"
+  },
+  {
+    "file": "cities/largest-cities.csv",
+    "name": "Yulin Shaanxi",
+    "slug": "Yulin"
+  },
+  {
+    "file": "history/ancient/ancient-civilizations.csv",
+    "name": "Chavin Culture",
+    "slug": "Chavín_culture"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Greek Classical Period",
+    "slug": "Classical_Greece"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Mauryan Art",
+    "slug": "Maurya_Empire"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Gupta Sculpture",
+    "slug": "Gupta_Empire"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Tang Dynasty Art",
+    "slug": "Tang_dynasty"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Heian Period Culture",
+    "slug": "Heian_period"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Song Dynasty Landscape Painting",
+    "slug": "Song_dynasty"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Romanesque Art",
+    "slug": "Romanesque_architecture"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Medieval Islamic Architecture",
+    "slug": "Islamic_architecture"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Indian Temple Sculpture",
+    "slug": "Indian_sculpture"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Aztec Art",
+    "slug": "Aztec_architecture"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Renaissance Polyphony",
+    "slug": "Renaissance_music"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Edo Period Culture",
+    "slug": "Edo_period"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Classical Period Music",
+    "slug": "Classical_music"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Latin American Muralism",
+    "slug": "Mexican_muralism"
+  },
+  {
+    "file": "history/culture/art-movements.csv",
+    "name": "Hip-Hop Culture",
+    "slug": "Hip_hop"
+  },
+  {
+    "file": "history/leaders/cultural-leaders.csv",
+    "name": "al-Biruni",
+    "slug": "Al-Biruni"
+  },
+  {
+    "file": "history/leaders/cultural-leaders.csv",
+    "name": "al-Ghazali",
+    "slug": "Al-Ghazali"
+  },
+  {
+    "file": "history/leaders/cultural-leaders.csv",
+    "name": "al-Farabi",
+    "slug": "Al-Farabi"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Gutenberg's Printing Press",
+    "slug": "Printing_press"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Columbus Reaches the Americas",
+    "slug": "Christopher_Columbus"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Vasco da Gama Reaches India",
+    "slug": "Vasco_da_Gama"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Spanish Conquest of the Aztecs",
+    "slug": "Spanish_conquest_of_the_Aztec_Empire"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Magellan's Circumnavigation",
+    "slug": "Ferdinand_Magellan"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Founding of the Mughal Empire",
+    "slug": "Mughal_Empire"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Spanish Conquest of the Incas",
+    "slug": "Spanish_conquest_of_the_Inca_Empire"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Galileo's Trial",
+    "slug": "Galileo_Galilei"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Rise of the Qing Dynasty",
+    "slug": "Qing_dynasty"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Opening of the Suez Canal",
+    "slug": "Suez_Canal"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Atomic Bombings of Hiroshima and Nagasaki",
+    "slug": "Atomic_bombings_of_Hiroshima_and_Nagasaki"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Indian Independence and Partition",
+    "slug": "Partition_of_India"
+  },
+  {
+    "file": "history/modern/modern-history.csv",
+    "name": "Rise of the Internet",
+    "slug": "History_of_the_Internet"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Austro-Hungarian Ultimatum to Serbia",
+    "slug": "July_Crisis"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Austria-Hungary Declares War on Serbia",
+    "slug": "Austria-Hungary_in_World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "German Ultimatum to Russia",
+    "slug": "World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Germany Declares War on Russia",
+    "slug": "World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Germany Declares War on France",
+    "slug": "World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Britain Declares War on Germany",
+    "slug": "World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Ottoman Empire Enters the War",
+    "slug": "Ottoman_Empire_in_World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Italy Enters the War",
+    "slug": "Italy_in_World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Bulgaria Enters the War",
+    "slug": "Bulgaria_in_World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Romania Enters the War",
+    "slug": "Romania_in_World_War_I"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Germany Resumes Unrestricted Submarine Warfare",
+    "slug": "Unrestricted_submarine_warfare"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "United States Enters the War",
+    "slug": "American_Expeditionary_Forces"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Armistice with the Ottoman Empire",
+    "slug": "Armistice_of_Mudros"
+  },
+  {
+    "file": "history/modern/ww1-timeline.csv",
+    "name": "Armistice with Austria-Hungary",
+    "slug": "Armistice_of_Villa_Giusti"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "Soviet Invasion of Manchuria",
+    "slug": "Soviet_invasion_of_Manchuria"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "Japan's Formal Surrender",
+    "slug": "Surrender_of_Japan"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "Katyusha Rockets First Used",
+    "slug": "Katyusha_rocket_launcher"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "Manhattan Project Begins",
+    "slug": "Manhattan_Project"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "First V-1 Attack on London",
+    "slug": "V-1_flying_bomb"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "Me 262 First Jet Combat",
+    "slug": "Messerschmitt_Me_262"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "First V-2 Rocket Attack",
+    "slug": "V-2_rocket"
+  },
+  {
+    "file": "history/modern/ww2-timeline.csv",
+    "name": "Trinity Nuclear Test",
+    "slug": "Trinity_test"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Cocoliztli Epidemic",
+    "slug": "Cocoliztli"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "English Sweating Sickness",
+    "slug": "Sweating_sickness"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Elizabethan Plague",
+    "slug": "Great_Plague_of_London"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Aztec Smallpox Epidemic",
+    "slug": "Smallpox"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "American Smallpox Epidemics",
+    "slug": "Smallpox_epidemics_in_the_Americas"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Boston Smallpox Epidemic",
+    "slug": "1721_Boston_smallpox_epidemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "First Cholera Pandemic",
+    "slug": "1817_cholera_pandemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Second Cholera Pandemic",
+    "slug": "Cholera_pandemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Third Cholera Pandemic",
+    "slug": "Cholera_pandemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Fourth Cholera Pandemic",
+    "slug": "Cholera_pandemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Fifth Cholera Pandemic",
+    "slug": "Cholera_pandemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Sixth Cholera Pandemic",
+    "slug": "Cholera_pandemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Seventh Cholera Pandemic",
+    "slug": "Cholera_pandemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "West Africa Ebola Epidemic",
+    "slug": "Western_African_Ebola_virus_epidemic"
+  },
+  {
+    "file": "history/science/pandemics.csv",
+    "name": "Polio Epidemics",
+    "slug": "Poliomyelitis"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Archimedes' Principles",
+    "slug": "Archimedes'_principle"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Measurement of Earth's Circumference",
+    "slug": "Eratosthenes"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Ptolemy's Almagest",
+    "slug": "Almagest"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Hindu-Arabic Numeral System",
+    "slug": "Hindu–Arabic_numeral_system"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Ibn al-Haytham's Book of Optics",
+    "slug": "Ibn_al-Haytham"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of Magnetic Declination",
+    "slug": "Magnetic_declination"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Copernican Heliocentrism",
+    "slug": "Copernican_Revolution"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Vesalius' Human Anatomy",
+    "slug": "Andreas_Vesalius"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Galileo's Telescopic Observations",
+    "slug": "Galileo_Galilei"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Harvey's Theory of Blood Circulation",
+    "slug": "William_Harvey"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Newton's Principia Mathematica",
+    "slug": "Philosophiæ_Naturalis_Principia_Mathematica"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Invention of Calculus",
+    "slug": "Calculus"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Newton's Opticks",
+    "slug": "Opticks"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Linnaean Taxonomy",
+    "slug": "Linnaean_taxonomy"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Franklin's Electrical Experiments",
+    "slug": "Benjamin_Franklin"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Lavoisier's Theory of Combustion",
+    "slug": "Antoine_Lavoisier"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Smallpox Vaccination",
+    "slug": "Edward_Jenner"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Dalton's Atomic Theory",
+    "slug": "John_Dalton"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Faraday's Electromagnetic Induction",
+    "slug": "Faraday's_law_of_induction"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Kirchhoff's Spectroscopy",
+    "slug": "Gustav_Kirchhoff"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Mendeleev's Periodic Table",
+    "slug": "Periodic_table"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Wallace-Darwin Natural Selection",
+    "slug": "Evolution"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of Radio Waves",
+    "slug": "Hertz_resonator"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of X-Rays",
+    "slug": "Wilhelm_Röntgen"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of Radioactivity",
+    "slug": "Radioactivity"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of the Electron",
+    "slug": "J._J._Thomson"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of Polonium and Radium",
+    "slug": "Marie_Curie"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Planck's Quantum Theory",
+    "slug": "Quantum_mechanics"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Pavlov's Classical Conditioning",
+    "slug": "Ivan_Pavlov"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Freud's Psychoanalytic Theory",
+    "slug": "Psychoanalysis"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Bohr Model of the Atom",
+    "slug": "Bohr_model"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Continental Drift Theory",
+    "slug": "Continental_drift"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of Penicillin",
+    "slug": "Penicillin"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Hubble's Expanding Universe",
+    "slug": "Edwin_Hubble"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Turing Machine and Computability",
+    "slug": "Turing_machine"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "DNA as Genetic Material",
+    "slug": "DNA"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Plate Tectonics Theory",
+    "slug": "Plate_tectonics"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "DNA Double Helix Structure",
+    "slug": "DNA"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of HIV",
+    "slug": "HIV"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Discovery of the Higgs Boson",
+    "slug": "Higgs_boson"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "CRISPR-Cas9 Gene Editing",
+    "slug": "CRISPR"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "Detection of Gravitational Waves",
+    "slug": "Gravitational_wave"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "First Image of a Black Hole",
+    "slug": "Black_hole"
+  },
+  {
+    "file": "history/science/scientific-discoveries.csv",
+    "name": "mRNA Vaccine Technology",
+    "slug": "mRNA_vaccine"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Photosynthesis",
+    "slug": "Photosynthesis"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Eukaryotes",
+    "slug": "Eukaryote"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Sexual Reproduction",
+    "slug": "Sexual_reproduction"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Multicellular Life",
+    "slug": "Multicellular_organism"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Ediacaran Fauna",
+    "slug": "Ediacara_biota"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Sponges",
+    "slug": "Sponge"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Jellyfish",
+    "slug": "Jellyfish"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Molluscs",
+    "slug": "Mollusca"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Trilobites",
+    "slug": "Trilobite"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Echinoderms",
+    "slug": "Echinoderm"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Cephalopods",
+    "slug": "Cephalopod"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Coral Reefs",
+    "slug": "Coral_reef"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Jawless Fish",
+    "slug": "Jawless_fish"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Sharks",
+    "slug": "Shark"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Jawed Fish",
+    "slug": "Gnathostomata"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Lobe-finned Fish",
+    "slug": "Sarcopterygii"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Ray-finned Fish",
+    "slug": "Actinopterygii"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Land Plants",
+    "slug": "Embryophyta"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Vascular Plants",
+    "slug": "Vascular_plant"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Ferns",
+    "slug": "Fern"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Seed Plants",
+    "slug": "Spermatophyte"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Conifers",
+    "slug": "Conifer"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Cycads",
+    "slug": "Cycad"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Flowering Plants",
+    "slug": "Flowering_plant"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Grasses",
+    "slug": "Poaceae"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Insects",
+    "slug": "Insect"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Amphibians",
+    "slug": "Amphibian"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Frogs",
+    "slug": "Frog"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Permian Mass Extinction",
+    "slug": "Permian–Triassic_extinction_event"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Reptiles",
+    "slug": "Reptile"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Synapsids",
+    "slug": "Synapsid"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Therapsids",
+    "slug": "Therapsid"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Turtles",
+    "slug": "Turtle"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Lizards",
+    "slug": "Lizard"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Crocodilians",
+    "slug": "Crocodilia"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Snakes",
+    "slug": "Snake"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Triassic-Jurassic Extinction",
+    "slug": "Triassic–Jurassic_extinction_event"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Dinosaurs",
+    "slug": "Dinosaur"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Sauropod Dinosaurs",
+    "slug": "Sauropoda"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Theropod Dinosaurs",
+    "slug": "Theropoda"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Ornithischian Dinosaurs",
+    "slug": "Ornithischia"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Birds",
+    "slug": "Bird"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Early True Birds",
+    "slug": "Archaeopteryx"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Modern Birds (Neornithes)",
+    "slug": "Neornithes"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "K-Pg Mass Extinction",
+    "slug": "Cretaceous–Paleogene_extinction_event"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Mammals",
+    "slug": "Mammal"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Monotremes",
+    "slug": "Monotreme"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Marsupials",
+    "slug": "Marsupial"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Placental Mammals",
+    "slug": "Eutheria"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Primates",
+    "slug": "Primate"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Prosimians",
+    "slug": "Prosimian"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Old World Monkeys",
+    "slug": "Cercopithecidae"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First New World Monkeys",
+    "slug": "Platyrrhini"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Apes",
+    "slug": "Ape"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Great Apes",
+    "slug": "Hominoidea"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Gibbons (Hylobatidae)",
+    "slug": "Hylobates"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Humans Out of Africa",
+    "slug": "Recent_African_origin"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Whales",
+    "slug": "Whale"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Horses",
+    "slug": "Horse"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Elephants",
+    "slug": "Elephant"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Bats",
+    "slug": "Bat"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Rodents",
+    "slug": "Rodent"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Carnivores",
+    "slug": "Carnivora"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Ungulates",
+    "slug": "Ungulate"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Cats",
+    "slug": "Felidae"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Sabre-toothed Cats",
+    "slug": "Saber-toothed_cat"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Dogs (Canidae)",
+    "slug": "Canidae"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "First Bears",
+    "slug": "Bear"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Domesticated Dogs",
+    "slug": "Dog"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Domesticated Horses",
+    "slug": "Horse"
+  },
+  {
+    "file": "history/science/species-evolution-all.csv",
+    "name": "Quaternary Megafauna Extinction",
+    "slug": "Megafauna"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Photosynthesis",
+    "slug": "Photosynthesis"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Eukaryotes",
+    "slug": "Eukaryote"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Multicellular Life",
+    "slug": "Multicellular_organism"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Land Plants",
+    "slug": "Embryophyta"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Vascular Plants",
+    "slug": "Vascular_plant"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Insects",
+    "slug": "Insect"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Sharks",
+    "slug": "Shark"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Amphibians",
+    "slug": "Amphibian"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Ferns",
+    "slug": "Fern"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Reptiles",
+    "slug": "Reptile"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Conifers",
+    "slug": "Conifer"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Mammals",
+    "slug": "Mammal"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Dinosaurs",
+    "slug": "Dinosaur"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Turtles",
+    "slug": "Turtle"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Crocodilians",
+    "slug": "Crocodilia"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Birds",
+    "slug": "Bird"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Flowering Plants",
+    "slug": "Flowering_plant"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "K-Pg Mass Extinction",
+    "slug": "Cretaceous–Paleogene_extinction_event"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Primates",
+    "slug": "Primate"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Whales",
+    "slug": "Whale"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Horses",
+    "slug": "Horse"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Elephants",
+    "slug": "Elephant"
+  },
+  {
+    "file": "history/science/species-evolution-major.csv",
+    "name": "First Great Apes",
+    "slug": "Hominoidea"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "V-2 Rocket Reaches Space",
+    "slug": "V-2_rocket"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "V-2 Rocket First Launch",
+    "slug": "V-2_rocket"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Laika Spaceflight",
+    "slug": "Laika"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "NASA Founded",
+    "slug": "NASA"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Yuri Gagarin Spaceflight",
+    "slug": "Yuri_Gagarin"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Alan Shepard Spaceflight",
+    "slug": "Alan_Shepard"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "John Glenn Orbital Flight",
+    "slug": "John_Glenn"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Valentina Tereshkova Spaceflight",
+    "slug": "Valentina_Tereshkova"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Alexei Leonov Spacewalk",
+    "slug": "Alexei_Leonov"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Mariner 4 Mars Flyby",
+    "slug": "Mariner_4"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Apollo 1 Fire",
+    "slug": "Apollo_1"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Apollo 11 Moon Landing",
+    "slug": "Apollo_11"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Mariner 10 Venus Flyby",
+    "slug": "Mariner_10"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Viking 1 Mars Landing",
+    "slug": "Viking_1"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Voyager 2 Launch",
+    "slug": "Voyager_2"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Voyager 1 Launch",
+    "slug": "Voyager_1"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Space Shuttle Columbia First Flight",
+    "slug": "Space_Shuttle_Columbia"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Sally Ride Spaceflight",
+    "slug": "Sally_Ride"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Voyager 1 Saturn Flyby",
+    "slug": "Voyager_1"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Voyager 2 Uranus Flyby",
+    "slug": "Voyager_2"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Mir Space Station Launch",
+    "slug": "Mir"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Voyager 2 Neptune Flyby",
+    "slug": "Voyager_2"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Hubble Space Telescope Launch",
+    "slug": "Hubble_Space_Telescope"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Magellan Venus Orbit",
+    "slug": "Magellan_spacecraft"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Galileo Jupiter Orbit",
+    "slug": "Galileo_spacecraft"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Sojourner Mars Rover",
+    "slug": "Sojourner"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "ISS Construction Begins",
+    "slug": "International_Space_Station"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "ISS First Crew",
+    "slug": "International_Space_Station"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Dennis Tito Spaceflight",
+    "slug": "Dennis_Tito"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Spirit Mars Rover Landing",
+    "slug": "Spirit_rover"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Opportunity Mars Rover Landing",
+    "slug": "Opportunity_rover"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Cassini Saturn Orbit",
+    "slug": "Cassini–Huygens"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "Curiosity Mars Rover Landing",
+    "slug": "Curiosity_rover"
+  },
+  {
+    "file": "history/space/space-milestones.csv",
+    "name": "New Horizons Pluto Flyby",
+    "slug": "New_Horizons"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Thoracic Vertebrae",
+    "slug": "Thoracic_vertebrae"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Costal Cartilage",
+    "slug": "Costal_cartilage"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Thumb Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Thumb Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Little Finger Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Little Finger Middle Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Index Finger Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Ring Finger Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Little Finger Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Middle Finger Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Index Finger Middle Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Ring Finger Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Index Finger Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Ring Finger Middle Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Middle Finger Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Middle Finger Middle Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Little Toe Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "2nd Toe Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "2nd Toe Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "3rd Toe Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "4th Toe Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Big Toe Proximal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Little Toe Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "Big Toe Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "3rd Toe Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "science/biology/human-bones.csv",
+    "name": "4th Toe Distal Phalanx",
+    "slug": "Phalanges"
+  },
+  {
+    "file": "subdivisions/china.csv",
+    "name": "Inner Mongol",
+    "slug": "Inner_Mongolia"
+  },
+  {
+    "file": "subdivisions/russia.csv",
+    "name": "Kabardin-Balkar",
+    "slug": "Kabardino-Balkaria"
+  },
+  {
+    "file": "subdivisions/russia.csv",
+    "name": "Khanty-Mansiy",
+    "slug": "Khanty-Mansiysk_Autonomous_Okrug"
+  }
+]

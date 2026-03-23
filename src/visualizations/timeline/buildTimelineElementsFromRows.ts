@@ -21,6 +21,7 @@ export function buildTimelineElementsFromRows(
 ): ReadonlyArray<TimelineElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
+  const wikipediaColumn = columnMappings['wikipedia'] ?? 'wikipedia';
 
   const inputs: TimelineElementInput[] = [];
   for (const row of rows) {
@@ -34,6 +35,7 @@ export function buildTimelineElementsFromRows(
       end: parseTimestamp(row, 'end'),
       category: row['category'] ?? (groupColumn ? row[groupColumn] : '') ?? '',
       group: groupColumn ? row[groupColumn] : undefined,
+      wikipediaSlug: row[wikipediaColumn] || undefined,
     });
   }
 

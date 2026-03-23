@@ -24,6 +24,8 @@ interface FlagCellProps {
   readonly state: ElementVisualState;
   readonly showCountryName: boolean;
   readonly onClick?: (elementId: string) => void;
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
   readonly onLabelMouseEnter: (label: string, event: React.MouseEvent) => void;
   readonly onLabelMouseMove: (event: React.MouseEvent) => void;
   readonly onLabelMouseLeave: () => void;
@@ -40,6 +42,8 @@ function FlagCell({
   state,
   showCountryName,
   onClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   onLabelMouseEnter,
   onLabelMouseMove,
   onLabelMouseLeave,
@@ -64,6 +68,8 @@ function FlagCell({
     <g
       data-element-id={element.id}
       onClick={element.interactive ? () => onClick?.(element.id) : undefined}
+      onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+      onMouseLeave={onElementHoverEnd}
       style={{ cursor: element.interactive ? 'pointer' : 'default' }}
     >
       <rect
@@ -117,6 +123,8 @@ function FlagGrid({
   elements,
   elementStates,
   onElementClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   toggles,
   elementToggles,
 }: VisualizationRendererProps) {
@@ -152,6 +160,8 @@ function FlagGrid({
               state={state}
               showCountryName={elementToggle(elementToggles, toggles, element.id, 'showCountryNames')}
               onClick={onElementClick}
+              onElementHoverStart={onElementHoverStart}
+              onElementHoverEnd={onElementHoverEnd}
               onLabelMouseEnter={handleLabelMouseEnter}
               onLabelMouseMove={handleLabelMouseMove}
               onLabelMouseLeave={handleLabelMouseLeave}

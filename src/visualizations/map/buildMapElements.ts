@@ -133,6 +133,7 @@ export function buildMapElements(
   const groupColumn = columnMappings['group'];
   const codeColumn = columnMappings['code'] ?? 'code';
   const pathStyle = columnMappings['pathRenderStyle'] as 'fill' | 'stroke' | undefined;
+  const wikipediaColumn = columnMappings['wikipedia'] ?? 'wikipedia';
 
   return mergedRows.map((row) => {
     const lat = parseFloat(row['latitude'] ?? '0');
@@ -180,6 +181,7 @@ export function buildMapElements(
       tributaryOf,
       distributaryOf,
       segmentOf,
+      wikipediaSlug: row[wikipediaColumn] || undefined,
     };
   });
 }

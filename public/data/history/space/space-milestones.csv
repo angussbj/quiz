@@ -1,72 +1,72 @@
-id,event,start_year,start_month,start_day,end_year,end_month,end_day,category,event_alternates
-v2-first-space,V-2 Rocket Reaches Space,1944,6,20,,,,Rockets & Launch Technology,First Object to Reach Space|MW 18014 Launch
-v2-first-launch,V-2 Rocket First Launch,1942,10,3,,,,Rockets & Launch Technology,Aggregat 4 First Launch|A-4 Rocket
-sputnik-1,Sputnik 1,1957,10,4,,,,Satellites & Probes,First Artificial Satellite|Sputnik-1
-laika-spaceflight,Laika Spaceflight,1957,11,3,,,,Human Spaceflight,First Living Creature in Space|Sputnik 2
-explorer-1,Explorer 1,1958,1,31,,,,Satellites & Probes,First American Satellite
-nasa-founded,NASA Founded,1958,7,29,,,,Rockets & Launch Technology,National Aeronautics and Space Administration
-luna-1,Luna 1,1959,1,2,,,,Moon,First Spacecraft to Reach Lunar Vicinity|Mechta
-luna-2,Luna 2,1959,9,12,,,,Moon,First Spacecraft to Impact the Moon
-luna-3,Luna 3,1959,10,4,,,,Moon,First Images of Far Side of Moon
-yuri-gagarin-spaceflight,Yuri Gagarin Spaceflight,1961,4,12,,,,Human Spaceflight,Vostok 1|First Human in Space
-alan-shepard-spaceflight,Alan Shepard Spaceflight,1961,5,5,,,,Human Spaceflight,Freedom 7|First American in Space|Mercury-Redstone 3
-john-glenn-orbit,John Glenn Orbital Flight,1962,2,20,,,,Human Spaceflight,Friendship 7|First American to Orbit Earth|Mercury-Atlas 6
-valentina-tereshkova,Valentina Tereshkova Spaceflight,1963,6,16,,,,Human Spaceflight,Vostok 6|First Woman in Space
-ranger-7,Ranger 7,1964,7,28,,,,Moon,First Close-Up Images of Moon
-alexei-leonov-spacewalk,Alexei Leonov Spacewalk,1965,3,18,,,,Human Spaceflight,First Spacewalk|Voskhod 2 EVA|First EVA
-mariner-4-mars-flyby,Mariner 4 Mars Flyby,1965,7,14,,,,Planetary Exploration,First Close-Up Images of Mars
-luna-9,Luna 9,1966,2,3,,,,Moon,First Soft Landing on Moon
-venera-3,Venera 3,1966,3,1,,,,Planetary Exploration,First Spacecraft to Impact Another Planet|First Venus Impact
-surveyor-1,Surveyor 1,1966,6,2,,,,Moon,First American Soft Landing on Moon
-apollo-1-fire,Apollo 1 Fire,1967,1,27,,,,Human Spaceflight,Apollo 1 Cabin Fire|Gus Grissom Death
-apollo-8,Apollo 8,1968,12,21,1968,12,27,Moon,First Crewed Lunar Orbit|First Humans to Leave Earth Orbit
-apollo-11-moon-landing,Apollo 11 Moon Landing,1969,7,20,1969,7,24,Moon,First Moon Landing|Neil Armstrong Moon Landing|First Humans on Moon
-venera-7,Venera 7,1970,12,15,,,,Planetary Exploration,First Soft Landing on Another Planet|First Landing on Venus
-salyut-1,Salyut 1,1971,4,19,,,,Human Spaceflight,First Space Station
-mariner-9,Mariner 9,1971,11,14,,,,Planetary Exploration,First Spacecraft to Orbit Mars
-apollo-17,Apollo 17,1972,12,7,1972,12,19,Moon,Last Moon Landing|Last Crewed Lunar Mission
-pioneer-10,Pioneer 10,1972,3,2,,,,Planetary Exploration,First Spacecraft to Jupiter
-skylab,Skylab,1973,5,14,1979,7,11,Human Spaceflight,First American Space Station
-mariner-10-venus-flyby,Mariner 10 Venus Flyby,1974,2,5,,,,Planetary Exploration,First Spacecraft to Mercury
-venera-9,Venera 9,1975,10,22,,,,Planetary Exploration,First Images from Surface of Venus
-apollo-soyuz,Apollo-Soyuz Test Project,1975,7,15,1975,7,24,Human Spaceflight,First International Space Mission|ASTP
-viking-1-mars-landing,Viking 1 Mars Landing,1976,7,20,,,,Planetary Exploration,First Successful Mars Lander
-voyager-2-launch,Voyager 2 Launch,1977,8,20,,,,Satellites & Probes,Voyager 2
-voyager-1-launch,Voyager 1 Launch,1977,9,5,,,,Satellites & Probes,Voyager 1
-sts-1-columbia,Space Shuttle Columbia First Flight,1981,4,12,,,,Rockets & Launch Technology,STS-1|First Space Shuttle Flight
-sally-ride-spaceflight,Sally Ride Spaceflight,1983,6,18,,,,Human Spaceflight,First American Woman in Space|STS-7
-voyager-1-saturn,Voyager 1 Saturn Flyby,1980,11,12,,,,Planetary Exploration,Voyager 1 Saturn Encounter
-voyager-2-uranus,Voyager 2 Uranus Flyby,1986,1,24,,,,Planetary Exploration,First Spacecraft to Uranus
-challenger-disaster,Space Shuttle Challenger Disaster,1986,1,28,,,,Rockets & Launch Technology,Challenger STS-51-L|Christa McAuliffe Death
-mir-space-station,Mir Space Station Launch,1986,2,20,2001,3,23,Human Spaceflight,Mir|Soviet Space Station
-voyager-2-neptune,Voyager 2 Neptune Flyby,1989,8,25,,,,Planetary Exploration,First Spacecraft to Neptune
-hubble-space-telescope,Hubble Space Telescope Launch,1990,4,24,,,,Space Telescopes & Observatories,HST|Hubble
-magellan-venus-orbit,Magellan Venus Orbit,1990,8,10,,,,Planetary Exploration,Magellan Radar Mapping Venus
-galileo-jupiter-orbit,Galileo Jupiter Orbit,1995,12,7,,,,Planetary Exploration,Galileo Spacecraft Jupiter|First Jupiter Orbiter
-sojourner-mars-rover,Sojourner Mars Rover,1997,7,4,,,,Planetary Exploration,Mars Pathfinder Rover|First Mars Rover
-iss-construction-begin,ISS Construction Begins,1998,11,20,2011,7,8,Human Spaceflight,International Space Station Construction|Zarya Launch
-iss-first-crew,ISS First Crew,2000,11,2,,,,Human Spaceflight,Expedition 1|First ISS Crew|ISS Permanent Occupation Begins
-dennis-tito-spaceflight,Dennis Tito Spaceflight,2001,4,28,,,,Private & Commercial Space,First Space Tourist|First Private Space Traveler
-columbia-disaster,Space Shuttle Columbia Disaster,2003,2,1,,,,Rockets & Launch Technology,Columbia STS-107
-spirit-mars-rover,Spirit Mars Rover Landing,2004,1,4,,,,Planetary Exploration,MER-A|Spirit Rover
-opportunity-mars-rover,Opportunity Mars Rover Landing,2004,1,25,,,,Planetary Exploration,MER-B|Opportunity Rover
-spaceship-one,SpaceShipOne First Private Spaceflight,2004,6,21,,,,Private & Commercial Space,First Private Crewed Spaceflight|Mike Melvill
-cassini-saturn-orbit,Cassini Saturn Orbit,2004,7,1,2017,9,15,Planetary Exploration,Cassini-Huygens Saturn Orbiter
-huygens-titan-landing,Huygens Titan Landing,2005,1,14,,,,Planetary Exploration,First Landing in Outer Solar System|Titan Surface
-new-horizons-launch,New Horizons Launch,2006,1,19,,,,Satellites & Probes,Pluto Mission Launch
-chandrayaan-1,Chandrayaan-1,2008,10,22,,,,Moon,First Indian Lunar Mission|India Moon Mission
-kepler-space-telescope,Kepler Space Telescope Launch,2009,3,7,,,,Space Telescopes & Observatories,Kepler|Planet-Hunting Telescope
-curiosity-mars-rover,Curiosity Mars Rover Landing,2012,8,6,,,,Planetary Exploration,Mars Science Laboratory|Curiosity Rover|MSL
-voyager-1-interstellar,Voyager 1 Enters Interstellar Space,2012,8,25,,,,Satellites & Probes,First Human-Made Object in Interstellar Space
-chang-e-3,Chang'e 3 Moon Landing,2013,12,14,,,,Moon,First Chinese Moon Landing|Yutu Rover|Chinese Lunar Lander
-rosetta-comet-orbit,Rosetta Comet Orbit,2014,8,6,,,,Satellites & Probes,Rosetta 67P|First Comet Orbiter
-philae-comet-landing,Philae Comet Landing,2014,11,12,,,,Satellites & Probes,First Comet Landing|Rosetta Lander
-new-horizons-pluto,New Horizons Pluto Flyby,2015,7,14,,,,Planetary Exploration,First Pluto Flyby|Pluto Close-Up Images
-spacex-falcon-9-landing,SpaceX Falcon 9 First Landing,2015,12,21,,,,Private & Commercial Space,First Orbital Rocket Booster Landing|Reusable Rocket Landing
-juno-jupiter-orbit,Juno Jupiter Orbit,2016,7,4,,,,Planetary Exploration,Juno Spacecraft Jupiter
-spacex-crew-dragon-demo-2,SpaceX Crew Dragon Demo-2,2020,5,30,,,,Private & Commercial Space,First Commercial Crewed Spaceflight to ISS|Boeing Crew Demo
-james-webb-space-telescope,James Webb Space Telescope Launch,2021,12,25,,,,Space Telescopes & Observatories,JWST|Webb Telescope
-perseverance-mars-rover,Perseverance Mars Rover Landing,2021,2,18,,,,Planetary Exploration,Mars 2020 Rover|Perseverance Rover
-ingenuity-mars-helicopter,Ingenuity Mars Helicopter First Flight,2021,4,19,,,,Planetary Exploration,First Powered Flight on Another Planet|Mars Helicopter
-artemis-1,Artemis 1 Launch,2022,11,16,,,,Moon,Artemis I|Uncrewed Moon Return Mission|SLS First Launch
-chang-e-5-sample-return,Chang'e 5 Moon Sample Return,2020,12,16,,,,Moon,First Chinese Lunar Sample Return|Chang'e-5
+id,event,start_year,start_month,start_day,end_year,end_month,end_day,category,event_alternates,wikipedia
+v2-first-space,V-2 Rocket Reaches Space,1944,6,20,,,,Rockets & Launch Technology,First Object to Reach Space|MW 18014 Launch,V-2_rocket
+v2-first-launch,V-2 Rocket First Launch,1942,10,3,,,,Rockets & Launch Technology,Aggregat 4 First Launch|A-4 Rocket,V-2_rocket
+sputnik-1,Sputnik 1,1957,10,4,,,,Satellites & Probes,First Artificial Satellite|Sputnik-1,Sputnik_1
+laika-spaceflight,Laika Spaceflight,1957,11,3,,,,Human Spaceflight,First Living Creature in Space|Sputnik 2,Laika
+explorer-1,Explorer 1,1958,1,31,,,,Satellites & Probes,First American Satellite,Explorer_1
+nasa-founded,NASA Founded,1958,7,29,,,,Rockets & Launch Technology,National Aeronautics and Space Administration,NASA
+luna-1,Luna 1,1959,1,2,,,,Moon,First Spacecraft to Reach Lunar Vicinity|Mechta,Luna_1
+luna-2,Luna 2,1959,9,12,,,,Moon,First Spacecraft to Impact the Moon,Luna_2
+luna-3,Luna 3,1959,10,4,,,,Moon,First Images of Far Side of Moon,Luna_3
+yuri-gagarin-spaceflight,Yuri Gagarin Spaceflight,1961,4,12,,,,Human Spaceflight,Vostok 1|First Human in Space,Yuri_Gagarin
+alan-shepard-spaceflight,Alan Shepard Spaceflight,1961,5,5,,,,Human Spaceflight,Freedom 7|First American in Space|Mercury-Redstone 3,Alan_Shepard
+john-glenn-orbit,John Glenn Orbital Flight,1962,2,20,,,,Human Spaceflight,Friendship 7|First American to Orbit Earth|Mercury-Atlas 6,John_Glenn
+valentina-tereshkova,Valentina Tereshkova Spaceflight,1963,6,16,,,,Human Spaceflight,Vostok 6|First Woman in Space,Valentina_Tereshkova
+ranger-7,Ranger 7,1964,7,28,,,,Moon,First Close-Up Images of Moon,Ranger_7
+alexei-leonov-spacewalk,Alexei Leonov Spacewalk,1965,3,18,,,,Human Spaceflight,First Spacewalk|Voskhod 2 EVA|First EVA,Alexei_Leonov
+mariner-4-mars-flyby,Mariner 4 Mars Flyby,1965,7,14,,,,Planetary Exploration,First Close-Up Images of Mars,Mariner_4
+luna-9,Luna 9,1966,2,3,,,,Moon,First Soft Landing on Moon,Luna_9
+venera-3,Venera 3,1966,3,1,,,,Planetary Exploration,First Spacecraft to Impact Another Planet|First Venus Impact,Venera_3
+surveyor-1,Surveyor 1,1966,6,2,,,,Moon,First American Soft Landing on Moon,Surveyor_1
+apollo-1-fire,Apollo 1 Fire,1967,1,27,,,,Human Spaceflight,Apollo 1 Cabin Fire|Gus Grissom Death,Apollo_1
+apollo-8,Apollo 8,1968,12,21,1968,12,27,Moon,First Crewed Lunar Orbit|First Humans to Leave Earth Orbit,Apollo_8
+apollo-11-moon-landing,Apollo 11 Moon Landing,1969,7,20,1969,7,24,Moon,First Moon Landing|Neil Armstrong Moon Landing|First Humans on Moon,Apollo_11
+venera-7,Venera 7,1970,12,15,,,,Planetary Exploration,First Soft Landing on Another Planet|First Landing on Venus,Venera_7
+salyut-1,Salyut 1,1971,4,19,,,,Human Spaceflight,First Space Station,Salyut_1
+mariner-9,Mariner 9,1971,11,14,,,,Planetary Exploration,First Spacecraft to Orbit Mars,Mariner_9
+apollo-17,Apollo 17,1972,12,7,1972,12,19,Moon,Last Moon Landing|Last Crewed Lunar Mission,Apollo_17
+pioneer-10,Pioneer 10,1972,3,2,,,,Planetary Exploration,First Spacecraft to Jupiter,Pioneer_10
+skylab,Skylab,1973,5,14,1979,7,11,Human Spaceflight,First American Space Station,Skylab
+mariner-10-venus-flyby,Mariner 10 Venus Flyby,1974,2,5,,,,Planetary Exploration,First Spacecraft to Mercury,Mariner_10
+venera-9,Venera 9,1975,10,22,,,,Planetary Exploration,First Images from Surface of Venus,Venera_9
+apollo-soyuz,Apollo-Soyuz Test Project,1975,7,15,1975,7,24,Human Spaceflight,First International Space Mission|ASTP,Apollo-Soyuz_Test_Project
+viking-1-mars-landing,Viking 1 Mars Landing,1976,7,20,,,,Planetary Exploration,First Successful Mars Lander,Viking_1
+voyager-2-launch,Voyager 2 Launch,1977,8,20,,,,Satellites & Probes,Voyager 2,Voyager_2
+voyager-1-launch,Voyager 1 Launch,1977,9,5,,,,Satellites & Probes,Voyager 1,Voyager_1
+sts-1-columbia,Space Shuttle Columbia First Flight,1981,4,12,,,,Rockets & Launch Technology,STS-1|First Space Shuttle Flight,Space_Shuttle_Columbia
+sally-ride-spaceflight,Sally Ride Spaceflight,1983,6,18,,,,Human Spaceflight,First American Woman in Space|STS-7,Sally_Ride
+voyager-1-saturn,Voyager 1 Saturn Flyby,1980,11,12,,,,Planetary Exploration,Voyager 1 Saturn Encounter,Voyager_1
+voyager-2-uranus,Voyager 2 Uranus Flyby,1986,1,24,,,,Planetary Exploration,First Spacecraft to Uranus,Voyager_2
+challenger-disaster,Space Shuttle Challenger Disaster,1986,1,28,,,,Rockets & Launch Technology,Challenger STS-51-L|Christa McAuliffe Death,Space_Shuttle_Challenger_Disaster
+mir-space-station,Mir Space Station Launch,1986,2,20,2001,3,23,Human Spaceflight,Mir|Soviet Space Station,Mir
+voyager-2-neptune,Voyager 2 Neptune Flyby,1989,8,25,,,,Planetary Exploration,First Spacecraft to Neptune,Voyager_2
+hubble-space-telescope,Hubble Space Telescope Launch,1990,4,24,,,,Space Telescopes & Observatories,HST|Hubble,Hubble_Space_Telescope
+magellan-venus-orbit,Magellan Venus Orbit,1990,8,10,,,,Planetary Exploration,Magellan Radar Mapping Venus,Magellan_spacecraft
+galileo-jupiter-orbit,Galileo Jupiter Orbit,1995,12,7,,,,Planetary Exploration,Galileo Spacecraft Jupiter|First Jupiter Orbiter,Galileo_spacecraft
+sojourner-mars-rover,Sojourner Mars Rover,1997,7,4,,,,Planetary Exploration,Mars Pathfinder Rover|First Mars Rover,Sojourner
+iss-construction-begin,ISS Construction Begins,1998,11,20,2011,7,8,Human Spaceflight,International Space Station Construction|Zarya Launch,International_Space_Station
+iss-first-crew,ISS First Crew,2000,11,2,,,,Human Spaceflight,Expedition 1|First ISS Crew|ISS Permanent Occupation Begins,International_Space_Station
+dennis-tito-spaceflight,Dennis Tito Spaceflight,2001,4,28,,,,Private & Commercial Space,First Space Tourist|First Private Space Traveler,Dennis_Tito
+columbia-disaster,Space Shuttle Columbia Disaster,2003,2,1,,,,Rockets & Launch Technology,Columbia STS-107,Space_Shuttle_Columbia_Disaster
+spirit-mars-rover,Spirit Mars Rover Landing,2004,1,4,,,,Planetary Exploration,MER-A|Spirit Rover,Spirit_rover
+opportunity-mars-rover,Opportunity Mars Rover Landing,2004,1,25,,,,Planetary Exploration,MER-B|Opportunity Rover,Opportunity_rover
+spaceship-one,SpaceShipOne First Private Spaceflight,2004,6,21,,,,Private & Commercial Space,First Private Crewed Spaceflight|Mike Melvill,
+cassini-saturn-orbit,Cassini Saturn Orbit,2004,7,1,2017,9,15,Planetary Exploration,Cassini-Huygens Saturn Orbiter,Cassini–Huygens
+huygens-titan-landing,Huygens Titan Landing,2005,1,14,,,,Planetary Exploration,First Landing in Outer Solar System|Titan Surface,
+new-horizons-launch,New Horizons Launch,2006,1,19,,,,Satellites & Probes,Pluto Mission Launch,
+chandrayaan-1,Chandrayaan-1,2008,10,22,,,,Moon,First Indian Lunar Mission|India Moon Mission,Chandrayaan-1
+kepler-space-telescope,Kepler Space Telescope Launch,2009,3,7,,,,Space Telescopes & Observatories,Kepler|Planet-Hunting Telescope,
+curiosity-mars-rover,Curiosity Mars Rover Landing,2012,8,6,,,,Planetary Exploration,Mars Science Laboratory|Curiosity Rover|MSL,Curiosity_rover
+voyager-1-interstellar,Voyager 1 Enters Interstellar Space,2012,8,25,,,,Satellites & Probes,First Human-Made Object in Interstellar Space,
+chang-e-3,Chang'e 3 Moon Landing,2013,12,14,,,,Moon,First Chinese Moon Landing|Yutu Rover|Chinese Lunar Lander,
+rosetta-comet-orbit,Rosetta Comet Orbit,2014,8,6,,,,Satellites & Probes,Rosetta 67P|First Comet Orbiter,
+philae-comet-landing,Philae Comet Landing,2014,11,12,,,,Satellites & Probes,First Comet Landing|Rosetta Lander,
+new-horizons-pluto,New Horizons Pluto Flyby,2015,7,14,,,,Planetary Exploration,First Pluto Flyby|Pluto Close-Up Images,New_Horizons
+spacex-falcon-9-landing,SpaceX Falcon 9 First Landing,2015,12,21,,,,Private & Commercial Space,First Orbital Rocket Booster Landing|Reusable Rocket Landing,
+juno-jupiter-orbit,Juno Jupiter Orbit,2016,7,4,,,,Planetary Exploration,Juno Spacecraft Jupiter,
+spacex-crew-dragon-demo-2,SpaceX Crew Dragon Demo-2,2020,5,30,,,,Private & Commercial Space,First Commercial Crewed Spaceflight to ISS|Boeing Crew Demo,
+james-webb-space-telescope,James Webb Space Telescope Launch,2021,12,25,,,,Space Telescopes & Observatories,JWST|Webb Telescope,
+perseverance-mars-rover,Perseverance Mars Rover Landing,2021,2,18,,,,Planetary Exploration,Mars 2020 Rover|Perseverance Rover,
+ingenuity-mars-helicopter,Ingenuity Mars Helicopter First Flight,2021,4,19,,,,Planetary Exploration,First Powered Flight on Another Planet|Mars Helicopter,
+artemis-1,Artemis 1 Launch,2022,11,16,,,,Moon,Artemis I|Uncrewed Moon Return Mission|SLS First Launch,
+chang-e-5-sample-return,Chang'e 5 Moon Sample Return,2020,12,16,,,,Moon,First Chinese Lunar Sample Return|Chang'e-5,
