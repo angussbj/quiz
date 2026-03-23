@@ -30,6 +30,7 @@ export function buildGridElements(
       viewBoxBounds: { minX: x, minY: y, maxX: x + CELL_SIZE, maxY: y + CELL_SIZE },
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
+      wikipediaSlug: row['wikipedia'] || undefined,
     };
   });
 }

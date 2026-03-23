@@ -53,6 +53,10 @@ export interface VisualizationElement {
    *  Set automatically when related elements (tributaries, distributaries) are merged
    *  into this element's paths. E.g. "(and tributaries)". */
   readonly promptSubtitle?: string;
+  /** Wikipedia page slug for the hover preview (e.g. "General_relativity").
+   *  The last segment of the Wikipedia URL. If set, hovering with a visible label
+   *  shows the first paragraph from Wikipedia; Cmd+click opens the page. */
+  readonly wikipediaSlug?: string;
 }
 
 /** Pre-computed label position for leader-line style labels (e.g. anatomy diagrams) */

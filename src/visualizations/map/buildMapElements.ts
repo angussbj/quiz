@@ -180,6 +180,7 @@ export function buildMapElements(
       tributaryOf,
       distributaryOf,
       segmentOf,
+      wikipediaSlug: row['wikipedia'] || undefined,
     };
   });
 }

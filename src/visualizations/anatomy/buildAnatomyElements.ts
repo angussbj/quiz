@@ -38,6 +38,7 @@ export function buildAnatomyElements(
       group: groupColumn ? row[groupColumn] : undefined,
       svgPathData,
       labelPosition,
+      wikipediaSlug: row['wikipedia'] || undefined,
     };
   });
 }

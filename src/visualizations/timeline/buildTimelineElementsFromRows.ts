@@ -34,6 +34,7 @@ export function buildTimelineElementsFromRows(
       end: parseTimestamp(row, 'end'),
       category: row['category'] ?? (groupColumn ? row[groupColumn] : '') ?? '',
       group: groupColumn ? row[groupColumn] : undefined,
+      wikipediaSlug: row['wikipedia'] || undefined,
     });
   }
 

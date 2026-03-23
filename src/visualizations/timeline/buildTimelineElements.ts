@@ -35,6 +35,7 @@ export interface TimelineElementInput {
   readonly track?: number;
   readonly group?: string;
   readonly interactive?: boolean;
+  readonly wikipediaSlug?: string;
 }
 
 /**
@@ -137,6 +138,7 @@ export function buildTimelineElements(
       track,
       group: input.group ?? input.category,
       interactive: input.interactive ?? true,
+      wikipediaSlug: input.wikipediaSlug,
       viewBoxCenter: {
         x: x + barWidth / 2,
         y: y + trackHeight / 2,

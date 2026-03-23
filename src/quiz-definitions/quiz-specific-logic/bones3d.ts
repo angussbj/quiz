@@ -31,6 +31,7 @@ export interface Bone3DRow {
   readonly bone_type: string;
   readonly bilateral_partner: string;
   readonly group_representative: string;
+  readonly wikipedia: string;
 }
 
 // ─── Element building ─────────────────────────────────────────────────────────
@@ -124,6 +125,7 @@ function makeElement(row: Bone3DRow): Anatomy3DElement {
     interactive: true,
     group: row.region,
     meshEntries: [makeMeshEntry(row)],
+    wikipediaSlug: row.wikipedia || undefined,
   };
 }
 

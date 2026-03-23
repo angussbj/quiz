@@ -38,6 +38,7 @@ export function buildFlagGridElements(
       viewBoxBounds: { minX: x, minY: y, maxX: x + FLAG_CELL_WIDTH, maxY: y + FLAG_CELL_HEIGHT },
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
+      wikipediaSlug: row['wikipedia'] || undefined,
     };
   });
 }
