@@ -54,6 +54,47 @@ function dayFromFractionalYear(fractionalYear: number): number {
   return 31;
 }
 
+/** Number of days in each month (0-indexed). */
+const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+function isLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+function daysInMonth(year: number, month: number): number {
+  if (month === 1 && isLeapYear(year)) return 29;
+  return DAYS_IN_MONTH[month];
+}
+
+function daysInYear(year: number): number {
+  return isLeapYear(year) ? 366 : 365;
+}
+
+/** Fractional year for the start of a given day (0-indexed month, 1-indexed day). */
+function dayToFractionalYear(year: number, month: number, day: number): number {
+  let dayOfYear = 0;
+  for (let m = 0; m < month; m++) dayOfYear += daysInMonth(year, m);
+  dayOfYear += day - 1;
+  return year + dayOfYear / daysInYear(year);
+}
+
+/** Decompose a fractional year into {year, month (0-indexed), day (1-indexed)}. */
+function fractionalYearToDate(fractionalYear: number): { year: number; month: number; day: number } {
+  const year = Math.floor(fractionalYear);
+  const frac = fractionalYear - year;
+  const totalDays = daysInYear(year);
+  const dayOfYear = Math.round(frac * totalDays);
+  let remaining = dayOfYear;
+  for (let m = 0; m < 12; m++) {
+    const dim = daysInMonth(year, m);
+    if (remaining < dim) {
+      return { year, month: m, day: Math.max(1, remaining + 1) };
+    }
+    remaining -= dim;
+  }
+  return { year, month: 11, day: 31 };
+}
+
 /**
  * Standard intervals for axis ticks, ordered from largest to smallest (coarsest first).
  * Each entry defines the interval in years, and how to format major/minor labels.
@@ -69,6 +110,9 @@ const TICK_LEVELS: ReadonlyArray<{
   readonly minPixelsPerMinorTick: number;
   /** Whether to show labels on minor ticks. False at coarse scales where minor labels would overlap. */
   readonly showMinorLabels: boolean;
+  /** When true, generate ticks by iterating actual calendar dates instead of fixed-interval stepping.
+   *  This avoids misalignment from leap years and non-uniform month lengths. */
+  readonly calendarDays?: boolean;
 }> = [
   // Geological: billion-year scale (Hadean, Archean, Proterozoic eons)
   {
@@ -176,7 +220,7 @@ const TICK_LEVELS: ReadonlyArray<{
     minPixelsPerMinorTick: 80,
     showMinorLabels: true,
   },
-  // Day ticks (major = month, minor = day)
+  // Day ticks (major = month, minor = day) — uses calendar iteration for exact alignment
   {
     majorInterval: 1 / 12,
     minorInterval: 1 / 365,
@@ -187,6 +231,7 @@ const TICK_LEVELS: ReadonlyArray<{
     formatMinor: (y) => String(dayFromFractionalYear(y)),
     minPixelsPerMinorTick: 20,
     showMinorLabels: true,
+    calendarDays: true,
   },
 ];
 
@@ -233,6 +278,12 @@ export function computeAxisTicks(
   // Cap total ticks to prevent runaway generation at extreme zoom levels.
   // 500 accommodates the padded viewport range (up to ~2.5× visible width).
   const MAX_TICKS = 500;
+
+  if (bestLevel.calendarDays) {
+    // Calendar-accurate day ticks: iterate actual dates so tick positions
+    // match timestampToFractionalYear exactly (handles leap years, variable month lengths).
+    return generateCalendarDayTicks(startYear, endYear, MAX_TICKS);
+  }
 
   // When major and minor intervals are incommensurable (e.g. 1/12 months and 1/365 days),
   // minor ticks won't land on major boundaries. Generate major ticks first at exact positions,
@@ -282,6 +333,68 @@ export function computeAxisTicks(
 
   // Sort by position for correct rendering order
   ticks.sort((a, b) => a.fractionalYear - b.fractionalYear);
+
+  return ticks;
+}
+
+/**
+ * Generate calendar-accurate day ticks by iterating actual dates.
+ * Major ticks at month boundaries, minor ticks at each day.
+ * Positions use the same (dayOfYear-1)/daysInYear formula as timestampToFractionalYear,
+ * ensuring bar start/end edges align exactly with tick marks.
+ */
+function generateCalendarDayTicks(
+  startYear: number,
+  endYear: number,
+  maxTicks: number,
+): ReadonlyArray<AxisTick> {
+  const ticks: AxisTick[] = [];
+
+  // Find the starting date (back up one day for padding)
+  const startDate = fractionalYearToDate(startYear);
+  let { year, month, day } = startDate;
+  // Back up one day for padding
+  day -= 1;
+  if (day < 1) {
+    month -= 1;
+    if (month < 0) { month = 11; year -= 1; }
+    day = daysInMonth(year, month);
+  }
+
+  while (ticks.length < maxTicks) {
+    const frac = dayToFractionalYear(year, month, day);
+    if (frac > endYear + 1 / 365) break;
+
+    const isMajor = day === 1;
+    if (isMajor) {
+      ticks.push({
+        fractionalYear: frac,
+        label: `${MONTH_FULL[month]} ${formatYear(year)}`,
+        isMajor: true,
+        showLabel: true,
+        priority: true,
+      });
+    } else {
+      ticks.push({
+        fractionalYear: frac,
+        label: String(day),
+        isMajor: false,
+        showLabel: true,
+        priority: false,
+      });
+    }
+
+    // Advance to next day
+    day += 1;
+    if (day > daysInMonth(year, month)) {
+      day = 1;
+      month += 1;
+      if (month > 11) {
+        month = 0;
+        year += 1;
+      }
+    }
+  }
 
   return ticks;
 }

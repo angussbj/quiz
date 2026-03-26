@@ -2,7 +2,7 @@ import type { TimelineElement } from './TimelineElement';
 import type { TimelineTimestamp } from './TimelineTimestamp';
 import { timestampToFractionalYear } from './TimelineTimestamp';
 import { assignTracks } from './assignTracks';
-import { computeLogReferenceYear, logYearToViewBoxX, UNITS_PER_LOG_DECADE } from './logTimeScale';
+import { computeLogReferenceYear, logYearToViewBoxX } from './logTimeScale';
 
 /**
  * ViewBox units per year on the X axis.
@@ -76,9 +76,10 @@ export function buildTimelineElements(
   let maxViewBoxX = -Infinity;
   for (const input of inputs) {
     const start = toViewBoxX(timestampToFractionalYear(input.start, false));
-    const end = input.end
-      ? toViewBoxX(timestampToFractionalYear(input.end, true))
-      : start + MINIMUM_BAR_WIDTH;
+    const end = Math.max(
+      toViewBoxX(timestampToFractionalYear(input.end ?? input.start, true)),
+      start + MINIMUM_BAR_WIDTH,
+    );
     minViewBoxX = Math.min(minViewBoxX, start);
     maxViewBoxX = Math.max(maxViewBoxX, end);
   }
@@ -117,14 +118,10 @@ export function buildTimelineElements(
 
   const elements: TimelineElement[] = inputs.map((input) => {
     const startFractional = timestampToFractionalYear(input.start, false);
-    const endFractional = input.end
-      ? timestampToFractionalYear(input.end, true)
-      : startFractional;
+    const endFractional = timestampToFractionalYear(input.end ?? input.start, true);
 
     const x = toViewBoxX(startFractional);
-    const rawWidth = input.end
-      ? toViewBoxX(endFractional) - x
-      : (timeScale === 'log' ? UNITS_PER_LOG_DECADE * 0.1 : UNITS_PER_YEAR * 0.5);
+    const rawWidth = toViewBoxX(endFractional) - x;
     const barWidth = Math.max(rawWidth, MINIMUM_BAR_WIDTH);
     const track = trackAssignments[input.id] ?? 0;
     const y = track * (trackHeight + trackGap);

@@ -230,7 +230,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       const pixelExtents = sorted.map((el) => {
         // Compute from raw timestamps, not viewBoxBounds (which has baked-in minimum width)
         const startFrac = timestampToFractionalYear(el.start, false);
-        const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
+        const endFrac = timestampToFractionalYear(el.end ?? el.start, true);
         const left = (yearToViewBoxX(startFrac) - minX) * zoom;
         const rawWidth = (yearToViewBoxX(endFrac) - yearToViewBoxX(startFrac)) * zoom;
         const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
@@ -302,7 +302,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 
       const pixelExtents = sorted.map((el) => {
         const startFrac = timestampToFractionalYear(el.start, false);
-        const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
+        const endFrac = timestampToFractionalYear(el.end ?? el.start, true);
         const left = (yearToViewBoxX(startFrac) - minX) * zoom;
         const rawWidth = (yearToViewBoxX(endFrac) - yearToViewBoxX(startFrac)) * zoom;
         const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
