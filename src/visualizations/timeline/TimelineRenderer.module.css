@@ -92,6 +92,24 @@
   color: var(--color-text-muted);
 }
 
+/* ---- Context label (year/month when deeply zoomed) ---- */
+
+.contextLabel {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  z-index: 11;
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  user-select: none;
+  background: var(--color-bg-primary);
+  padding: 0 4px;
+  border-radius: var(--radius-xs);
+}
+
 .gridLine {
   position: absolute;
   top: 0;

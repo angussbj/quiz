@@ -193,6 +193,7 @@ export function computeLogAxisTicks(
         label: showLabel ? formatLogTick(yearsAgo, referenceYear) : '',
         isMajor,
         showLabel,
+        priority: isMajor,
       });
     }
   }
@@ -225,7 +226,7 @@ function deduplicateLabels(ticks: ReadonlyArray<AxisTick>): ReadonlyArray<AxisTi
   // Second pass: suppress minor tick labels that duplicate a major tick
   for (const tick of sorted) {
     if (!tick.isMajor && tick.showLabel && seen.has(tick.label)) {
-      result.push({ ...tick, showLabel: false, label: '' });
+      result.push({ ...tick, showLabel: false, label: '', priority: false });
     } else {
       if (tick.showLabel) seen.add(tick.label);
       result.push(tick);

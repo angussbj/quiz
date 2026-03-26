@@ -10,7 +10,7 @@ import { buildCategoryColorMap } from './categoryColors';
 import { STATUS_COLORS } from '../elementStateColors';
 import { computeAxisTicks } from './computeAxisTicks';
 import { computeLogAxisTicks, computeLogReferenceYear, logYearToViewBoxX, viewBoxXToLogYear } from './logTimeScale';
-import { formatTimestampRange, timestampToFractionalYear } from './TimelineTimestamp';
+import { formatTimestampRange, formatYear, timestampToFractionalYear } from './TimelineTimestamp';
 import { UNITS_PER_YEAR } from './buildTimelineElements';
 import { useTimelineZoom } from './useTimelineZoom';
 import styles from './TimelineRenderer.module.css';
@@ -35,6 +35,8 @@ const MIN_TRACK_STEP = 16;
 
 /** Minimum visual bar width in pixels (for very short / point events). */
 const MIN_PIXEL_BAR_WIDTH = 8;
+
+const MONTH_NAMES_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 interface TooltipState {
   readonly x: number;
@@ -153,6 +155,28 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       : computeAxisTicks(visibleStartYear, visibleEndYear, effectivePixels),
     [isLogScale, visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear],
   );
+
+  // Context label: when deeply zoomed, show year/month in top-left for orientation.
+  // Only shown when no major tick is visible on the axis (otherwise the axis already
+  // provides the date context and the label would be redundant/overlapping).
+  const contextLabel = useMemo(() => {
+    if (isLogScale) return undefined;
+    const hasMajorTickOnScreen = axisTicks.some(
+      (t) => t.isMajor && t.fractionalYear >= visibleStartYear && t.fractionalYear <= visibleEndYear,
+    );
+    if (hasMajorTickOnScreen) return undefined;
+    const startFloorYear = Math.floor(visibleStartYear);
+    const endFloorYear = Math.floor(visibleEndYear);
+    if (startFloorYear !== endFloorYear) return undefined;
+    // All visible dates are in the same year
+    const year = startFloorYear;
+    const startMonth = Math.floor((visibleStartYear - year) * 12);
+    const endMonth = Math.floor((visibleEndYear - year) * 12);
+    if (startMonth === endMonth && startMonth >= 0 && startMonth < 12) {
+      return `${MONTH_NAMES_FULL[startMonth]} ${formatYear(year)}`;
+    }
+    return formatYear(year);
+  }, [isLogScale, visibleStartYear, visibleEndYear, axisTicks]);
 
   // Compute pixel positions and per-track sub-layers for overlapping bars.
   // Vertical positions are computed fresh here (ignoring viewBoxBounds.minY)
@@ -350,23 +374,33 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   }, [onPositionClick, panOffset, zoom, minX]);
 
   // Hide overlapping tick labels via DOM measurement after layout.
+  // Priority ticks (e.g. year boundaries when months visible) are placed first,
+  // then non-priority ticks fill remaining gaps.
   const axisAreaRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const axisArea = axisAreaRef.current;
     if (!axisArea) return;
     const labels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label]');
-    // Greedy left-to-right: keep a label if it doesn't overlap any previously kept label.
-    const kept: DOMRect[] = [];
+
+    // First pass: hide all, measure all
+    const entries: Array<{ label: HTMLElement; rect: DOMRect; priority: boolean }> = [];
     for (const label of labels) {
+      label.style.visibility = 'hidden';
       const rect = label.getBoundingClientRect();
-      // Zero-width means off-screen or not rendered — skip
-      if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
-      const overlaps = kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
-      if (overlaps) {
-        label.style.visibility = 'hidden';
-      } else {
-        label.style.visibility = '';
-        kept.push(rect);
+      if (rect.width === 0) continue;
+      entries.push({ label, rect, priority: label.dataset.tickPriority === 'true' });
+    }
+
+    // Place priority ticks first, then non-priority
+    const kept: DOMRect[] = [];
+    for (const pass of [true, false]) {
+      for (const entry of entries) {
+        if (entry.priority !== pass) continue;
+        const overlaps = kept.some((prev) => prev.right > entry.rect.left && prev.left < entry.rect.right);
+        if (!overlaps) {
+          entry.label.style.visibility = '';
+          kept.push(entry.rect);
+        }
       }
     }
   }, [axisTicks, zoom, panOffset]);
@@ -374,32 +408,38 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   const tooltipTextRef = useRef('');
   const hoveredElementRef = useRef<TimelineElement | null>(null);
   const lastMousePosRef = useRef({ x: 0, y: 0 });
+  const hoveredLabelWasVisibleRef = useRef(false);
 
-  // Re-evaluate tooltip when toggles change (e.g. wrong-click reveals a label while hovering).
+  // Re-evaluate tooltip when toggles/states change (e.g. click-to-reveal while hovering).
+  // Also re-fire onElementHoverStart so Wikipedia preview timer begins immediately on reveal.
   useEffect(() => {
     const element = hoveredElementRef.current;
     if (!element) return;
-    if (shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'))) {
-      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
-      tooltipTextRef.current = text;
-      setTooltip({ x: lastMousePosRef.current.x, y: lastMousePosRef.current.y, text });
-    } else {
-      tooltipTextRef.current = '';
-      setTooltip(null);
+    const labelVisible = shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'));
+    const text = labelVisible
+      ? `${element.label}: ${formatTimestampRange(element.start, element.end)}`
+      : formatTimestampRange(element.start, element.end);
+    tooltipTextRef.current = text;
+    setTooltip({ x: lastMousePosRef.current.x, y: lastMousePosRef.current.y, text });
+    // When a label becomes visible while hovering (click-to-reveal), re-fire hover
+    // so the Wikipedia preview hook picks up the newly-revealed element immediately.
+    if (labelVisible && !hoveredLabelWasVisibleRef.current) {
+      onElementHoverStart?.(element.id);
     }
-  }, [elementToggles, toggles, elementStates]);
+    hoveredLabelWasVisibleRef.current = labelVisible;
+  }, [elementToggles, toggles, elementStates, onElementHoverStart]);
 
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
       hoveredElementRef.current = element;
       lastMousePosRef.current = { x: event.clientX, y: event.clientY };
       onElementHoverStart?.(element.id);
-      if (!shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'))) {
-        tooltipTextRef.current = '';
-        setTooltip(null);
-        return;
-      }
-      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
+      const labelVisible = shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'));
+      hoveredLabelWasVisibleRef.current = labelVisible;
+      // Show "label: dates" when label is visible, just dates when hidden (don't reveal the answer)
+      const text = labelVisible
+        ? `${element.label}: ${formatTimestampRange(element.start, element.end)}`
+        : formatTimestampRange(element.start, element.end);
       tooltipTextRef.current = text;
       setTooltip({ x: event.clientX, y: event.clientY, text });
     },
@@ -412,6 +452,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   }, []);
   const handleBarMouseLeave = useCallback(() => {
     hoveredElementRef.current = null;
+    hoveredLabelWasVisibleRef.current = false;
     tooltipTextRef.current = '';
     setTooltip(null);
     onElementHoverEnd?.();
@@ -448,6 +489,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                   {tick.showLabel && (
                     <div
                       data-tick-label
+                      data-tick-priority={tick.priority || undefined}
                       className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}
                     >
                       {tick.label}
@@ -538,6 +580,10 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
             </AnimatePresence>
           </div>
         </div>
+
+        {contextLabel && (
+          <div className={styles.contextLabel}>{contextLabel}</div>
+        )}
       </div>
 
       {tooltip && (

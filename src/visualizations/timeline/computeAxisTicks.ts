@@ -10,6 +10,8 @@ export interface AxisTick {
   readonly isMajor: boolean;
   /** Whether to render a text label for this tick. False for minor ticks at coarse zoom levels to prevent overlap. */
   readonly showLabel: boolean;
+  /** High-priority ticks (e.g. year boundaries when months are visible) survive overlap culling before lower-priority ones. */
+  readonly priority: boolean;
 }
 
 /**
@@ -21,6 +23,35 @@ function formatGeologicalYear(year: number, unitDivisor: number, unitSuffix: str
   const absVal = Math.abs(year) / unitDivisor;
   const formatted = Number.isInteger(absVal) ? `${absVal}` : absVal.toPrecision(2);
   return `${formatted} ${unitSuffix}`;
+}
+
+const MONTH_LETTERS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/** Get 0-based month index from a fractional year. */
+function monthIndexFromFractionalYear(fractionalYear: number): number {
+  const frac = fractionalYear - Math.floor(fractionalYear);
+  return Math.min(11, Math.max(0, Math.round(frac * 12)));
+}
+
+/** Get 1-based day-of-month from a fractional year. */
+function dayFromFractionalYear(fractionalYear: number): number {
+  const year = Math.floor(fractionalYear);
+  const frac = fractionalYear - year;
+  const totalDays = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365;
+  // Round to nearest whole day to avoid float drift producing duplicate day labels
+  const dayOfYear = Math.round(frac * totalDays);
+  // Walk months to find which month and day
+  const daysPerMonth = [31, (totalDays === 366 ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let remaining = dayOfYear;
+  for (let m = 0; m < 12; m++) {
+    if (remaining < daysPerMonth[m]) {
+      return Math.max(1, remaining + 1);
+    }
+    remaining -= daysPerMonth[m];
+  }
+  return 31;
 }
 
 /**
@@ -118,15 +149,42 @@ const TICK_LEVELS: ReadonlyArray<{
     minPixelsPerMinorTick: 40,
     showMinorLabels: true,
   },
+  // Month letters (single character)
   {
     majorInterval: 1,
     minorInterval: 1 / 12,
     formatMajor: (y) => formatYear(y),
-    formatMinor: (y) => {
-      const month = Math.round((y % 1) * 12);
-      const monthNames = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
-      return monthNames[month] ?? '';
+    formatMinor: (y) => MONTH_LETTERS[monthIndexFromFractionalYear(y)] ?? '',
+    minPixelsPerMinorTick: 20,
+    showMinorLabels: true,
+  },
+  // 3-letter month abbreviations
+  {
+    majorInterval: 1,
+    minorInterval: 1 / 12,
+    formatMajor: (y) => formatYear(y),
+    formatMinor: (y) => MONTH_SHORT[monthIndexFromFractionalYear(y)] ?? '',
+    minPixelsPerMinorTick: 40,
+    showMinorLabels: true,
+  },
+  // Full month names
+  {
+    majorInterval: 1,
+    minorInterval: 1 / 12,
+    formatMajor: (y) => formatYear(y),
+    formatMinor: (y) => MONTH_FULL[monthIndexFromFractionalYear(y)] ?? '',
+    minPixelsPerMinorTick: 80,
+    showMinorLabels: true,
+  },
+  // Day ticks (major = month, minor = day)
+  {
+    majorInterval: 1 / 12,
+    minorInterval: 1 / 365,
+    formatMajor: (y) => {
+      const mi = monthIndexFromFractionalYear(y);
+      return `${MONTH_FULL[mi]} ${formatYear(Math.floor(y))}`;
     },
+    formatMinor: (y) => String(dayFromFractionalYear(y)),
     minPixelsPerMinorTick: 20,
     showMinorLabels: true,
   },
@@ -174,6 +232,30 @@ export function computeAxisTicks(
 
   // Generate minor ticks (cap at 300 to prevent runaway generation at extreme zoom levels)
   const MAX_TICKS = 300;
+
+  // When major and minor intervals are incommensurable (e.g. 1/12 months and 1/365 days),
+  // minor ticks won't land on major boundaries. Generate major ticks first at exact positions,
+  // then fill minor ticks in between.
+  const majorPositions = new Set<number>();
+  const majorStart = Math.ceil((startYear - bestLevel.minorInterval) / bestLevel.majorInterval) * bestLevel.majorInterval;
+  for (
+    let m = majorStart;
+    m <= endYear + bestLevel.minorInterval;
+    m += bestLevel.majorInterval
+  ) {
+    if (ticks.length >= MAX_TICKS) break;
+    // Snap to clean boundary to avoid float drift in the label formatter
+    const snapped = Math.round(m / bestLevel.majorInterval) * bestLevel.majorInterval;
+    majorPositions.add(snapped);
+    ticks.push({
+      fractionalYear: snapped,
+      label: bestLevel.formatMajor(snapped),
+      isMajor: true,
+      showLabel: true,
+      priority: true,
+    });
+  }
+
   const minorStart = Math.floor(startYear / bestLevel.minorInterval) * bestLevel.minorInterval;
   for (
     let t = minorStart;
@@ -183,14 +265,22 @@ export function computeAxisTicks(
     if (t < startYear - bestLevel.minorInterval) continue;
     if (ticks.length >= MAX_TICKS) break;
 
-    const isMajor = Math.abs(t % bestLevel.majorInterval) < bestLevel.minorInterval * 0.01;
+    // Skip if this position is already covered by a major tick
+    const nearestMajor = Math.round(t / bestLevel.majorInterval) * bestLevel.majorInterval;
+    const tolerance = bestLevel.minorInterval * 0.1;
+    if (Math.abs(t - nearestMajor) < tolerance && majorPositions.has(nearestMajor)) continue;
+
     ticks.push({
       fractionalYear: t,
-      label: isMajor ? bestLevel.formatMajor(Math.round(t)) : bestLevel.formatMinor(t),
-      isMajor,
-      showLabel: isMajor || bestLevel.showMinorLabels,
+      label: bestLevel.showMinorLabels ? bestLevel.formatMinor(t) : '',
+      isMajor: false,
+      showLabel: bestLevel.showMinorLabels,
+      priority: false,
     });
   }
+
+  // Sort by position for correct rendering order
+  ticks.sort((a, b) => a.fractionalYear - b.fractionalYear);
 
   return ticks;
 }
