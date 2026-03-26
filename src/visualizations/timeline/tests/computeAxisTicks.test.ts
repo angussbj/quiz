@@ -69,9 +69,9 @@ describe('computeAxisTicks', () => {
     expect(majorTicks.some((t) => t.label.includes('Ga') || t.label.includes('Ma'))).toBe(true);
   });
 
-  it('caps tick count at 300 regardless of range', () => {
+  it('caps tick count at 500 regardless of range', () => {
     // Deliberately pathological: tiny range with fine ticks forced
     const ticks = computeAxisTicks(-1_000_000_000_000, 0, 1);
-    expect(ticks.length).toBeLessThanOrEqual(300);
+    expect(ticks.length).toBeLessThanOrEqual(500);
   });
 });

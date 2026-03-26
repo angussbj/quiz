@@ -230,8 +230,9 @@ export function computeAxisTicks(
 
   const ticks: AxisTick[] = [];
 
-  // Generate minor ticks (cap at 300 to prevent runaway generation at extreme zoom levels)
-  const MAX_TICKS = 300;
+  // Cap total ticks to prevent runaway generation at extreme zoom levels.
+  // 500 accommodates the padded viewport range (up to ~2.5× visible width).
+  const MAX_TICKS = 500;
 
   // When major and minor intervals are incommensurable (e.g. 1/12 months and 1/365 days),
   // minor ticks won't land on major boundaries. Generate major ticks first at exact positions,

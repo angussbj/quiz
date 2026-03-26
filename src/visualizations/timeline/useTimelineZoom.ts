@@ -118,6 +118,17 @@ export function useTimelineZoom({
     });
   }, []);
 
+  // Track the panOffset value at last React render so we can detect
+  // when the live offset has drifted far enough to need a re-render.
+  const lastRenderedPanRef = useRef(panAndZoom.panOffset);
+  useEffect(() => { lastRenderedPanRef.current = panAndZoom.panOffset; }, [panAndZoom.panOffset]);
+
+  // Threshold in pixels: when live pan drifts this far from the last-rendered
+  // pan offset, trigger a React re-render so axis ticks refresh. This should be
+  // somewhat less than the padding rendered off-screen (AXIS_PADDING_SCREENS × containerWidth)
+  // to ensure ticks are refreshed before the edge becomes visible.
+  const panSyncThreshold = containerWidth * 0.5;
+
   const handleWheel = useCallback((e: WheelEvent) => {
     const isPinch = e.ctrlKey;
 
@@ -138,9 +149,14 @@ export function useTimelineZoom({
     if (gestureMode.current === 'horizontal') {
       const newOffset = clampPanOffset(livePanOffsetRef.current - e.deltaX);
       applyPan(newOffset);
-      // Debounced sync so ticks update after the gesture settles
-      if (wheelSyncTimeout.current) clearTimeout(wheelSyncTimeout.current);
-      wheelSyncTimeout.current = setTimeout(syncPanToState, 150);
+      // Sync immediately if we've panned far from last render, otherwise debounce
+      if (Math.abs(newOffset - lastRenderedPanRef.current) > panSyncThreshold) {
+        if (wheelSyncTimeout.current) clearTimeout(wheelSyncTimeout.current);
+        syncPanToState();
+      } else {
+        if (wheelSyncTimeout.current) clearTimeout(wheelSyncTimeout.current);
+        wheelSyncTimeout.current = setTimeout(syncPanToState, 150);
+      }
       return;
     }
 
@@ -168,7 +184,7 @@ export function useTimelineZoom({
         zoom: clampedZoom,
       };
     });
-  }, [minZoom, clampPanOffset, totalViewBoxWidth, applyPan, syncPanToState]);
+  }, [minZoom, clampPanOffset, totalViewBoxWidth, applyPan, syncPanToState, panSyncThreshold]);
 
   // Attach wheel listener with { passive: false }
   useEffect(() => {
@@ -192,7 +208,12 @@ export function useTimelineZoom({
     const deltaX = e.clientX - dragStartX.current;
     const newOffset = clampPanOffset(dragStartPanOffset.current + deltaX);
     applyPan(newOffset);
-  }, [clampPanOffset, applyPan]);
+    // If we've panned far enough from the last rendered state, sync now
+    // so the axis ticks re-render before blank areas become visible.
+    if (Math.abs(newOffset - lastRenderedPanRef.current) > panSyncThreshold) {
+      syncPanToState();
+    }
+  }, [clampPanOffset, applyPan, panSyncThreshold, syncPanToState]);
 
   const handleMouseUpOrLeave = useCallback(() => {
     if (!isDragging.current) return;

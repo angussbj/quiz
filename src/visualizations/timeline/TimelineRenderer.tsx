@@ -134,10 +134,20 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 
   const visibleElements = timelineElements;
 
-  // Axis ticks: compute for the visible viewport so labels are always on screen.
-  // Derive the year range actually visible from pan/zoom state.
-  // Fall back to full data range when container hasn't measured yet (e.g. jsdom).
+  // Axis ticks: compute for the visible viewport plus padding on each side so that
+  // ticks are already in the DOM when panning brings them into view. Panning applies
+  // a CSS translateX via ref (no React re-render), so pre-rendering ticks beyond the
+  // viewport edge prevents blank axis gaps during drag or wheel pan.
+  //
+  // We render ticks covering (1 + 2 * AXIS_PADDING_SCREENS) viewport widths, centred
+  // on the current React-state viewport. The zoom hook calls syncPanToState when the
+  // live pan offset drifts far enough (> AXIS_PADDING_SCREENS * containerWidth) to
+  // approach the pre-rendered edge, triggering a re-render with fresh ticks.
+  const AXIS_PADDING_SCREENS = 0.75;
+
   const hasValidViewport = containerWidth > 0 && zoom > 0;
+  const paddingViewBoxUnits = hasValidViewport ? (containerWidth * AXIS_PADDING_SCREENS) / zoom : 0;
+
   const visibleStartYear = hasValidViewport
     ? (isLogScale
         ? viewBoxXToLogYear(-panOffset / zoom + minX, logReferenceYear)
@@ -148,12 +158,22 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX, logReferenceYear)
         : ((containerWidth - panOffset) / zoom + minX) / UNITS_PER_YEAR)
     : (isLogScale ? viewBoxXToLogYear(maxX, logReferenceYear) : maxX / UNITS_PER_YEAR);
-  const effectivePixels = containerWidth || timelineWidth || 800;
+
+  // Padded range for tick generation — wider than the viewport so off-screen ticks
+  // are pre-rendered and slide into view during pan gestures.
+  const paddedStartYear = isLogScale
+    ? viewBoxXToLogYear(-panOffset / zoom + minX - paddingViewBoxUnits, logReferenceYear)
+    : visibleStartYear - paddingViewBoxUnits / UNITS_PER_YEAR;
+  const paddedEndYear = isLogScale
+    ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX + paddingViewBoxUnits, logReferenceYear)
+    : visibleEndYear + paddingViewBoxUnits / UNITS_PER_YEAR;
+
+  const effectivePixels = (containerWidth || timelineWidth || 800) * (1 + 2 * AXIS_PADDING_SCREENS);
   const axisTicks = useMemo(
     () => isLogScale
-      ? computeLogAxisTicks(visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear)
-      : computeAxisTicks(visibleStartYear, visibleEndYear, effectivePixels),
-    [isLogScale, visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear],
+      ? computeLogAxisTicks(paddedStartYear, paddedEndYear, effectivePixels, logReferenceYear)
+      : computeAxisTicks(paddedStartYear, paddedEndYear, effectivePixels),
+    [isLogScale, paddedStartYear, paddedEndYear, effectivePixels, logReferenceYear],
   );
 
   // Context label: when deeply zoomed, show year/month in top-left for orientation.
