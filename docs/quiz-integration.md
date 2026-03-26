@@ -119,3 +119,4 @@ All quiz CSVs should include a `wikipedia` column containing the Wikipedia artic
 - **Manual fixes**: Add entries to `scripts/wikipedia-fixes.json` and run `node scripts/applyWikipediaFixes.mjs` to validate and apply.
 - **New quizzes**: When adding a new quiz CSV, add its config to `CSV_CONFIG` in `generateWikipediaSlugs.mjs` and re-run the script.
 - **Element building**: Element builders read the `wikipedia` column and set `wikipediaSlug` on `VisualizationElement`. The hover preview in `ActiveQuiz` uses this field.
+- **Column override**: Set `columnMappings.wikipedia` to use a different CSV column as the slug source (e.g., `wikipedia: 'country'` in the flags quiz to show country articles instead of capital city articles).
