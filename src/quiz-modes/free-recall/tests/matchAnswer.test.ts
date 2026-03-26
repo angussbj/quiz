@@ -34,6 +34,30 @@ describe('normalizeText', () => {
     expect(normalizeText('España')).toBe('espana');
   });
 
+  it('transliterates dotless i', () => {
+    expect(normalizeText('Bakı')).toBe('baki');
+  });
+
+  it('transliterates ø', () => {
+    expect(normalizeText('Malmø')).toBe('malmo');
+  });
+
+  it('transliterates ß', () => {
+    expect(normalizeText('Straße')).toBe('strasse');
+  });
+
+  it('transliterates æ', () => {
+    expect(normalizeText('Præstø')).toBe('praesto');
+  });
+
+  it('transliterates œ', () => {
+    expect(normalizeText('cœur')).toBe('coeur');
+  });
+
+  it('transliterates ł', () => {
+    expect(normalizeText('Łódź')).toBe('lodz');
+  });
+
   it('strips underscores', () => {
     expect(normalizeText('some_place')).toBe('someplace');
   });

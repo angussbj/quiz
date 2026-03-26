@@ -13,11 +13,33 @@ export interface NormalizeOptions {
  * - Strip punctuation (unless punctuationMatters)
  * - Strip whitespace (unless whitespaceMatters, in which case collapse to single space)
  */
+/**
+ * Characters that survive NFD decomposition + combining-mark removal
+ * but should map to ASCII equivalents for matching purposes.
+ */
+const transliterations: Readonly<Record<string, string>> = {
+  'ı': 'i', // Turkish dotless i
+  'ł': 'l', // Polish
+  'ø': 'o', // Scandinavian
+  'đ': 'd', // Croatian/Vietnamese
+  'ð': 'd', // Icelandic
+  'þ': 'th', // Icelandic
+  'ß': 'ss', // German
+  'æ': 'ae', // Scandinavian
+  'œ': 'oe', // French
+};
+
+const transliterationPattern = new RegExp(
+  `[${Object.keys(transliterations).join('')}]`,
+  'g',
+);
+
 export function normalizeText(text: string, options?: NormalizeOptions): string {
   let result = text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(transliterationPattern, (ch) => transliterations[ch] ?? ch);
 
   if (!options?.punctuationMatters) {
     result = result.replace(/[^a-zA-Z0-9\s]/g, '');
