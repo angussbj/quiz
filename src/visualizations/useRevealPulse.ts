@@ -32,7 +32,8 @@ export function useRevealPulse(): {
     if (ids.length === 0) return;
 
     // Skip animation if more than 10% of total elements revealed at once
-    if (totalElements > 0 && ids.length > totalElements * 0.1) return;
+    // (e.g. give-up with many remaining). Single-element reveals always animate.
+    if (ids.length > 1 && totalElements > 0 && ids.length > totalElements * 0.1) return;
 
     // Clear any pending timer
     if (timerRef.current) clearTimeout(timerRef.current);
