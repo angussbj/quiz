@@ -149,6 +149,7 @@ export function LocateMode({
           <QuizPromptBar
             promptKey={quiz.currentTarget?.label ?? ''}
             prompt={<>{promptVerb} <strong>{quiz.currentTarget?.label ?? ''}</strong>{promptSuffix}</>}
+            shortPrompt={<strong>{quiz.currentTarget?.label ?? ''}</strong>}
             promptSubtitle={quiz.currentTarget?.promptSubtitle}
             counter={quiz.isFinished ? undefined : `${quiz.currentTargetIndex + 1}/${quiz.totalTargets}`}
             progressCurrent={quiz.currentTargetIndex}

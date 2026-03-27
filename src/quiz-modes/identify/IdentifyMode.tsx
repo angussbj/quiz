@@ -156,6 +156,7 @@ export function IdentifyMode({
           <QuizPromptBar
             promptKey={quiz.currentElementId ?? ''}
             prompt={<>Click on <strong>{quiz.currentElementLabel}</strong></>}
+            shortPrompt={<strong>{quiz.currentElementLabel}</strong>}
             promptSubtitle={quiz.currentElementId ? elements.find((el) => el.id === quiz.currentElementId)?.promptSubtitle : undefined}
             promptFields={promptFields}
             counter={`${quiz.correctCount + quiz.skippedCount}/${quiz.totalPrompts}`}

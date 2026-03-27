@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { IdentifyPromptFields, type PromptField } from './identify/IdentifyPromptFields';
 import styles from './QuizPromptBar.module.css';
@@ -8,6 +8,8 @@ interface QuizPromptBarProps {
   readonly promptKey: string;
   /** The prompt content, e.g. <>Click on <strong>Paris</strong></> */
   readonly prompt: ReactNode;
+  /** Shorter version shown when the full prompt would wrap, e.g. <strong>Paris</strong>. */
+  readonly shortPrompt?: ReactNode;
   /** Optional subtitle shown below the prompt in smaller text, e.g. "(and tributaries)". */
   readonly promptSubtitle?: string;
   /** Optional extra hint fields shown above the prompt (e.g. flag images). */
@@ -29,6 +31,7 @@ interface QuizPromptBarProps {
 export function QuizPromptBar({
   promptKey,
   prompt,
+  shortPrompt,
   promptSubtitle,
   promptFields,
   counter,
@@ -43,6 +46,54 @@ export function QuizPromptBar({
 }: QuizPromptBarProps) {
   const progressPercent = progressTotal > 0 ? (progressCurrent / progressTotal) * 100 : 0;
 
+  // When the full prompt text overflows its container (white-space: nowrap + overflow: hidden),
+  // switch to the shorter version. On each new prompt we reset to full text, measure on the
+  // next layout, and switch to short if it overflows. The full text is never visually visible
+  // in the overflow state because the CSS clips it.
+  const promptRef = useRef<HTMLSpanElement>(null);
+  const [useShort, setUseShort] = useState(false);
+  const prevKeyRef = useRef(promptKey);
+
+  // Reset to full text whenever the prompt changes so we can re-measure.
+  if (prevKeyRef.current !== promptKey) {
+    prevKeyRef.current = promptKey;
+    setUseShort(false);
+  }
+
+  const checkOverflow = useCallback(() => {
+    const el = promptRef.current;
+    if (!el || !shortPrompt) return;
+    // Only switch to short if we're currently showing the full text.
+    // scrollWidth > clientWidth means the text overflows its container.
+    if (!useShort && el.scrollWidth > el.clientWidth + 1) {
+      setUseShort(true);
+    }
+  }, [shortPrompt, useShort]);
+
+  useLayoutEffect(() => {
+    checkOverflow();
+  }, [checkOverflow]);
+
+  useLayoutEffect(() => {
+    const el = promptRef.current?.closest(`.${styles.bar}`);
+    if (!el || !shortPrompt) return;
+    const observer = new ResizeObserver(() => {
+      const promptEl = promptRef.current;
+      if (!promptEl) return;
+      // When the container grows, we might be able to fit the full text again.
+      // When it shrinks, we might need to switch to short.
+      // We can only check overflow when showing the full text, so if currently
+      // showing short and the container grows, we can't easily know if full would fit.
+      // For simplicity: only shrink → short transitions happen automatically.
+      // Growing back requires a new prompt (promptKey change).
+      if (promptEl.scrollWidth > promptEl.clientWidth + 1) {
+        setUseShort(true);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [shortPrompt]);
+
   return (
     <>
       <div className={styles.bar}>
@@ -55,8 +106,8 @@ export function QuizPromptBar({
                 <IdentifyPromptFields fields={promptFields} />
               )}
               <div className={styles.prompt}>
-                <span key={promptKey} className={styles.promptText}>
-                  {prompt}
+                <span ref={promptRef} key={promptKey} className={styles.promptText}>
+                  {useShort ? shortPrompt : prompt}
                   {promptSubtitle && <span className={styles.promptSubtitle}>{promptSubtitle}</span>}
                 </span>
               </div>
