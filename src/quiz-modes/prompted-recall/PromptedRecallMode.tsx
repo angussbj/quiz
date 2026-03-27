@@ -5,6 +5,7 @@ import { buildReviewElementStates, buildReviewElementToggles } from '../buildRev
 import { RecallInputBar } from '../RecallInputBar';
 import { usePromptedRecallQuiz } from './usePromptedRecallQuiz';
 import { buildPromptFields } from '../buildPromptFields';
+import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import styles from './PromptedRecallMode.module.css';
 
 /**
@@ -38,6 +39,22 @@ export function PromptedRecallMode({
     answerColumn: columnMappings['answer'] ?? 'answer',
     normalizeOptions,
   });
+  const { revealingElementIds, triggerReveal } = useRevealPulse();
+
+  const wrappedHandleSkip = useCallback(() => {
+    if (quiz.currentElementId) {
+      triggerReveal([quiz.currentElementId], quiz.totalPrompts);
+    }
+    quiz.handleSkip();
+  }, [quiz.currentElementId, quiz.totalPrompts, quiz.handleSkip, triggerReveal]);
+
+  const wrappedHandleGiveUp = useCallback(() => {
+    const remainingIds = elements
+      .filter((e) => e.interactive !== false && !quiz.answeredElementIds.has(e.id))
+      .map((e) => e.id);
+    triggerReveal(remainingIds, quiz.totalPrompts);
+    quiz.handleGiveUp();
+  }, [elements, quiz.answeredElementIds, quiz.totalPrompts, quiz.handleGiveUp, triggerReveal]);
 
   const [inputText, setInputText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -179,6 +196,7 @@ export function PromptedRecallMode({
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
           putInView={putInView}
+          autoRevealElementIds={revealingElementIds}
         />
       </div>
 
@@ -192,8 +210,8 @@ export function PromptedRecallMode({
         onKeyDown={handleKeyDown}
         placeholder="Type the name..."
         flashIncorrect={quiz.flashIncorrect}
-        onSkip={() => quiz.handleSkip()}
-        onGiveUp={() => quiz.handleGiveUp()}
+        onSkip={wrappedHandleSkip}
+        onGiveUp={wrappedHandleGiveUp}
         lastMatchedElementId={quiz.lastMatchedElementId}
         lastMatchedAnswer={quiz.lastMatchedAnswer}
         isFinished={quiz.isFinished}

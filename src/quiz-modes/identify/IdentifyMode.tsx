@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { QuizModeProps } from '../QuizModeProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
@@ -7,6 +7,7 @@ import { InlineResults } from '../InlineResults';
 import { QuizPromptBar } from '../QuizPromptBar';
 import { useIdentifyQuiz } from './useIdentifyQuiz';
 import { buildPromptFields } from '../buildPromptFields';
+import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import styles from './IdentifyMode.module.css';
 
 /**
@@ -32,6 +33,7 @@ export function IdentifyMode({
   reviewResult,
 }: QuizModeProps) {
   const quiz = useIdentifyQuiz(elements);
+  const { revealingElementIds, triggerReveal } = useRevealPulse();
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
@@ -51,17 +53,31 @@ export function IdentifyMode({
      
   }, [quiz.isFinished, quiz.score]);
 
+  // Trigger pulse when autoRevealId changes (3rd wrong answer reveals correct element)
+  useEffect(() => {
+    if (quiz.autoRevealId) {
+      triggerReveal([quiz.autoRevealId], quiz.totalPrompts);
+    }
+  }, [quiz.autoRevealId, quiz.totalPrompts, triggerReveal]);
+
   const handleElementClick = (elementId: string) => {
     quiz.handleElementClick(elementId);
   };
 
-  const handleSkip = () => {
+  const handleSkip = useCallback(() => {
+    if (quiz.currentElementId) {
+      triggerReveal([quiz.currentElementId], quiz.totalPrompts);
+    }
     quiz.handleSkip();
-  };
+  }, [quiz.currentElementId, quiz.totalPrompts, quiz.handleSkip, triggerReveal]);
 
-  const handleGiveUp = () => {
+  const handleGiveUp = useCallback(() => {
+    const remainingIds = elements
+      .filter((e) => e.interactive !== false && !quiz.answeredElementIds.has(e.id))
+      .map((e) => e.id);
+    triggerReveal(remainingIds, quiz.totalPrompts);
     quiz.handleGiveUp();
-  };
+  }, [elements, quiz.answeredElementIds, quiz.totalPrompts, quiz.handleGiveUp, triggerReveal]);
 
   const elementToggles = useMemo(() => {
     const elementQuizStates: Record<string, ElementQuizState> = {};
@@ -182,6 +198,7 @@ export function IdentifyMode({
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
           putInView={putInView}
+          autoRevealElementIds={revealingElementIds}
         />
       </div>
     </div>

@@ -113,6 +113,12 @@ export interface VisualizationRendererProps {
   readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;
   /** Distance feedback lines for the renderer to draw (e.g., locate mode click-to-target paths). */
   readonly distanceFeedbackLines?: ReadonlyArray<DistanceFeedbackLine>;
+  /**
+   * Element IDs currently being auto-revealed (shown without direct user interaction).
+   * Renderers show a gentle pulse animation on these elements to draw attention.
+   * If an element is inside a cluster badge, the pulse appears on the badge instead.
+   */
+  readonly autoRevealElementIds?: ReadonlyArray<string>;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';
