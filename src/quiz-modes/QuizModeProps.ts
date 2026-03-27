@@ -5,7 +5,6 @@ import type { VisualizationElement } from '@/visualizations/VisualizationElement
 import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { TimeScale } from '@/visualizations/timeline/buildTimelineElements';
-import type { NormalizeOptions } from './free-recall/matchAnswer';
 
 /**
  * Unified props interface for all quiz mode components.
@@ -40,13 +39,7 @@ export interface QuizModeProps {
   readonly reviewing?: boolean;
   readonly reviewResult?: ReviewResult;
   /** How locate mode measures distance. See QuizDefinition.locateDistanceMode. */
-  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary' | 'grid-centroid';
-  /** Thresholds for graded locate feedback. See QuizDefinition.locateThresholds. */
-  readonly locateThresholds?: {
-    readonly correct: number;
-    readonly correctSecond: number;
-    readonly correctThird: number;
-  };
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
   /**
    * When false, interactive elements start visible (default state) instead of hidden.
    * Used by quizzes where elements are always shown (e.g. 3D skeleton). Default: true.
@@ -54,6 +47,4 @@ export interface QuizModeProps {
   readonly hideUnfocusedElements?: boolean;
   /** Time axis scale for timeline quizzes. See QuizDefinition.timeScale. */
   readonly timeScale?: TimeScale;
-  /** Options controlling answer normalization (whitespace/punctuation sensitivity). */
-  readonly normalizeOptions?: NormalizeOptions;
 }

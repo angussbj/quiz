@@ -7,7 +7,10 @@ describe('formatHalfLife', () => {
 
   it('formats gigayears', () => {
     // Bismuth-209: ~1.9e19 years = ~5.998e26 seconds
-    expect(formatHalfLife(5.998e26)).toMatch(/Gy$/);
+    const result = formatHalfLife(5.998e26);
+    expect(result).toMatch(/Gy$/);
+    // Should use scientific notation for very large values
+    expect(result).toMatch(/e\d+/);
   });
 
   it('formats megayears', () => {
@@ -69,9 +72,15 @@ describe('formatHalfLife', () => {
     expect(result).toMatch(/e-\d+ s$/);
   });
 
-  it('rounds large unit values', () => {
-    // 19 billion years
+  it('rounds moderate Gy values', () => {
+    // 19 billion years = 19 Gy
     const result = formatHalfLife(19e9 * 365.25 * 24 * 3600);
     expect(result).toBe('19 Gy');
+  });
+
+  it('rounds moderate unit values', () => {
+    // 14 Gy (Thorium)
+    const result = formatHalfLife(4.42e17);
+    expect(result).toBe('14 Gy');
   });
 });

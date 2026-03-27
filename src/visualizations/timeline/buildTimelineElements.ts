@@ -2,7 +2,7 @@ import type { TimelineElement } from './TimelineElement';
 import type { TimelineTimestamp } from './TimelineTimestamp';
 import { timestampToFractionalYear } from './TimelineTimestamp';
 import { assignTracks } from './assignTracks';
-import { computeLogReferenceYear, logYearToViewBoxX } from './logTimeScale';
+import { computeLogReferenceYear, logYearToViewBoxX, UNITS_PER_LOG_DECADE } from './logTimeScale';
 
 /**
  * ViewBox units per year on the X axis.
@@ -35,7 +35,6 @@ export interface TimelineElementInput {
   readonly track?: number;
   readonly group?: string;
   readonly interactive?: boolean;
-  readonly wikipediaSlug?: string;
 }
 
 /**
@@ -76,10 +75,9 @@ export function buildTimelineElements(
   let maxViewBoxX = -Infinity;
   for (const input of inputs) {
     const start = toViewBoxX(timestampToFractionalYear(input.start, false));
-    const end = Math.max(
-      toViewBoxX(timestampToFractionalYear(input.end ?? input.start, true)),
-      start + MINIMUM_BAR_WIDTH,
-    );
+    const end = input.end
+      ? toViewBoxX(timestampToFractionalYear(input.end, true))
+      : start + MINIMUM_BAR_WIDTH;
     minViewBoxX = Math.min(minViewBoxX, start);
     maxViewBoxX = Math.max(maxViewBoxX, end);
   }
@@ -118,10 +116,14 @@ export function buildTimelineElements(
 
   const elements: TimelineElement[] = inputs.map((input) => {
     const startFractional = timestampToFractionalYear(input.start, false);
-    const endFractional = timestampToFractionalYear(input.end ?? input.start, true);
+    const endFractional = input.end
+      ? timestampToFractionalYear(input.end, true)
+      : startFractional;
 
     const x = toViewBoxX(startFractional);
-    const rawWidth = toViewBoxX(endFractional) - x;
+    const rawWidth = input.end
+      ? toViewBoxX(endFractional) - x
+      : (timeScale === 'log' ? UNITS_PER_LOG_DECADE * 0.1 : UNITS_PER_YEAR * 0.5);
     const barWidth = Math.max(rawWidth, MINIMUM_BAR_WIDTH);
     const track = trackAssignments[input.id] ?? 0;
     const y = track * (trackHeight + trackGap);
@@ -135,7 +137,6 @@ export function buildTimelineElements(
       track,
       group: input.group ?? input.category,
       interactive: input.interactive ?? true,
-      wikipediaSlug: input.wikipediaSlug,
       viewBoxCenter: {
         x: x + barWidth / 2,
         y: y + trackHeight / 2,

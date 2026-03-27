@@ -93,17 +93,7 @@ export interface QuizDefinition<K extends string = string> {
    * - `'polygon-boundary'`: zero distance for clicks inside the element's polygon;
    *   distance to the nearest border point for clicks outside. Use for country/region quizzes.
    */
-  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary' | 'grid-centroid';
-  /**
-   * Thresholds for graded locate feedback (correct/second/third/incorrect).
-   * Units match the distance mode: km for map modes, Manhattan steps for grid-centroid.
-   * When absent, falls back to legacy 100km correct threshold.
-   */
-  readonly locateThresholds?: {
-    readonly correct: number;
-    readonly correctSecond: number;
-    readonly correctThird: number;
-  };
+  readonly locateDistanceMode?: 'centroid' | 'polygon-boundary';
   /** Override the initial camera position for map visualizations (viewBox coordinates: x=lng, y=-lat). */
   readonly initialCameraPosition?: {
     readonly x: number;
@@ -123,20 +113,4 @@ export interface QuizDefinition<K extends string = string> {
    * for the specified states.
    */
   readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;
-  /**
-   * Dynamic grouping: lets the user switch the group-by column at runtime via a select toggle.
-   * `selectToggleKey` names the select toggle, `options` maps each option value to a column
-   * config (or undefined for "no grouping").
-   */
-  readonly dynamicGrouping?: {
-    readonly selectToggleKey: string;
-    readonly options: Readonly<Record<string, {
-      readonly column: string;
-      readonly chipLabel: string;
-    } | undefined>>;
-  };
-  /** When true, whitespace differences matter for answer matching. Default: false (whitespace stripped). */
-  readonly whitespaceMatters?: boolean;
-  /** When true, punctuation differences matter for answer matching. Default: false (punctuation stripped). */
-  readonly punctuationMatters?: boolean;
 }

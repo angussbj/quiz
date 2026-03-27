@@ -10,7 +10,7 @@ import { buildCategoryColorMap } from './categoryColors';
 import { STATUS_COLORS } from '../elementStateColors';
 import { computeAxisTicks } from './computeAxisTicks';
 import { computeLogAxisTicks, computeLogReferenceYear, logYearToViewBoxX, viewBoxXToLogYear } from './logTimeScale';
-import { formatTimestampRange, formatYear, timestampToFractionalYear } from './TimelineTimestamp';
+import { formatTimestampRange, timestampToFractionalYear } from './TimelineTimestamp';
 import { UNITS_PER_YEAR } from './buildTimelineElements';
 import { useTimelineZoom } from './useTimelineZoom';
 import styles from './TimelineRenderer.module.css';
@@ -36,8 +36,6 @@ const MIN_TRACK_STEP = 16;
 /** Minimum visual bar width in pixels (for very short / point events). */
 const MIN_PIXEL_BAR_WIDTH = 8;
 
-const MONTH_NAMES_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
 interface TooltipState {
   readonly x: number;
   readonly y: number;
@@ -45,12 +43,11 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, onElementHoverStart, onElementHoverEnd, putInView, timeScale } = props;
+  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, putInView, timeScale } = props;
   const isLogScale = timeScale === 'log';
 
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const innerContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
 
   const timelineElements = useMemo(
@@ -122,7 +119,6 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
     scrollIntoView,
   } = useTimelineZoom({
     containerRef,
-    innerContainerRef,
     totalViewBoxWidth,
     containerWidth,
   });
@@ -134,20 +130,10 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 
   const visibleElements = timelineElements;
 
-  // Axis ticks: compute for the visible viewport plus padding on each side so that
-  // ticks are already in the DOM when panning brings them into view. Panning applies
-  // a CSS translateX via ref (no React re-render), so pre-rendering ticks beyond the
-  // viewport edge prevents blank axis gaps during drag or wheel pan.
-  //
-  // We render ticks covering (1 + 2 * AXIS_PADDING_SCREENS) viewport widths, centred
-  // on the current React-state viewport. The zoom hook calls syncPanToState when the
-  // live pan offset drifts far enough (> AXIS_PADDING_SCREENS * containerWidth) to
-  // approach the pre-rendered edge, triggering a re-render with fresh ticks.
-  const AXIS_PADDING_SCREENS = 0.75;
-
+  // Axis ticks: compute for the visible viewport so labels are always on screen.
+  // Derive the year range actually visible from pan/zoom state.
+  // Fall back to full data range when container hasn't measured yet (e.g. jsdom).
   const hasValidViewport = containerWidth > 0 && zoom > 0;
-  const paddingViewBoxUnits = hasValidViewport ? (containerWidth * AXIS_PADDING_SCREENS) / zoom : 0;
-
   const visibleStartYear = hasValidViewport
     ? (isLogScale
         ? viewBoxXToLogYear(-panOffset / zoom + minX, logReferenceYear)
@@ -158,45 +144,13 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX, logReferenceYear)
         : ((containerWidth - panOffset) / zoom + minX) / UNITS_PER_YEAR)
     : (isLogScale ? viewBoxXToLogYear(maxX, logReferenceYear) : maxX / UNITS_PER_YEAR);
-
-  // Padded range for tick generation — wider than the viewport so off-screen ticks
-  // are pre-rendered and slide into view during pan gestures.
-  const paddedStartYear = isLogScale
-    ? viewBoxXToLogYear(-panOffset / zoom + minX - paddingViewBoxUnits, logReferenceYear)
-    : visibleStartYear - paddingViewBoxUnits / UNITS_PER_YEAR;
-  const paddedEndYear = isLogScale
-    ? viewBoxXToLogYear((containerWidth - panOffset) / zoom + minX + paddingViewBoxUnits, logReferenceYear)
-    : visibleEndYear + paddingViewBoxUnits / UNITS_PER_YEAR;
-
-  const effectivePixels = (containerWidth || timelineWidth || 800) * (1 + 2 * AXIS_PADDING_SCREENS);
+  const effectivePixels = containerWidth || timelineWidth || 800;
   const axisTicks = useMemo(
     () => isLogScale
-      ? computeLogAxisTicks(paddedStartYear, paddedEndYear, effectivePixels, logReferenceYear)
-      : computeAxisTicks(paddedStartYear, paddedEndYear, effectivePixels),
-    [isLogScale, paddedStartYear, paddedEndYear, effectivePixels, logReferenceYear],
+      ? computeLogAxisTicks(visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear)
+      : computeAxisTicks(visibleStartYear, visibleEndYear, effectivePixels),
+    [isLogScale, visibleStartYear, visibleEndYear, effectivePixels, logReferenceYear],
   );
-
-  // Context label: when deeply zoomed, show year/month in top-left for orientation.
-  // Only shown when no major tick is visible on the axis (otherwise the axis already
-  // provides the date context and the label would be redundant/overlapping).
-  const contextLabel = useMemo(() => {
-    if (isLogScale) return undefined;
-    const hasMajorTickOnScreen = axisTicks.some(
-      (t) => t.isMajor && t.fractionalYear >= visibleStartYear && t.fractionalYear <= visibleEndYear,
-    );
-    if (hasMajorTickOnScreen) return undefined;
-    const startFloorYear = Math.floor(visibleStartYear);
-    const endFloorYear = Math.floor(visibleEndYear);
-    if (startFloorYear !== endFloorYear) return undefined;
-    // All visible dates are in the same year
-    const year = startFloorYear;
-    const startMonth = Math.floor((visibleStartYear - year) * 12);
-    const endMonth = Math.floor((visibleEndYear - year) * 12);
-    if (startMonth === endMonth && startMonth >= 0 && startMonth < 12) {
-      return `${MONTH_NAMES_FULL[startMonth]} ${formatYear(year)}`;
-    }
-    return formatYear(year);
-  }, [isLogScale, visibleStartYear, visibleEndYear, axisTicks]);
 
   // Compute pixel positions and per-track sub-layers for overlapping bars.
   // Vertical positions are computed fresh here (ignoring viewBoxBounds.minY)
@@ -230,7 +184,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
       const pixelExtents = sorted.map((el) => {
         // Compute from raw timestamps, not viewBoxBounds (which has baked-in minimum width)
         const startFrac = timestampToFractionalYear(el.start, false);
-        const endFrac = timestampToFractionalYear(el.end ?? el.start, true);
+        const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
         const left = (yearToViewBoxX(startFrac) - minX) * zoom;
         const rawWidth = (yearToViewBoxX(endFrac) - yearToViewBoxX(startFrac)) * zoom;
         const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
@@ -302,7 +256,7 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 
       const pixelExtents = sorted.map((el) => {
         const startFrac = timestampToFractionalYear(el.start, false);
-        const endFrac = timestampToFractionalYear(el.end ?? el.start, true);
+        const endFrac = el.end ? timestampToFractionalYear(el.end, true) : startFrac;
         const left = (yearToViewBoxX(startFrac) - minX) * zoom;
         const rawWidth = (yearToViewBoxX(endFrac) - yearToViewBoxX(startFrac)) * zoom;
         const width = Math.max(rawWidth, MIN_PIXEL_BAR_WIDTH);
@@ -394,33 +348,23 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   }, [onPositionClick, panOffset, zoom, minX]);
 
   // Hide overlapping tick labels via DOM measurement after layout.
-  // Priority ticks (e.g. year boundaries when months visible) are placed first,
-  // then non-priority ticks fill remaining gaps.
   const axisAreaRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const axisArea = axisAreaRef.current;
     if (!axisArea) return;
     const labels = axisArea.querySelectorAll<HTMLElement>('[data-tick-label]');
-
-    // First pass: hide all, measure all
-    const entries: Array<{ label: HTMLElement; rect: DOMRect; priority: boolean }> = [];
-    for (const label of labels) {
-      label.style.visibility = 'hidden';
-      const rect = label.getBoundingClientRect();
-      if (rect.width === 0) continue;
-      entries.push({ label, rect, priority: label.dataset.tickPriority === 'true' });
-    }
-
-    // Place priority ticks first, then non-priority
+    // Greedy left-to-right: keep a label if it doesn't overlap any previously kept label.
     const kept: DOMRect[] = [];
-    for (const pass of [true, false]) {
-      for (const entry of entries) {
-        if (entry.priority !== pass) continue;
-        const overlaps = kept.some((prev) => prev.right > entry.rect.left && prev.left < entry.rect.right);
-        if (!overlaps) {
-          entry.label.style.visibility = '';
-          kept.push(entry.rect);
-        }
+    for (const label of labels) {
+      const rect = label.getBoundingClientRect();
+      // Zero-width means off-screen or not rendered — skip
+      if (rect.width === 0) { label.style.visibility = 'hidden'; continue; }
+      const overlaps = kept.some((prev) => prev.right > rect.left && prev.left < rect.right);
+      if (overlaps) {
+        label.style.visibility = 'hidden';
+      } else {
+        label.style.visibility = '';
+        kept.push(rect);
       }
     }
   }, [axisTicks, zoom, panOffset]);
@@ -428,42 +372,35 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   const tooltipTextRef = useRef('');
   const hoveredElementRef = useRef<TimelineElement | null>(null);
   const lastMousePosRef = useRef({ x: 0, y: 0 });
-  const hoveredLabelWasVisibleRef = useRef(false);
 
-  // Re-evaluate tooltip when toggles/states change (e.g. click-to-reveal while hovering).
-  // Also re-fire onElementHoverStart so Wikipedia preview timer begins immediately on reveal.
+  // Re-evaluate tooltip when toggles change (e.g. wrong-click reveals a label while hovering).
   useEffect(() => {
     const element = hoveredElementRef.current;
     if (!element) return;
-    const labelVisible = shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'));
-    const text = labelVisible
-      ? `${element.label}: ${formatTimestampRange(element.start, element.end)}`
-      : formatTimestampRange(element.start, element.end);
-    tooltipTextRef.current = text;
-    setTooltip({ x: lastMousePosRef.current.x, y: lastMousePosRef.current.y, text });
-    // When a label becomes visible while hovering (click-to-reveal), re-fire hover
-    // so the Wikipedia preview hook picks up the newly-revealed element immediately.
-    if (labelVisible && !hoveredLabelWasVisibleRef.current) {
-      onElementHoverStart?.(element.id);
+    if (shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'))) {
+      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
+      tooltipTextRef.current = text;
+      setTooltip({ x: lastMousePosRef.current.x, y: lastMousePosRef.current.y, text });
+    } else {
+      tooltipTextRef.current = '';
+      setTooltip(null);
     }
-    hoveredLabelWasVisibleRef.current = labelVisible;
-  }, [elementToggles, toggles, elementStates, onElementHoverStart]);
+  }, [elementToggles, toggles, elementStates]);
 
   const handleBarMouseEnter = useCallback(
     (element: TimelineElement, event: React.MouseEvent) => {
       hoveredElementRef.current = element;
       lastMousePosRef.current = { x: event.clientX, y: event.clientY };
-      onElementHoverStart?.(element.id);
-      const labelVisible = shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'));
-      hoveredLabelWasVisibleRef.current = labelVisible;
-      // Show "label: dates" when label is visible, just dates when hidden (don't reveal the answer)
-      const text = labelVisible
-        ? `${element.label}: ${formatTimestampRange(element.start, element.end)}`
-        : formatTimestampRange(element.start, element.end);
+      if (!shouldShowLabel(elementStates[element.id], elementToggle(elementToggles, toggles, element.id, 'showLabels'))) {
+        tooltipTextRef.current = '';
+        setTooltip(null);
+        return;
+      }
+      const text = `${element.label}: ${formatTimestampRange(element.start, element.end)}`;
       tooltipTextRef.current = text;
       setTooltip({ x: event.clientX, y: event.clientY, text });
     },
-    [elementToggles, toggles, elementStates, onElementHoverStart],
+    [elementToggles, toggles, elementStates],
   );
   const handleBarMouseMove = useCallback((event: React.MouseEvent) => {
     lastMousePosRef.current = { x: event.clientX, y: event.clientY };
@@ -472,11 +409,9 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
   }, []);
   const handleBarMouseLeave = useCallback(() => {
     hoveredElementRef.current = null;
-    hoveredLabelWasVisibleRef.current = false;
     tooltipTextRef.current = '';
     setTooltip(null);
-    onElementHoverEnd?.();
-  }, [onElementHoverEnd]);
+  }, []);
 
   return (
     <>
@@ -490,7 +425,6 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
         onMouseLeave={handleMouseUpOrLeave}
       >
         <div
-          ref={innerContainerRef}
           className={styles.innerContainer}
           style={{
             width: `${timelineWidth}px`,
@@ -509,7 +443,6 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
                   {tick.showLabel && (
                     <div
                       data-tick-label
-                      data-tick-priority={tick.priority || undefined}
                       className={tick.isMajor ? styles.tickLabelMajor : styles.tickLabelMinor}
                     >
                       {tick.label}
@@ -600,10 +533,6 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
             </AnimatePresence>
           </div>
         </div>
-
-        {contextLabel && (
-          <div className={styles.contextLabel}>{contextLabel}</div>
-        )}
       </div>
 
       {tooltip && (

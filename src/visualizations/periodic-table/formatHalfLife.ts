@@ -23,11 +23,13 @@ export function formatHalfLife(seconds: number | undefined): string {
   for (const [unit, factor] of TIME_UNITS) {
     if (seconds >= factor) {
       const value = seconds / factor;
-      const formatted = value >= 100
-        ? Math.round(value).toString()
-        : value >= 10
-          ? value.toFixed(1).replace(/\.0$/, '')
-          : value.toFixed(2).replace(/\.?0+$/, '');
+      const formatted = value >= 1e6
+        ? value.toExponential(1).replace(/\.0e/, 'e').replace('e+', 'e')
+        : value >= 100
+          ? Math.round(value).toString()
+          : value >= 10
+            ? value.toFixed(1).replace(/\.0$/, '')
+            : value.toFixed(2).replace(/\.?0+$/, '');
       const displayUnit = unit === 'us' ? '\u03bcs' : unit;
       return `${formatted} ${displayUnit}`;
     }

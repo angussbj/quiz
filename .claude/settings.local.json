@@ -104,8 +104,7 @@
       "Bash(ps:*)",
       "WebFetch(domain:www.wikidata.org)",
       "WebFetch(domain:query.wikidata.org)",
-      "WebFetch(domain:anatomytool.org)",
-      "mcp__plugin_playwright_playwright__browser_tabs"
+      "WebFetch(domain:anatomytool.org)"
     ]
   }
 }

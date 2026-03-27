@@ -174,13 +174,8 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             initialCameraPosition={definition.initialCameraPosition}
             groupFilterCameraPositions={definition.groupFilterCameraPositions}
             locateDistanceMode={definition.locateDistanceMode}
-            locateThresholds={definition.locateThresholds}
             timeScale={definition.timeScale}
             elementStateColorOverrides={definition.elementStateColorOverrides}
-            normalizeOptions={definition.whitespaceMatters || definition.punctuationMatters ? {
-              whitespaceMatters: definition.whitespaceMatters,
-              punctuationMatters: definition.punctuationMatters,
-            } : undefined}
           />
         )}
       </QuizShell>
