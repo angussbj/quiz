@@ -20,8 +20,6 @@ export const ZOOM_DETAIL_THRESHOLD = 1.8;
 interface CellProps {
   readonly element: GridElement;
   readonly state: ElementVisualState;
-  readonly groupColorIndex: number | undefined;
-  readonly showGroups: boolean;
   readonly showSymbol: boolean;
   readonly showAtomicNumber: boolean;
   readonly showName: boolean;
@@ -36,14 +34,8 @@ interface CellProps {
   readonly onElementHoverEnd?: () => void;
 }
 
-function stateToFill(state: ElementVisualState, groupColorIndex: number | undefined, showGroups: boolean): string {
-  const groupColor = showGroups && groupColorIndex !== undefined
-    ? `var(--color-group-${groupColorIndex + 1})`
-    : undefined;
-  if (state === 'hidden') return groupColor ?? STATUS_COLORS['default'].background;
-  if (groupColor !== undefined && (state === 'correct' || state === 'correct-second' || state === 'correct-third' || state === 'default')) {
-    return groupColor;
-  }
+function stateToFill(state: ElementVisualState): string {
+  if (state === 'hidden') return STATUS_COLORS['default'].background;
   return STATUS_COLORS[state].background;
 }
 
@@ -52,12 +44,8 @@ function stateToStroke(state: ElementVisualState): string {
   return STATUS_COLORS[state].main;
 }
 
-function stateToTextFill(state: ElementVisualState, groupColorIndex: number | undefined, showGroups: boolean): string {
-  const hasGroupColor = showGroups && groupColorIndex !== undefined;
-  if (state === 'hidden') return hasGroupColor ? 'var(--color-on-accent)' : STATUS_COLORS['default'].text;
-  if (hasGroupColor && (state === 'correct' || state === 'correct-second' || state === 'correct-third')) {
-    return 'var(--color-on-accent)';
-  }
+function stateToTextFill(state: ElementVisualState): string {
+  if (state === 'hidden') return STATUS_COLORS['default'].text;
   return STATUS_COLORS[state].text;
 }
 
@@ -72,11 +60,12 @@ function isAnswered(state: ElementVisualState): boolean {
     || state === 'correct-third' || state === 'incorrect' || state === 'missed';
 }
 
+/** Text color for cells with a custom color fill — always dark for contrast. */
+const COLOR_FILL_TEXT = '#333';
+
 function GridCell({
   element,
   state,
-  groupColorIndex,
-  showGroups,
   showSymbol,
   showAtomicNumber,
   showName,
@@ -95,13 +84,14 @@ function GridCell({
   const x = element.column * CELL_STEP;
   const y = element.row * CELL_STEP;
   const baseState = state;
-  const defaultFill = stateToFill(baseState, groupColorIndex, showGroups);
+  const defaultFill = stateToFill(baseState);
   // Color fill applies to hidden/default/context states (not answered elements with feedback colors)
   const useColorFill = colorFill !== undefined
     && (baseState === 'hidden' || baseState === 'default' || baseState === 'context');
   const fill = useColorFill ? colorFill : defaultFill;
   const stroke = stateToStroke(baseState);
-  const textFill = stateToTextFill(baseState, groupColorIndex, showGroups);
+  const defaultTextFill = stateToTextFill(baseState);
+  const textFill = useColorFill ? COLOR_FILL_TEXT : defaultTextFill;
   const answered = isAnswered(baseState);
   const symbolVisible = answered || showSymbol;
   const atomicNumberVisible = answered || showAtomicNumber;
@@ -270,7 +260,6 @@ function PeriodicTableGrid({
 }: VisualizationRendererProps) {
   const { scale, clusteredElementIds } = useZoomPan();
   const zoomedIn = scale >= ZOOM_DETAIL_THRESHOLD;
-  const showGroups = elementToggle(elementToggles, toggles, '', 'showGroups');
   const showAtomicWeight = elementToggle(elementToggles, toggles, '', 'showAtomicWeight');
   const elementDataValue = selectValues?.['elementData'] ?? 'none';
   const elementDataField = toElementDataField(elementDataValue);
@@ -279,35 +268,19 @@ function PeriodicTableGrid({
 
   const elementColorMap: ElementColorMap | undefined = useMemo(() => {
     if (elementColorField === undefined) return undefined;
-    const gridElements = elements.filter(isGridElement);
-    return computeElementColors(gridElements, elementColorField);
+    return computeElementColors(elements, elementColorField);
   }, [elements, elementColorField]);
-
-  const groupColorMap = useMemo(() => {
-    const map = new Map<string, number>();
-    let index = 0;
-    for (const element of elements) {
-      if (element.group && !map.has(element.group)) {
-        map.set(element.group, index % 8);
-        index++;
-      }
-    }
-    return map;
-  }, [elements]);
 
   return (
     <g>
       {elements.map((element) => {
         if (!isGridElement(element)) return null;
         const state = elementStates[element.id] ?? 'hidden';
-        const groupColorIndex = element.group ? groupColorMap.get(element.group) : undefined;
         return (
           <GridCell
             key={element.id}
             element={element}
             state={state}
-            groupColorIndex={groupColorIndex}
-            showGroups={showGroups}
             showSymbol={elementToggle(elementToggles, toggles, element.id, 'showSymbols')}
             showAtomicNumber={elementToggle(elementToggles, toggles, element.id, 'showAtomicNumbers')}
             showName={elementToggle(elementToggles, toggles, element.id, 'showNames')}
