@@ -193,6 +193,7 @@ function SelectToggleControl({
         options={selectToggle.options}
         value={value}
         onChange={onChange}
+        label={selectToggle.label}
       />
     );
   }
@@ -210,16 +211,19 @@ function DropdownSelect({
   options,
   value,
   onChange,
+  label,
 }: {
   readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
   readonly value: string;
   readonly onChange: (value: string) => void;
+  readonly label: string;
 }) {
   return (
     <select
       className={styles.dropdownSelect}
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      aria-label={label}
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
