@@ -51,6 +51,15 @@ export interface LakePath {
   readonly svgPathData: string;
 }
 
+/** A distance feedback line to be rendered by the visualization (e.g., from click to correct target). */
+export interface DistanceFeedbackLine {
+  readonly id: string;
+  readonly from: ViewBoxPosition;
+  readonly to: ViewBoxPosition;
+  readonly elementState: ElementVisualState;
+  readonly label?: string;
+}
+
 /**
  * Props every visualization renderer receives.
  * THE contract between quiz modes and renderers.
@@ -60,6 +69,10 @@ export interface VisualizationRendererProps {
   readonly elementStates: Readonly<Record<string, ElementVisualState>>;
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: (position: ViewBoxPosition) => void;
+  /** Called when the pointer hovers over an element (for Wikipedia preview). */
+  readonly onElementHoverStart?: (elementId: string) => void;
+  /** Called when the pointer leaves an element (for Wikipedia preview). */
+  readonly onElementHoverEnd?: () => void;
   readonly onClusterClick?: (cluster: ElementCluster) => void;
   readonly toggles: Readonly<Record<string, boolean>>;
   /** Per-element toggle overrides. Renderer checks elementToggles[elementId][toggleKey] ?? toggles[toggleKey]. */
@@ -71,6 +84,8 @@ export interface VisualizationRendererProps {
   readonly lakePaths?: ReadonlyArray<LakePath>;
   /** Labels positioned at background shape centroids (e.g., country names) */
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
+  /** Additional SVG content rendered behind all elements (e.g., path lines that cells cover) */
+  readonly svgUnderlay?: ReactNode;
   /** Additional SVG content rendered on top of all elements (e.g., feedback overlays) */
   readonly svgOverlay?: ReactNode;
   /** The element currently being targeted (e.g., for identify mode highlight ring) */
@@ -96,6 +111,8 @@ export interface VisualizationRendererProps {
    * STATUS_COLORS.main for the specified states.
    */
   readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;
+  /** Distance feedback lines for the renderer to draw (e.g., locate mode click-to-target paths). */
+  readonly distanceFeedbackLines?: ReadonlyArray<DistanceFeedbackLine>;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';

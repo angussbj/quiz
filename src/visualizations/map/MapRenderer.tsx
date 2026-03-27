@@ -7,7 +7,9 @@ import { ZoomPanContainer } from '../ZoomPanContainer';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { isMapElement } from './MapElement';
+import type { BackgroundLabel } from './BackgroundLabel';
 import { MapCountryLabels } from './MapCountryLabels';
+import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
 import styles from './MapRenderer.module.css';
 
@@ -64,6 +66,8 @@ export function MapRenderer({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   clustering,
   onClusterClick,
   toggles,
@@ -100,6 +104,8 @@ export function MapRenderer({
         elementStates={elementStates}
         onElementClick={onElementClick}
         onPositionClick={onPositionClick}
+        onElementHoverStart={onElementHoverStart}
+        onElementHoverEnd={onElementHoverEnd}
         uniqueGroups={uniqueGroups}
         showBorders={showBorders}
         toggles={toggles}
@@ -169,6 +175,8 @@ function renderShapeElements(
   showRegionColors: boolean,
   isDrag: (e: React.MouseEvent) => boolean,
   elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'],
+  onElementHoverStart?: (elementId: string) => void,
+  onElementHoverEnd?: () => void,
 ) {
   return elements.map((element) => {
     if (!isMapElement(element) || !element.svgPathData) return null;
@@ -197,11 +205,12 @@ function renderShapeElements(
       const subpaths = splitSubpaths(element.svgPathData);
       const strokeD = subpaths.filter((p) => !p.endsWith('Z')).join(' ');
       const handleClick = onElementClick;
+      const isHoverable = !handleClick && !!onElementHoverStart;
 
       return (
-        <g key={`shape-${element.id}`} className={handleClick ? styles.interactiveGroup : undefined}>
-          {/* Invisible wider hit area for clicking (strokes only, non-tributary-proxy) */}
-          {handleClick && strokeD && (
+        <g key={`shape-${element.id}`} className={handleClick ? styles.interactiveGroup : isHoverable ? styles.hoverableGroup : undefined}>
+          {/* Invisible wider hit area for clicking/hovering (strokes only) */}
+          {(handleClick || isHoverable) && strokeD && (
             <path
               d={strokeD}
               style={{
@@ -211,12 +220,14 @@ function renderShapeElements(
                 strokeLinecap: 'round',
                 strokeLinejoin: 'round',
               }}
-              className={styles.interactivePath}
-              onClick={(e) => {
+              className={handleClick ? styles.interactivePath : styles.hoverablePath}
+              onClick={handleClick ? (e) => {
                 if (isDrag(e)) return;
                 e.stopPropagation();
                 handleClick(element.id);
-              }}
+              } : undefined}
+              onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+              onMouseLeave={onElementHoverEnd}
             />
           )}
           {/* Visible river strokes */}
@@ -231,7 +242,7 @@ function renderShapeElements(
                 strokeLinecap: 'round',
                 strokeLinejoin: 'round',
               }}
-              pointerEvents={handleClick ? 'none' : undefined}
+              pointerEvents={(handleClick || isHoverable) ? 'none' : undefined}
               className={handleClick ? styles.interactivePath : undefined}
               onClick={
                 handleClick
@@ -269,7 +280,7 @@ function renderShapeElements(
           stroke: color,
           strokeWidth: 0.075,
         }}
-        className={onElementClick ? styles.interactivePath : styles.borderPath}
+        className={onElementClick ? styles.interactivePath : onElementHoverStart ? styles.hoverablePath : styles.borderPath}
         onClick={
           onElementClick
             ? (e) => {
@@ -279,6 +290,8 @@ function renderShapeElements(
               }
             : undefined
         }
+        onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+        onMouseLeave={onElementHoverEnd}
       />
     );
   });
@@ -342,6 +355,8 @@ interface MapContentProps {
   readonly elementStates: VisualizationRendererProps['elementStates'];
   readonly onElementClick?: (elementId: string) => void;
   readonly onPositionClick?: VisualizationRendererProps['onPositionClick'];
+  readonly onElementHoverStart?: (elementId: string) => void;
+  readonly onElementHoverEnd?: () => void;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly showBorders: boolean;
   readonly toggles: Readonly<Record<string, boolean>>;
@@ -357,6 +372,8 @@ function MapContent({
   elementStates,
   onElementClick,
   onPositionClick,
+  onElementHoverStart,
+  onElementHoverEnd,
   uniqueGroups,
   showBorders,
   toggles,
@@ -372,7 +389,7 @@ function MapContent({
   const showRegionColors = toggles['showRegionColors'] === true;
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
-  // Map from element label (country name) → element state, for MapCountryLabels.
+  // Map from element label → element state, used by MapCountryLabels for state-aware colours.
   const elementNameToState = useMemo(() => {
     const map: Record<string, ElementVisualState | undefined> = {};
     for (const el of elements) {
@@ -383,19 +400,31 @@ function MapContent({
     return map;
   }, [elements, elementStates]);
 
-  // Filter backgroundLabels to exclude polygon quiz element names — those labels are
-  // rendered inline directly from the element data (see "Region polygon labels" below),
-  // so we don't want to double-render them via MapCountryLabels.
-  const filteredBackgroundLabels = useMemo(() => {
-    if (!backgroundLabels) return undefined;
-    const polygonElementNames = new Set(
-      elements
-        .filter((el) => isMapElement(el) && el.svgPathData && el.pathRenderStyle !== 'stroke')
-        .map((el) => el.label),
-    );
-    if (polygonElementNames.size === 0) return backgroundLabels;
-    return backgroundLabels.filter((l) => !polygonElementNames.has(l.name));
-  }, [elements, backgroundLabels]);
+  // Map from element label → element id, used by MapCountryLabels for hover.
+  const nameToElementId = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const el of elements) {
+      if (isMapElement(el) && el.svgPathData && el.pathRenderStyle !== 'stroke') {
+        map[el.label] = el.id;
+      }
+    }
+    return map;
+  }, [elements]);
+
+  // Build BackgroundLabel objects from polygon quiz elements so they pass through the
+  // full label placement system (polylabel positioning, area-based sizing, collision detection).
+  const elementPolygonLabels = useMemo(
+    () => computeElementLabels(elements),
+    [elements],
+  );
+
+  // Merge background labels (excluding polygon element names to avoid duplicates) with
+  // element-derived labels for a single unified placement pass.
+  const allLabels = useMemo((): ReadonlyArray<BackgroundLabel> => {
+    const polygonElementNames = new Set(elementPolygonLabels.map((l) => l.name));
+    const filteredBg = (backgroundLabels ?? []).filter((l) => !polygonElementNames.has(l.name));
+    return [...filteredBg, ...elementPolygonLabels];
+  }, [backgroundLabels, elementPolygonLabels]);
 
   const visibleDotPositions = useMemo(
     () => elements
@@ -466,22 +495,26 @@ function MapContent({
       {/* Map element shapes (for country quizzes where elements have svgPathData).
           Rendered in layers: default first, then incorrect, correct, highlighted on top
           so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
 
-      {/* Country name labels and flags (from background border data, non-quiz context elements) */}
-      {filteredBackgroundLabels && (
+      {/* Country/region name labels and flags — background context labels merged with polygon
+          quiz element labels, run through unified placement (polylabel, collision detection). */}
+      {allLabels.length > 0 && (
         <MapCountryLabels
-          labels={filteredBackgroundLabels}
+          labels={allLabels}
           showNames={toggles['showCountryNames'] ?? false}
           showFlags={toggles['showMapFlags'] ?? false}
           avoidPoints={visibleDotPositions}
           elementNameToState={elementNameToState}
+          nameToElementId={nameToElementId}
+          onElementHoverStart={onElementHoverStart}
+          onElementHoverEnd={onElementHoverEnd}
         />
       )}
 
@@ -502,7 +535,7 @@ function MapContent({
           <text
             key={`river-label-${element.id}`}
             {...labelProps}
-            className={styles.riverLabel}
+            className={onElementHoverStart ? styles.riverLabelHoverable : styles.riverLabel}
             style={{
               fill: color,
               strokeOpacity: 0.75,
@@ -511,6 +544,8 @@ function MapContent({
               strokeWidth: 0.5,
               strokeLinejoin: 'round',
             }}
+            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverEnd}
           >
             {element.label}
           </text>
@@ -564,7 +599,7 @@ function MapContent({
             fill={color}
             stroke={'var(--color-bg-primary)'}
             strokeWidth={dotRadius * 0.27}
-            className={onElementClick ? styles.interactiveDot : undefined}
+            className={onElementClick ? styles.interactiveDot : onElementHoverStart ? styles.hoverableDot : undefined}
             onClick={
               onElementClick
                 ? (e) => {
@@ -574,6 +609,8 @@ function MapContent({
                   }
                 : undefined
             }
+            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverEnd}
           />
         );
       })}
@@ -582,7 +619,7 @@ function MapContent({
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
-        // Shape elements (countries) use MapCountryLabels, not element labels
+        // Shape elements (countries/states) use the "Region polygon labels" section above
         if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
         if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showCityNames'))) return null;
@@ -593,8 +630,10 @@ function MapContent({
           <text
             key={`city-label-${element.id}`}
             {...labelProps}
-            className={styles.cityLabel}
+            className={onElementHoverStart ? styles.cityLabelHoverable : styles.cityLabel}
             style={{ fontSize: `${fontSize}px` }}
+            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverEnd}
           >
             {element.label}
           </text>
