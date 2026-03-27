@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QuizModeProps } from '../QuizModeProps';
 import type { DistanceFeedbackLine as DistanceFeedbackLineType } from '@/visualizations/VisualizationRendererProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
@@ -96,6 +96,28 @@ export function LocateMode({
     quiz.handleGiveUp();
   }, [elements, quiz.elementStates, quiz.totalTargets, quiz.handleGiveUp, triggerReveal]);
 
+  // putInView: pan to the element when revealed after an incorrect answer or skip.
+  const [putInViewId, setPutInViewId] = useState<string | undefined>(undefined);
+  const prevTargetRef = useRef(quiz.currentTarget);
+  const elementStatesRef = useRef(quiz.elementStates);
+  elementStatesRef.current = quiz.elementStates;
+
+  useEffect(() => {
+    const prevTarget = prevTargetRef.current;
+    prevTargetRef.current = quiz.currentTarget;
+    if (!prevTarget) return;
+
+    const prevState = elementStatesRef.current[prevTarget.id];
+    if (prevState === 'incorrect' || prevState === 'missed') {
+      setPutInViewId(prevTarget.id);
+    }
+  }, [quiz.currentTarget]);
+
+  const putInView = useMemo(
+    () => (putInViewId ? [putInViewId] : undefined),
+    [putInViewId],
+  );
+
   const isGridMode = locateDistanceMode === 'grid-centroid';
   const promptVerb = isGridMode ? 'Click on' : 'Click where';
   const promptSuffix = isGridMode ? '' : ' is';
@@ -157,6 +179,7 @@ export function LocateMode({
           backgroundLabels={backgroundLabels}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
+          putInView={putInView}
           svgOverlay={feedbackOverlay}
           distanceFeedbackLines={gridFeedbackLines}
           autoRevealElementIds={revealingElementIds}
