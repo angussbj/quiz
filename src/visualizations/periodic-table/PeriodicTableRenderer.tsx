@@ -10,6 +10,7 @@ import { STATUS_COLORS } from '../elementStateColors';
 import { gridElementToVisualizationElement } from './gridElementToVisualizationElement';
 import { GridFeedbackOverlay } from './GridFeedbackOverlay';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
+import { formatHalfLife } from './formatHalfLife';
 
 export const ZOOM_DETAIL_THRESHOLD = 1.8;
 
@@ -21,6 +22,8 @@ interface CellProps {
   readonly showSymbol: boolean;
   readonly showAtomicNumber: boolean;
   readonly showName: boolean;
+  readonly showAtomicWeight: boolean;
+  readonly showHalfLife: boolean;
   readonly isClustered: boolean;
   readonly zoomedIn: boolean;
   readonly onElementClick?: (elementId: string) => void;
@@ -65,6 +68,13 @@ function isAnswered(state: ElementVisualState): boolean {
     || state === 'correct-third' || state === 'incorrect' || state === 'missed';
 }
 
+/** Pick font size for atomic weight so it fits in the top-right area. */
+function atomicWeightFontSize(weight: string): number {
+  if (weight.length <= 5) return 7;
+  if (weight.length <= 7) return 6;
+  return 5;
+}
+
 function GridCell({
   element,
   state,
@@ -73,6 +83,8 @@ function GridCell({
   showSymbol,
   showAtomicNumber,
   showName,
+  showAtomicWeight,
+  showHalfLife,
   isClustered,
   zoomedIn,
   onElementClick,
@@ -92,6 +104,8 @@ function GridCell({
   const symbolVisible = answered || showSymbol;
   const atomicNumberVisible = answered || showAtomicNumber;
   const nameVisible = (answered || showName) && zoomedIn;
+  const atomicWeightVisible = showAtomicWeight && zoomedIn;
+  const halfLifeVisible = showHalfLife && zoomedIn;
   const interactive = element.interactive;
 
   const cellCenterX = x + CELL_SIZE / 2;
@@ -107,10 +121,32 @@ function GridCell({
       }
     : undefined;
 
+  // Layout: when half-life toggle is on AND we're zoomed in, shrink symbol
+  // to make room for half-life text between symbol and name.
+  // When half-life toggle is off, use the original layout unchanged.
   const hasAtomicNumber = atomicNumberVisible && element.atomicNumber > 0;
-  const symbolY = hasAtomicNumber || nameVisible
-    ? y + CELL_SIZE * 0.45
-    : y + CELL_SIZE / 2;
+  let symbolY: number;
+  let symbolFontSize: number;
+  let halfLifeY: number;
+  let nameY: number;
+
+  if (halfLifeVisible) {
+    // Compact layout: symbol higher and smaller, half-life below it, name at bottom
+    symbolY = hasAtomicNumber ? y + CELL_SIZE * 0.36 : y + CELL_SIZE * 0.38;
+    symbolFontSize = zoomedIn ? 14 : 22;
+    halfLifeY = y + CELL_SIZE * 0.58;
+    nameY = y + CELL_SIZE * 0.78;
+  } else {
+    // Original layout — no change from before
+    symbolY = hasAtomicNumber || nameVisible
+      ? y + CELL_SIZE * 0.45
+      : y + CELL_SIZE / 2;
+    symbolFontSize = zoomedIn ? 18 : 22;
+    halfLifeY = 0; // unused
+    nameY = y + CELL_SIZE * 0.75;
+  }
+
+  const halfLifeText = halfLifeVisible ? formatHalfLife(element.halfLifeSeconds) : undefined;
 
   return (
     <g
@@ -144,6 +180,19 @@ function GridCell({
           {element.atomicNumber}
         </text>
       )}
+      {atomicWeightVisible && element.atomicWeight && (
+        <text
+          x={x + CELL_SIZE - 5}
+          y={y + 11}
+          textAnchor="end"
+          dominantBaseline="central"
+          fill={textFill}
+          fontSize={atomicWeightFontSize(element.atomicWeight)}
+          opacity={0.6}
+        >
+          {element.atomicWeight}
+        </text>
+      )}
       {symbolVisible && (
         <text
           x={x + CELL_SIZE / 2}
@@ -151,16 +200,29 @@ function GridCell({
           textAnchor="middle"
           dominantBaseline="central"
           fill={textFill}
-          fontSize={zoomedIn ? 18 : 22}
+          fontSize={symbolFontSize}
           fontWeight="bold"
         >
           {element.symbol}
         </text>
       )}
+      {halfLifeText !== undefined && (
+        <text
+          x={x + CELL_SIZE / 2}
+          y={halfLifeY}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill={textFill}
+          fontSize={6}
+          opacity={0.65}
+        >
+          {halfLifeText}
+        </text>
+      )}
       {nameVisible && (
         <text
           x={x + CELL_SIZE / 2}
-          y={y + CELL_SIZE * 0.75}
+          y={nameY}
           textAnchor="middle"
           dominantBaseline="central"
           fill={textFill}
@@ -188,6 +250,8 @@ function PeriodicTableGrid({
   const { scale, clusteredElementIds } = useZoomPan();
   const zoomedIn = scale >= ZOOM_DETAIL_THRESHOLD;
   const showGroups = elementToggle(elementToggles, toggles, '', 'showGroups');
+  const showAtomicWeight = elementToggle(elementToggles, toggles, '', 'showAtomicWeight');
+  const showHalfLife = elementToggle(elementToggles, toggles, '', 'showHalfLife');
 
   const groupColorMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -217,6 +281,8 @@ function PeriodicTableGrid({
             showSymbol={elementToggle(elementToggles, toggles, element.id, 'showSymbols')}
             showAtomicNumber={elementToggle(elementToggles, toggles, element.id, 'showAtomicNumbers')}
             showName={elementToggle(elementToggles, toggles, element.id, 'showNames')}
+            showAtomicWeight={showAtomicWeight}
+            showHalfLife={showHalfLife}
             isClustered={clusteredElementIds.has(element.id)}
             zoomedIn={zoomedIn}
             onElementClick={onElementClick}

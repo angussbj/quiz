@@ -14,6 +14,8 @@ function makeGridElement(overrides: Partial<GridElement> = {}): GridElement {
     atomicNumber: 1,
     trueRow: 0,
     trueColumn: 0,
+    atomicWeight: '1.008',
+    halfLifeSeconds: undefined,
     ...overrides,
   };
 }

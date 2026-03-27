@@ -14,6 +14,10 @@ export interface GridElement extends VisualizationElement {
   readonly trueRow: number;
   /** Column in the extended 32-column periodic table. */
   readonly trueColumn: number;
+  /** Atomic weight as a display string (e.g. "1.008", "244"). */
+  readonly atomicWeight: string;
+  /** Half-life of most stable isotope in seconds, or undefined if stable. */
+  readonly halfLifeSeconds: number | undefined;
 }
 
 export function isGridElement(element: VisualizationElement): element is GridElement {

@@ -27,6 +27,8 @@ export function buildGridElements(
       atomicNumber: parseInt(row['atomic_number'] ?? '0', 10),
       trueRow,
       trueColumn,
+      atomicWeight: row['atomic_weight'] ?? '',
+      halfLifeSeconds: row['half_life'] ? parseFloat(row['half_life']) : undefined,
       viewBoxCenter: { x: x + CELL_SIZE / 2, y: y + CELL_SIZE / 2 },
       viewBoxBounds: { minX: x, minY: y, maxX: x + CELL_SIZE, maxY: y + CELL_SIZE },
       interactive: true,

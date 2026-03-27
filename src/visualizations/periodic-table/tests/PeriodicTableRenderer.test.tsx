@@ -38,6 +38,8 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     atomicNumber: 1,
     trueRow: 0,
     trueColumn: 0,
+    atomicWeight: '1.008',
+    halfLifeSeconds: undefined,
     ...overrides,
   };
 }
@@ -226,5 +228,102 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents).not.toContain('Hydrogen');
     expect(textContents).not.toContain('Helium');
     expect(textContents).not.toContain('Lithium');
+  });
+
+  it('shows atomic weight in top-right when toggle is on and zoomed in', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', atomicWeight: '1.008' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showAtomicWeight: true },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('1.008');
+  });
+
+  it('does not show atomic weight when toggle is off', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', atomicWeight: '1.008' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showAtomicWeight: false },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).not.toContain('1.008');
+  });
+
+  it('does not show atomic weight when not zoomed in', () => {
+    mockScale = 1;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', atomicWeight: '1.008' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showAtomicWeight: true },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).not.toContain('1.008');
+  });
+
+  it('shows "Stable" for half-life when element has no half-life data', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showHalfLife: true },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('Stable');
+  });
+
+  it('shows formatted half-life for radioactive element', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'Tc', halfLifeSeconds: 1.325e14 })],
+          elementStates: { Tc: 'context' },
+          toggles: { showSymbols: false, showHalfLife: true },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    // 1.325e14 seconds is ~4.2 megayears
+    expect(textContents.some((t) => t !== null && t.includes('My'))).toBe(true);
+  });
+
+  it('does not show half-life when toggle is off', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showHalfLife: false },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).not.toContain('Stable');
   });
 });

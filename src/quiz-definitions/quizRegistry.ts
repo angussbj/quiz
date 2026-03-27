@@ -291,6 +291,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { key: 'showAtomicNumbers', label: 'Atomic numbers', defaultValue: true, group: 'display', hiddenBehavior: 'on-reveal' },
       { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true },
       { key: 'showGroups', label: 'Category colours', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showAtomicWeight', label: 'Atomic weight', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
+      { key: 'showHalfLife', label: 'Half-life', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
     ],
     presets: [],
     columnMappings: {
