@@ -289,6 +289,7 @@ describe('bone3DLocateDistance', () => {
       viewBoxCenter: { x, y, z },
       viewBoxBounds: { minX: x, minY: y, maxX: x, maxY: y },
       meshEntries: [{ meshName: 'Test.r', side: 'right', directMesh: true }],
+      preferredView: 'front',
     };
   }
 

@@ -19,7 +19,7 @@ import * as THREE from 'three';
 import type { ThreeEvent } from '@react-three/fiber';
 import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
-import { isAnatomy3DElement } from './Anatomy3DElement';
+import { isAnatomy3DElement, type Anatomy3DPreferredView } from './Anatomy3DElement';
 import { assetPath } from '@/utilities/assetPath';
 import styles from './Anatomy3DRenderer.module.css';
 
@@ -157,6 +157,39 @@ function symmetricBox(box: THREE.Box3): THREE.Box3 {
     new THREE.Vector3(-halfWidth, box.min.y, box.min.z),
     new THREE.Vector3(halfWidth, box.max.y, box.max.z),
   );
+}
+
+/** Camera looking up at the sole of the foot — for sesamoid bones. */
+function footBottomView(box: THREE.Box3, aspect: number, padding = 1.8): CameraView {
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const dist = fitDistance(size, aspect, padding);
+  return {
+    position: new THREE.Vector3(center.x, center.y - dist * 0.6, center.z + dist * 0.1),
+    target: center.clone(),
+  };
+}
+
+/** Camera behind the foot at heel level — for calcaneus. */
+function footBackView(box: THREE.Box3, aspect: number, padding = 1.8): CameraView {
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const dist = fitDistance(size, aspect, padding);
+  return {
+    position: new THREE.Vector3(center.x, center.y + dist * 0.3, center.z - dist * 0.8),
+    target: center.clone(),
+  };
+}
+
+/** Angled view for foot bones — from above and slightly in front. */
+function footView(box: THREE.Box3, aspect: number, padding = 1.8): CameraView {
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const dist = fitDistance(size, aspect, padding);
+  return {
+    position: new THREE.Vector3(center.x, center.y + dist * 0.55, center.z + dist * 0.75),
+    target: center.clone(),
+  };
 }
 
 // ─── CameraAnimator ───────────────────────────────────────────────────────────
@@ -549,6 +582,7 @@ function SkeletonMeshes({
 // ─── Scene ────────────────────────────────────────────────────────────────────
 
 interface SceneProps {
+  readonly elements: VisualizationRendererProps['elements'];
   readonly meshMap: Map<string, MeshEntry>;
   readonly elementStates: Readonly<Record<string, ElementVisualState>>;
   readonly elementLabels: ReadonlyArray<{ id: string; label: string; state: ElementVisualState | undefined }>;
@@ -564,6 +598,7 @@ interface SceneProps {
 }
 
 function Scene({
+  elements,
   meshMap,
   elementStates,
   elementLabels,
@@ -639,49 +674,68 @@ function Scene({
     return result;
   }, [elementLabels, meshCenters]);
 
-  // putInView: animate camera to frame target element(s).
-  // Per contract: pans/zooms OUT to show targets, never zooms in closer than current.
+  // putInView: animate camera to frame target element(s) using preferred view angle.
+  // For bilateral elements, only frames the right-side meshes (avoids framing both sides).
+  // Allows zoom-in to properly frame small bones.
   const putInViewLatestRef = useRef({ meshCenters, viewport, camera });
   putInViewLatestRef.current = { meshCenters, viewport, camera };
 
   useEffect(() => {
     if (!putInView || putInView.length === 0) return;
-    const { meshCenters: centers, viewport: vp, camera: cam } = putInViewLatestRef.current;
+    const { meshCenters: centers, viewport: vp } = putInViewLatestRef.current;
     if (centers.size === 0) return;
 
+    // Collect right-side/midline centers only (for bilateral, avoids framing both sides).
+    // Also determine the preferred view from the target element(s).
     const targetCenters: Array<THREE.Vector3> = [];
-    for (const [, { elementId, center }] of centers) {
-      if (putInView.includes(elementId)) {
-        targetCenters.push(center);
-      }
+    let preferredView: Anatomy3DPreferredView = 'front';
+    for (const [meshKey, { elementId, center }] of centers) {
+      if (!putInView.includes(elementId)) continue;
+      // Skip mirrored (left-side) mesh centers — only frame the original (right) side
+      if (meshKey.includes(':mirrored:')) continue;
+      targetCenters.push(center);
     }
     if (targetCenters.length === 0) return;
 
-    // Build bounding box from centers, then expand generously — centers are
-    // single points, not mesh volumes, so the actual bone extends well beyond.
+    // Determine preferred view from the first matching element
+    for (const el of elements) {
+      if (putInView.includes(el.id) && isAnatomy3DElement(el)) {
+        preferredView = el.preferredView;
+        break;
+      }
+    }
+
     const box = new THREE.Box3();
     for (const c of targetCenters) {
       box.expandByPoint(c);
     }
     box.expandByScalar(0.12);
 
-    const view = frontView(symmetricBox(box), vp.aspect || 1, 1.8);
-
-    // Never zoom in: clamp camera distance to be no closer than current distance
-    // to the new target. This prevents jarring zoom-in when the user is zoomed out
-    // and a small bone is answered.
-    const currentDist = cam.position.distanceTo(view.target);
-    const candidateDist = view.position.distanceTo(view.target);
-    if (candidateDist < currentDist) {
-      const direction = view.position.clone().sub(view.target).normalize();
-      onPutInViewTarget({
-        position: view.target.clone().addScaledVector(direction, currentDist),
-        target: view.target,
-      });
-    } else {
-      onPutInViewTarget(view);
+    const aspect = vp.aspect || 1;
+    let view: CameraView;
+    switch (preferredView) {
+      case 'back':
+        view = backView(box, aspect, 1.8);
+        break;
+      case 'hand':
+        view = frontView(box, aspect, 1.8);
+        break;
+      case 'foot':
+        view = footView(box, aspect, 1.8);
+        break;
+      case 'foot-bottom':
+        view = footBottomView(box, aspect, 1.8);
+        break;
+      case 'foot-back':
+        view = footBackView(box, aspect, 1.8);
+        break;
+      default:
+        view = frontView(symmetricBox(box), aspect, 1.8);
+        break;
     }
-  }, [putInView, onPutInViewTarget]);
+
+    onPutInViewTarget(view);
+  }, [putInView, onPutInViewTarget, elements]);
 
   return (
     <>
@@ -833,6 +887,7 @@ export function Anatomy3DRenderer({
         gl={{ antialias: true }}
       >
         <Scene
+          elements={elements}
           meshMap={meshMap}
           elementStates={elementStates}
           elementLabels={elementLabels}

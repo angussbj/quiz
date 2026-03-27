@@ -14,7 +14,7 @@
  *   Region chips (showSkull, showTorso, showLimbs, showHands, showFeet) — filter by body region
  */
 
-import type { Anatomy3DElement, Anatomy3DMeshEntry } from '@/visualizations/anatomy-3d/Anatomy3DElement';
+import type { Anatomy3DElement, Anatomy3DMeshEntry, Anatomy3DPreferredView } from '@/visualizations/anatomy-3d/Anatomy3DElement';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -32,6 +32,7 @@ export interface Bone3DRow {
   readonly bilateral_partner: string;
   readonly group_representative: string;
   readonly wikipedia: string;
+  readonly view: string;
 }
 
 // ─── Element building ─────────────────────────────────────────────────────────
@@ -107,6 +108,14 @@ function makeMeshEntry(row: Bone3DRow): Anatomy3DMeshEntry {
   };
 }
 
+const VALID_VIEWS = new Set<Anatomy3DPreferredView>(['front', 'back', 'hand', 'foot', 'foot-bottom', 'foot-back']);
+
+function parseView(raw: string | undefined): Anatomy3DPreferredView {
+  if (!raw) return 'front';
+  const v = raw.trim() as Anatomy3DPreferredView;
+  return VALID_VIEWS.has(v) ? v : 'front';
+}
+
 function makeElement(row: Bone3DRow): Anatomy3DElement {
   return {
     id: row.id,
@@ -126,6 +135,7 @@ function makeElement(row: Bone3DRow): Anatomy3DElement {
     group: row.region,
     meshEntries: [makeMeshEntry(row)],
     wikipediaSlug: row.wikipedia || undefined,
+    preferredView: parseView(row.view),
   };
 }
 
