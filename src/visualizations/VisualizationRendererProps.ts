@@ -77,6 +77,8 @@ export interface VisualizationRendererProps {
   readonly toggles: Readonly<Record<string, boolean>>;
   /** Per-element toggle overrides. Renderer checks elementToggles[elementId][toggleKey] ?? toggles[toggleKey]. */
   readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
+  /** Current values for multi-value select toggles (e.g., which element data field to display). */
+  readonly selectValues?: Readonly<Record<string, string>>;
   readonly clustering?: ClusteringConfig;
   /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;

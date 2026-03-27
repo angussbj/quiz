@@ -45,6 +45,8 @@ export interface SelectToggleDefinition {
   readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
   readonly defaultValue: string;
   readonly group: string;
+  /** How to render: 'segmented' (default) or 'dropdown'. */
+  readonly renderAs?: 'segmented' | 'dropdown';
   /** If set, this toggle only appears in the setup panel for these modes. */
   readonly modes?: ReadonlyArray<string>;
   /** If set, this select toggle can add a field to the identify mode prompt bar. */

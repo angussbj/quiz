@@ -191,6 +191,7 @@ export function IdentifyMode({
           elementStates={reviewElementStates}
           onElementClick={reviewing ? undefined : handleElementClick}
           toggles={toggleValues}
+          selectValues={selectValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

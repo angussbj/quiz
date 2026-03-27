@@ -206,6 +206,7 @@ export function TimelineLocateMode({
           elementStates={reviewElementStates}
           onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
           toggles={toggleValues}
+          selectValues={selectValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

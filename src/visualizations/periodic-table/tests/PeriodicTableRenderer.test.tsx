@@ -5,6 +5,10 @@ import type { VisualizationRendererProps } from '../../VisualizationRendererProp
 
 let mockScale = 1;
 
+jest.mock('@/theme/ThemeProvider', () => ({
+  useTheme: () => ({ preference: 'system', resolved: 'light', setPreference: jest.fn() }),
+}));
+
 jest.mock('react-zoom-pan-pinch', () => ({
   TransformWrapper: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   TransformComponent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -38,6 +42,14 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     atomicNumber: 1,
     trueRow: 0,
     trueColumn: 0,
+    atomicWeight: '1.008',
+    halfLifeSeconds: undefined,
+    density: 0.00008988,
+    electronegativity: 2.2,
+    standardState: 'gas',
+    yearDiscovered: 1766,
+    meltingPoint: 14.01,
+    boilingPoint: 20.28,
     ...overrides,
   };
 }
@@ -226,5 +238,173 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents).not.toContain('Hydrogen');
     expect(textContents).not.toContain('Helium');
     expect(textContents).not.toContain('Lithium');
+  });
+
+  it('shows atomic weight in top-right when toggle is on and zoomed in', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', atomicWeight: '1.008' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showAtomicWeight: true },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('1.008');
+  });
+
+  it('does not show atomic weight when toggle is off', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', atomicWeight: '1.008' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showAtomicWeight: false },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).not.toContain('1.008');
+  });
+
+  it('shows atomic weight even when not zoomed in', () => {
+    mockScale = 1;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', atomicWeight: '1.008' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false, showAtomicWeight: true },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('1.008');
+  });
+
+  it('shows "Stable" for half-life when element data is set to half-life', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'half-life' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('Stable');
+  });
+
+  it('shows formatted half-life for radioactive element', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'Tc', halfLifeSeconds: 1.325e14 })],
+          elementStates: { Tc: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'half-life' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    // 1.325e14 seconds is ~4.2 megayears
+    expect(textContents.some((t) => t !== null && t.includes('My'))).toBe(true);
+  });
+
+  it('does not show element data when set to none', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'none' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).not.toContain('Stable');
+  });
+
+  it('shows density when element data is set to density', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'Fe', density: 7.874 })],
+          elementStates: { Fe: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'density' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents.some((t) => t !== null && t.includes('g/cm³'))).toBe(true);
+  });
+
+  it('shows state when element data is set to state', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', standardState: 'gas' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'state' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('Gas');
+  });
+
+  it('shows melting point when element data is set to melting-point', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', meltingPoint: 14.01 })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'melting-point' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents.some((t) => t !== null && t.includes('K'))).toBe(true);
+  });
+
+  it('shows boiling point when element data is set to boiling-point', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', boilingPoint: 20.28 })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'boiling-point' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents.some((t) => t !== null && t.includes('K'))).toBe(true);
   });
 });
