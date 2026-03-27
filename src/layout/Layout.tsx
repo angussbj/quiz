@@ -13,14 +13,14 @@ export function Layout({ children }: LayoutProps) {
     <div className={styles.layout}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <Link to="/" className={styles.siteTitle}>Quizzical</Link>
+          <div className={styles.titleAndBreadcrumbs}>
+            <Link to="/" className={styles.siteTitle}>Quizzical</Link>
+            <Breadcrumbs />
+          </div>
           <ThemeToggle />
         </div>
       </header>
       <div className={styles.contentArea}>
-        <div className={styles.breadcrumbsWrapper}>
-          <Breadcrumbs />
-        </div>
         <main className={styles.main}>
           {children}
         </main>

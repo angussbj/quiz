@@ -56,4 +56,6 @@ export interface QuizModeProps {
   readonly timeScale?: TimeScale;
   /** Options controlling answer normalization (whitespace/punctuation sensitivity). */
   readonly normalizeOptions?: NormalizeOptions;
+  /** Callback to return to the quiz setup/configuration screen. */
+  readonly onReconfigure: () => void;
 }

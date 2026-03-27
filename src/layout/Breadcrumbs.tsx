@@ -55,7 +55,6 @@ export function Breadcrumbs() {
 
   return (
     <nav className={styles.breadcrumbs} aria-label="Breadcrumbs">
-      <Link to="/" className={styles.link}>Home</Link>
       {segments.map((segment, index) => {
         const isLast = index === segments.length - 1;
         return (

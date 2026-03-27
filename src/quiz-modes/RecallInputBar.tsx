@@ -25,6 +25,7 @@ interface RecallInputBarProps {
   /** If omitted, no Skip button is shown. */
   readonly onSkip?: () => void;
   readonly onGiveUp: () => void;
+  readonly onReconfigure: () => void;
 
   readonly lastMatchedElementId?: string | null;
   readonly lastMatchedAnswer?: string | null;
@@ -50,6 +51,7 @@ export function RecallInputBar({
   flashIncorrect,
   onSkip,
   onGiveUp,
+  onReconfigure,
   lastMatchedElementId,
   lastMatchedAnswer,
   ambiguousMessage,
@@ -98,6 +100,9 @@ export function RecallInputBar({
                 autoCorrect="off"
                 spellCheck={false}
               />
+              <button className={styles.reconfigureButton} onClick={onReconfigure} type="button">
+                <span aria-hidden="true">‹</span> Reconfigure
+              </button>
               {onSkip && (
                 <button className={styles.skipButton} onClick={onSkip} type="button">
                   Skip

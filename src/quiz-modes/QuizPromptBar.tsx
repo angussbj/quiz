@@ -20,6 +20,7 @@ interface QuizPromptBarProps {
   readonly scoreLabel?: string;
   readonly onSkip: () => void;
   readonly onGiveUp: () => void;
+  readonly onReconfigure: () => void;
   readonly isFinished: boolean;
   /** Replaces the prompt + controls when the quiz is finished. */
   readonly finishedContent?: ReactNode;
@@ -36,6 +37,7 @@ export function QuizPromptBar({
   scoreLabel,
   onSkip,
   onGiveUp,
+  onReconfigure,
   isFinished,
   finishedContent,
 }: QuizPromptBarProps) {
@@ -53,7 +55,6 @@ export function QuizPromptBar({
                 <IdentifyPromptFields fields={promptFields} />
               )}
               <div className={styles.prompt}>
-                {counter && <span className={styles.counter}>{counter}</span>}
                 <span key={promptKey} className={styles.promptText}>
                   {prompt}
                   {promptSubtitle && <span className={styles.promptSubtitle}>{promptSubtitle}</span>}
@@ -62,6 +63,9 @@ export function QuizPromptBar({
             </div>
             <div className={styles.trailing}>
               {scoreLabel && <span className={styles.scoreLabel}>{scoreLabel}</span>}
+              <button className={styles.reconfigureButton} onClick={onReconfigure} type="button">
+                <span aria-hidden="true">‹</span> Reconfigure
+              </button>
               <button className={styles.skipButton} onClick={onSkip} type="button">
                 Skip
               </button>
@@ -72,13 +76,16 @@ export function QuizPromptBar({
           </>
         )}
       </div>
-      <div className={styles.progressStrip}>
-        <motion.div
-          className={styles.progressFill}
-          initial={{ width: '0%' }}
-          animate={{ width: `${progressPercent}%` }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-        />
+      <div className={styles.progressRow}>
+        {counter && <span className={styles.counter}>{counter}</span>}
+        <div className={styles.progressStrip}>
+          <motion.div
+            className={styles.progressFill}
+            initial={{ width: '0%' }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          />
+        </div>
       </div>
     </>
   );

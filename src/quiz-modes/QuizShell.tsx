@@ -247,14 +247,6 @@ export function QuizShell({
 
   return (
     <div className={styles.quizContainer}>
-      <div className={styles.reconfigureRow}>
-        <button
-          className={styles.reconfigureButton}
-          onClick={handleReconfigure}
-        >
-          <span aria-hidden="true">‹</span> Reconfigure
-        </button>
-      </div>
       <div key={quizKey} className={styles.quizContent}>
         {children(config)}
       </div>

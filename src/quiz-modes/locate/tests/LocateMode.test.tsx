@@ -51,6 +51,7 @@ function renderLocateMode() {
       toggleValues={{}}
       Renderer={MockRenderer}
       onFinish={jest.fn()}
+      onReconfigure={jest.fn()}
     />,
   );
 }

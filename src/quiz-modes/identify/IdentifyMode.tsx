@@ -31,6 +31,7 @@ export function IdentifyMode({
   forceGiveUp = false,
   reviewing = false,
   reviewResult,
+  onReconfigure,
 }: QuizModeProps) {
   const quiz = useIdentifyQuiz(elements);
   const { revealingElementIds, triggerReveal } = useRevealPulse();
@@ -163,6 +164,7 @@ export function IdentifyMode({
             scoreLabel={`${quiz.correctCount}/${quiz.totalPrompts} correct`}
             onSkip={handleSkip}
             onGiveUp={handleGiveUp}
+            onReconfigure={onReconfigure}
             isFinished={quiz.isFinished}
             finishedContent={
               <div className={styles.finishedContent}>

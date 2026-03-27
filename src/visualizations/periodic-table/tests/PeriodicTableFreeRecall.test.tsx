@@ -49,6 +49,7 @@ describe('Periodic table free recall', () => {
         toggleValues={{}}
         Renderer={PeriodicTableRenderer}
         onFinish={jest.fn()}
+        onReconfigure={jest.fn()}
       />,
     );
 

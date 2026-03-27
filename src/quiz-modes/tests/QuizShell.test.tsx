@@ -17,6 +17,7 @@ function renderShell() {
   const childFn = jest.fn((config: QuizConfig) => (
     <div data-testid="quiz-content">
       Labels: {String(config.toggleValues['show-labels'])}, Flags: {String(config.toggleValues['show-flags'])}
+      <button onClick={config.onReconfigure}>Reconfigure</button>
     </div>
   ));
 

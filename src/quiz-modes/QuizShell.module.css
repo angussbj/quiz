@@ -6,37 +6,9 @@
   position: relative;
 }
 
-.reconfigureRow {
-  max-width: 900px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--spacing-lg);
-}
-
 .quizContent {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
-}
-
-.reconfigureButton {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-primary);
-  color: var(--color-text-secondary);
-  font-family: var(--font-family);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  margin: var(--spacing-sm);
-}
-
-.reconfigureButton:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
 }

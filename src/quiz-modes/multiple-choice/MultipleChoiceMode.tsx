@@ -21,6 +21,7 @@ export function MultipleChoiceMode({
   elements,
   onFinish,
   forceGiveUp = false,
+  onReconfigure,
 }: QuizModeProps) {
   const quiz = useMultipleChoiceQuiz(elements);
 
@@ -76,6 +77,13 @@ export function MultipleChoiceMode({
               {quiz.promptIndex + 1}/{quiz.totalPrompts}
             </span>
             <div className={styles.controls}>
+              <button
+                className={styles.reconfigureButton}
+                onClick={onReconfigure}
+                type="button"
+              >
+                <span aria-hidden="true">‹</span> Reconfigure
+              </button>
               <button
                 className={styles.skipButton}
                 onClick={quiz.handleSkip}

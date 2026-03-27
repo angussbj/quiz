@@ -1,11 +1,11 @@
 .breadcrumbs {
-  display: flex;
-  align-items: center;
+  display: inline-flex;
+  align-items: baseline;
   flex-wrap: wrap;
   gap: 0;
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  padding: var(--spacing-sm) 0;
+  min-width: 0;
 }
 
 .segment {

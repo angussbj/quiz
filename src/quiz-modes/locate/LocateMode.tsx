@@ -32,6 +32,7 @@ export function LocateMode({
   locateDistanceMode,
   locateThresholds,
   hideUnfocusedElements,
+  onReconfigure,
 }: QuizModeProps) {
   const quiz = useLocateQuiz(elements, { locateDistanceMode, locateThresholds, hideUnfocusedElements });
   const { revealingElementIds, triggerReveal } = useRevealPulse();
@@ -155,6 +156,7 @@ export function LocateMode({
             scoreLabel={`${quiz.correctCount}/${quiz.currentTargetIndex} correct`}
             onSkip={handleSkip}
             onGiveUp={handleGiveUp}
+            onReconfigure={onReconfigure}
             isFinished={quiz.isFinished}
             finishedContent={
               <span className={styles.finishedText}>

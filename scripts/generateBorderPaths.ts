@@ -207,6 +207,49 @@ function nameToId(name: string): string {
 }
 
 // ------------------------------------------------------------------
+// Disputed territories (ISO -99 in Natural Earth)
+// ------------------------------------------------------------------
+
+interface DisputedMeta {
+  readonly id: string;
+  readonly name: string;
+  readonly region: string;
+  readonly group: string;
+}
+
+/** ISO -99 features that already exist in the CSV under their standard id.
+ *  These get their paths updated like normal countries. */
+const DISPUTED_EXISTING_ID: Readonly<Record<string, string>> = {
+  'France': 'france',
+  'Norway': 'norway',
+  'Kosovo': 'kosovo',
+};
+
+/** Whitelist of ISO -99 GeoJSON features to include as NEW separate rows.
+ *  Features NOT listed here (and not in DISPUTED_EXISTING_ID) are silently skipped. */
+const DISPUTED_TERRITORY_META: Readonly<Record<string, DisputedMeta>> = {
+  'Somaliland': { id: 'somaliland', name: 'Somaliland', region: 'Africa', group: 'Eastern Africa' },
+  'Northern Cyprus': { id: 'northern-cyprus', name: 'Northern Cyprus', region: 'Europe', group: 'Southern Europe' },
+  'Cyprus No Mans Area': { id: 'cyprus-no-mans-area', name: 'Cyprus No Mans Area', region: 'Europe', group: 'Southern Europe' },
+  'Dhekelia Sovereign Base Area': { id: 'dhekelia-sba', name: 'Dhekelia Sovereign Base Area', region: 'Europe', group: 'Southern Europe' },
+  'Akrotiri Sovereign Base Area': { id: 'akrotiri-sba', name: 'Akrotiri Sovereign Base Area', region: 'Europe', group: 'Southern Europe' },
+  'Siachen Glacier': { id: 'siachen-glacier', name: 'Siachen Glacier', region: 'Asia', group: 'Southern Asia' },
+  'Baykonur Cosmodrome': { id: 'baykonur-cosmodrome', name: 'Baykonur Cosmodrome', region: 'Asia', group: 'Central Asia' },
+  'Southern Patagonian Ice Field': { id: 'southern-patagonian-ice-field', name: 'Southern Patagonian Ice Field', region: 'Americas', group: 'South America' },
+  'Bir Tawil': { id: 'bir-tawil', name: 'Bir Tawil', region: 'Africa', group: 'Northern Africa' },
+  'US Naval Base Guantanamo Bay': { id: 'guantanamo-bay', name: 'Guantanamo Bay', region: 'Americas', group: 'Caribbean' },
+  'Indian Ocean Territories': { id: 'indian-ocean-territories', name: 'Indian Ocean Territories', region: 'Asia', group: 'Southern Asia' },
+  'Coral Sea Islands': { id: 'coral-sea-islands', name: 'Coral Sea Islands', region: 'Oceania', group: 'Melanesia' },
+  'Spratly Islands': { id: 'spratly-islands', name: 'Spratly Islands', region: 'Asia', group: 'South-Eastern Asia' },
+  'Clipperton Island': { id: 'clipperton-island', name: 'Clipperton Island', region: 'Americas', group: 'Central America' },
+  'Ashmore and Cartier Islands': { id: 'ashmore-and-cartier-islands', name: 'Ashmore and Cartier Islands', region: 'Oceania', group: 'Melanesia' },
+  'Bajo Nuevo Bank (Petrel Is.)': { id: 'bajo-nuevo-bank', name: 'Bajo Nuevo Bank', region: 'Americas', group: 'Caribbean' },
+  'Serranilla Bank': { id: 'serranilla-bank', name: 'Serranilla Bank', region: 'Americas', group: 'Caribbean' },
+  'Scarborough Reef': { id: 'scarborough-reef', name: 'Scarborough Reef', region: 'Asia', group: 'South-Eastern Asia' },
+  'Brazilian Island': { id: 'brazilian-island', name: 'Brazilian Island', region: 'Americas', group: 'South America' },
+};
+
+// ------------------------------------------------------------------
 // Main
 // ------------------------------------------------------------------
 
@@ -240,16 +283,44 @@ const geojson: GeoJsonCollection = JSON.parse(readFileSync(geojsonPath, 'utf8'))
 // Simplification epsilon — in degrees. 0.1° ≈ 11km at the equator.
 const EPSILON = 0.05;
 
-// Build GeoJSON id → paths lookup
+// Column indices for building new disputed territory rows
+const nameColIndex = headerFields.indexOf('name');
+const regionColIndex = headerFields.indexOf('region');
+const groupColIndex = headerFields.indexOf('group');
+
+// Build GeoJSON id → paths lookup, and collect new disputed territory rows
 const geojsonPaths = new Map<string, string>();
+const newDisputedRows: Array<{ readonly meta: DisputedMeta; readonly paths: string }> = [];
+
 for (const feature of geojson.features) {
   const name = feature.properties.name;
-  const id = GEOJSON_NAME_TO_CSV_ID[name] ?? nameToId(name);
+  const iso = feature.properties['ISO3166-1-Alpha-2'];
 
   const svgPaths = featureToSvgPaths(feature.geometry, EPSILON);
   if (svgPaths.length === 0) continue;
 
-  geojsonPaths.set(id, svgPaths.join('|'));
+  const pathsValue = svgPaths.join('|');
+
+  if (iso === '-99') {
+    // Some -99 features are already in the CSV under their standard id
+    const existingId = DISPUTED_EXISTING_ID[name];
+    if (existingId) {
+      geojsonPaths.set(existingId, pathsValue);
+      continue;
+    }
+    // Disputed territory — check whitelist
+    const meta = DISPUTED_TERRITORY_META[name];
+    if (meta && !existingRows.has(meta.id)) {
+      newDisputedRows.push({ meta, paths: pathsValue });
+    } else if (meta && existingRows.has(meta.id)) {
+      // Already in CSV — just update paths
+      geojsonPaths.set(meta.id, pathsValue);
+    }
+    continue;
+  }
+
+  const id = GEOJSON_NAME_TO_CSV_ID[name] ?? nameToId(name);
+  geojsonPaths.set(id, pathsValue);
 }
 
 // Update paths column in existing rows
@@ -266,6 +337,20 @@ for (const [id, fields] of existingRows) {
   }
 }
 
+// Add new disputed territory rows
+let disputedCount = 0;
+for (const { meta, paths } of newDisputedRows) {
+  const fields = new Array<string>(headerFields.length).fill('');
+  fields[0] = meta.id;
+  if (nameColIndex !== -1) fields[nameColIndex] = meta.name;
+  if (regionColIndex !== -1) fields[regionColIndex] = meta.region;
+  if (groupColIndex !== -1) fields[groupColIndex] = meta.group;
+  fields[pathsColIndex] = paths;
+  existingRows.set(meta.id, fields);
+  rowOrder.push(meta.id);
+  disputedCount++;
+}
+
 // Write back
 const outputLines = [csvLines[0]];
 for (const id of rowOrder) {
@@ -277,4 +362,7 @@ for (const id of rowOrder) {
 writeFileSync(csvPath, outputLines.join('\n') + '\n');
 
 console.log(`Updated paths for ${updatedCount} countries, kept ${skippedCount} unchanged`);
+if (disputedCount > 0) {
+  console.log(`Added ${disputedCount} new disputed territory rows`);
+}
 console.log(`File size: ${Math.round((outputLines.join('\n').length) / 1024)}KB`);

@@ -28,6 +28,7 @@ export function OrderedRecallMode({
   reviewing = false,
   reviewResult,
   normalizeOptions,
+  onReconfigure,
 }: QuizModeProps) {
   const quiz = useOrderedRecallSession({
     elements,
@@ -187,6 +188,7 @@ export function OrderedRecallMode({
         flashIncorrect={quiz.flashIncorrect}
         onSkip={wrappedHandleSkip}
         onGiveUp={wrappedHandleGiveUp}
+        onReconfigure={onReconfigure}
         lastMatchedElementId={quiz.lastMatchedElementId}
         lastMatchedAnswer={quiz.lastMatchedAnswer}
         isFinished={quiz.isFinished}

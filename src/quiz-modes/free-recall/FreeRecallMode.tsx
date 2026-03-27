@@ -32,6 +32,7 @@ export function FreeRecallMode({
   reviewing = false,
   reviewResult,
   normalizeOptions,
+  onReconfigure,
 }: QuizModeProps) {
   const { session, elementToggles, handleTextAnswer, handleGiveUp: rawHandleGiveUp, ambiguousMessage } = useFreeRecallSession({
     elements,
@@ -143,6 +144,7 @@ export function FreeRecallMode({
         onKeyDown={handleKeyDown}
         placeholder="Type an answer…"
         onGiveUp={handleGiveUp}
+        onReconfigure={onReconfigure}
         lastMatchedElementId={session.lastMatchedElementId}
         lastMatchedAnswer={session.lastMatchedAnswer}
         ambiguousMessage={ambiguousMessage}

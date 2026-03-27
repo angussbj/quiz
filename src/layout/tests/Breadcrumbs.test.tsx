@@ -18,16 +18,12 @@ describe('Breadcrumbs', () => {
 
   it('renders quiz breadcrumbs with path segments', () => {
     renderBreadcrumbs('/geo-capitals-world');
-    expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Geography')).toBeInTheDocument();
     expect(screen.getByText('World Capitals')).toBeInTheDocument();
   });
 
   it('makes intermediate segments clickable links', () => {
     renderBreadcrumbs('/geo-capitals-world');
-    const homeLink = screen.getByText('Home');
-    expect(homeLink.closest('a')).toHaveAttribute('href', '/');
-
     const geographyLink = screen.getByText('Geography');
     expect(geographyLink.closest('a')).toHaveAttribute('href', '/geography');
   });
@@ -40,13 +36,11 @@ describe('Breadcrumbs', () => {
 
   it('renders category breadcrumbs', () => {
     renderBreadcrumbs('/geography');
-    expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Geography')).toBeInTheDocument();
   });
 
   it('renders category breadcrumbs for unknown single-segment paths', () => {
     renderBreadcrumbs('/nonexistent');
-    expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Nonexistent')).toBeInTheDocument();
   });
 

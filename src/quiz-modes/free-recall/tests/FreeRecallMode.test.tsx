@@ -36,6 +36,7 @@ function renderMode(overrides: Partial<Parameters<typeof FreeRecallMode>[0]> = {
       toggleValues={{}}
       Renderer={MockRenderer}
       onFinish={jest.fn()}
+      onReconfigure={jest.fn()}
       {...overrides}
     />,
   );

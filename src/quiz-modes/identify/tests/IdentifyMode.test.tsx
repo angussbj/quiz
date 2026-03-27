@@ -38,6 +38,7 @@ function renderIdentifyMode(elementCount = 3) {
       toggleValues={{}}
       Renderer={MockRenderer}
       onFinish={jest.fn()}
+      onReconfigure={jest.fn()}
     />,
   );
   return { elements };
@@ -83,6 +84,7 @@ describe('IdentifyMode', () => {
         toggleValues={{}}
         Renderer={CapturingRenderer}
         onFinish={jest.fn()}
+        onReconfigure={jest.fn()}
       />,
     );
     const states = Object.values(capturedStates);
@@ -145,6 +147,7 @@ describe('IdentifyMode', () => {
         toggleValues={{}}
         Renderer={MockRenderer}
         onFinish={onFinish}
+        onReconfigure={jest.fn()}
       />,
     );
 
@@ -175,6 +178,7 @@ describe('IdentifyMode', () => {
         toggleValues={toggleValues}
         Renderer={CapturingRenderer}
         onFinish={jest.fn()}
+        onReconfigure={jest.fn()}
       />,
     );
 
@@ -199,6 +203,7 @@ describe('IdentifyMode', () => {
         toggleValues={{}}
         Renderer={CapturingRenderer}
         onFinish={jest.fn()}
+        onReconfigure={jest.fn()}
         reviewing
       />,
     );

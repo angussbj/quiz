@@ -120,9 +120,8 @@ for (const row of rows) {
 }
 
 // NE uses some country names that differ from our CSV. Map NE names → CSV names.
-const neToCsvNameOverrides = new Map([
-  ['united states of america', 'United States'],
-]);
+// Add entries here if NE sovereign name doesn't match the CSV 'name' column.
+const neToCsvNameOverrides = new Map([]);
 
 function resolveSovereignName(neSovereignName) {
   const override = neToCsvNameOverrides.get(neSovereignName.toLowerCase());

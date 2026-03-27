@@ -543,6 +543,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           hideUnfocusedElements={hideUnfocusedElements}
           timeScale={timeScale}
           normalizeOptions={normalizeOptions}
+          onReconfigure={config.onReconfigure}
         />
       </div>
     </div>

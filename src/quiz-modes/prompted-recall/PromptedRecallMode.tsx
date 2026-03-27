@@ -32,6 +32,7 @@ export function PromptedRecallMode({
   reviewing = false,
   reviewResult,
   normalizeOptions,
+  onReconfigure,
 }: QuizModeProps) {
   const quiz = usePromptedRecallQuiz({
     elements,
@@ -213,6 +214,7 @@ export function PromptedRecallMode({
         flashIncorrect={quiz.flashIncorrect}
         onSkip={wrappedHandleSkip}
         onGiveUp={wrappedHandleGiveUp}
+        onReconfigure={onReconfigure}
         lastMatchedElementId={quiz.lastMatchedElementId}
         lastMatchedAnswer={quiz.lastMatchedAnswer}
         isFinished={quiz.isFinished}

@@ -24,6 +24,7 @@ export function TimelineLocateMode({
   reviewing = false,
   reviewResult,
   timeScale,
+  onReconfigure,
 }: QuizModeProps) {
   const rawPrecision = selectValues?.['datePrecision'];
   const datePrecision: DatePrecision =
@@ -171,6 +172,9 @@ export function TimelineLocateMode({
               )}
               {!quiz.isFinished && (
                 <div className={styles.controls}>
+                  <button className={styles.reconfigureButton} onClick={onReconfigure}>
+                    <span aria-hidden="true">‹</span> Reconfigure
+                  </button>
                   <button className={styles.controlButton} onClick={handleSkip}>
                     Skip
                   </button>
