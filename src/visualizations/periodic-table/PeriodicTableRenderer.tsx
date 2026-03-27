@@ -246,6 +246,7 @@ export function PeriodicTableRenderer(props: VisualizationRendererProps) {
       clustering={props.clustering}
       onClusterClick={props.onClusterClick}
       putInView={props.putInView}
+      autoRevealElementIds={props.autoRevealElementIds}
     >
       {props.svgUnderlay}
       <PeriodicTableGrid {...props} />

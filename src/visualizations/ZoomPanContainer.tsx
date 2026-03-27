@@ -14,6 +14,7 @@ import { computeClusters } from './computeClusters';
 import { computeViewBox } from './computeViewBox';
 import type { ViewBox } from './computeViewBox';
 import { ClusterBadge } from './ClusterBadge';
+import { RevealPulseLayer } from './RevealPulse';
 import styles from './ZoomPanContainer.module.css';
 
 interface ZoomPanContainerProps {
@@ -27,6 +28,8 @@ interface ZoomPanContainerProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   /** Element IDs to bring into view when this array reference changes. Only pans if the target is off-screen; never zooms in. */
   readonly putInView?: ReadonlyArray<string>;
+  /** Element IDs currently being auto-revealed — renders pulse animation on these elements (or their cluster badge). */
+  readonly autoRevealElementIds?: ReadonlyArray<string>;
 }
 
 interface ContainerSize {
@@ -106,6 +109,7 @@ export function ZoomPanContainer({
   initialCameraPosition,
   backgroundPaths,
   putInView,
+  autoRevealElementIds,
 }: ZoomPanContainerProps) {
   const viewBox = useMemo(
     () => computeViewBox(elements, backgroundPaths),
@@ -175,6 +179,7 @@ export function ZoomPanContainer({
           initialCameraPosition={effectiveCameraPosition}
           initialScale={initialCamera?.scale ?? 1}
           putInView={putInView}
+          autoRevealElementIds={autoRevealElementIds}
         >
           {children}
         </ZoomPanInner>
@@ -194,6 +199,7 @@ interface ZoomPanInnerProps {
   readonly initialCameraPosition?: ViewBox;
   readonly initialScale: number;
   readonly putInView?: ReadonlyArray<string>;
+  readonly autoRevealElementIds?: ReadonlyArray<string>;
 }
 
 function ZoomPanInner({
@@ -207,6 +213,7 @@ function ZoomPanInner({
   initialCameraPosition,
   initialScale,
   putInView,
+  autoRevealElementIds,
 }: ZoomPanInnerProps) {
   const { setTransform, centerView } = useControls();
   const scaleRef = useRef(initialScale);
@@ -471,6 +478,63 @@ function ZoomPanInner({
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
 
+  // Compute pulse positions for auto-revealed elements.
+  // If an element is inside a cluster, the pulse appears on the cluster badge instead.
+  const PULSE_SCREEN_RADIUS = 22;
+  const revealPulses = useMemo(() => {
+    if (!autoRevealElementIds || autoRevealElementIds.length === 0) return [];
+    const revealSet = new Set(autoRevealElementIds);
+    const elementsById = new Map(elements.map((e) => [e.id, e]));
+
+    // Build cluster lookup: element ID → cluster
+    const elementToCluster = new Map<string, ElementCluster>();
+    for (const cluster of clusters) {
+      for (const id of cluster.elementIds) {
+        elementToCluster.set(id, cluster);
+      }
+    }
+
+    // Deduplicate cluster pulses (multiple revealed elements in same cluster → one pulse)
+    const seenClusterKeys = new Set<string>();
+    const pulses: Array<{
+      readonly id: string;
+      readonly x: number;
+      readonly y: number;
+      readonly radius: number;
+      readonly state: ElementVisualState;
+    }> = [];
+
+    const pulseRadius = PULSE_SCREEN_RADIUS / (quantisedScale * basePixelsPerViewBoxUnit);
+
+    for (const id of autoRevealElementIds) {
+      if (!revealSet.has(id)) continue;
+      const cluster = elementToCluster.get(id);
+      if (cluster) {
+        const key = cluster.elementIds.join(',');
+        if (seenClusterKeys.has(key)) continue;
+        seenClusterKeys.add(key);
+        pulses.push({
+          id: `pulse-cluster-${key}`,
+          x: cluster.center.x,
+          y: cluster.center.y,
+          radius: pulseRadius,
+          state: elementStates?.[id] ?? 'default',
+        });
+      } else {
+        const el = elementsById.get(id);
+        if (!el) continue;
+        pulses.push({
+          id: `pulse-${id}`,
+          x: el.viewBoxCenter.x,
+          y: el.viewBoxCenter.y,
+          radius: pulseRadius,
+          state: elementStates?.[id] ?? 'default',
+        });
+      }
+    }
+    return pulses;
+  }, [autoRevealElementIds, elements, clusters, elementStates, quantisedScale, basePixelsPerViewBoxUnit]);
+
   return (
     <ZoomPanContext.Provider value={contextValue}>
       <TransformComponent
@@ -496,6 +560,7 @@ function ZoomPanInner({
               />
             ))}
           </AnimatePresence>
+          <RevealPulseLayer pulses={revealPulses} />
         </svg>
       </TransformComponent>
       {showResetButton && (

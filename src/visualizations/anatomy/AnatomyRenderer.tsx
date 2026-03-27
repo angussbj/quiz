@@ -125,6 +125,7 @@ export function AnatomyRenderer({
   svgOverlay,
   initialCameraPosition,
   putInView,
+  autoRevealElementIds,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -136,6 +137,7 @@ export function AnatomyRenderer({
       elementStates={elementStates}
       initialCameraPosition={initialCameraPosition}
       putInView={putInView}
+      autoRevealElementIds={autoRevealElementIds}
     >
       <AnatomyContent
         elements={elements}

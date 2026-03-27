@@ -79,6 +79,7 @@ export function MapRenderer({
   initialCameraPosition,
   putInView,
   elementStateColorOverrides,
+  autoRevealElementIds,
 }: VisualizationRendererProps) {
   const uniqueGroups = Array.from(
     new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
@@ -98,6 +99,7 @@ export function MapRenderer({
       initialCameraPosition={initialCameraPosition}
       backgroundPaths={backgroundPaths}
       putInView={putInView}
+      autoRevealElementIds={autoRevealElementIds}
     >
       <MapContent
         elements={elements}

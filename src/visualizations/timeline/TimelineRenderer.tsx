@@ -45,7 +45,7 @@ interface TooltipState {
 }
 
 export function TimelineRenderer(props: VisualizationRendererProps) {
-  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, onElementHoverStart, onElementHoverEnd, putInView, timeScale } = props;
+  const { elements, elementStates, toggles, elementToggles, onElementClick, onPositionClick, onElementHoverStart, onElementHoverEnd, putInView, timeScale, autoRevealElementIds } = props;
   const isLogScale = timeScale === 'log';
 
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
@@ -554,11 +554,12 @@ export function TimelineRenderer(props: VisualizationRendererProps) {
 
                 const showInsideLabel = showLabel && layout.pixelWidth >= 60;
                 const showOutsideLabel = showLabel && !showInsideLabel && layout.outsideGap > 30;
+                const isRevealing = autoRevealElementIds?.includes(element.id) ?? false;
 
                 return (
                   <motion.div
                     key={element.id}
-                    className={`${styles.bar} ${stateClass ?? ''}`}
+                    className={`${styles.bar} ${stateClass ?? ''} ${isRevealing ? styles.barRevealPulse : ''}`}
                     style={{
                       left: `${layout.pixelLeft}px`,
                       top: `${layout.pixelTop}px`,
