@@ -44,6 +44,8 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     electronegativity: 2.2,
     standardState: 'gas',
     yearDiscovered: 1766,
+    meltingPoint: 14.01,
+    boilingPoint: 20.28,
     ...overrides,
   };
 }
@@ -366,5 +368,39 @@ describe('PeriodicTableRenderer', () => {
     const texts = container.querySelectorAll('text');
     const textContents = Array.from(texts).map((t) => t.textContent);
     expect(textContents).toContain('Gas');
+  });
+
+  it('shows melting point when element data is set to melting-point', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', meltingPoint: 14.01 })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'melting-point' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents.some((t) => t !== null && t.includes('K'))).toBe(true);
+  });
+
+  it('shows boiling point when element data is set to boiling-point', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', boilingPoint: 20.28 })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'boiling-point' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents.some((t) => t !== null && t.includes('K'))).toBe(true);
   });
 });

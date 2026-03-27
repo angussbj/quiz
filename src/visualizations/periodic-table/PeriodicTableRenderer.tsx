@@ -12,6 +12,8 @@ import { GridFeedbackOverlay } from './GridFeedbackOverlay';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 import { formatElementData } from './formatElementData';
 import type { ElementDataField } from './formatElementData';
+import { computeElementColors, toElementColorField } from './elementColorScale';
+import type { ElementColorMap } from './elementColorScale';
 
 export const ZOOM_DETAIL_THRESHOLD = 1.8;
 
@@ -25,6 +27,7 @@ interface CellProps {
   readonly showName: boolean;
   readonly showAtomicWeight: boolean;
   readonly elementDataField: ElementDataField | undefined;
+  readonly colorFill: string | undefined;
   readonly isClustered: boolean;
   readonly zoomedIn: boolean;
   readonly onElementClick?: (elementId: string) => void;
@@ -79,6 +82,7 @@ function GridCell({
   showName,
   showAtomicWeight,
   elementDataField,
+  colorFill,
   isClustered,
   zoomedIn,
   onElementClick,
@@ -91,7 +95,11 @@ function GridCell({
   const x = element.column * CELL_STEP;
   const y = element.row * CELL_STEP;
   const baseState = state;
-  const fill = stateToFill(baseState, groupColorIndex, showGroups);
+  const defaultFill = stateToFill(baseState, groupColorIndex, showGroups);
+  // Color fill applies to hidden/default/context states (not answered elements with feedback colors)
+  const useColorFill = colorFill !== undefined
+    && (baseState === 'hidden' || baseState === 'default' || baseState === 'context');
+  const fill = useColorFill ? colorFill : defaultFill;
   const stroke = stateToStroke(baseState);
   const textFill = stateToTextFill(baseState, groupColorIndex, showGroups);
   const answered = isAnswered(baseState);
@@ -119,20 +127,17 @@ function GridCell({
   // When no data field is selected, symbol is centered naturally.
   const hasAtomicNumber = atomicNumberVisible && element.atomicNumber > 0;
   let symbolY: number;
-  let symbolFontSize: number;
   let dataFieldY: number;
   let nameY: number;
 
   if (hasDataField && zoomedIn) {
     // Zoomed in + data field: compact layout with smaller symbol
-    symbolY = hasAtomicNumber ? y + CELL_SIZE * 0.36 : y + CELL_SIZE * 0.38;
-    symbolFontSize = 14;
-    dataFieldY = y + CELL_SIZE * 0.58;
-    nameY = y + CELL_SIZE * 0.78;
+    symbolY = y + CELL_SIZE * 0.4;
+    dataFieldY = y + CELL_SIZE * 0.66;
+    nameY = y + CELL_SIZE * 0.8;
   } else if (hasDataField) {
     // Zoomed out + data field: keep symbol at normal size, data below
     symbolY = y + CELL_SIZE * 0.42;
-    symbolFontSize = 22;
     dataFieldY = y + CELL_SIZE * 0.75;
     nameY = y + CELL_SIZE * 0.75; // unused at this zoom
   } else if (zoomedIn) {
@@ -140,7 +145,6 @@ function GridCell({
     symbolY = hasAtomicNumber || nameVisible
       ? y + CELL_SIZE * 0.42
       : y + CELL_SIZE / 2;
-    symbolFontSize = 18;
     dataFieldY = 0; // unused
     nameY = y + CELL_SIZE * 0.75;
   } else {
@@ -148,7 +152,6 @@ function GridCell({
     symbolY = hasAtomicNumber
       ? y + CELL_SIZE * 0.52
       : y + CELL_SIZE / 2;
-    symbolFontSize = 22;
     dataFieldY = 0; // unused
     nameY = y + CELL_SIZE * 0.75;
   }
@@ -184,7 +187,7 @@ function GridCell({
           dominantBaseline="central"
           fill={textFill}
           fontSize={9}
-          opacity={0.7}
+          opacity={0.8}
         >
           {element.atomicNumber}
         </text>
@@ -197,7 +200,7 @@ function GridCell({
           dominantBaseline="central"
           fill={textFill}
           fontSize={9}
-          opacity={0.7}
+          opacity={0.8}
         >
           {element.atomicWeight}
         </text>
@@ -209,7 +212,7 @@ function GridCell({
           textAnchor="middle"
           dominantBaseline="central"
           fill={textFill}
-          fontSize={symbolFontSize}
+          fontSize={24}
           fontWeight="bold"
         >
           {element.symbol}
@@ -222,8 +225,8 @@ function GridCell({
           textAnchor="middle"
           dominantBaseline="central"
           fill={textFill}
-          fontSize={9}
-          opacity={0.7}
+          fontSize={8}
+          opacity={0.8}
         >
           {dataFieldText}
         </text>
@@ -236,7 +239,6 @@ function GridCell({
           dominantBaseline="central"
           fill={textFill}
           fontSize={8}
-          opacity={0.85}
         >
           {element.label}
         </text>
@@ -245,7 +247,10 @@ function GridCell({
   );
 }
 
-const ELEMENT_DATA_FIELDS: ReadonlyArray<ElementDataField> = ['half-life', 'density', 'state', 'electronegativity', 'year-discovered'];
+const ELEMENT_DATA_FIELDS: ReadonlyArray<ElementDataField> = [
+  'half-life', 'density', 'state', 'electronegativity', 'year-discovered',
+  'melting-point', 'boiling-point',
+];
 
 function toElementDataField(value: string): ElementDataField | undefined {
   return ELEMENT_DATA_FIELDS.find((f) => f === value);
@@ -269,6 +274,14 @@ function PeriodicTableGrid({
   const showAtomicWeight = elementToggle(elementToggles, toggles, '', 'showAtomicWeight');
   const elementDataValue = selectValues?.['elementData'] ?? 'none';
   const elementDataField = toElementDataField(elementDataValue);
+  const elementColorValue = selectValues?.['elementColors'] ?? 'none';
+  const elementColorField = toElementColorField(elementColorValue);
+
+  const elementColorMap: ElementColorMap | undefined = useMemo(() => {
+    if (elementColorField === undefined) return undefined;
+    const gridElements = elements.filter(isGridElement);
+    return computeElementColors(gridElements, elementColorField);
+  }, [elements, elementColorField]);
 
   const groupColorMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -300,6 +313,7 @@ function PeriodicTableGrid({
             showName={elementToggle(elementToggles, toggles, element.id, 'showNames')}
             showAtomicWeight={showAtomicWeight}
             elementDataField={elementDataField}
+            colorFill={elementColorMap?.get(element.id)}
             isClustered={clusteredElementIds.has(element.id)}
             zoomedIn={zoomedIn}
             onElementClick={onElementClick}

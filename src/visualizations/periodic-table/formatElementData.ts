@@ -1,7 +1,9 @@
 import type { GridElement } from './GridElement';
 import { formatHalfLife } from './formatHalfLife';
 
-export type ElementDataField = 'half-life' | 'density' | 'state' | 'electronegativity' | 'year-discovered';
+export type ElementDataField =
+  | 'half-life' | 'density' | 'state' | 'electronegativity'
+  | 'year-discovered' | 'melting-point' | 'boiling-point';
 
 function formatDensity(density: number | undefined): string {
   if (density === undefined) return '—';
@@ -26,6 +28,13 @@ function formatYearDiscovered(year: number | undefined): string {
   return year.toString();
 }
 
+function formatTemperature(kelvin: number | undefined): string {
+  if (kelvin === undefined) return '—';
+  if (kelvin >= 1000) return `${Math.round(kelvin)} K`;
+  if (kelvin >= 100) return `${kelvin.toFixed(1)} K`;
+  return `${kelvin.toFixed(2)} K`;
+}
+
 export function formatElementData(element: GridElement, field: ElementDataField): string {
   switch (field) {
     case 'half-life': return formatHalfLife(element.halfLifeSeconds);
@@ -33,5 +42,7 @@ export function formatElementData(element: GridElement, field: ElementDataField)
     case 'state': return formatState(element.standardState);
     case 'electronegativity': return formatElectronegativity(element.electronegativity);
     case 'year-discovered': return formatYearDiscovered(element.yearDiscovered);
+    case 'melting-point': return formatTemperature(element.meltingPoint);
+    case 'boiling-point': return formatTemperature(element.boilingPoint);
   }
 }

@@ -130,8 +130,8 @@ export function TogglePanel({
                 const selectRow = (
                   <div key={selectToggle.key} className={styles.selectRow}>
                     <span className={styles.selectLabel}>{selectToggle.label}</span>
-                    <SegmentedControl
-                      options={selectToggle.options}
+                    <SelectToggleControl
+                      selectToggle={selectToggle}
                       value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
                       onChange={(value) => onSelectChange?.(selectToggle.key, value)}
                       preventOff={cannotDisable}
@@ -155,8 +155,8 @@ export function TogglePanel({
           const selectRow = (
             <div className={styles.selectRow}>
               <span className={styles.selectLabel}>{selectToggle.label}</span>
-              <SegmentedControl
-                options={selectToggle.options}
+              <SelectToggleControl
+                selectToggle={selectToggle}
                 value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
                 onChange={(value) => onSelectChange?.(selectToggle.key, value)}
                 preventOff={cannotDisable}
@@ -173,6 +173,60 @@ export function TogglePanel({
           );
         })}
     </div>
+  );
+}
+
+function SelectToggleControl({
+  selectToggle,
+  value,
+  onChange,
+  preventOff = false,
+}: {
+  readonly selectToggle: SelectToggleDefinition;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+  readonly preventOff?: boolean;
+}) {
+  if (selectToggle.renderAs === 'dropdown') {
+    return (
+      <DropdownSelect
+        options={selectToggle.options}
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }
+  return (
+    <SegmentedControl
+      options={selectToggle.options}
+      value={value}
+      onChange={onChange}
+      preventOff={preventOff}
+    />
+  );
+}
+
+function DropdownSelect({
+  options,
+  value,
+  onChange,
+}: {
+  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+}) {
+  return (
+    <select
+      className={styles.dropdownSelect}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
   );
 }
 

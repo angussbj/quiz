@@ -20,6 +20,8 @@ function makeGridElement(overrides: Partial<GridElement> = {}): GridElement {
     electronegativity: 2.2,
     standardState: 'gas',
     yearDiscovered: 1766,
+    meltingPoint: 14.01,
+    boilingPoint: 20.28,
     ...overrides,
   };
 }

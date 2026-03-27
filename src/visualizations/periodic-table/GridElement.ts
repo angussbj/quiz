@@ -26,6 +26,10 @@ export interface GridElement extends VisualizationElement {
   readonly standardState: string | undefined;
   /** Year the element was discovered, or undefined if known since antiquity. */
   readonly yearDiscovered: number | undefined;
+  /** Melting point in Kelvin, or undefined if unknown. */
+  readonly meltingPoint: number | undefined;
+  /** Boiling point in Kelvin, or undefined if unknown. */
+  readonly boilingPoint: number | undefined;
 }
 
 export function isGridElement(element: VisualizationElement): element is GridElement {
