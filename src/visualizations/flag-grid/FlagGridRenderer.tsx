@@ -3,6 +3,7 @@ import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { FlagGridElement } from './FlagGridElement';
 import { isFlagGridElement } from './FlagGridElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
+import { RevealPulseOverlay } from '../RevealPulse';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { CursorTooltip } from '../CursorTooltip';
@@ -214,10 +215,10 @@ export function FlagGridRenderer(props: VisualizationRendererProps) {
         clustering={props.clustering}
         onClusterClick={props.onClusterClick}
         putInView={props.putInView}
-        autoRevealElementIds={props.autoRevealElementIds}
       >
         <FlagGrid {...props} elements={layoutElements} />
         {props.svgOverlay}
+        <RevealPulseOverlay elements={layoutElements} elementStates={props.elementStates} autoRevealElementIds={props.autoRevealElementIds} />
       </ZoomPanContainer>
     </div>
   );

@@ -3,6 +3,7 @@ import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
 import { ZoomPanContainer } from '../ZoomPanContainer';
+import { RevealPulseOverlay } from '../RevealPulse';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { shouldShowLabel } from '../shouldShowLabel';
@@ -137,7 +138,6 @@ export function AnatomyRenderer({
       elementStates={elementStates}
       initialCameraPosition={initialCameraPosition}
       putInView={putInView}
-      autoRevealElementIds={autoRevealElementIds}
     >
       <AnatomyContent
         elements={elements}
@@ -152,6 +152,7 @@ export function AnatomyRenderer({
         elementToggles={elementToggles}
       />
       {svgOverlay}
+      <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
     </ZoomPanContainer>
   );
 }

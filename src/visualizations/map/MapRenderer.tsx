@@ -4,6 +4,7 @@ import type { VisualizationRendererProps, ClusteringConfig } from '../Visualizat
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
 import { ZoomPanContainer } from '../ZoomPanContainer';
+import { RevealPulseOverlay } from '../RevealPulse';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import { isMapElement } from './MapElement';
@@ -99,7 +100,6 @@ export function MapRenderer({
       initialCameraPosition={initialCameraPosition}
       backgroundPaths={backgroundPaths}
       putInView={putInView}
-      autoRevealElementIds={autoRevealElementIds}
     >
       <MapContent
         elements={elements}
@@ -118,6 +118,7 @@ export function MapRenderer({
         elementStateColorOverrides={elementStateColorOverrides}
       />
       {svgOverlay}
+      <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
     </ZoomPanContainer>
   );
 }

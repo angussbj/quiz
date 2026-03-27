@@ -41,8 +41,8 @@ Every renderer receives `VisualizationRendererProps` and must handle its fields.
 When elements are revealed without direct user interaction (skip, give-up, wrong-answer auto-reveal), the renderer must display a brief pulse animation to draw attention.
 
 **SVG-based renderers** (map, periodic table, flag grid, anatomy):
-- Pass `autoRevealElementIds` through to `ZoomPanContainer`. The container handles pulse rendering automatically via `RevealPulseLayer` — including cluster badge pulses when elements are clustered.
-- No additional work needed in the renderer itself.
+- Place `<RevealPulseOverlay>` from `src/visualizations/RevealPulse.tsx` as a child inside `ZoomPanContainer`, passing `elements`, `elementStates`, and `autoRevealElementIds`.
+- The overlay reads cluster and scale data from `ZoomPanContext` to position pulses on cluster badges when elements are clustered.
 
 **HTML-based renderers** (timeline):
 - Apply a CSS animation class (e.g., `barRevealPulse`) to elements whose IDs appear in `autoRevealElementIds`.

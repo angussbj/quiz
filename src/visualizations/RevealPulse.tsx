@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { ElementVisualState } from './VisualizationElement';
+import type { VisualizationElement, ElementVisualState } from './VisualizationElement';
+import type { ElementCluster } from './VisualizationRendererProps';
 import { STATUS_COLORS } from './elementStateColors';
+import { useZoomPan } from './ZoomPanContext';
 
 interface RevealPulseProps {
   /** Center X in viewBox coordinates */
@@ -85,4 +88,80 @@ export function RevealPulseLayer({ pulses }: RevealPulseLayerProps) {
       ))}
     </g>
   );
+}
+
+const PULSE_SCREEN_RADIUS = 22;
+
+interface RevealPulseOverlayProps {
+  readonly elements: ReadonlyArray<VisualizationElement>;
+  readonly elementStates?: Readonly<Record<string, ElementVisualState>>;
+  readonly autoRevealElementIds?: ReadonlyArray<string>;
+}
+
+/**
+ * SVG overlay that renders pulse animations for auto-revealed elements.
+ * Reads cluster and scale data from ZoomPanContext.
+ *
+ * Place as a child inside ZoomPanContainer's SVG tree.
+ */
+export function RevealPulseOverlay({
+  elements,
+  elementStates,
+  autoRevealElementIds,
+}: RevealPulseOverlayProps) {
+  const { scale, clusters, basePixelsPerViewBoxUnit } = useZoomPan();
+
+  const pulses = useMemo(() => {
+    if (!autoRevealElementIds || autoRevealElementIds.length === 0) return [];
+    const revealSet = new Set(autoRevealElementIds);
+    const elementsById = new Map(elements.map((e) => [e.id, e]));
+
+    const elementToCluster = new Map<string, ElementCluster>();
+    for (const cluster of clusters) {
+      for (const id of cluster.elementIds) {
+        elementToCluster.set(id, cluster);
+      }
+    }
+
+    const seenClusterKeys = new Set<string>();
+    const result: Array<{
+      readonly id: string;
+      readonly x: number;
+      readonly y: number;
+      readonly radius: number;
+      readonly state: ElementVisualState;
+    }> = [];
+
+    const pulseRadius = PULSE_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
+
+    for (const id of autoRevealElementIds) {
+      if (!revealSet.has(id)) continue;
+      const cluster = elementToCluster.get(id);
+      if (cluster) {
+        const key = cluster.elementIds.join(',');
+        if (seenClusterKeys.has(key)) continue;
+        seenClusterKeys.add(key);
+        result.push({
+          id: `pulse-cluster-${key}`,
+          x: cluster.center.x,
+          y: cluster.center.y,
+          radius: pulseRadius,
+          state: elementStates?.[id] ?? 'default',
+        });
+      } else {
+        const el = elementsById.get(id);
+        if (!el) continue;
+        result.push({
+          id: `pulse-${id}`,
+          x: el.viewBoxCenter.x,
+          y: el.viewBoxCenter.y,
+          radius: pulseRadius,
+          state: elementStates?.[id] ?? 'default',
+        });
+      }
+    }
+    return result;
+  }, [autoRevealElementIds, elements, clusters, elementStates, scale, basePixelsPerViewBoxUnit]);
+
+  return <RevealPulseLayer pulses={pulses} />;
 }
