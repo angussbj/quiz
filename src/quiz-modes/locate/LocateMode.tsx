@@ -16,6 +16,7 @@ import styles from './LocateMode.module.css';
 export function LocateMode({
   elements,
   toggleValues,
+  selectValues,
   toggleDefinitions = [],
   Renderer,
   backgroundPaths,
@@ -131,6 +132,7 @@ export function LocateMode({
           onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
           onElementClick={reviewing || quiz.isFinished ? undefined : quiz.handleElementClick}
           toggles={toggleValues}
+          selectValues={selectValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

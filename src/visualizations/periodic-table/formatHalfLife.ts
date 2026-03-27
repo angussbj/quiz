@@ -1,6 +1,6 @@
 /**
  * Formats a half-life value in seconds into a concise human-readable string.
- * Returns 'Stable' for undefined/null (element has no radioactive decay).
+ * Returns 'Stable' for undefined (element has no radioactive decay).
  */
 
 const TIME_UNITS: ReadonlyArray<readonly [string, number]> = [

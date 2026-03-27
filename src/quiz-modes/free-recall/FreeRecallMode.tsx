@@ -19,6 +19,7 @@ export function FreeRecallMode({
   columnMappings,
   toggleDefinitions,
   toggleValues,
+  selectValues,
   Renderer,
   backgroundPaths,
   lakePaths,
@@ -108,6 +109,7 @@ export function FreeRecallMode({
           elements={elements}
           elementStates={reviewElementStates}
           toggles={toggleValues}
+          selectValues={selectValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

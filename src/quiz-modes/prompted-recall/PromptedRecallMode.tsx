@@ -172,6 +172,7 @@ export function PromptedRecallMode({
           elements={elements}
           elementStates={reviewElementStates}
           toggles={toggleValues}
+          selectValues={selectValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}

@@ -17,6 +17,7 @@ export function OrderedRecallMode({
   columnMappings,
   toggleDefinitions,
   toggleValues = {},
+  selectValues,
   Renderer,
   backgroundPaths,
   lakePaths,
@@ -147,6 +148,7 @@ export function OrderedRecallMode({
           elements={elements}
           elementStates={reviewElementStates}
           toggles={toggleValues}
+          selectValues={selectValues}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

@@ -292,7 +292,22 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { key: 'showNames', label: 'Element names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true },
       { key: 'showGroups', label: 'Category colours', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
       { key: 'showAtomicWeight', label: 'Atomic weight', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
-      { key: 'showHalfLife', label: 'Half-life', defaultValue: false, group: 'display', hiddenBehavior: 'never' },
+    ],
+    selectToggles: [
+      {
+        key: 'elementData',
+        label: 'Element data',
+        group: 'display',
+        defaultValue: 'none',
+        options: [
+          { value: 'none', label: 'None' },
+          { value: 'half-life', label: 'Half-life' },
+          { value: 'density', label: 'Density' },
+          { value: 'state', label: 'State' },
+          { value: 'electronegativity', label: 'Electronegativity' },
+          { value: 'year-discovered', label: 'Year discovered' },
+        ],
+      },
     ],
     presets: [],
     columnMappings: {

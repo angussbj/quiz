@@ -25,10 +25,16 @@ describe('formatHalfLife', () => {
     expect(result).toMatch(/ky$/);
   });
 
-  it('formats years', () => {
+  it('formats plain years', () => {
+    // ~1.6 years = ~5e7 seconds (below ky threshold)
+    const result = formatHalfLife(5e7);
+    expect(result).toMatch(/^\d+(\.\d+)? y$/);
+  });
+
+  it('formats kiloyears for Radium-226', () => {
     // Radium-226: ~1600 years = ~5.049e10 seconds
     const result = formatHalfLife(5.049e10);
-    expect(result).toMatch(/y$/);
+    expect(result).toMatch(/ky$/);
   });
 
   it('formats days', () => {

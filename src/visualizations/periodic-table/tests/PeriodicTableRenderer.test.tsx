@@ -40,6 +40,10 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     trueColumn: 0,
     atomicWeight: '1.008',
     halfLifeSeconds: undefined,
+    density: 0.00008988,
+    electronegativity: 2.2,
+    standardState: 'gas',
+    yearDiscovered: 1766,
     ...overrides,
   };
 }
@@ -278,14 +282,15 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents).toContain('1.008');
   });
 
-  it('shows "Stable" for half-life when element has no half-life data', () => {
+  it('shows "Stable" for half-life when element data is set to half-life', () => {
     mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
           elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
           elementStates: { H: 'context' },
-          toggles: { showSymbols: false, showHalfLife: true },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'half-life' },
         })}
       />,
     );
@@ -301,7 +306,8 @@ describe('PeriodicTableRenderer', () => {
         {...makeProps({
           elements: [makeElement({ id: 'Tc', halfLifeSeconds: 1.325e14 })],
           elementStates: { Tc: 'context' },
-          toggles: { showSymbols: false, showHalfLife: true },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'half-life' },
         })}
       />,
     );
@@ -311,19 +317,54 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents.some((t) => t !== null && t.includes('My'))).toBe(true);
   });
 
-  it('does not show half-life when toggle is off', () => {
+  it('does not show element data when set to none', () => {
     mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
           elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
           elementStates: { H: 'context' },
-          toggles: { showSymbols: false, showHalfLife: false },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'none' },
         })}
       />,
     );
     const texts = container.querySelectorAll('text');
     const textContents = Array.from(texts).map((t) => t.textContent);
     expect(textContents).not.toContain('Stable');
+  });
+
+  it('shows density when element data is set to density', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'Fe', density: 7.874 })],
+          elementStates: { Fe: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'density' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents.some((t) => t !== null && t.includes('g/cm³'))).toBe(true);
+  });
+
+  it('shows state when element data is set to state', () => {
+    mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
+    const { container } = render(
+      <PeriodicTableRenderer
+        {...makeProps({
+          elements: [makeElement({ id: 'H', standardState: 'gas' })],
+          elementStates: { H: 'context' },
+          toggles: { showSymbols: false },
+          selectValues: { elementData: 'state' },
+        })}
+      />,
+    );
+    const texts = container.querySelectorAll('text');
+    const textContents = Array.from(texts).map((t) => t.textContent);
+    expect(textContents).toContain('Gas');
   });
 });
