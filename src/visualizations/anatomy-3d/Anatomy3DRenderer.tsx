@@ -640,13 +640,13 @@ function Scene({
   }, [elementLabels, meshCenters]);
 
   // putInView: animate camera to frame target element(s).
-  // Computes a front-facing view that comfortably frames the bone(s).
-  const putInViewLatestRef = useRef({ meshCenters, viewport });
-  putInViewLatestRef.current = { meshCenters, viewport };
+  // Per contract: pans/zooms OUT to show targets, never zooms in closer than current.
+  const putInViewLatestRef = useRef({ meshCenters, viewport, camera });
+  putInViewLatestRef.current = { meshCenters, viewport, camera };
 
   useEffect(() => {
     if (!putInView || putInView.length === 0) return;
-    const { meshCenters: centers, viewport: vp } = putInViewLatestRef.current;
+    const { meshCenters: centers, viewport: vp, camera: cam } = putInViewLatestRef.current;
     if (centers.size === 0) return;
 
     const targetCenters: Array<THREE.Vector3> = [];
@@ -666,7 +666,21 @@ function Scene({
     box.expandByScalar(0.12);
 
     const view = frontView(symmetricBox(box), vp.aspect || 1, 1.8);
-    onPutInViewTarget(view);
+
+    // Never zoom in: clamp camera distance to be no closer than current distance
+    // to the new target. This prevents jarring zoom-in when the user is zoomed out
+    // and a small bone is answered.
+    const currentDist = cam.position.distanceTo(view.target);
+    const candidateDist = view.position.distanceTo(view.target);
+    if (candidateDist < currentDist) {
+      const direction = view.position.clone().sub(view.target).normalize();
+      onPutInViewTarget({
+        position: view.target.clone().addScaledVector(direction, currentDist),
+        target: view.target,
+      });
+    } else {
+      onPutInViewTarget(view);
+    }
   }, [putInView, onPutInViewTarget]);
 
   return (
