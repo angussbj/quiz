@@ -268,6 +268,7 @@ function renderShapeElements(
         <path
           key={`shape-${element.id}`}
           d={element.svgPathData}
+          fillRule="evenodd"
           className={styles.borderPath}
         />
       );
@@ -277,6 +278,7 @@ function renderShapeElements(
       <path
         key={`shape-${element.id}`}
         d={element.svgPathData}
+        fillRule="evenodd"
         style={{
           fill: color,
           fillOpacity: stateFillOpacity(state),
@@ -482,6 +484,7 @@ function MapContent({
         <path
           key={path.id}
           d={path.svgPathData}
+          fillRule="evenodd"
           className={styles.borderPath}
         />
       ))}

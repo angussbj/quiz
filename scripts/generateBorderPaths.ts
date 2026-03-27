@@ -1,27 +1,28 @@
 /**
- * Generate world-borders.csv from Natural Earth GeoJSON data.
+ * Update the paths column of world-borders.csv from Natural Earth GeoJSON data.
  *
- * Reads source GeoJSON (countries.geojson) and countries.json metadata,
- * converts polygon coordinates to equirectangular SVG path `d` strings
- * (x = longitude, y = -latitude — matching projectGeo in the app),
- * and outputs a CSV file with pipe-separated paths for multi-polygon countries.
+ * Reads the existing CSV, regenerates SVG path data from GeoJSON source, and
+ * writes back ONLY the paths column — all other columns are preserved as-is.
+ * This avoids clobbering manual edits to names, alternates, regions, etc.
+ *
+ * Polygon holes (inner rings) are included in the path data so that enclaves
+ * (e.g. Lesotho inside South Africa) render correctly with fill-rule="evenodd".
  *
  * Usage:
  *   npx tsx scripts/generateBorderPaths.ts
  *
  * Input:
  *   scripts/source-data/countries.geojson  (Natural Earth via datasets/geo-countries)
- *   scripts/source-data/countries.json     (mledoze/countries for region metadata)
+ *   public/data/borders/world-borders.csv  (existing CSV — only paths column is updated)
  *
  * Output:
- *   public/data/borders/world-borders.csv
+ *   public/data/borders/world-borders.csv  (updated in place)
  *
  * Source files are gitignored (too large). Download before running:
  *   curl -L https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson -o scripts/source-data/countries.geojson
- *   curl -L https://raw.githubusercontent.com/mledoze/countries/master/countries.json -o scripts/source-data/countries.json
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 
 // ------------------------------------------------------------------
@@ -39,13 +40,6 @@ interface GeoJsonFeature {
 interface GeoJsonCollection {
   readonly type: 'FeatureCollection';
   readonly features: ReadonlyArray<GeoJsonFeature>;
-}
-
-interface CountryMeta {
-  readonly cca2: string;
-  readonly name: { readonly common: string };
-  readonly region: string;
-  readonly subregion?: string;
 }
 
 // ------------------------------------------------------------------
@@ -116,19 +110,32 @@ function ringToPath(ring: ReadonlyArray<ReadonlyArray<number>>, epsilon: number)
   return parts.join(' ');
 }
 
+/**
+ * Convert a GeoJSON geometry to pipe-separated SVG path strings.
+ * Each polygon produces one path string. Inner rings (holes) are included
+ * in the same path string as the outer ring, enabling fill-rule="evenodd"
+ * to cut out enclaves (e.g. Lesotho inside South Africa).
+ */
 function featureToSvgPaths(geometry: GeoJsonFeature['geometry'], epsilon: number): ReadonlyArray<string> {
   const paths: Array<string> = [];
 
   if (geometry.type === 'Polygon') {
     const rings = geometry.coordinates as ReadonlyArray<ReadonlyArray<ReadonlyArray<number>>>;
-    // Only use outer ring (index 0), skip holes
-    const path = ringToPath(rings[0], epsilon);
-    if (path) paths.push(path);
+    const ringPaths: Array<string> = [];
+    for (const ring of rings) {
+      const path = ringToPath(ring, epsilon);
+      if (path) ringPaths.push(path);
+    }
+    if (ringPaths.length > 0) paths.push(ringPaths.join(' '));
   } else if (geometry.type === 'MultiPolygon') {
     const polygons = geometry.coordinates as ReadonlyArray<ReadonlyArray<ReadonlyArray<ReadonlyArray<number>>>>;
     for (const polygon of polygons) {
-      const path = ringToPath(polygon[0], epsilon);
-      if (path) paths.push(path);
+      const ringPaths: Array<string> = [];
+      for (const ring of polygon) {
+        const path = ringToPath(ring, epsilon);
+        if (path) ringPaths.push(path);
+      }
+      if (ringPaths.length > 0) paths.push(ringPaths.join(' '));
     }
   }
 
@@ -147,75 +154,127 @@ function escapeCsvField(value: string): string {
 }
 
 // ------------------------------------------------------------------
+// CSV parsing (handles quoted fields with pipes and commas)
+// ------------------------------------------------------------------
+
+function parseCsvRow(line: string): Array<string> {
+  const fields: Array<string> = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      fields.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  fields.push(current);
+  return fields;
+}
+
+// ------------------------------------------------------------------
+// GeoJSON name → CSV id mapping
+// ------------------------------------------------------------------
+
+/** Maps GeoJSON feature names to CSV ids where they don't match the
+ *  default id derivation (lowercase, strip diacritics, hyphenate). */
+const GEOJSON_NAME_TO_CSV_ID: Readonly<Record<string, string>> = {
+  'Vatican': 'vatican-city',
+};
+
+function nameToId(name: string): string {
+  return name.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+// ------------------------------------------------------------------
 // Main
 // ------------------------------------------------------------------
 
 const scriptDir = dirname(new URL(import.meta.url).pathname);
 const sourceDir = resolve(scriptDir, 'source-data');
-const outputDir = resolve(scriptDir, '..', 'public', 'data', 'borders');
+const csvPath = resolve(scriptDir, '..', 'public', 'data', 'borders', 'world-borders.csv');
+
+// Load existing CSV
+const csvContent = readFileSync(csvPath, 'utf8');
+const csvLines = csvContent.split('\n').filter((line) => line.trim() !== '');
+const headerFields = parseCsvRow(csvLines[0]);
+const pathsColIndex = headerFields.indexOf('paths');
+if (pathsColIndex === -1) {
+  throw new Error('Could not find "paths" column in CSV header');
+}
+
+// Parse existing rows into id → fields map
+const existingRows = new Map<string, Array<string>>();
+const rowOrder: Array<string> = [];
+for (let i = 1; i < csvLines.length; i++) {
+  const fields = parseCsvRow(csvLines[i]);
+  const id = fields[0];
+  existingRows.set(id, fields);
+  rowOrder.push(id);
+}
 
 // Load GeoJSON
 const geojsonPath = resolve(sourceDir, 'countries.geojson');
 const geojson: GeoJsonCollection = JSON.parse(readFileSync(geojsonPath, 'utf8'));
 
-// Load country metadata for region info
-const countriesPath = resolve(sourceDir, 'countries.json');
-const countriesMeta: ReadonlyArray<CountryMeta> = JSON.parse(readFileSync(countriesPath, 'utf8'));
-
-// Build region lookup by ISO alpha-2 code
-const regionByCode = new Map<string, { region: string; subregion: string }>();
-for (const c of countriesMeta) {
-  regionByCode.set(c.cca2, { region: c.region, subregion: c.subregion ?? '' });
-}
-
 // Simplification epsilon — in degrees. 0.1° ≈ 11km at the equator.
-// The 110m Natural Earth data is already simplified, so we use a small epsilon
-// just to reduce point count slightly for file size.
 const EPSILON = 0.05;
 
-// Generate CSV rows
-const csvRows: Array<string> = [];
-
+// Build GeoJSON id → paths lookup
+const geojsonPaths = new Map<string, string>();
 for (const feature of geojson.features) {
-  const iso2 = feature.properties['ISO3166-1-Alpha-2'];
   const name = feature.properties.name;
-
-  if (!iso2 || iso2 === '-99') continue;
-
-  const meta = regionByCode.get(iso2);
-  const region = meta?.region ?? '';
-  const subregion = meta?.subregion ?? '';
+  const id = GEOJSON_NAME_TO_CSV_ID[name] ?? nameToId(name);
 
   const svgPaths = featureToSvgPaths(feature.geometry, EPSILON);
   if (svgPaths.length === 0) continue;
 
-  const id = name.toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-
-  const pathsField = svgPaths.join('|');
-
-  csvRows.push(
-    [id, name, region, subregion, pathsField]
-      .map(escapeCsvField)
-      .join(','),
-  );
+  geojsonPaths.set(id, svgPaths.join('|'));
 }
 
-// Sort by region then name for readability
-csvRows.sort();
-
-// Write output
-if (!existsSync(outputDir)) {
-  mkdirSync(outputDir, { recursive: true });
+// Update paths column in existing rows
+let updatedCount = 0;
+let skippedCount = 0;
+for (const [id, fields] of existingRows) {
+  const newPaths = geojsonPaths.get(id);
+  if (newPaths !== undefined) {
+    fields[pathsColIndex] = newPaths;
+    updatedCount++;
+  } else {
+    skippedCount++;
+    console.log(`  Kept existing paths for: ${id} (no GeoJSON match)`);
+  }
 }
 
-const header = 'id,name,region,group,paths';
-const output = header + '\n' + csvRows.join('\n') + '\n';
-const outputPath = resolve(outputDir, 'world-borders.csv');
-writeFileSync(outputPath, output);
+// Write back
+const outputLines = [csvLines[0]];
+for (const id of rowOrder) {
+  const fields = existingRows.get(id);
+  if (!fields) continue;
+  outputLines.push(fields.map(escapeCsvField).join(','));
+}
 
-console.log(`Written ${csvRows.length} countries to ${outputPath}`);
-console.log(`File size: ${Math.round(output.length / 1024)}KB`);
+writeFileSync(csvPath, outputLines.join('\n') + '\n');
+
+console.log(`Updated paths for ${updatedCount} countries, kept ${skippedCount} unchanged`);
+console.log(`File size: ${Math.round((outputLines.join('\n').length) / 1024)}KB`);
