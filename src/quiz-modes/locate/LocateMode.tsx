@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { QuizModeProps } from '../QuizModeProps';
 import type { DistanceFeedbackLine as DistanceFeedbackLineType } from '@/visualizations/VisualizationRendererProps';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
@@ -7,6 +7,7 @@ import { InlineResults } from '../InlineResults';
 import { QuizPromptBar } from '../QuizPromptBar';
 import { useLocateQuiz } from './useLocateQuiz';
 import { DistanceFeedbackLine } from './DistanceFeedbackLine';
+import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import styles from './LocateMode.module.css';
 
 /**
@@ -32,6 +33,7 @@ export function LocateMode({
   hideUnfocusedElements,
 }: QuizModeProps) {
   const quiz = useLocateQuiz(elements, { locateDistanceMode, locateThresholds, hideUnfocusedElements });
+  const { revealingElementIds, triggerReveal } = useRevealPulse();
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
@@ -76,6 +78,24 @@ export function LocateMode({
     [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
+  const handleSkip = useCallback(() => {
+    if (quiz.currentTarget) {
+      triggerReveal([quiz.currentTarget.id], quiz.totalTargets);
+    }
+    quiz.handleSkip();
+  }, [quiz.currentTarget, quiz.totalTargets, quiz.handleSkip, triggerReveal]);
+
+  const handleGiveUp = useCallback(() => {
+    const remainingIds: Array<string> = [];
+    for (const el of elements) {
+      if (el.interactive && quiz.elementStates[el.id] === 'hidden') {
+        remainingIds.push(el.id);
+      }
+    }
+    triggerReveal(remainingIds, quiz.totalTargets);
+    quiz.handleGiveUp();
+  }, [elements, quiz.elementStates, quiz.totalTargets, quiz.handleGiveUp, triggerReveal]);
+
   const isGridMode = locateDistanceMode === 'grid-centroid';
   const promptVerb = isGridMode ? 'Click on' : 'Click where';
   const promptSuffix = isGridMode ? '' : ' is';
@@ -110,8 +130,8 @@ export function LocateMode({
             progressCurrent={quiz.currentTargetIndex}
             progressTotal={quiz.totalTargets}
             scoreLabel={`${quiz.correctCount}/${quiz.currentTargetIndex} correct`}
-            onSkip={quiz.handleSkip}
-            onGiveUp={quiz.handleGiveUp}
+            onSkip={handleSkip}
+            onGiveUp={handleGiveUp}
             isFinished={quiz.isFinished}
             finishedContent={
               <span className={styles.finishedText}>
@@ -139,6 +159,7 @@ export function LocateMode({
           initialCameraPosition={initialCameraPosition}
           svgOverlay={feedbackOverlay}
           distanceFeedbackLines={gridFeedbackLines}
+          autoRevealElementIds={revealingElementIds}
         />
       </div>
     </div>

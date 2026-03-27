@@ -7,6 +7,7 @@ import { resolveElementToggles, type ElementQuizState } from '../resolveElementT
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { InlineResults } from '../InlineResults';
 import { useTimelineLocateQuiz } from './useTimelineLocateQuiz';
+import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import styles from './TimelineLocateMode.module.css';
 
 export function TimelineLocateMode({
@@ -31,6 +32,7 @@ export function TimelineLocateMode({
       : 'month';
 
   const quiz = useTimelineLocateQuiz(elements, datePrecision, timeScale);
+  const { revealingElementIds, triggerReveal } = useRevealPulse();
   const [dateInput, setDateInput] = useState('');
   const [inputError, setInputError] = useState(false);
 
@@ -99,6 +101,24 @@ export function TimelineLocateMode({
     }
   }, [handleDateSubmit]);
 
+  const handleSkip = useCallback(() => {
+    if (quiz.currentTarget) {
+      triggerReveal([quiz.currentTarget.id], quiz.totalTargets);
+    }
+    quiz.handleSkip();
+  }, [quiz.currentTarget, quiz.totalTargets, quiz.handleSkip, triggerReveal]);
+
+  const handleGiveUp = useCallback(() => {
+    const remainingIds: Array<string> = [];
+    for (const el of elements) {
+      if (el.interactive && quiz.elementStates[el.id] === 'hidden') {
+        remainingIds.push(el.id);
+      }
+    }
+    triggerReveal(remainingIds, quiz.totalTargets);
+    quiz.handleGiveUp();
+  }, [elements, quiz.elementStates, quiz.totalTargets, quiz.handleGiveUp, triggerReveal]);
+
   const precisionLabel = datePrecision === 'year' ? 'year' : datePrecision === 'month' ? 'month & year' : 'date';
   const placeholderExamples: Readonly<Record<DatePrecision, string>> = {
     year: 'e.g. 1944',
@@ -151,10 +171,10 @@ export function TimelineLocateMode({
               )}
               {!quiz.isFinished && (
                 <div className={styles.controls}>
-                  <button className={styles.controlButton} onClick={quiz.handleSkip}>
+                  <button className={styles.controlButton} onClick={handleSkip}>
                     Skip
                   </button>
-                  <button className={styles.controlButton} onClick={quiz.handleGiveUp}>
+                  <button className={styles.controlButton} onClick={handleGiveUp}>
                     Give up
                   </button>
                 </div>
@@ -191,6 +211,7 @@ export function TimelineLocateMode({
           lakePaths={lakePaths}
           clustering={clustering}
           timeScale={timeScale}
+          autoRevealElementIds={revealingElementIds}
         />
       </div>
     </div>

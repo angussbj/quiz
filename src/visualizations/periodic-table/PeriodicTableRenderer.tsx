@@ -3,6 +3,7 @@ import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { GridElement } from './GridElement';
 import { isGridElement } from './GridElement';
 import { ZoomPanContainer } from '../ZoomPanContainer';
+import { RevealPulseOverlay } from '../RevealPulse';
 import { useZoomPan } from '../ZoomPanContext';
 import { elementToggle } from '../elementToggle';
 import type { ElementVisualState } from '../VisualizationElement';
@@ -250,6 +251,7 @@ export function PeriodicTableRenderer(props: VisualizationRendererProps) {
       {props.svgUnderlay}
       <PeriodicTableGrid {...props} />
       {props.svgOverlay}
+      <RevealPulseOverlay elements={gridElements} elementStates={props.elementStates} autoRevealElementIds={props.autoRevealElementIds} />
     </ZoomPanContainer>
   );
 }

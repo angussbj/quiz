@@ -464,9 +464,10 @@ function ZoomPanInner({
     () => ({
       scale: quantisedScale,
       clusteredElementIds,
+      clusters,
       basePixelsPerViewBoxUnit,
     }),
-    [quantisedScale, clusteredElementIds, basePixelsPerViewBoxUnit],
+    [quantisedScale, clusteredElementIds, clusters, basePixelsPerViewBoxUnit],
   );
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
