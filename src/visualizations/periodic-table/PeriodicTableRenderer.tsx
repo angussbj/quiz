@@ -245,7 +245,11 @@ function GridCell({
   );
 }
 
-const ELEMENT_DATA_FIELDS = new Set(['half-life', 'density', 'state', 'electronegativity', 'year-discovered']);
+const ELEMENT_DATA_FIELDS: ReadonlyArray<ElementDataField> = ['half-life', 'density', 'state', 'electronegativity', 'year-discovered'];
+
+function toElementDataField(value: string): ElementDataField | undefined {
+  return ELEMENT_DATA_FIELDS.find((f) => f === value);
+}
 
 function PeriodicTableGrid({
   elements,
@@ -264,9 +268,7 @@ function PeriodicTableGrid({
   const showGroups = elementToggle(elementToggles, toggles, '', 'showGroups');
   const showAtomicWeight = elementToggle(elementToggles, toggles, '', 'showAtomicWeight');
   const elementDataValue = selectValues?.['elementData'] ?? 'none';
-  const elementDataField = ELEMENT_DATA_FIELDS.has(elementDataValue)
-    ? elementDataValue as ElementDataField
-    : undefined;
+  const elementDataField = toElementDataField(elementDataValue);
 
   const groupColorMap = useMemo(() => {
     const map = new Map<string, number>();
