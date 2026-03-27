@@ -53,6 +53,7 @@ describe('isGridElement', () => {
       atomicNumber: 26,
       trueRow: 3,
       trueColumn: 21,
+      atomicWeight: '55.845',
     };
     expect(isGridElement(gridElement)).toBe(true);
   });

@@ -262,7 +262,7 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents).not.toContain('1.008');
   });
 
-  it('does not show atomic weight when not zoomed in', () => {
+  it('shows atomic weight even when not zoomed in', () => {
     mockScale = 1;
     const { container } = render(
       <PeriodicTableRenderer
@@ -275,7 +275,7 @@ describe('PeriodicTableRenderer', () => {
     );
     const texts = container.querySelectorAll('text');
     const textContents = Array.from(texts).map((t) => t.textContent);
-    expect(textContents).not.toContain('1.008');
+    expect(textContents).toContain('1.008');
   });
 
   it('shows "Stable" for half-life when element has no half-life data', () => {

@@ -68,13 +68,6 @@ function isAnswered(state: ElementVisualState): boolean {
     || state === 'correct-third' || state === 'incorrect' || state === 'missed';
 }
 
-/** Pick font size for atomic weight so it fits in the top-right area. */
-function atomicWeightFontSize(weight: string): number {
-  if (weight.length <= 5) return 7;
-  if (weight.length <= 7) return 6;
-  return 5;
-}
-
 function GridCell({
   element,
   state,
@@ -104,8 +97,8 @@ function GridCell({
   const symbolVisible = answered || showSymbol;
   const atomicNumberVisible = answered || showAtomicNumber;
   const nameVisible = (answered || showName) && zoomedIn;
-  const atomicWeightVisible = showAtomicWeight && zoomedIn;
-  const halfLifeVisible = showHalfLife && zoomedIn;
+  const atomicWeightVisible = showAtomicWeight;
+  const halfLifeVisible = showHalfLife;
   const interactive = element.interactive;
 
   const cellCenterX = x + CELL_SIZE / 2;
@@ -121,8 +114,8 @@ function GridCell({
       }
     : undefined;
 
-  // Layout: when half-life toggle is on AND we're zoomed in, shrink symbol
-  // to make room for half-life text between symbol and name.
+  // Layout: when half-life toggle is on, shrink symbol to make room for
+  // half-life text between symbol and name.
   // When half-life toggle is off, use the original layout unchanged.
   const hasAtomicNumber = atomicNumberVisible && element.atomicNumber > 0;
   let symbolY: number;
@@ -130,12 +123,20 @@ function GridCell({
   let halfLifeY: number;
   let nameY: number;
 
-  if (halfLifeVisible) {
-    // Compact layout: symbol higher and smaller, half-life below it, name at bottom
+  if (halfLifeVisible && zoomedIn) {
+    // Zoomed in + half-life: compact layout with smaller symbol
     symbolY = hasAtomicNumber ? y + CELL_SIZE * 0.36 : y + CELL_SIZE * 0.38;
-    symbolFontSize = zoomedIn ? 14 : 22;
+    symbolFontSize = 14;
     halfLifeY = y + CELL_SIZE * 0.58;
     nameY = y + CELL_SIZE * 0.78;
+  } else if (halfLifeVisible) {
+    // Zoomed out + half-life: keep symbol at normal size, half-life below
+    symbolY = hasAtomicNumber
+      ? y + CELL_SIZE * 0.42
+      : y + CELL_SIZE * 0.42;
+    symbolFontSize = 22;
+    halfLifeY = y + CELL_SIZE * 0.75;
+    nameY = y + CELL_SIZE * 0.75; // unused at this zoom
   } else {
     // Original layout — no change from before
     symbolY = hasAtomicNumber || nameVisible
@@ -187,8 +188,8 @@ function GridCell({
           textAnchor="end"
           dominantBaseline="central"
           fill={textFill}
-          fontSize={atomicWeightFontSize(element.atomicWeight)}
-          opacity={0.6}
+          fontSize={9}
+          opacity={0.7}
         >
           {element.atomicWeight}
         </text>
@@ -213,8 +214,8 @@ function GridCell({
           textAnchor="middle"
           dominantBaseline="central"
           fill={textFill}
-          fontSize={6}
-          opacity={0.65}
+          fontSize={9}
+          opacity={0.7}
         >
           {halfLifeText}
         </text>
