@@ -36,18 +36,6 @@ export function TimelineLocateMode({
   const [dateInput, setDateInput] = useState('');
   const [inputError, setInputError] = useState(false);
 
-  // Track target index to trigger reveal pulse when elements are answered
-  const prevTargetIndexRef = useRef(0);
-  const prevTargetIdRef = useRef<string | undefined>(quiz.currentTarget?.id);
-
-  useEffect(() => {
-    if (quiz.currentTargetIndex > prevTargetIndexRef.current && prevTargetIdRef.current) {
-      triggerReveal([prevTargetIdRef.current], quiz.totalTargets);
-    }
-    prevTargetIndexRef.current = quiz.currentTargetIndex;
-    prevTargetIdRef.current = quiz.currentTarget?.id;
-  }, [quiz.currentTargetIndex, quiz.currentTarget?.id, quiz.totalTargets, triggerReveal]);
-
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
   const hasCalledFinish = useRef(false);

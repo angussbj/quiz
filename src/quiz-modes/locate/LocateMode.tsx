@@ -35,24 +35,6 @@ export function LocateMode({
   const quiz = useLocateQuiz(elements, { locateDistanceMode, locateThresholds, hideUnfocusedElements });
   const { revealingElementIds, triggerReveal } = useRevealPulse();
 
-  // Track target index changes to trigger reveal pulse when elements are answered
-  const prevTargetIndexRef = useRef(0);
-  const prevTargetIdRef = useRef<string | undefined>(undefined);
-
-  useEffect(() => {
-    // On first render, just record the initial target
-    if (prevTargetIndexRef.current === 0 && quiz.currentTargetIndex === 0) {
-      prevTargetIdRef.current = quiz.currentTarget?.id;
-      return;
-    }
-    // When target index advances, the previous target was just revealed
-    if (quiz.currentTargetIndex > prevTargetIndexRef.current && prevTargetIdRef.current) {
-      triggerReveal([prevTargetIdRef.current], quiz.totalTargets);
-    }
-    prevTargetIndexRef.current = quiz.currentTargetIndex;
-    prevTargetIdRef.current = quiz.currentTarget?.id;
-  }, [quiz.currentTargetIndex, quiz.currentTarget?.id, quiz.totalTargets, triggerReveal]);
-
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
   const hasCalledFinish = useRef(false);

@@ -53,6 +53,9 @@ When elements are revealed without direct user interaction (skip, give-up, wrong
 - The hook enforces a 10% threshold: bulk reveals (>10% of total elements) skip animation to avoid visual noise. Single-element reveals always animate.
 - The mode passes `revealingElementIds` to the renderer via the `autoRevealElementIds` prop.
 
+**3D/WebGL renderers** (e.g., Anatomy3DRenderer):
+- Not yet supported. The `autoRevealElementIds` prop is accepted but currently ignored. A future implementation could use a screen-space ring or brief mesh highlight. This is a known gap.
+
 ### 7. Target element
 
 - If `targetElementId` is provided, visually distinguish the target element (e.g., highlight ring). Used by locate mode to show which element the user should find.

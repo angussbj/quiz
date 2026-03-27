@@ -28,27 +28,27 @@ export function RevealPulse({ x, y, radius, state, pulseKey }: RevealPulseProps)
 
   return (
     <AnimatePresence>
-      <motion.circle
+      <motion.g
         key={pulseKey}
-        cx={x}
-        cy={y}
-        r={radius}
-        fill="none"
-        stroke={color}
-        strokeWidth={radius * 0.15}
+        style={{ x, y }}
         initial={{ scale: 0.6, opacity: 0.8 }}
         animate={{
           scale: [0.6, 1.6],
           opacity: [0.8, 0],
-          strokeWidth: [radius * 0.15, radius * 0.02],
         }}
         transition={{
           duration: 1.0,
           ease: 'easeOut',
           times: [0, 1],
         }}
-        style={{ originX: `${x}px`, originY: `${y}px` }}
-      />
+      >
+        <circle
+          r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth={radius * 0.15}
+        />
+      </motion.g>
     </AnimatePresence>
   );
 }
