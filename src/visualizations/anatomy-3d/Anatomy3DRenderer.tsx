@@ -639,7 +639,8 @@ function Scene({
     return result;
   }, [elementLabels, meshCenters]);
 
-  // putInView: animate camera to frame target element(s)
+  // putInView: animate camera to frame target element(s).
+  // Computes a front-facing view that comfortably frames the bone(s).
   const putInViewLatestRef = useRef({ meshCenters, viewport });
   putInViewLatestRef.current = { meshCenters, viewport };
 
@@ -656,11 +657,15 @@ function Scene({
     }
     if (targetCenters.length === 0) return;
 
+    // Build bounding box from centers, then expand generously — centers are
+    // single points, not mesh volumes, so the actual bone extends well beyond.
     const box = new THREE.Box3();
     for (const c of targetCenters) {
       box.expandByPoint(c);
     }
-    const view = frontView(symmetricBox(box), vp.aspect || 1, 1.6);
+    box.expandByScalar(0.12);
+
+    const view = frontView(symmetricBox(box), vp.aspect || 1, 1.8);
     onPutInViewTarget(view);
   }, [putInView, onPutInViewTarget]);
 
