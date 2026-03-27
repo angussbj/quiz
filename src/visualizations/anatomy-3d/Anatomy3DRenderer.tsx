@@ -557,6 +557,8 @@ interface SceneProps {
   readonly onElementHoverEnd?: () => void;
   readonly animTarget: CameraView | null;
   readonly onAnimDone: () => void;
+  readonly onPutInViewTarget: (view: CameraView) => void;
+  readonly putInView?: ReadonlyArray<string>;
   readonly labelMode: 'off' | 'hover' | 'on';
   readonly onModelReady: (yMin: number, yMax: number, centers: Map<string, MeshCenter>, views: Record<string, CameraView>) => void;
 }
@@ -570,11 +572,13 @@ function Scene({
   onElementHoverEnd,
   animTarget,
   onAnimDone,
+  onPutInViewTarget,
+  putInView,
   labelMode,
   onModelReady,
 }: SceneProps) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
-  const { camera } = useThree();
+  const { camera, viewport } = useThree();
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
   const handleElementHover = useCallback((elementId: string | null) => {
     setHoveredElementId(elementId);
@@ -635,6 +639,31 @@ function Scene({
     return result;
   }, [elementLabels, meshCenters]);
 
+  // putInView: animate camera to frame target element(s)
+  const putInViewLatestRef = useRef({ meshCenters, viewport });
+  putInViewLatestRef.current = { meshCenters, viewport };
+
+  useEffect(() => {
+    if (!putInView || putInView.length === 0) return;
+    const { meshCenters: centers, viewport: vp } = putInViewLatestRef.current;
+    if (centers.size === 0) return;
+
+    const targetCenters: Array<THREE.Vector3> = [];
+    for (const [, { elementId, center }] of centers) {
+      if (putInView.includes(elementId)) {
+        targetCenters.push(center);
+      }
+    }
+    if (targetCenters.length === 0) return;
+
+    const box = new THREE.Box3();
+    for (const c of targetCenters) {
+      box.expandByPoint(c);
+    }
+    const view = frontView(symmetricBox(box), vp.aspect || 1, 1.6);
+    onPutInViewTarget(view);
+  }, [putInView, onPutInViewTarget]);
+
   return (
     <>
       <ambientLight intensity={0.6} />
@@ -693,6 +722,7 @@ export function Anatomy3DRenderer({
   onElementClick,
   onElementHoverStart,
   onElementHoverEnd,
+  putInView,
 }: VisualizationRendererProps) {
   const [views, setViews] = useState<Record<string, CameraView>>({});
   const [modelReady, setModelReady] = useState(false);
@@ -792,6 +822,8 @@ export function Anatomy3DRenderer({
           onElementHoverEnd={onElementHoverEnd}
           animTarget={animTarget}
           onAnimDone={() => setAnimTarget(null)}
+          onPutInViewTarget={setAnimTarget}
+          putInView={putInView}
           labelMode={labelMode}
           onModelReady={handleModelReady}
         />
