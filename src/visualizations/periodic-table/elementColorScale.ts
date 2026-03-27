@@ -30,18 +30,23 @@ function getNumericValue(element: GridElement, field: Exclude<ElementColorField,
   }
 }
 
-/** HSL color with high lightness for good text contrast. */
+/** HSL color string. */
 function hslColor(hue: number, saturation: number, lightness: number): string {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
-/** Gradient color: blue (240°) → red (0°) via green, pastel. */
-function gradientColor(t: number): string {
+/** Light-mode lightness for pastel fills (dark text on light bg). */
+const LIGHT_LIGHTNESS = 82;
+/** Dark-mode lightness for deep fills (light text on dark bg). */
+const DARK_LIGHTNESS = 28;
+
+/** Gradient color: blue (240°) → red (0°) via green. */
+function gradientColor(t: number, darkMode: boolean): string {
   const hue = 240 * (1 - t);
-  return hslColor(hue, 50, 82);
+  return hslColor(hue, 50, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
 }
 
-/** Fixed category colors — 8 distinguishable pastel hues. */
+/** Fixed category colors — 8 distinguishable hues. */
 const CATEGORY_HUES: ReadonlyArray<readonly [number, number]> = [
   [215, 45],  // blue
   [20, 50],   // orange
@@ -53,9 +58,9 @@ const CATEGORY_HUES: ReadonlyArray<readonly [number, number]> = [
   [15, 35],   // brown
 ];
 
-function categoryColor(index: number): string {
+function categoryColor(index: number, darkMode: boolean): string {
   const [hue, sat] = CATEGORY_HUES[index % CATEGORY_HUES.length];
-  return hslColor(hue, sat, 82);
+  return hslColor(hue, sat, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
 }
 
 export interface ElementColorMap {
@@ -63,7 +68,7 @@ export interface ElementColorMap {
 }
 
 /** Compute category-based color map using element group assignments. */
-function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>): ElementColorMap {
+function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, darkMode: boolean): ElementColorMap {
   const groupIndexMap = new Map<string, number>();
   let index = 0;
   for (const element of elements) {
@@ -78,7 +83,7 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>): E
     if (isGridElement(element) && element.group) {
       const groupIndex = groupIndexMap.get(element.group);
       if (groupIndex !== undefined) {
-        colorMap.set(element.id, categoryColor(groupIndex));
+        colorMap.set(element.id, categoryColor(groupIndex, darkMode));
       }
     }
   }
@@ -90,6 +95,7 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>): E
 function computeGradientColors(
   elements: ReadonlyArray<GridElement>,
   field: Exclude<ElementColorField, 'category'>,
+  darkMode: boolean,
 ): ElementColorMap {
   const values = new Map<string, number>();
   let min = Infinity;
@@ -110,9 +116,9 @@ function computeGradientColors(
     get(elementId: string): string | undefined {
       const value = values.get(elementId);
       if (value === undefined) return undefined;
-      if (range <= 0) return gradientColor(0.5);
+      if (range <= 0) return gradientColor(0.5, darkMode);
       const t = (value - min) / range;
-      return gradientColor(t);
+      return gradientColor(t, darkMode);
     },
   };
 }
@@ -120,14 +126,16 @@ function computeGradientColors(
 /**
  * Compute a color map for all elements based on a field.
  * 'category' uses fixed distinguishable hues; numeric fields use a gradient.
+ * In dark mode, colors use low lightness with light text; in light mode, high lightness with dark text.
  */
 export function computeElementColors(
   elements: ReadonlyArray<VisualizationElement>,
   field: ElementColorField,
+  darkMode: boolean,
 ): ElementColorMap {
   if (field === 'category') {
-    return computeCategoryColors(elements);
+    return computeCategoryColors(elements, darkMode);
   }
   const gridElements = elements.filter(isGridElement);
-  return computeGradientColors(gridElements, field);
+  return computeGradientColors(gridElements, field, darkMode);
 }

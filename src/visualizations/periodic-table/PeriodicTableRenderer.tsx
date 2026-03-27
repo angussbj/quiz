@@ -14,6 +14,7 @@ import { formatElementData } from './formatElementData';
 import type { ElementDataField } from './formatElementData';
 import { computeElementColors, toElementColorField } from './elementColorScale';
 import type { ElementColorMap } from './elementColorScale';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export const ZOOM_DETAIL_THRESHOLD = 1.8;
 
@@ -259,6 +260,8 @@ function PeriodicTableGrid({
   distanceFeedbackLines,
 }: VisualizationRendererProps) {
   const { scale, clusteredElementIds } = useZoomPan();
+  const { resolved: theme } = useTheme();
+  const darkMode = theme === 'dark';
   const zoomedIn = scale >= ZOOM_DETAIL_THRESHOLD;
   const showAtomicWeight = elementToggle(elementToggles, toggles, '', 'showAtomicWeight');
   const elementDataValue = selectValues?.['elementData'] ?? 'none';
@@ -268,8 +271,8 @@ function PeriodicTableGrid({
 
   const elementColorMap: ElementColorMap | undefined = useMemo(() => {
     if (elementColorField === undefined) return undefined;
-    return computeElementColors(elements, elementColorField);
-  }, [elements, elementColorField]);
+    return computeElementColors(elements, elementColorField, darkMode);
+  }, [elements, elementColorField, darkMode]);
 
   return (
     <g>

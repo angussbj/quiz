@@ -5,6 +5,10 @@ import type { VisualizationRendererProps } from '../../VisualizationRendererProp
 
 let mockScale = 1;
 
+jest.mock('@/theme/ThemeProvider', () => ({
+  useTheme: () => ({ preference: 'system', resolved: 'light', setPreference: jest.fn() }),
+}));
+
 jest.mock('react-zoom-pan-pinch', () => ({
   TransformWrapper: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   TransformComponent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
