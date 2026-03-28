@@ -21,6 +21,8 @@ import type { ElementVisualState } from '@/visualizations/VisualizationElement';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import { isAnatomy3DElement, type Anatomy3DPreferredView } from './Anatomy3DElement';
 import { assetPath } from '@/utilities/assetPath';
+import { useWindowSize } from '@/utilities/useWindowSize';
+import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './Anatomy3DRenderer.module.css';
 
 const MODEL_URL = assetPath('/data/bones-3d/overview-skeleton.glb');
@@ -837,48 +839,61 @@ export function Anatomy3DRenderer({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [goToPreset]);
 
+  const { width } = useWindowSize();
+  const isNarrow = width < NARROW_WIDTH;
+
+  const sidebarContent = (
+    <>
+      <span className={styles.sidebarHeading}>Camera</span>
+      <div className={styles.presets}>
+        {PRESETS.map(({ key, label, hotkey }) => (
+          <button
+            key={key}
+            className={styles.presetButton}
+            onClick={() => goToPreset(key)}
+            disabled={Object.keys(views).length === 0}
+            title={`${label} (${hotkey})`}
+          >
+            <span className={styles.presetLabel}>{label}</span>
+            <kbd className={styles.hotkey}>{hotkey}</kbd>
+          </button>
+        ))}
+      </div>
+      <span className={styles.sidebarHeading}>Labels</span>
+      <div className={styles.labelToggle}>
+        {(['off', 'hover', 'on'] as const).map((mode) => (
+          <button
+            key={mode}
+            className={`${styles.labelButton} ${mode === labelMode ? styles.labelButtonActive : ''}`}
+            onClick={() => setLabelMode(mode)}
+          >
+            {mode === 'off' ? 'Off' : mode === 'hover' ? 'Hover' : 'On'}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+
   return (
     <div className={styles.page}>
-      <nav className={styles.sidebar}>
-        <span className={styles.sidebarHeading}>Camera</span>
-        <div className={styles.presets}>
-          {PRESETS.map(({ key, label, hotkey }) => (
-            <button
-              key={key}
-              className={styles.presetButton}
-              onClick={() => goToPreset(key)}
-              disabled={Object.keys(views).length === 0}
-              title={`${label} (${hotkey})`}
-            >
-              <span className={styles.presetLabel}>{label}</span>
-              <kbd className={styles.hotkey}>{hotkey}</kbd>
-            </button>
-          ))}
-        </div>
-        <span className={styles.sidebarHeading}>Labels</span>
-        <div className={styles.labelToggle}>
-          {(['off', 'hover', 'on'] as const).map((mode) => (
-            <button
-              key={mode}
-              className={`${styles.labelButton} ${mode === labelMode ? styles.labelButtonActive : ''}`}
-              onClick={() => setLabelMode(mode)}
-            >
-              {mode === 'off' ? 'Off' : mode === 'hover' ? 'Hover' : 'On'}
-            </button>
-          ))}
-        </div>
-        <div className={styles.attribution}>
-          <a href="https://anatomytool.org/content/open3dmodel-skeleton-english-labels" target="_blank" rel="noopener noreferrer">Open3DModel - Skeleton</a>
-          {' by '}
-          <a href="https://anatomytool.org/open3Dmodel-about" target="_blank" rel="noopener noreferrer">Open3D project</a>
-          {', '}
-          <a href="https://www.researchgate.net/profile/George-Maat" target="_blank" rel="noopener noreferrer">George J.R. Maat</a>
-          {', LUMC, '}
-          <a href="https://www.eungyeol-lee.com/" target="_blank" rel="noopener noreferrer">Eungyeol Lee</a>
-          {', LUMC et al, '}
-          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA</a>
-        </div>
-      </nav>
+      {isNarrow ? (
+        <FloatingSidebar>{sidebarContent}</FloatingSidebar>
+      ) : (
+        <nav className={styles.sidebar}>
+          {sidebarContent}
+          <div className={styles.attribution}>
+            <a href="https://anatomytool.org/content/open3dmodel-skeleton-english-labels" target="_blank" rel="noopener noreferrer">Open3DModel - Skeleton</a>
+            {' by '}
+            <a href="https://anatomytool.org/open3Dmodel-about" target="_blank" rel="noopener noreferrer">Open3D project</a>
+            {', '}
+            <a href="https://www.researchgate.net/profile/George-Maat" target="_blank" rel="noopener noreferrer">George J.R. Maat</a>
+            {', LUMC, '}
+            <a href="https://www.eungyeol-lee.com/" target="_blank" rel="noopener noreferrer">Eungyeol Lee</a>
+            {', LUMC et al, '}
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA</a>
+          </div>
+        </nav>
+      )}
 
       <Canvas
         className={styles.canvas}
@@ -902,6 +917,49 @@ export function Anatomy3DRenderer({
           onModelReady={handleModelReady}
         />
       </Canvas>
+    </div>
+  );
+}
+
+// ─── Floating sidebar for narrow screens ─────────────────────────────────────
+
+function FloatingSidebar({ children }: { readonly children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [open]);
+
+  return (
+    <div className={styles.floatingContainer} ref={containerRef}>
+      <button
+        className={styles.floatingTrigger}
+        onClick={() => setOpen((prev) => !prev)}
+        aria-label="View options"
+        aria-expanded={open}
+      >
+        ⋯
+      </button>
+      {open && (
+        <nav className={styles.floatingPanel}>
+          {children}
+        </nav>
+      )}
     </div>
   );
 }
