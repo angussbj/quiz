@@ -6,6 +6,7 @@ import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
 import { countFilteredElements } from './countFilteredElements';
+import { useQuizActiveRegister } from './QuizActiveContext';
 import styles from './QuizShell.module.css';
 
 export interface ElementRange {
@@ -192,6 +193,16 @@ export function QuizShell({
     if (Object.keys(result.forcedValues).length === 0) return toggleState.values;
     return { ...toggleState.values, ...result.forcedValues };
   }, [modeConstraints, selectedMode, toggleState.values, toggleState.selectValues]);
+
+  const { setQuizActive, clearQuizActive } = useQuizActiveRegister();
+  useEffect(() => {
+    if (phase === 'active') {
+      setQuizActive(handleReconfigure);
+    } else {
+      clearQuizActive();
+    }
+    return () => clearQuizActive();
+  }, [phase, handleReconfigure, setQuizActive, clearQuizActive]);
 
   if (phase === 'configuring') {
     return (

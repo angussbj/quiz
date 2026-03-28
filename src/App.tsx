@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useParams } from 'react-router';
 import { Layout } from './layout/Layout';
+import { QuizActiveProvider } from '@/quiz-modes/QuizActiveContext';
 import { getQuizById } from '@/quiz-definitions/getQuizById';
 
 const HomePage = lazy(() => import('./routes/HomePage.tsx'));
@@ -17,6 +18,7 @@ function QuizOrCategoryPage() {
 export function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+      <QuizActiveProvider>
       <Layout>
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
@@ -25,6 +27,7 @@ export function App() {
           </Routes>
         </Suspense>
       </Layout>
+      </QuizActiveProvider>
     </BrowserRouter>
   );
 }

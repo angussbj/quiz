@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router';
 import { getQuizById } from '@/quiz-definitions/getQuizById';
+import { useQuizActiveState } from '@/quiz-modes/QuizActiveContext';
 import styles from './Breadcrumbs.module.css';
 
 interface BreadcrumbSegment {
@@ -37,6 +38,7 @@ function buildCategoryBreadcrumbs(pathname: string): ReadonlyArray<BreadcrumbSeg
 export function Breadcrumbs() {
   const location = useLocation();
   const pathname = location.pathname;
+  const { isActive, onReconfigure } = useQuizActiveState();
 
   if (pathname === '/') return null;
 
@@ -60,7 +62,9 @@ export function Breadcrumbs() {
         return (
           <span key={segment.path || index} className={styles.segment}>
             <span className={styles.separator} aria-hidden="true">/</span>
-            {isLast || !segment.path ? (
+            {isLast && isActive ? (
+              <button className={styles.link} onClick={onReconfigure} type="button">{segment.label}</button>
+            ) : isLast || !segment.path ? (
               <span className={styles.current} aria-current="page">{segment.label}</span>
             ) : (
               <Link to={segment.path} className={styles.link}>{segment.label}</Link>
