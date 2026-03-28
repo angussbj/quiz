@@ -132,7 +132,6 @@
 
 /* ─── Responsive overrides ──────────────────────────────────────────────────
    Width breakpoints: 480px (narrow), 640px (medium)
-   Height breakpoints: 500px (short), 360px (very short / keyboard open)
    ────────────────────────────────────────────────────────────────────────── */
 
 @media (max-width: 640px) {
@@ -141,14 +140,3 @@
   }
 }
 
-@media (max-height: 500px) {
-  :root {
-    --quiz-controls-height: 6rem;
-  }
-}
-
-@media (max-height: 360px) {
-  :root {
-    --quiz-controls-height: 4.5rem;
-  }
-}

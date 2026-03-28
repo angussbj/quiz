@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme, type ThemePreference } from '@/theme/ThemeProvider';
 import styles from './ThemeToggle.module.css';
@@ -54,13 +53,13 @@ function PhoneIcon() {
   );
 }
 
-/** True on touch-primary devices (phones/tablets), false on mouse-primary (desktops). */
-const isTouchDevice =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(pointer: coarse)').matches;
-
 export function ThemeToggle() {
   const { preference, setPreference } = useTheme();
+
+  /** True on touch-primary devices (phones/tablets), false on mouse-primary (desktops). */
+  const isTouchDevice =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(pointer: coarse)').matches;
 
   function handleClick() {
     const currentIndex = cycleOrder.indexOf(preference);
