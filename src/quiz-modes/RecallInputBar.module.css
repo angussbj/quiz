@@ -13,8 +13,8 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
 }
 
 /* --- Progress --- */
@@ -152,13 +152,11 @@
 .lastAnswer {
   font-size: var(--font-size-sm);
   color: var(--color-correct);
-  min-height: 1.4em;
 }
 
 .ambiguousMessage {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  min-height: 1.4em;
 }
 
 /* --- Finished --- */
