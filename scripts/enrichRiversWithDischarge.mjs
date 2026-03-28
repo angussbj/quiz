@@ -99,7 +99,7 @@ const DISCHARGE = {
   'Xun':               3800,  // Pearl River tributary
 
   // ── Irrawaddy ───────────────────────────────────────────────────────────
-  'Irrawaddy Delta':  13000,
+  'Irrawaddy':        13000,
   'Nmai':               450,  // Irrawaddy headwater
 
   // ── Indus system ────────────────────────────────────────────────────────
@@ -149,6 +149,7 @@ const DISCHARGE = {
   'Shatt al Arab':     1750,  // Tigris+Euphrates confluence at mouth
   'Salween':           1494,
   'Don':                900,
+  'Donets':             159,  // Don tributary (Seversky Donets)
   'Loire':              900,
   'Po':                1500,
   'Vistula':           1050,
@@ -192,6 +193,10 @@ const DISCHARGE = {
   'Pilcomayo':          550,  // Paraguay tributary
   'Amu Darya':         2525,
   'Syr Darya':          700,
+  'Guadalquivir':       164,  // Spain
+  'Srepok':             380,  // Mekong tributary
+  'Madre de Dios':     1400,  // Madeira headwater
+  'Mangoky':            250,  // Madagascar
 };
 
 // Direct parent river for each tributary. One level only — each river points to its
@@ -203,6 +208,7 @@ const TRIBUTARY_OF = {
   'Negro':      'Amazonas',
   'Mamoré':     'Madeira',
   'Guaporé':    'Mamoré',
+  'Madre de Dios': 'Madeira',
   'Araguaia':   'Tocantins',
   'Paraguay':   'Paraná',
   'Pilcomayo':  'Paraguay',
@@ -237,8 +243,9 @@ const TRIBUTARY_OF = {
   'Shiquan':        'Brahmaputra',
 
   // ── Mekong headwaters ───────────────────────────────────────────────────
-  'Ideriyn':    'Mekong',
+  'Ideriyn':    'Selenga',
   'Za':         'Mekong',
+  'Srepok':     'Mekong',
 
   // ── Yellow River ────────────────────────────────────────────────────────
   'Wei':        'Huang',
@@ -249,7 +256,7 @@ const TRIBUTARY_OF = {
   'Xun':        'Xi',
 
   // ── Irrawaddy ───────────────────────────────────────────────────────────
-  'Nmai':       'Irrawaddy Delta',
+  'Nmai':       'Irrawaddy',
 
   // ── Indus system ────────────────────────────────────────────────────────
   'Chenab':     'Indus',
@@ -289,7 +296,8 @@ const TRIBUTARY_OF = {
   'Oka':        'Volga',
 
   // ── Danube ──────────────────────────────────────────────────────────────
-  // (major tributaries not in dataset)
+  'Drava':             610,  // Danube tributary
+  'Mureș':             184,  // Tisa tributary
 
   // ── Sénégal ─────────────────────────────────────────────────────────────
   'Bafing':     'Sénégal',
@@ -334,7 +342,7 @@ const TRIBUTARY_OF = {
   // ── Yenisei system ───────────────────────────────────────────────────────
   'Nizhnyaya Tunguska': 'Yenisey',  // Lower Tunguska
   'Podkamennaya Tunguska': 'Yenisey',  // Middle Tunguska
-  'Kem':        'Yenisey',
+  // Kem removed: Kem (Karelia) was incorrectly linked to Yenisey; it flows to the White Sea
   'Kureyka':    'Yenisey',
 
   // ── Ob system ────────────────────────────────────────────────────────────
@@ -374,6 +382,8 @@ const TRIBUTARY_OF = {
   'Sava':       'Danube',
   'Inn':        'Danube',
   'Mur':        'Danube',
+  'Drava':      'Danube',
+  'Mureș':      'Tisa',
   'Drina':      'Sava',
   'Una':        'Sava',
 
@@ -381,6 +391,7 @@ const TRIBUTARY_OF = {
   'Ariège':     'Garonne',
   'Vychegda':   'Severnaya Dvina',
   'Pinega':     'Severnaya Dvina',
+  'Donets':     'Don',       // Seversky Donets
   'Save':       'Garonne',   // French Save (not the Balkan Sava)
   'Tarn':       'Garonne',
   'Vienne':     'Loire',
@@ -411,7 +422,7 @@ const TRIBUTARY_OF = {
   'Vym':        'Vychegda',
   'Seym':       'Desna',
   'Tsna':       'Oka',
-  'Unzha':      'Oka',
+  'Unzha':      'Volga',
   'Tura':       'Tobol',
 
   // ── Congo system (additional) ─────────────────────────────────────────────
