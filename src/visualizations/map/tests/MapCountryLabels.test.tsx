@@ -5,7 +5,7 @@ import type { BackgroundLabel } from '../BackgroundLabel';
 
 function renderWithZoom(scale: number, ui: React.ReactElement) {
   return render(
-    <ZoomPanContext.Provider value={{ scale, clusteredElementIds: new Set(), clusters: [], basePixelsPerViewBoxUnit: 1 }}>
+    <ZoomPanContext.Provider value={{ scale, clusteredElementIds: new Set(), clusters: [], basePixelsPerViewBoxUnit: 1, viewBoxString: '0 0 100 100' }}>
       <svg>{ui}</svg>
     </ZoomPanContext.Provider>,
   );

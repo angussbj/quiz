@@ -10,6 +10,8 @@ export interface ZoomPanState {
   readonly clusters: ReadonlyArray<ElementCluster>;
   /** Pixels per viewBox unit at scale=1, for converting screen sizes to viewBox units */
   readonly basePixelsPerViewBoxUnit: number;
+  /** The SVG viewBox string, for creating additional SVGs with matching coordinates. */
+  readonly viewBoxString: string;
 }
 
 const ZoomPanContext = createContext<ZoomPanState>({
@@ -17,6 +19,7 @@ const ZoomPanContext = createContext<ZoomPanState>({
   clusteredElementIds: new Set(),
   clusters: [],
   basePixelsPerViewBoxUnit: 1,
+  viewBoxString: '0 0 1 1',
 });
 
 export function useZoomPan(): ZoomPanState {

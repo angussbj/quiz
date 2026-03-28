@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
@@ -12,6 +12,8 @@ import type { BackgroundLabel } from './BackgroundLabel';
 import { MapCountryLabels } from './MapCountryLabels';
 import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
+import { MapElementOverlays } from './MapElementOverlays';
+import { useDragDetector } from './useDragDetector';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -24,44 +26,6 @@ const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
 
 /** City dot radius in screen pixels. Converted to viewBox units at render time. */
 const DOT_SCREEN_RADIUS = 5;
-const GROUP_COLORS = [
-  'var(--color-group-1)',
-  'var(--color-group-2)',
-  'var(--color-group-3)',
-  'var(--color-group-4)',
-  'var(--color-group-5)',
-  'var(--color-group-6)',
-  'var(--color-group-7)',
-  'var(--color-group-8)',
-];
-
-function groupColor(group: string | undefined, groups: ReadonlyArray<string>): string {
-  if (!group) return GROUP_COLORS[0];
-  const index = groups.indexOf(group);
-  return GROUP_COLORS[index >= 0 ? index % GROUP_COLORS.length : 0];
-}
-
-
-function stateFillOpacity(state: ElementVisualState | undefined): number {
-  switch (state) {
-    case 'hidden':
-      return 0;
-    case 'correct':
-    case 'correct-second':
-    case 'correct-third':
-    case 'incorrect':
-    case 'missed':
-    case 'highlighted':
-      return 0.3;
-    case 'default':
-      return 0.6;
-    case 'context':
-      return 0.4;
-    default:
-      return 0.15;
-  }
-}
-
 export function MapRenderer({
   elements,
   elementStates,
@@ -82,14 +46,30 @@ export function MapRenderer({
   elementStateColorOverrides,
   autoRevealElementIds,
 }: VisualizationRendererProps) {
-  const uniqueGroups = Array.from(
-    new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
+  const uniqueGroups = useMemo(
+    () => Array.from(new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined))),
+    [elements],
   );
   const showBorders = toggles['showBorders'] !== false;
   // Disable default clustering for stroke-style elements since clustering
   // by centroid doesn't make sense for line features spread across the map.
   const hasStrokeElements = elements.some((e) => isMapElement(e) && e.pathRenderStyle === 'stroke');
   const effectiveClustering = clustering ?? (hasStrokeElements ? undefined : DEFAULT_MAP_CLUSTERING);
+
+  const showRegionColors = toggles['showRegionColors'] === true;
+
+  const overlays = (
+    <MapElementOverlays
+      elements={elements}
+      elementStates={elementStates}
+      uniqueGroups={uniqueGroups}
+      onElementClick={onElementClick}
+      onElementHoverStart={onElementHoverStart}
+      onElementHoverEnd={onElementHoverEnd}
+      showRegionColors={showRegionColors}
+      elementStateColorOverrides={elementStateColorOverrides}
+    />
+  );
 
   return (
     <ZoomPanContainer
@@ -100,6 +80,7 @@ export function MapRenderer({
       initialCameraPosition={initialCameraPosition}
       backgroundPaths={backgroundPaths}
       putInView={putInView}
+      elementOverlays={overlays}
     >
       <MapContent
         elements={elements}
@@ -108,7 +89,6 @@ export function MapRenderer({
         onPositionClick={onPositionClick}
         onElementHoverStart={onElementHoverStart}
         onElementHoverEnd={onElementHoverEnd}
-        uniqueGroups={uniqueGroups}
         showBorders={showBorders}
         toggles={toggles}
         elementToggles={elementToggles}
@@ -121,185 +101,6 @@ export function MapRenderer({
       <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
     </ZoomPanContainer>
   );
-}
-
-/** Split a combined SVG path `d` string into individual subpaths (each starting with M). */
-function splitSubpaths(d: string): ReadonlyArray<string> {
-  const parts: Array<string> = [];
-  const matches = d.matchAll(/M\s/g);
-  const indices: Array<number> = [];
-  for (const m of matches) {
-    if (m.index !== undefined) indices.push(m.index);
-  }
-  for (let i = 0; i < indices.length; i++) {
-    const start = indices[i];
-    const end = i < indices.length - 1 ? indices[i + 1] : d.length;
-    const sub = d.slice(start, end).trim();
-    if (sub) parts.push(sub);
-  }
-  return parts;
-}
-
-/** Stroke width for river paths in viewBox units (matches border stroke-width). */
-const RIVER_STROKE_WIDTH = 0.15;
-
-/** Wider hit area for clicking river paths in viewBox units. */
-const RIVER_HIT_STROKE_WIDTH = 2.0;
-
-function strokeOpacity(state: ElementVisualState | undefined): number {
-  switch (state) {
-    case 'hidden':
-      return 0;
-    case 'correct':
-    case 'correct-second':
-    case 'correct-third':
-    case 'incorrect':
-    case 'missed':
-    case 'highlighted':
-      return 1;
-    case 'default':
-    case 'context':
-      return 0.8;
-    default:
-      return 0.6;
-  }
-}
-
-/** Render shape elements filtered to a specific state (or undefined for default/no-state). */
-function renderShapeElements(
-  elements: VisualizationRendererProps['elements'],
-  elementStates: VisualizationRendererProps['elementStates'],
-  uniqueGroups: ReadonlyArray<string>,
-  clusteredElementIds: ReadonlySet<string>,
-  onElementClick: ((elementId: string) => void) | undefined,
-  targetState: ElementVisualState | undefined,
-  riverStrokeWidth: number,
-  riverHitStrokeWidth: number,
-  showRegionColors: boolean,
-  isDrag: (e: React.MouseEvent) => boolean,
-  elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'],
-  onElementHoverStart?: (elementId: string) => void,
-  onElementHoverEnd?: () => void,
-) {
-  return elements.map((element) => {
-    if (!isMapElement(element) || !element.svgPathData) return null;
-    // Stroke elements (rivers) are hidden when clustered; fill shapes (countries) render regardless
-    if (clusteredElementIds.has(element.id) && element.pathRenderStyle === 'stroke') return null;
-    const state = elementStates[element.id];
-    if (state === 'hidden') return null;
-    if (targetState === undefined) {
-      // Default layer: only elements with no state assigned
-      if (state !== undefined) return null;
-    } else {
-      if (state !== targetState) return null;
-    }
-    const isStrokePath = element.pathRenderStyle === 'stroke';
-    const effectiveState = state;
-
-    // Rivers use a neutral water color instead of region-based group colors
-    const color = effectiveState !== undefined
-      ? (elementStateColorOverrides?.[effectiveState] ?? STATUS_COLORS[effectiveState].main)
-      : (isStrokePath ? 'var(--color-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--color-bg-primary)'));
-    const effectiveRiverStrokeWidth = isStrokePath && effectiveState === 'highlighted' ? riverStrokeWidth * 2.5 : riverStrokeWidth;
-
-    if (isStrokePath) {
-      // Split combined path into subpaths. Z-closed subpaths are lake polygons
-      // embedded by Natural Earth — skip them (lakes are rendered separately).
-      const subpaths = splitSubpaths(element.svgPathData);
-      const strokeD = subpaths.filter((p) => !p.endsWith('Z')).join(' ');
-      const handleClick = onElementClick;
-      const isHoverable = !handleClick && !!onElementHoverStart;
-
-      return (
-        <g key={`shape-${element.id}`} className={handleClick ? styles.interactiveGroup : isHoverable ? styles.hoverableGroup : undefined}>
-          {/* Invisible wider hit area for clicking/hovering (strokes only) */}
-          {(handleClick || isHoverable) && strokeD && (
-            <path
-              d={strokeD}
-              style={{
-                fill: 'none',
-                stroke: 'transparent',
-                strokeWidth: riverHitStrokeWidth,
-                strokeLinecap: 'round',
-                strokeLinejoin: 'round',
-              }}
-              className={handleClick ? styles.interactivePath : styles.hoverablePath}
-              onClick={handleClick ? (e) => {
-                if (isDrag(e)) return;
-                e.stopPropagation();
-                handleClick(element.id);
-              } : undefined}
-              onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-              onMouseLeave={onElementHoverEnd}
-            />
-          )}
-          {/* Visible river strokes */}
-          {strokeD && (
-            <path
-              d={strokeD}
-              style={{
-                fill: 'none',
-                stroke: color,
-                strokeWidth: effectiveRiverStrokeWidth,
-                strokeOpacity: strokeOpacity(effectiveState),
-                strokeLinecap: 'round',
-                strokeLinejoin: 'round',
-              }}
-              pointerEvents={(handleClick || isHoverable) ? 'none' : undefined}
-              className={handleClick ? styles.interactivePath : undefined}
-              onClick={
-                handleClick
-                  ? (e) => {
-                      if (isDrag(e)) return;
-                      e.stopPropagation();
-                      handleClick(element.id);
-                    }
-                  : undefined
-              }
-            />
-          )}
-        </g>
-      );
-    }
-
-    // Context fill shapes render like background borders — non-interactive, muted
-    if (effectiveState === 'context') {
-      return (
-        <path
-          key={`shape-${element.id}`}
-          d={element.svgPathData}
-          fillRule="evenodd"
-          className={styles.borderPath}
-        />
-      );
-    }
-
-    return (
-      <path
-        key={`shape-${element.id}`}
-        d={element.svgPathData}
-        fillRule="evenodd"
-        style={{
-          fill: color,
-          fillOpacity: stateFillOpacity(state),
-          stroke: color,
-          strokeWidth: 0.075,
-        }}
-        className={onElementClick ? styles.interactivePath : onElementHoverStart ? styles.hoverablePath : styles.borderPath}
-        onClick={
-          onElementClick
-            ? (e) => {
-                if (isDrag(e)) return;
-                e.stopPropagation();
-                onElementClick(element.id);
-              }
-            : undefined
-        }
-        onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-        onMouseLeave={onElementHoverEnd}
-      />
-    );
-  });
 }
 
 type LabelPosition = NonNullable<VisualizationElement['labelPosition']>;
@@ -330,31 +131,6 @@ function computeLabelProps(
   return { x, y, textAnchor, dominantBaseline };
 }
 
-/** Threshold in screen pixels above which a pointerdown→click sequence is treated as a drag. */
-const DRAG_THRESHOLD_PX = 5;
-
-/**
- * Tracks whether the last pointer gesture was a drag (pan) rather than a tap/click.
- * Returns an `onPointerDown` handler to attach to the SVG and an `isDrag` predicate
- * to call inside onClick handlers to suppress false-positive clicks after panning.
- */
-function useDragDetector() {
-  const downRef = useRef<{ x: number; y: number } | null>(null);
-
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
-    downRef.current = { x: e.clientX, y: e.clientY };
-  }, []);
-
-  const isDrag = useCallback((e: React.MouseEvent): boolean => {
-    if (!downRef.current) return false;
-    const dx = e.clientX - downRef.current.x;
-    const dy = e.clientY - downRef.current.y;
-    return Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD_PX;
-  }, []);
-
-  return { onPointerDown, isDrag };
-}
-
 interface MapContentProps {
   readonly elements: VisualizationRendererProps['elements'];
   readonly elementStates: VisualizationRendererProps['elementStates'];
@@ -362,7 +138,6 @@ interface MapContentProps {
   readonly onPositionClick?: VisualizationRendererProps['onPositionClick'];
   readonly onElementHoverStart?: (elementId: string) => void;
   readonly onElementHoverEnd?: () => void;
-  readonly uniqueGroups: ReadonlyArray<string>;
   readonly showBorders: boolean;
   readonly toggles: Readonly<Record<string, boolean>>;
   readonly elementToggles: VisualizationRendererProps['elementToggles'];
@@ -372,14 +147,13 @@ interface MapContentProps {
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
 }
 
-function MapContent({
+const MapContent = memo(function MapContent({
   elements,
   elementStates,
   onElementClick,
   onPositionClick,
   onElementHoverStart,
   onElementHoverEnd,
-  uniqueGroups,
   showBorders,
   toggles,
   elementToggles,
@@ -391,7 +165,6 @@ function MapContent({
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { onPointerDown, isDrag } = useDragDetector();
 
-  const showRegionColors = toggles['showRegionColors'] === true;
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
   // Map from element label → element state, used by MapCountryLabels for state-aware colours.
@@ -498,16 +271,8 @@ function MapContent({
         />
       ))}
 
-      {/* Map element shapes (for country quizzes where elements have svgPathData).
-          Rendered in layers: default first, then incorrect, correct, highlighted on top
-          so state-colored shapes aren't obscured by neighbouring borders. */}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, undefined, RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'default', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'incorrect', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'missed', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'context', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'correct', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
-      {renderShapeElements(elements, elementStates, uniqueGroups, clusteredElementIds, onElementClick, 'highlighted', RIVER_STROKE_WIDTH, RIVER_HIT_STROKE_WIDTH, showRegionColors, isDrag, elementStateColorOverrides, onElementHoverStart, onElementHoverEnd)}
+      {/* Shape elements (countries, rivers) are rendered in separate SVG overlays
+          via MapElementOverlays for compositing isolation — see elementOverlays prop. */}
 
       {/* Country/region name labels and flags — background context labels merged with polygon
           quiz element labels, run through unified placement (polylabel, collision detection). */}
@@ -647,4 +412,4 @@ function MapContent({
       })}
     </g>
   );
-}
+});
