@@ -143,7 +143,7 @@ export function useOrderedRecallSession({
       }
       return false;
     },
-    [isFinished, currentElementId, dataRowsById, answerColumn, elementLabelById, clearFlash, advancePrompt],
+    [isFinished, currentElementId, dataRowsById, answerColumn, normalizeOptions, elementLabelById, clearFlash, advancePrompt],
   );
 
   const handleSubmit = useCallback(
@@ -176,7 +176,7 @@ export function useOrderedRecallSession({
         setFlashIncorrect(false);
       }, 600);
     },
-    [isFinished, currentElementId, dataRowsById, answerColumn, elementLabelById, clearFlash, advancePrompt],
+    [isFinished, currentElementId, dataRowsById, answerColumn, normalizeOptions, elementLabelById, clearFlash, advancePrompt],
   );
 
   const handleSkip = useCallback(() => {

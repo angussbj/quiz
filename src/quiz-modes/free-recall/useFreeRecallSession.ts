@@ -124,7 +124,7 @@ export function useFreeRecallSession({
       setLastMatchedElementId(match.elementId);
       setLastMatchedAnswer(elementLabelById.get(match.elementId) ?? match.displayAnswer);
     }
-  }, [answerColumn, elementLabelById, givenUp]);
+  }, [answerColumn, normalizeOptions, elementLabelById, givenUp]);
 
   const handleGiveUp = useCallback(() => {
     setGivenUp(true);
