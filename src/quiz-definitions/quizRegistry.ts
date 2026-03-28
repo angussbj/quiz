@@ -144,6 +144,22 @@ const largestCitiesQuiz = {
   groupFilterColumn: 'region',
   groupFilterLabel: 'Region',
   hideFilteredElements: true,
+  // Cities quiz: country hints in the prompt are too revealing for identify mode.
+  // Only show them in prompted-recall where hints are the point.
+  toggles: capitalsQuizBase.toggles.map((t) =>
+    t.key === 'showPromptCountryNames' ? { ...t, modes: ['prompted-recall'] as const } : t,
+  ),
+  selectToggles: capitalsQuizBase.selectToggles.map((t) =>
+    t.key === 'showPromptFlags' ? { ...t, modes: ['prompted-recall'] as const } : t,
+  ),
+  modeConstraints: {
+    identify: [
+      { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
+    ],
+    'prompted-recall': [
+      { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one prompt hint is required' },
+    ],
+  },
 } satisfies QuizDefinition;
 
 /**
