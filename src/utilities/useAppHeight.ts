@@ -9,13 +9,25 @@ import { useEffect } from 'react';
 export function useAppHeight(): void {
   useEffect(() => {
     function update() {
-      const height = window.visualViewport?.height ?? window.innerHeight;
+      const vv = window.visualViewport;
+      const height = vv?.height ?? window.innerHeight;
       document.documentElement.style.setProperty('--app-height', `${height}px`);
+
+      // iOS scrolls the page when the keyboard opens to keep the input visible.
+      // Since our layout is sized to the visual viewport, we don't need that —
+      // force scroll back to the top so the layout stays pinned.
+      if (window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+      if (vv && vv.offsetTop !== 0) {
+        window.scrollTo(0, 0);
+      }
     }
 
     update();
 
     window.addEventListener('resize', update);
+    window.addEventListener('scroll', update);
     const vv = window.visualViewport;
     if (vv) {
       vv.addEventListener('resize', update);
@@ -24,6 +36,7 @@ export function useAppHeight(): void {
 
     return () => {
       window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update);
       if (vv) {
         vv.removeEventListener('resize', update);
         vv.removeEventListener('scroll', update);
