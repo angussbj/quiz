@@ -19,8 +19,16 @@ export type WikipediaPreviewState =
 const FETCH_DELAY_MS = 400;
 const SHOW_DELAY_MS = 1000;
 
+/**
+ * Stable reference for the idle state. Using the same object reference lets
+ * React bail out of re-renders when setState is called while already idle
+ * (Object.is returns true → no re-render). This prevents unnecessary
+ * re-render cascades during rapid mouse movement across map elements.
+ */
+const IDLE_STATE: WikipediaPreviewState = { status: 'idle' };
+
 export function useWikipediaPreview() {
-  const [state, setState] = useState<WikipediaPreviewState>({ status: 'idle' });
+  const [state, setState] = useState<WikipediaPreviewState>(IDLE_STATE);
 
   // Cache: slug → WikipediaExtract (only successful fetches)
   const cacheRef = useRef(new Map<string, WikipediaExtract>());
@@ -107,7 +115,7 @@ export function useWikipediaPreview() {
     hoveredRef.current = null;
     clearTimers();
     abortFetch();
-    setState({ status: 'idle' });
+    setState(IDLE_STATE);
   }, [clearTimers, abortFetch]);
 
   // Cleanup on unmount
