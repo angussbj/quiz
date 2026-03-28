@@ -118,7 +118,7 @@ export function RecallInputBar({
                       Skip
                     </button>
                   )}
-                  <OverflowMenu items={overflowItems} />
+                  <OverflowMenu items={overflowItems} triggerClassName={styles.skipButton} />
                 </>
               ) : (
                 <>

@@ -11,6 +11,8 @@ interface OverflowMenuProps {
   readonly items: ReadonlyArray<OverflowMenuItem>;
   /** Extra content rendered inside the popover after the menu items. */
   readonly children?: ReactNode;
+  /** Optional class applied to the trigger button so it can match sibling button styles. */
+  readonly triggerClassName?: string;
 }
 
 /**
@@ -20,7 +22,7 @@ interface OverflowMenuProps {
  * Uses position: fixed so the popover escapes overflow: hidden containers
  * (the quiz controls area clips overflow to maintain fixed height).
  */
-export function OverflowMenu({ items, children }: OverflowMenuProps) {
+export function OverflowMenu({ items, children, triggerClassName }: OverflowMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -78,7 +80,7 @@ export function OverflowMenu({ items, children }: OverflowMenuProps) {
     <div ref={containerRef} className={styles.container}>
       <button
         ref={triggerRef}
-        className={styles.trigger}
+        className={triggerClassName ?? styles.trigger}
         onClick={toggle}
         aria-label="More options"
         aria-expanded={open}

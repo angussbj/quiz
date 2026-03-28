@@ -184,7 +184,7 @@ export function TimelineLocateMode({
                     <OverflowMenu items={[
                       { label: 'Reconfigure', onClick: onReconfigure },
                       { label: 'Give up', onClick: handleGiveUp, variant: 'danger' },
-                    ]} />
+                    ]} triggerClassName={styles.controlButton} />
                   </div>
                 ) : (
                   <div className={styles.controls}>

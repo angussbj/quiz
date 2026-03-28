@@ -126,7 +126,7 @@ export function QuizPromptBar({
                 <button className={styles.skipButton} onClick={onSkip} type="button">
                   Skip
                 </button>
-                <OverflowMenu items={overflowItems} />
+                <OverflowMenu items={overflowItems} triggerClassName={styles.skipButton} />
               </div>
             ) : (
               <div className={styles.trailing}>

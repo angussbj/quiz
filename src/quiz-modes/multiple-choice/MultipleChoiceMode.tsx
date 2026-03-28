@@ -89,7 +89,7 @@ export function MultipleChoiceMode({
                 <OverflowMenu items={[
                   { label: 'Reconfigure', onClick: onReconfigure },
                   { label: 'Give up', onClick: quiz.handleGiveUp, variant: 'danger' },
-                ]} />
+                ]} triggerClassName={styles.skipButton} />
               </div>
             ) : (
               <div className={styles.controls}>
