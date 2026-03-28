@@ -492,21 +492,29 @@ function ZoomPanInner({
             preserveAspectRatio="xMidYMid meet"
           >
             {children}
-            <AnimatePresence>
-              {clusters.map((cluster) => (
-                <ClusterBadge
-                  key={cluster.elementIds.join(',')}
-                  cluster={cluster}
-                  matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
-                  elementStates={elementStates}
-                  scale={quantisedScale}
-                  basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
-                  onClick={handleClusterClick}
-                />
-              ))}
-            </AnimatePresence>
           </svg>
           {elementOverlays}
+          {clusters.length > 0 && (
+            <svg
+              className={styles.overlaySvg}
+              viewBox={viewBoxString}
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <AnimatePresence>
+                {clusters.map((cluster) => (
+                  <ClusterBadge
+                    key={cluster.elementIds.join(',')}
+                    cluster={cluster}
+                    matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
+                    elementStates={elementStates}
+                    scale={quantisedScale}
+                    basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
+                    onClick={handleClusterClick}
+                  />
+                ))}
+              </AnimatePresence>
+            </svg>
+          )}
         </div>
       </TransformComponent>
       {showResetButton && (
