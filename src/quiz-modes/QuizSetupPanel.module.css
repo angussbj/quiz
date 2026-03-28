@@ -249,6 +249,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background var(--transition-fast);
+  width: 100%;
 }
 
 .startButton:hover {
@@ -269,7 +270,4 @@
     background: linear-gradient(transparent, var(--color-bg-primary) 30%);
   }
 
-  .startButton {
-    width: 100%;
-  }
 }
