@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
@@ -13,6 +13,7 @@ import { MapCountryLabels } from './MapCountryLabels';
 import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
 import { MapElementOverlays } from './MapElementOverlays';
+import { useDragDetector } from './useDragDetector';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -128,31 +129,6 @@ function computeLabelProps(
     : 'central' as const;
 
   return { x, y, textAnchor, dominantBaseline };
-}
-
-/** Threshold in screen pixels above which a pointerdown→click sequence is treated as a drag. */
-const DRAG_THRESHOLD_PX = 5;
-
-/**
- * Tracks whether the last pointer gesture was a drag (pan) rather than a tap/click.
- * Returns an `onPointerDown` handler to attach to the SVG and an `isDrag` predicate
- * to call inside onClick handlers to suppress false-positive clicks after panning.
- */
-function useDragDetector() {
-  const downRef = useRef<{ x: number; y: number } | null>(null);
-
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
-    downRef.current = { x: e.clientX, y: e.clientY };
-  }, []);
-
-  const isDrag = useCallback((e: React.MouseEvent): boolean => {
-    if (!downRef.current) return false;
-    const dx = e.clientX - downRef.current.x;
-    const dy = e.clientY - downRef.current.y;
-    return Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD_PX;
-  }, []);
-
-  return { onPointerDown, isDrag };
 }
 
 interface MapContentProps {

@@ -1,17 +1,18 @@
 /**
- * SPIKE: Renders each quiz shape element in its own SVG for compositing isolation.
+ * Renders each quiz shape element in its own SVG for compositing isolation.
  * This prevents CSS hover effects on one element from triggering repaints of others.
  *
  * Each element SVG uses `contain: strict` and `will-change: opacity` to hint the
  * browser to isolate repaints to GPU compositing layers.
  */
-import { memo, useCallback, useRef } from 'react';
+import { memo } from 'react';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
 import { useZoomPan } from '../ZoomPanContext';
 import { isMapElement } from './MapElement';
 import type { MapElement } from './MapElement';
+import { useDragDetector } from './useDragDetector';
 import styles from './MapRenderer.module.css';
 
 const GROUP_COLORS = [
@@ -89,7 +90,6 @@ function splitSubpaths(d: string): ReadonlyArray<string> {
 
 const RIVER_STROKE_WIDTH = 0.15;
 const RIVER_HIT_STROKE_WIDTH = 2.0;
-const DRAG_THRESHOLD_PX = 5;
 
 /** Each overlay SVG is absolutely positioned, with paint containment for GPU isolation. */
 const overlayStyle: React.CSSProperties = {
@@ -176,18 +176,7 @@ const OverlayElement = memo(function OverlayElement({
   showRegionColors,
   elementStateColorOverrides,
 }: OverlayElementProps) {
-  const downRef = useRef<{ x: number; y: number } | null>(null);
-
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
-    downRef.current = { x: e.clientX, y: e.clientY };
-  }, []);
-
-  const isDrag = useCallback((e: React.MouseEvent): boolean => {
-    if (!downRef.current) return false;
-    const dx = e.clientX - downRef.current.x;
-    const dy = e.clientY - downRef.current.y;
-    return Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD_PX;
-  }, []);
+  const { onPointerDown, isDrag } = useDragDetector();
 
   const isStrokePath = element.pathRenderStyle === 'stroke';
   const color = (state !== undefined && state !== 'hidden')
