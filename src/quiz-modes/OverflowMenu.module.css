@@ -26,9 +26,6 @@
 }
 
 .popover {
-  position: absolute;
-  bottom: calc(100% + var(--spacing-xs));
-  right: 0;
   display: flex;
   flex-direction: column;
   min-width: 140px;

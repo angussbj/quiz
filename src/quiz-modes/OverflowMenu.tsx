@@ -16,13 +16,40 @@ interface OverflowMenuProps {
 /**
  * A "..." button that opens a small popover with action items.
  * Used to collapse buttons on narrow screens.
+ *
+ * Uses position: fixed so the popover escapes overflow: hidden containers
+ * (the quiz controls area clips overflow to maintain fixed height).
  */
 export function OverflowMenu({ items, children }: OverflowMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
 
   const toggle = useCallback(() => {
-    setOpen((prev) => !prev);
+    setOpen((prev) => {
+      const next = !prev;
+      if (next && triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
+        const spaceAbove = rect.top;
+        const popoverEstimate = 140;
+        const openDown = spaceAbove < popoverEstimate;
+        if (openDown) {
+          setPopoverStyle({
+            position: 'fixed',
+            top: rect.bottom + 4,
+            right: window.innerWidth - rect.right,
+          });
+        } else {
+          setPopoverStyle({
+            position: 'fixed',
+            bottom: window.innerHeight - rect.top + 4,
+            right: window.innerWidth - rect.right,
+          });
+        }
+      }
+      return next;
+    });
   }, []);
 
   // Close on click outside
@@ -50,6 +77,7 @@ export function OverflowMenu({ items, children }: OverflowMenuProps) {
   return (
     <div ref={containerRef} className={styles.container}>
       <button
+        ref={triggerRef}
         className={styles.trigger}
         onClick={toggle}
         aria-label="More options"
@@ -59,7 +87,7 @@ export function OverflowMenu({ items, children }: OverflowMenuProps) {
         &middot;&middot;&middot;
       </button>
       {open && (
-        <div className={styles.popover}>
+        <div className={styles.popover} style={popoverStyle}>
           {items.map((item) => (
             <button
               key={item.label}
