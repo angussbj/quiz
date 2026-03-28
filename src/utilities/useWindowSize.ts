@@ -17,7 +17,11 @@ export function useWindowSize(): WindowSize {
 
   useEffect(() => {
     function update() {
-      setSize({ width: window.innerWidth, height: window.innerHeight });
+      const vv = window.visualViewport;
+      setSize({
+        width: vv?.width ?? window.innerWidth,
+        height: vv?.height ?? window.innerHeight,
+      });
     }
 
     window.addEventListener('resize', update);

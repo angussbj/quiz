@@ -930,7 +930,7 @@ function FloatingSidebar({ children }: { readonly children: React.ReactNode }) {
   useEffect(() => {
     if (!open) return;
     function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (containerRef.current && e.target instanceof Node && !containerRef.current.contains(e.target)) {
         setOpen(false);
       }
     }
@@ -952,6 +952,7 @@ function FloatingSidebar({ children }: { readonly children: React.ReactNode }) {
         onClick={() => setOpen((prev) => !prev)}
         aria-label="View options"
         aria-expanded={open}
+        type="button"
       >
         ⋯
       </button>
