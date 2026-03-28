@@ -10,6 +10,8 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: color var(--transition-fast), border-color var(--transition-fast);
+  margin-left: var(--spacing-sm);
+  flex-shrink: 0;
 }
 
 .button:hover {
@@ -21,4 +23,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .button {
+    width: 28px;
+    height: 28px;
+  }
+
+  .iconWrapper svg {
+    width: 14px;
+    height: 14px;
+  }
 }

@@ -177,11 +177,15 @@ export function TimelineLocateMode({
               )}
               {!quiz.isFinished && (
                 isNarrow ? (
-                  <OverflowMenu items={[
-                    { label: 'Skip', onClick: handleSkip },
-                    { label: 'Reconfigure', onClick: onReconfigure },
-                    { label: 'Give up', onClick: handleGiveUp, variant: 'danger' },
-                  ]} />
+                  <div className={styles.controls}>
+                    <button className={styles.controlButton} onClick={handleSkip} type="button">
+                      Skip
+                    </button>
+                    <OverflowMenu items={[
+                      { label: 'Reconfigure', onClick: onReconfigure },
+                      { label: 'Give up', onClick: handleGiveUp, variant: 'danger' },
+                    ]} />
+                  </div>
                 ) : (
                   <div className={styles.controls}>
                     <button className={styles.reconfigureButton} onClick={onReconfigure}>

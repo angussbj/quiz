@@ -50,10 +50,9 @@ export function QuizPromptBar({
   const { width } = useWindowSize();
   const isNarrow = width < NARROW_WIDTH;
   const overflowItems = useMemo(() => [
-    { label: 'Skip', onClick: onSkip },
     { label: 'Reconfigure', onClick: onReconfigure },
     { label: 'Give up', onClick: onGiveUp, variant: 'danger' as const },
-  ], [onSkip, onReconfigure, onGiveUp]);
+  ], [onReconfigure, onGiveUp]);
   const progressPercent = progressTotal > 0 ? (progressCurrent / progressTotal) * 100 : 0;
 
   // When the full prompt text overflows its container (white-space: nowrap + overflow: hidden),
@@ -123,7 +122,12 @@ export function QuizPromptBar({
               </div>
             </div>
             {isNarrow ? (
-              <OverflowMenu items={overflowItems} />
+              <div className={styles.trailing}>
+                <button className={styles.skipButton} onClick={onSkip} type="button">
+                  Skip
+                </button>
+                <OverflowMenu items={overflowItems} />
+              </div>
             ) : (
               <div className={styles.trailing}>
                 {scoreLabel && <span className={styles.scoreLabel}>{scoreLabel}</span>}

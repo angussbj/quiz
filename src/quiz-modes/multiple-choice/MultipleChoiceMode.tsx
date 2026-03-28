@@ -82,11 +82,15 @@ export function MultipleChoiceMode({
               {quiz.promptIndex + 1}/{quiz.totalPrompts}
             </span>
             {isNarrow ? (
-              <OverflowMenu items={[
-                { label: 'Skip', onClick: quiz.handleSkip },
-                { label: 'Reconfigure', onClick: onReconfigure },
-                { label: 'Give up', onClick: quiz.handleGiveUp, variant: 'danger' },
-              ]} />
+              <div className={styles.controls}>
+                <button className={styles.skipButton} onClick={quiz.handleSkip} type="button">
+                  Skip
+                </button>
+                <OverflowMenu items={[
+                  { label: 'Reconfigure', onClick: onReconfigure },
+                  { label: 'Give up', onClick: quiz.handleGiveUp, variant: 'danger' },
+                ]} />
+              </div>
             ) : (
               <div className={styles.controls}>
                 <button

@@ -66,11 +66,10 @@ export function RecallInputBar({
   const isNarrow = width < NARROW_WIDTH;
   const overflowItems = useMemo(() => {
     const items: Array<{ label: string; onClick: () => void; variant?: 'default' | 'danger' }> = [];
-    if (onSkip) items.push({ label: 'Skip', onClick: onSkip });
     items.push({ label: 'Reconfigure', onClick: onReconfigure });
     items.push({ label: 'Give up', onClick: onGiveUp, variant: 'danger' });
     return items;
-  }, [onSkip, onReconfigure, onGiveUp]);
+  }, [onReconfigure, onGiveUp]);
   const progressPercent = totalCount > 0 ? (correctCount / totalCount) * 100 : 0;
   const inputClass = flashIncorrect
     ? `${styles.answerInput} ${styles.answerInputIncorrect}`
@@ -113,7 +112,14 @@ export function RecallInputBar({
                 spellCheck={false}
               />
               {isNarrow ? (
-                <OverflowMenu items={overflowItems} />
+                <>
+                  {onSkip && (
+                    <button className={styles.skipButton} onClick={onSkip} type="button">
+                      Skip
+                    </button>
+                  )}
+                  <OverflowMenu items={overflowItems} />
+                </>
               ) : (
                 <>
                   <button className={styles.reconfigureButton} onClick={onReconfigure} type="button">
