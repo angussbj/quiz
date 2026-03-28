@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { ThemeToggle } from './ThemeToggle';
 import { Breadcrumbs } from './Breadcrumbs';
+import { useAppHeight } from '@/utilities/useAppHeight';
 import styles from './Layout.module.css';
 
 interface LayoutProps {
@@ -9,6 +10,8 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
+  useAppHeight();
+
   return (
     <div className={styles.layout}>
       <header className={styles.header}>

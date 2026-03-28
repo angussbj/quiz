@@ -313,15 +313,17 @@ export function QuizSetupPanel({
           </p>
         )}
 
-        <motion.button
-          className={styles.startButton}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onStart}
-          disabled={isEmptyQuiz}
-        >
-          Start Quiz
-        </motion.button>
+        <div className={styles.startButtonWrapper}>
+          <motion.button
+            className={styles.startButton}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onStart}
+            disabled={isEmptyQuiz}
+          >
+            Start Quiz
+          </motion.button>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,11 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InlineResults } from './InlineResults';
+import { OverflowMenu } from './OverflowMenu';
 import type { ReviewResult } from './QuizModeProps';
 import { IdentifyPromptFields, type PromptField } from './identify/IdentifyPromptFields';
+import { useWindowSize } from '@/utilities/useWindowSize';
+import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './RecallInputBar.module.css';
 
 interface RecallInputBarProps {
@@ -59,6 +62,14 @@ export function RecallInputBar({
   reviewing,
   reviewResult,
 }: RecallInputBarProps) {
+  const { width } = useWindowSize();
+  const isNarrow = width < NARROW_WIDTH;
+  const overflowItems = useMemo(() => {
+    const items: Array<{ label: string; onClick: () => void; variant?: 'default' | 'danger' }> = [];
+    items.push({ label: 'Reconfigure', onClick: onReconfigure });
+    items.push({ label: 'Give up', onClick: onGiveUp, variant: 'danger' });
+    return items;
+  }, [onReconfigure, onGiveUp]);
   const progressPercent = totalCount > 0 ? (correctCount / totalCount) * 100 : 0;
   const inputClass = flashIncorrect
     ? `${styles.answerInput} ${styles.answerInputIncorrect}`
@@ -100,17 +111,30 @@ export function RecallInputBar({
                 autoCorrect="off"
                 spellCheck={false}
               />
-              <button className={styles.reconfigureButton} onClick={onReconfigure} type="button">
-                <span aria-hidden="true">‹</span> Reconfigure
-              </button>
-              {onSkip && (
-                <button className={styles.skipButton} onClick={onSkip} type="button">
-                  Skip
-                </button>
+              {isNarrow ? (
+                <>
+                  {onSkip && (
+                    <button className={styles.skipButton} onClick={onSkip} type="button">
+                      Skip
+                    </button>
+                  )}
+                  <OverflowMenu items={overflowItems} triggerClassName={styles.skipButton} />
+                </>
+              ) : (
+                <>
+                  <button className={styles.reconfigureButton} onClick={onReconfigure} type="button">
+                    <span aria-hidden="true">‹</span> Reconfigure
+                  </button>
+                  {onSkip && (
+                    <button className={styles.skipButton} onClick={onSkip} type="button">
+                      Skip
+                    </button>
+                  )}
+                  <button className={styles.giveUpButton} onClick={onGiveUp} type="button">
+                    Give up
+                  </button>
+                </>
               )}
-              <button className={styles.giveUpButton} onClick={onGiveUp} type="button">
-                Give up
-              </button>
             </div>
           )}
 

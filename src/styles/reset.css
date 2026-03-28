@@ -10,10 +10,11 @@ html {
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  overflow: hidden;
 }
 
 body {
-  min-height: 100vh;
+  overflow: hidden;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }

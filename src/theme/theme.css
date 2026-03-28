@@ -129,3 +129,14 @@
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
+
+/* ─── Responsive overrides ──────────────────────────────────────────────────
+   Width breakpoints: 480px (narrow), 640px (medium)
+   ────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  :root {
+    --spacing-lg: 1rem;
+  }
+}
+

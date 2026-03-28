@@ -12,6 +12,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  /* Bottom padding ensures content isn't hidden behind the sticky button */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .title {
@@ -247,8 +249,25 @@
   font-weight: 600;
   cursor: pointer;
   transition: background var(--transition-fast);
+  width: 100%;
 }
 
 .startButton:hover {
   background: var(--color-accent-hover);
+}
+
+@media (max-height: 700px) {
+  .container {
+    padding-top: var(--spacing-md);
+    padding-bottom: 0;
+  }
+
+  .startButtonWrapper {
+    position: sticky;
+    bottom: 0;
+    padding: var(--spacing-sm) 0;
+    padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom, 0));
+    background: linear-gradient(transparent, var(--color-bg-primary) 30%);
+  }
+
 }
