@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
@@ -82,8 +82,9 @@ export function MapRenderer({
   elementStateColorOverrides,
   autoRevealElementIds,
 }: VisualizationRendererProps) {
-  const uniqueGroups = Array.from(
-    new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined)),
+  const uniqueGroups = useMemo(
+    () => Array.from(new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined))),
+    [elements],
   );
   const showBorders = toggles['showBorders'] !== false;
   // Disable default clustering for stroke-style elements since clustering
@@ -372,7 +373,7 @@ interface MapContentProps {
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
 }
 
-function MapContent({
+const MapContent = memo(function MapContent({
   elements,
   elementStates,
   onElementClick,
@@ -647,4 +648,4 @@ function MapContent({
       })}
     </g>
   );
-}
+});
