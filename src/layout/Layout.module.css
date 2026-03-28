@@ -1,6 +1,6 @@
 .layout {
   height: 100vh;
-  height: 100dvh;
+  height: var(--app-height, 100vh);
   display: flex;
   flex-direction: column;
   overflow: hidden;
