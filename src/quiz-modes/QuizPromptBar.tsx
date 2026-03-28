@@ -1,6 +1,9 @@
-import { type ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { IdentifyPromptFields, type PromptField } from './identify/IdentifyPromptFields';
+import { OverflowMenu } from './OverflowMenu';
+import { useWindowSize } from '@/utilities/useWindowSize';
+import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './QuizPromptBar.module.css';
 
 interface QuizPromptBarProps {
@@ -44,6 +47,13 @@ export function QuizPromptBar({
   isFinished,
   finishedContent,
 }: QuizPromptBarProps) {
+  const { width } = useWindowSize();
+  const isNarrow = width < NARROW_WIDTH;
+  const overflowItems = useMemo(() => [
+    { label: 'Skip', onClick: onSkip },
+    { label: 'Reconfigure', onClick: onReconfigure },
+    { label: 'Give up', onClick: onGiveUp, variant: 'danger' as const },
+  ], [onSkip, onReconfigure, onGiveUp]);
   const progressPercent = progressTotal > 0 ? (progressCurrent / progressTotal) * 100 : 0;
 
   // When the full prompt text overflows its container (white-space: nowrap + overflow: hidden),
@@ -112,18 +122,22 @@ export function QuizPromptBar({
                 </span>
               </div>
             </div>
-            <div className={styles.trailing}>
-              {scoreLabel && <span className={styles.scoreLabel}>{scoreLabel}</span>}
-              <button className={styles.reconfigureButton} onClick={onReconfigure} type="button">
-                <span aria-hidden="true">‹</span> Reconfigure
-              </button>
-              <button className={styles.skipButton} onClick={onSkip} type="button">
-                Skip
-              </button>
-              <button className={styles.giveUpButton} onClick={onGiveUp} type="button">
-                Give up
-              </button>
-            </div>
+            {isNarrow ? (
+              <OverflowMenu items={overflowItems} />
+            ) : (
+              <div className={styles.trailing}>
+                {scoreLabel && <span className={styles.scoreLabel}>{scoreLabel}</span>}
+                <button className={styles.reconfigureButton} onClick={onReconfigure} type="button">
+                  <span aria-hidden="true">‹</span> Reconfigure
+                </button>
+                <button className={styles.skipButton} onClick={onSkip} type="button">
+                  Skip
+                </button>
+                <button className={styles.giveUpButton} onClick={onGiveUp} type="button">
+                  Give up
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

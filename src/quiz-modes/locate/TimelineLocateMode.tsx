@@ -6,8 +6,11 @@ import { formatTimestamp } from '@/visualizations/timeline/TimelineTimestamp';
 import { resolveElementToggles, type ElementQuizState } from '../resolveElementToggles';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { InlineResults } from '../InlineResults';
+import { OverflowMenu } from '../OverflowMenu';
 import { useTimelineLocateQuiz } from './useTimelineLocateQuiz';
 import { useRevealPulse } from '@/visualizations/useRevealPulse';
+import { useWindowSize } from '@/utilities/useWindowSize';
+import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './TimelineLocateMode.module.css';
 
 export function TimelineLocateMode({
@@ -26,6 +29,8 @@ export function TimelineLocateMode({
   timeScale,
   onReconfigure,
 }: QuizModeProps) {
+  const { width } = useWindowSize();
+  const isNarrow = width < NARROW_WIDTH;
   const rawPrecision = selectValues?.['datePrecision'];
   const datePrecision: DatePrecision =
     rawPrecision === 'year' || rawPrecision === 'month' || rawPrecision === 'day'
@@ -171,17 +176,25 @@ export function TimelineLocateMode({
                 </div>
               )}
               {!quiz.isFinished && (
-                <div className={styles.controls}>
-                  <button className={styles.reconfigureButton} onClick={onReconfigure}>
-                    <span aria-hidden="true">‹</span> Reconfigure
-                  </button>
-                  <button className={styles.controlButton} onClick={handleSkip}>
-                    Skip
-                  </button>
-                  <button className={styles.controlButton} onClick={handleGiveUp}>
-                    Give up
-                  </button>
-                </div>
+                isNarrow ? (
+                  <OverflowMenu items={[
+                    { label: 'Skip', onClick: handleSkip },
+                    { label: 'Reconfigure', onClick: onReconfigure },
+                    { label: 'Give up', onClick: handleGiveUp, variant: 'danger' },
+                  ]} />
+                ) : (
+                  <div className={styles.controls}>
+                    <button className={styles.reconfigureButton} onClick={onReconfigure}>
+                      <span aria-hidden="true">‹</span> Reconfigure
+                    </button>
+                    <button className={styles.controlButton} onClick={handleSkip}>
+                      Skip
+                    </button>
+                    <button className={styles.controlButton} onClick={handleGiveUp}>
+                      Give up
+                    </button>
+                  </div>
+                )
               )}
             </div>
 

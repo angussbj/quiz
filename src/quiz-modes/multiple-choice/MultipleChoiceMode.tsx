@@ -3,7 +3,10 @@ import { motion } from 'framer-motion';
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { QuizModeProps } from '../QuizModeProps';
 import { isFlagGridElement } from '@/visualizations/flag-grid/FlagGridElement';
+import { OverflowMenu } from '../OverflowMenu';
 import { useMultipleChoiceQuiz } from './useMultipleChoiceQuiz';
+import { useWindowSize } from '@/utilities/useWindowSize';
+import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './MultipleChoiceMode.module.css';
 
 function renderChoice(element: VisualizationElement): React.ReactNode {
@@ -23,6 +26,8 @@ export function MultipleChoiceMode({
   forceGiveUp = false,
   onReconfigure,
 }: QuizModeProps) {
+  const { width } = useWindowSize();
+  const isNarrow = width < NARROW_WIDTH;
   const quiz = useMultipleChoiceQuiz(elements);
 
   const onFinishRef = useRef(onFinish);
@@ -76,29 +81,37 @@ export function MultipleChoiceMode({
             <span className={styles.progress}>
               {quiz.promptIndex + 1}/{quiz.totalPrompts}
             </span>
-            <div className={styles.controls}>
-              <button
-                className={styles.reconfigureButton}
-                onClick={onReconfigure}
-                type="button"
-              >
-                <span aria-hidden="true">‹</span> Reconfigure
-              </button>
-              <button
-                className={styles.skipButton}
-                onClick={quiz.handleSkip}
-                type="button"
-              >
-                Skip
-              </button>
-              <button
-                className={styles.giveUpButton}
-                onClick={quiz.handleGiveUp}
-                type="button"
-              >
-                Give up
-              </button>
-            </div>
+            {isNarrow ? (
+              <OverflowMenu items={[
+                { label: 'Skip', onClick: quiz.handleSkip },
+                { label: 'Reconfigure', onClick: onReconfigure },
+                { label: 'Give up', onClick: quiz.handleGiveUp, variant: 'danger' },
+              ]} />
+            ) : (
+              <div className={styles.controls}>
+                <button
+                  className={styles.reconfigureButton}
+                  onClick={onReconfigure}
+                  type="button"
+                >
+                  <span aria-hidden="true">‹</span> Reconfigure
+                </button>
+                <button
+                  className={styles.skipButton}
+                  onClick={quiz.handleSkip}
+                  type="button"
+                >
+                  Skip
+                </button>
+                <button
+                  className={styles.giveUpButton}
+                  onClick={quiz.handleGiveUp}
+                  type="button"
+                >
+                  Give up
+                </button>
+              </div>
+            )}
           </div>
 
           <div className={styles.choicesGrid}>
