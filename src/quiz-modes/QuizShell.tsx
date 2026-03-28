@@ -6,7 +6,7 @@ import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
 import { countFilteredElements } from './countFilteredElements';
-import { QuizActiveContext } from './QuizActiveContext';
+import { useQuizActiveRegister } from './QuizActiveContext';
 import styles from './QuizShell.module.css';
 
 export interface ElementRange {
@@ -194,14 +194,18 @@ export function QuizShell({
     return { ...toggleState.values, ...result.forcedValues };
   }, [modeConstraints, selectedMode, toggleState.values, toggleState.selectValues]);
 
-  const quizActiveState = useMemo(() => ({
-    isActive: phase === 'active',
-    onReconfigure: handleReconfigure,
-  }), [phase, handleReconfigure]);
+  const { setQuizActive, clearQuizActive } = useQuizActiveRegister();
+  useEffect(() => {
+    if (phase === 'active') {
+      setQuizActive(handleReconfigure);
+    } else {
+      clearQuizActive();
+    }
+    return () => clearQuizActive();
+  }, [phase, handleReconfigure, setQuizActive, clearQuizActive]);
 
   if (phase === 'configuring') {
     return (
-      <QuizActiveContext.Provider value={quizActiveState}>
       <QuizSetupPanel
         title={title}
         description={description}
@@ -235,7 +239,6 @@ export function QuizShell({
         selectValues={toggleState.selectValues}
         onSelectChange={handleSelectChange}
       />
-      </QuizActiveContext.Provider>
     );
   }
 
@@ -254,12 +257,10 @@ export function QuizShell({
   };
 
   return (
-    <QuizActiveContext.Provider value={quizActiveState}>
-      <div className={styles.quizContainer}>
-        <div key={quizKey} className={styles.quizContent}>
-          {children(config)}
-        </div>
+    <div className={styles.quizContainer}>
+      <div key={quizKey} className={styles.quizContent}>
+        {children(config)}
       </div>
-    </QuizActiveContext.Provider>
+    </div>
   );
 }

@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { Breadcrumbs } from '../Breadcrumbs';
-import { QuizActiveContext } from '@/quiz-modes/QuizActiveContext';
+import { QuizActiveProvider, useQuizActiveRegister } from '@/quiz-modes/QuizActiveContext';
 
 function renderBreadcrumbs(path: string) {
   return render(
@@ -12,12 +13,21 @@ function renderBreadcrumbs(path: string) {
   );
 }
 
+function SetQuizActive({ onReconfigure }: { readonly onReconfigure: () => void }) {
+  const { setQuizActive } = useQuizActiveRegister();
+  useEffect(() => {
+    setQuizActive(onReconfigure);
+  }, [setQuizActive, onReconfigure]);
+  return null;
+}
+
 function renderBreadcrumbsWithQuizActive(path: string, onReconfigure: () => void) {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <QuizActiveContext.Provider value={{ isActive: true, onReconfigure }}>
+      <QuizActiveProvider>
+        <SetQuizActive onReconfigure={onReconfigure} />
         <Breadcrumbs />
-      </QuizActiveContext.Provider>
+      </QuizActiveProvider>
     </MemoryRouter>,
   );
 }
