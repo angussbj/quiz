@@ -176,9 +176,8 @@ export function ActiveQuiz({
         // Apply range and group filters to non-tributary/distributary/segment rows
         let passes = true;
         if (hasRangeFilter) {
-          const value = parseInt(row[rangeColumn] ?? '0', 10);
-          const { min, max } = config.elementRange;
-          if (value < min || value > max) passes = false;
+          const value = parseInt(row[rangeColumn] ?? '', 10);
+          if (Number.isNaN(value) || value < config.elementRange.min || value > config.elementRange.max) passes = false;
         }
         if (passes && hasGroupFilter && config.selectedGroups) {
           const group = row[groupFilterColumn] ?? '';

@@ -619,17 +619,11 @@ function groupsAreConnectable(
 
 /** Check if two name sets are similar enough to consider merging. */
 function namesAreSimilar(aNamesSet: Set<string>, bNamesSet: Set<string>): boolean {
-  // Direct overlap in name variants
+  // Only merge groups that share an exact name variant.
+  // Previously used a 3-char prefix heuristic (e.g. "Mis" matching Mississippi
+  // and Missouri) which incorrectly merged distinct rivers.
   for (const n of aNamesSet) {
     if (bNamesSet.has(n)) return true;
-  }
-  // Check if any pair shares a common prefix of 3+ chars (handles Rhein/Rhine, etc.)
-  for (const a of aNamesSet) {
-    for (const b of bNamesSet) {
-      const minLen = Math.min(a.length, b.length);
-      const prefixLen = Math.min(3, minLen);
-      if (prefixLen >= 3 && a.slice(0, prefixLen) === b.slice(0, prefixLen)) return true;
-    }
   }
   return false;
 }
