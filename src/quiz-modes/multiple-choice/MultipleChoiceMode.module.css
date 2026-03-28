@@ -95,6 +95,19 @@
   justify-items: center;
 }
 
+@media (max-width: 480px) {
+  .choicesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+
+  .promptBar {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+}
+
 .choiceCard {
   display: flex;
   align-items: center;

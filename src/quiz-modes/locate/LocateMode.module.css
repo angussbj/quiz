@@ -16,6 +16,19 @@
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
+  padding: 0 var(--spacing-sm);
+}
+
+@media (max-height: 500px) {
+  .controlsArea {
+    height: 3.5rem;
+  }
+}
+
+@media (max-height: 360px) {
+  .controlsArea {
+    height: 2.75rem;
+  }
 }
 
 /* --- Visualization area --- */

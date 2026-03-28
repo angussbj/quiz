@@ -56,3 +56,13 @@
   display: flex;
   flex-direction: column;
 }
+
+@media (max-width: 480px) {
+  .headerContent {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .siteTitle {
+    font-size: var(--font-size-base);
+  }
+}
