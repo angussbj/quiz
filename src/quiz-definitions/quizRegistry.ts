@@ -25,10 +25,10 @@ const capitalsQuizBase = {
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['identify', 'prompted-recall'] } as const,
+    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['prompted-recall'] } as const,
   ],
   selectToggles: [
-    { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: 'off', group: 'display', modes: ['identify', 'prompted-recall'], promptField: { type: 'flag', column: 'country_code' }, options: [
+    { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: 'off', group: 'display', modes: ['prompted-recall'], promptField: { type: 'flag', column: 'country_code' }, options: [
       { value: 'off', label: 'Off' },
       { value: 'hint', label: 'Hint' },
       { value: 'on', label: 'On' },
@@ -49,7 +49,6 @@ const capitalsQuizBase = {
   modeConstraints: {
     identify: [
       { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
-      { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one prompt hint is required' },
     ],
     'prompted-recall': [
       { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one prompt hint is required' },
@@ -144,22 +143,6 @@ const largestCitiesQuiz = {
   groupFilterColumn: 'region',
   groupFilterLabel: 'Region',
   hideFilteredElements: true,
-  // Cities quiz: country hints in the prompt are too revealing for identify mode.
-  // Only show them in prompted-recall where hints are the point.
-  toggles: capitalsQuizBase.toggles.map((t) =>
-    t.key === 'showPromptCountryNames' ? { ...t, modes: ['prompted-recall'] as const } : t,
-  ),
-  selectToggles: capitalsQuizBase.selectToggles.map((t) =>
-    t.key === 'showPromptFlags' ? { ...t, modes: ['prompted-recall'] as const } : t,
-  ),
-  modeConstraints: {
-    identify: [
-      { type: 'forced' as const, key: 'showCityDots', forcedValue: true, reason: 'City dots are required for clicking in identify mode' },
-    ],
-    'prompted-recall': [
-      { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one prompt hint is required' },
-    ],
-  },
 } satisfies QuizDefinition;
 
 /**
