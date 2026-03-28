@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useCallback, useEffect } from 'react';
+import { useRef, useState, useMemo, useCallback, useEffect, useLayoutEffect } from 'react';
 import type { ReactNode } from 'react';
 import {
   TransformWrapper,
@@ -251,6 +251,42 @@ function ZoomPanInner({
     }
   });
 
+  // Compensate for container resize so the visual center stays stable.
+  // Without this, react-zoom-pan-pinch keeps the same pixel-space transform
+  // while the SVG's preserveAspectRatio shifts the content, causing drift.
+  const prevContainerSizeRef = useRef(containerSize);
+  useLayoutEffect(() => {
+    const prev = prevContainerSizeRef.current;
+    prevContainerSizeRef.current = containerSize;
+
+    if (prev.width === 0 || prev.height === 0) return;
+    if (prev.width === containerSize.width && prev.height === containerSize.height) return;
+
+    const { posX, posY, scale } = currentTransformRef.current;
+
+    const oldBppu = Math.min(prev.width / viewBox.width, prev.height / viewBox.height);
+    const newBppu = Math.min(containerSize.width / viewBox.width, containerSize.height / viewBox.height);
+
+    const oldOffsetX = (prev.width - viewBox.width * oldBppu) / 2;
+    const oldOffsetY = (prev.height - viewBox.height * oldBppu) / 2;
+    const newOffsetX = (containerSize.width - viewBox.width * newBppu) / 2;
+    const newOffsetY = (containerSize.height - viewBox.height * newBppu) / 2;
+
+    // What viewBox point was at the screen center?
+    const centerPxX = (prev.width / 2 - posX) / scale;
+    const centerPxY = (prev.height / 2 - posY) / scale;
+    const centerVbX = (centerPxX - oldOffsetX) / oldBppu + viewBox.x;
+    const centerVbY = (centerPxY - oldOffsetY) / oldBppu + viewBox.y;
+
+    // Compute new transform to keep that viewBox point centered
+    const newContentX = newOffsetX + (centerVbX - viewBox.x) * newBppu;
+    const newContentY = newOffsetY + (centerVbY - viewBox.y) * newBppu;
+    const newPosX = containerSize.width / 2 - newContentX * scale;
+    const newPosY = containerSize.height / 2 - newContentY * scale;
+
+    setTransform(newPosX, newPosY, scale, 0);
+  }, [containerSize, viewBox, setTransform]);
+
   // Show reset when the camera bounds area is less than half the visible area.
   // We approximate this by comparing current scale to initial scale: if we've
   // zoomed in past 2x the initial scale, or panned far enough that the initial
@@ -386,13 +422,13 @@ function ZoomPanInner({
   // No-ops if the target is already visible. Zooms out if needed to fit. One-shot.
   const putInViewLatestRef = useRef({ elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform });
   putInViewLatestRef.current = { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform };
+  const pendingPutInViewRef = useRef(false);
 
-  useEffect(() => {
-    if (!putInView || putInView.length === 0) return;
+  const executePutInView = useCallback((ids: ReadonlyArray<string>, animationMs: number) => {
     const { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform } = putInViewLatestRef.current;
 
-    const targetElements = elements.filter((e) => putInView.includes(e.id));
-    if (targetElements.length === 0 || containerSize.width === 0) return;
+    const targetElements = elements.filter((e) => ids.includes(e.id));
+    if (targetElements.length === 0 || containerSize.width === 0) return false;
 
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     for (const el of targetElements) {
@@ -423,7 +459,7 @@ function ZoomPanInner({
     const MIN_VISIBLE_PX = 8;
     const bboxDiagonal = Math.sqrt(bboxWidth * bboxWidth + bboxHeight * bboxHeight);
     const screenDiagonal = bboxDiagonal * basePixelsPerViewBoxUnit * scale;
-    if (isFullyOnScreen && screenDiagonal >= MIN_VISIBLE_PX) return;
+    if (isFullyOnScreen && screenDiagonal >= MIN_VISIBLE_PX) return true;
 
     // Scale to zoom OUT if bbox is larger than the screen (same as handleClusterClick).
     const ZOOM_PADDING = 0.7;
@@ -455,10 +491,25 @@ function ZoomPanInner({
       containerSize.width / 2 - contentX * finalScale,
       containerSize.height / 2 - contentY * finalScale,
       finalScale,
-      400,
+      animationMs,
       'easeOut',
     );
-  }, [putInView]); // reference equality — callers control when this fires
+    return true;
+  }, []);
+
+  useEffect(() => {
+    if (!putInView || putInView.length === 0) return;
+    const executed = executePutInView(putInView, 400);
+    pendingPutInViewRef.current = !executed;
+  }, [putInView, executePutInView]);
+
+  // Retry pending putInView once containerSize becomes non-zero (initial layout).
+  useEffect(() => {
+    if (!pendingPutInViewRef.current || containerSize.width === 0) return;
+    if (!putInView || putInView.length === 0) return;
+    const executed = executePutInView(putInView, 0);
+    if (executed) pendingPutInViewRef.current = false;
+  }, [containerSize, putInView, executePutInView]);
 
   const contextValue = useMemo(
     () => ({
