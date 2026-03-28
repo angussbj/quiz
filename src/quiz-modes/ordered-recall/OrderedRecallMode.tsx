@@ -5,6 +5,8 @@ import { buildReviewElementStates, buildReviewElementToggles } from '../buildRev
 import { RecallInputBar } from '../RecallInputBar';
 import { useOrderedRecallSession } from './useOrderedRecallSession';
 import { useRevealPulse } from '@/visualizations/useRevealPulse';
+import { useWindowSize } from '@/utilities/useWindowSize';
+import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './OrderedRecallMode.module.css';
 
 /**
@@ -30,6 +32,8 @@ export function OrderedRecallMode({
   normalizeOptions,
   onReconfigure,
 }: QuizModeProps) {
+  const { width } = useWindowSize();
+  const isNarrow = width < NARROW_WIDTH;
   const quiz = useOrderedRecallSession({
     elements,
     dataRows,
@@ -179,7 +183,7 @@ export function OrderedRecallMode({
       <RecallInputBar
         correctCount={quiz.correctCount}
         totalCount={quiz.totalPrompts}
-        promptLabel={`${quiz.promptIndex + 1} of ${quiz.totalPrompts}`}
+        promptLabel={isNarrow ? undefined : `${quiz.promptIndex + 1} of ${quiz.totalPrompts}`}
         inputValue={inputText}
         inputRef={inputRef}
         onInputChange={handleInputChange}
