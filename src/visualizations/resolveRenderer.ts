@@ -6,6 +6,7 @@ import { TimelineRenderer } from './timeline/TimelineRenderer';
 import { FlagGridRenderer } from './flag-grid/FlagGridRenderer';
 import { AnatomyRenderer } from './anatomy/AnatomyRenderer';
 import { Anatomy3DRenderer } from './anatomy-3d/Anatomy3DRenderer';
+import { StarMap3DRenderer } from './star-map-3d/StarMap3DRenderer';
 
 const RENDERERS: Readonly<Record<VisualizationType, ComponentType<VisualizationRendererProps>>> = {
   map: MapRenderer,
@@ -14,6 +15,7 @@ const RENDERERS: Readonly<Record<VisualizationType, ComponentType<VisualizationR
   'flag-grid': FlagGridRenderer,
   anatomy: AnatomyRenderer,
   'anatomy-3d': Anatomy3DRenderer,
+  'star-map-3d': StarMap3DRenderer,
 };
 
 export function resolveRenderer(

@@ -6,6 +6,7 @@ import { buildTimelineElementsFromRows } from './timeline/buildTimelineElementsF
 import { buildFlagGridElements } from './flag-grid/buildFlagGridElements';
 import { buildAnatomyElements } from './anatomy/buildAnatomyElements';
 import { buildAnatomy3DElements } from './anatomy-3d/buildAnatomy3DElements';
+import { buildStarMap3DElements } from './star-map-3d/buildStarMap3DElements';
 import type { TimeScale } from './timeline/buildTimelineElements';
 
 export function buildElements(
@@ -27,5 +28,7 @@ export function buildElements(
       return buildAnatomyElements(rows, columnMappings);
     case 'anatomy-3d':
       return buildAnatomy3DElements(rows, columnMappings);
+    case 'star-map-3d':
+      return buildStarMap3DElements(rows, columnMappings);
   }
 }

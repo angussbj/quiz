@@ -995,6 +995,37 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     timeScale: 'log' as const,
   },
 
+  // ===== Nearby Stars =====
+  {
+    id: 'sci-nearby-stars',
+    title: 'Nearby Stars',
+    description: 'Name the nearest star systems to our Sun within 50 light-years.',
+    path: ['Science', 'Astronomy'],
+    visualizationType: 'star-map-3d' as const,
+    availableModes: ['free-recall-unordered', 'free-recall-ordered', 'identify', 'locate', 'prompted-recall'] as const,
+    defaultMode: 'identify' as const,
+    toggles: [
+      { key: 'showSpectralColors', label: 'Spectral colors', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+      { key: 'showStarNames', label: 'Star names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
+      { key: 'showGalacticIndicators', label: 'Galactic indicators', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+      { key: 'showGrid', label: 'Reference grid', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
+    ],
+    presets: [],
+    columnMappings: {
+      answer: 'name',
+      label: 'name',
+      group: 'spectral_class',
+    },
+    dataPath: '/data/stars/nearby-stars.csv',
+    supportingDataPaths: [] as const,
+    rangeColumn: 'rank',
+    rangeLabel: 'Nearest stars',
+    groupFilterColumn: 'spectral_class',
+    groupFilterLabel: 'Spectral class',
+    hideFilteredElements: true,
+    hideUnfocusedElements: false,
+  },
+
   // ===== Country Subdivisions =====
   {
     ...subdivisionsQuizBase,

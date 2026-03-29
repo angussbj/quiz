@@ -408,9 +408,11 @@ function main() {
     mkdirSync(outputDir, { recursive: true });
   }
 
-  const header = 'rank,name,alternates,distance_ly,x,y,z,spectral_class,spectral_type,luminosity,magnitude,star_count,wikipedia';
+  const header = 'id,rank,name,name_alternates,distance_ly,x,y,z,spectral_class,spectral_type,luminosity,magnitude,star_count,wikipedia';
   const csvLines = nearest.map((s, i) => {
+    const id = s.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     return [
+      escapeCsvField(id),
       i + 1,
       escapeCsvField(s.name),
       escapeCsvField(s.nameAlternates),
