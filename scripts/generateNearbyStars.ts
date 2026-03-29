@@ -304,7 +304,6 @@ function main() {
 
   // Parse all stars (excluding Sol, which is id=0, dist=0)
   const allStars: Array<HygStar> = [];
-  let solRow: HygStar | null = null;
   for (const row of rows) {
     const dist = parseFloat(row.dist);
     if (isNaN(dist) || dist >= 100000) continue; // Missing/dubious parallax
@@ -331,7 +330,6 @@ function main() {
     };
 
     if (dist === 0) {
-      solRow = star;
       continue;
     }
 
