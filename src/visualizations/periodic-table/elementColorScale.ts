@@ -35,15 +35,15 @@ function hslColor(hue: number, saturation: number, lightness: number): string {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
-/** Light-mode lightness for pastel fills (dark text on light bg). */
-const LIGHT_LIGHTNESS = 82;
+/** Light-mode lightness for fills (dark text on light bg). */
+const LIGHT_LIGHTNESS = 70;
 /** Dark-mode lightness for deep fills (light text on dark bg). */
-const DARK_LIGHTNESS = 28;
+const DARK_LIGHTNESS = 22;
 
 /** Gradient color: blue (240°) → red (0°) via green. */
 function gradientColor(t: number, darkMode: boolean): string {
   const hue = 240 * (1 - t);
-  return hslColor(hue, 50, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
+  return hslColor(hue, 60, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
 }
 
 /** Fixed category colors — 8 distinguishable hues. */
