@@ -123,4 +123,4 @@ export interface VisualizationRendererProps {
   readonly autoRevealElementIds?: ReadonlyArray<string>;
 }
 
-export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';
+export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d' | 'star-map-3d';
