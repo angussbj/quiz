@@ -12,7 +12,7 @@ import type { BackgroundLabel } from './BackgroundLabel';
 import { MapCountryLabels } from './MapCountryLabels';
 import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
-import { MapElementOverlays } from './MapElementOverlays';
+import { MapElementShapes } from './MapElementOverlays';
 import { useDragDetector } from './useDragDetector';
 import styles from './MapRenderer.module.css';
 
@@ -58,19 +58,6 @@ export function MapRenderer({
 
   const showRegionColors = toggles['showRegionColors'] === true;
 
-  const overlays = (
-    <MapElementOverlays
-      elements={elements}
-      elementStates={elementStates}
-      uniqueGroups={uniqueGroups}
-      onElementClick={onElementClick}
-      onElementHoverStart={onElementHoverStart}
-      onElementHoverEnd={onElementHoverEnd}
-      showRegionColors={showRegionColors}
-      elementStateColorOverrides={elementStateColorOverrides}
-    />
-  );
-
   return (
     <ZoomPanContainer
       elements={elements}
@@ -80,7 +67,6 @@ export function MapRenderer({
       initialCameraPosition={initialCameraPosition}
       backgroundPaths={backgroundPaths}
       putInView={putInView}
-      elementOverlays={overlays}
     >
       <MapContent
         elements={elements}
@@ -95,6 +81,8 @@ export function MapRenderer({
         backgroundPaths={backgroundPaths}
         lakePaths={lakePaths}
         backgroundLabels={backgroundLabels}
+        uniqueGroups={uniqueGroups}
+        showRegionColors={showRegionColors}
         elementStateColorOverrides={elementStateColorOverrides}
       />
       {svgOverlay}
@@ -144,6 +132,8 @@ interface MapContentProps {
   readonly backgroundPaths: VisualizationRendererProps['backgroundPaths'];
   readonly lakePaths: VisualizationRendererProps['lakePaths'];
   readonly backgroundLabels: VisualizationRendererProps['backgroundLabels'];
+  readonly uniqueGroups: ReadonlyArray<string>;
+  readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
 }
 
@@ -160,6 +150,8 @@ const MapContent = memo(function MapContent({
   backgroundPaths,
   lakePaths,
   backgroundLabels,
+  uniqueGroups,
+  showRegionColors,
   elementStateColorOverrides,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
@@ -271,8 +263,20 @@ const MapContent = memo(function MapContent({
         />
       ))}
 
-      {/* Shape elements (countries, rivers) are rendered in separate SVG overlays
-          via MapElementOverlays for compositing isolation — see elementOverlays prop. */}
+      {/* Quiz element shapes (countries, rivers) — sorted by state so highlighted
+          elements paint on top of correct, correct on top of default, etc. */}
+      <MapElementShapes
+        elements={elements}
+        elementStates={elementStates}
+        uniqueGroups={uniqueGroups}
+        onElementClick={onElementClick}
+        onElementHoverStart={onElementHoverStart}
+        onElementHoverEnd={onElementHoverEnd}
+        showRegionColors={showRegionColors}
+        elementStateColorOverrides={elementStateColorOverrides}
+        isDrag={isDrag}
+        clusteredElementIds={clusteredElementIds}
+      />
 
       {/* Country/region name labels and flags — background context labels merged with polygon
           quiz element labels, run through unified placement (polylabel, collision detection). */}

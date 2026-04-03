@@ -1,18 +1,14 @@
 /**
- * Renders each quiz shape element in its own SVG for compositing isolation.
- * This prevents CSS hover effects on one element from triggering repaints of others.
- *
- * Each element SVG uses `contain: strict` and `will-change: opacity` to hint the
- * browser to isolate repaints to GPU compositing layers.
+ * Renders all quiz shape elements in a single overlay SVG, grouped by visual
+ * state so that highlighted elements paint on top of correct, correct on top
+ * of default, etc. SVG has no inherent z-index — paint order IS z-order.
  */
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementVisualState } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
-import { useZoomPan } from '../ZoomPanContext';
 import { isMapElement } from './MapElement';
 import type { MapElement } from './MapElement';
-import { useDragDetector } from './useDragDetector';
 import styles from './MapRenderer.module.css';
 
 const GROUP_COLORS = [
@@ -49,6 +45,22 @@ function stateFillOpacity(state: ElementVisualState | undefined): number {
       return 0.4;
     default:
       return 0.15;
+  }
+}
+
+/** Render priority: lower values paint first (behind), higher paint last (on top). */
+function stateRenderPriority(state: ElementVisualState | undefined): number {
+  switch (state) {
+    case 'context': return 1;
+    case undefined: return 2;
+    case 'default': return 2;
+    case 'missed': return 3;
+    case 'incorrect': return 4;
+    case 'correct-third': return 5;
+    case 'correct-second': return 6;
+    case 'correct': return 7;
+    case 'highlighted': return 8;
+    default: return 2;
   }
 }
 
@@ -91,18 +103,7 @@ function splitSubpaths(d: string): ReadonlyArray<string> {
 const RIVER_STROKE_WIDTH = 0.15;
 const RIVER_HIT_STROKE_WIDTH = 2.0;
 
-/** Each overlay SVG is absolutely positioned, with paint containment for GPU isolation. */
-const overlayStyle: React.CSSProperties = {
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-  pointerEvents: 'none',
-  contain: 'strict',
-  willChange: 'opacity',
-};
-
-interface MapElementOverlaysProps {
+interface MapElementShapesProps {
   readonly elements: VisualizationRendererProps['elements'];
   readonly elementStates: VisualizationRendererProps['elementStates'];
   readonly uniqueGroups: ReadonlyArray<string>;
@@ -111,9 +112,11 @@ interface MapElementOverlaysProps {
   readonly onElementHoverEnd?: () => void;
   readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly isDrag: (e: React.MouseEvent) => boolean;
+  readonly clusteredElementIds: ReadonlySet<string>;
 }
 
-export const MapElementOverlays = memo(function MapElementOverlays({
+export const MapElementShapes = memo(function MapElementShapes({
   elements,
   elementStates,
   uniqueGroups,
@@ -122,29 +125,43 @@ export const MapElementOverlays = memo(function MapElementOverlays({
   onElementHoverEnd,
   showRegionColors,
   elementStateColorOverrides,
-}: MapElementOverlaysProps) {
-  const { viewBoxString, clusteredElementIds } = useZoomPan();
+  isDrag,
+  clusteredElementIds,
+}: MapElementShapesProps) {
+  // Sort elements by state render priority so highlighted elements paint last (on top).
+  const sortedElements = useMemo(() => {
+    const visible: Array<MapElement> = [];
+    for (const element of elements) {
+      if (!isMapElement(element) || !element.svgPathData) continue;
+      if (clusteredElementIds.has(element.id) && element.pathRenderStyle === 'stroke') continue;
+      const state = elementStates[element.id];
+      if (state === 'hidden') continue;
+      visible.push(element);
+    }
+    visible.sort((a, b) => {
+      const pa = stateRenderPriority(elementStates[a.id]);
+      const pb = stateRenderPriority(elementStates[b.id]);
+      return pa - pb;
+    });
+    return visible;
+  }, [elements, elementStates, clusteredElementIds]);
 
   return (
     <>
-      {elements.map((element) => {
-        if (!isMapElement(element) || !element.svgPathData) return null;
-        if (clusteredElementIds.has(element.id) && element.pathRenderStyle === 'stroke') return null;
+      {sortedElements.map((element) => {
         const state = elementStates[element.id];
-        if (state === 'hidden') return null;
-
         return (
-          <OverlayElement
+          <ElementShape
             key={element.id}
             element={element}
             state={state}
-            viewBoxString={viewBoxString}
             uniqueGroups={uniqueGroups}
             onElementClick={onElementClick}
             onElementHoverStart={onElementHoverStart}
             onElementHoverEnd={onElementHoverEnd}
             showRegionColors={showRegionColors}
             elementStateColorOverrides={elementStateColorOverrides}
+            isDrag={isDrag}
           />
         );
       })}
@@ -152,32 +169,29 @@ export const MapElementOverlays = memo(function MapElementOverlays({
   );
 });
 
-interface OverlayElementProps {
+interface ElementShapeProps {
   readonly element: MapElement;
   readonly state: ElementVisualState | undefined;
-  readonly viewBoxString: string;
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly onElementClick?: (elementId: string) => void;
   readonly onElementHoverStart?: (elementId: string) => void;
   readonly onElementHoverEnd?: () => void;
   readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly isDrag: (e: React.MouseEvent) => boolean;
 }
 
-/** Each element in its own memo'd SVG — React skips re-render when state hasn't changed. */
-const OverlayElement = memo(function OverlayElement({
+const ElementShape = memo(function ElementShape({
   element,
   state,
-  viewBoxString,
   uniqueGroups,
   onElementClick,
   onElementHoverStart,
   onElementHoverEnd,
   showRegionColors,
   elementStateColorOverrides,
-}: OverlayElementProps) {
-  const { onPointerDown, isDrag } = useDragDetector();
-
+  isDrag,
+}: ElementShapeProps) {
   const isStrokePath = element.pathRenderStyle === 'stroke';
   const color = (state !== undefined && state !== 'hidden')
     ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
@@ -191,101 +205,79 @@ const OverlayElement = memo(function OverlayElement({
     const isHoverable = !onElementClick && !!onElementHoverStart;
 
     return (
-      <svg
-        viewBox={viewBoxString}
-        preserveAspectRatio="xMidYMid meet"
-        style={overlayStyle}
-      >
-        <g
-          className={onElementClick ? styles.interactiveGroup : isHoverable ? styles.hoverableGroup : undefined}
-          onPointerDown={onPointerDown}
-        >
-          {(onElementClick || isHoverable) && (
-            <path
-              d={strokeD}
-              style={{
-                fill: 'none',
-                stroke: 'transparent',
-                strokeWidth: RIVER_HIT_STROKE_WIDTH,
-                strokeLinecap: 'round',
-                strokeLinejoin: 'round',
-                pointerEvents: 'auto',
-              }}
-              className={onElementClick ? styles.interactivePath : styles.hoverablePath}
-              onClick={onElementClick ? (e) => {
-                if (isDrag(e)) return;
-                e.stopPropagation();
-                onElementClick(element.id);
-              } : undefined}
-              onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-              onMouseLeave={onElementHoverEnd}
-            />
-          )}
+      <g className={onElementClick ? styles.interactiveGroup : isHoverable ? styles.hoverableGroup : undefined}>
+        {(onElementClick || isHoverable) && (
           <path
             d={strokeD}
             style={{
               fill: 'none',
-              stroke: color,
-              strokeWidth: effectiveRiverStrokeWidth,
-              strokeOpacity: strokeOpacity(state),
+              stroke: 'transparent',
+              strokeWidth: RIVER_HIT_STROKE_WIDTH,
               strokeLinecap: 'round',
               strokeLinejoin: 'round',
+              pointerEvents: 'auto',
             }}
-            pointerEvents={(onElementClick || isHoverable) ? 'none' : undefined}
-            className={onElementClick ? styles.interactivePath : undefined}
+            className={onElementClick ? styles.interactivePath : styles.hoverablePath}
+            onClick={onElementClick ? (e) => {
+              if (isDrag(e)) return;
+              e.stopPropagation();
+              onElementClick(element.id);
+            } : undefined}
+            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverEnd}
           />
-        </g>
-      </svg>
+        )}
+        <path
+          d={strokeD}
+          style={{
+            fill: 'none',
+            stroke: color,
+            strokeWidth: effectiveRiverStrokeWidth,
+            strokeOpacity: strokeOpacity(state),
+            strokeLinecap: 'round',
+            strokeLinejoin: 'round',
+          }}
+          pointerEvents={(onElementClick || isHoverable) ? 'none' : undefined}
+          className={onElementClick ? styles.interactivePath : undefined}
+        />
+      </g>
     );
   }
 
   // Context fill shapes render like background borders
   if (state === 'context') {
     return (
-      <svg
-        viewBox={viewBoxString}
-        preserveAspectRatio="xMidYMid meet"
-        style={overlayStyle}
-      >
-        <path
-          d={element.svgPathData ?? ''}
-          fillRule="evenodd"
-          className={styles.borderPath}
-        />
-      </svg>
+      <path
+        d={element.svgPathData ?? ''}
+        fillRule="evenodd"
+        className={styles.borderPath}
+      />
     );
   }
 
   return (
-    <svg
-      viewBox={viewBoxString}
-      preserveAspectRatio="xMidYMid meet"
-      style={overlayStyle}
-      onPointerDown={onPointerDown}
-    >
-      <path
-        d={element.svgPathData ?? ''}
-        fillRule="evenodd"
-        style={{
-          fill: color,
-          fillOpacity: stateFillOpacity(state),
-          stroke: color,
-          strokeWidth: 0.075,
-          pointerEvents: 'auto',
-        }}
-        className={onElementClick ? styles.interactivePath : onElementHoverStart ? styles.hoverablePath : styles.borderPath}
-        onClick={
-          onElementClick
-            ? (e) => {
-                if (isDrag(e)) return;
-                e.stopPropagation();
-                onElementClick(element.id);
-              }
-            : undefined
-        }
-        onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-        onMouseLeave={onElementHoverEnd}
-      />
-    </svg>
+    <path
+      d={element.svgPathData ?? ''}
+      fillRule="evenodd"
+      style={{
+        fill: color,
+        fillOpacity: stateFillOpacity(state),
+        stroke: color,
+        strokeWidth: 0.075,
+        pointerEvents: 'auto',
+      }}
+      className={onElementClick ? styles.interactivePath : onElementHoverStart ? styles.hoverablePath : styles.borderPath}
+      onClick={
+        onElementClick
+          ? (e) => {
+              if (isDrag(e)) return;
+              e.stopPropagation();
+              onElementClick(element.id);
+            }
+          : undefined
+      }
+      onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
+      onMouseLeave={onElementHoverEnd}
+    />
   );
 });
