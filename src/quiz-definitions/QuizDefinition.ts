@@ -144,8 +144,20 @@ export interface QuizDefinition<K extends string = string> {
    * When present, the setup panel shows "Order by", "Sort order", and "Missing values"
    * controls for `free-recall-ordered` mode. The first column is the default sort.
    */
-  readonly orderedRecallSortColumns?: ReadonlyArray<{
-    readonly column: string;
-    readonly label: string;
-  }>;
+  readonly orderedRecallSortColumns?: ReadonlyArray<SortColumnDefinition>;
+}
+
+/**
+ * Definition for a numeric column available for sorting/range filtering.
+ * Used by both ordered recall mode and the range filter dropdown.
+ */
+export interface SortColumnDefinition {
+  readonly column: string;
+  readonly label: string;
+  /**
+   * How to aggregate values when elements are merged (e.g. tributaries into parent river).
+   * - 'parent' (default): use the parent element's value, ignore merged children.
+   * - 'sum': sum the parent + all merged children's values.
+   */
+  readonly mergeAggregation?: 'parent' | 'sum';
 }

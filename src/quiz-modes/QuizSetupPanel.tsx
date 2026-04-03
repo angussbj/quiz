@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
+import type { QuizModeType, SortColumnDefinition } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
@@ -40,6 +40,9 @@ export interface QuizSetupPanelProps {
   readonly rangeMaxValue?: number;
   readonly onRangeMinChange?: (value: number | undefined) => void;
   readonly onRangeMaxChange?: (value: number | undefined) => void;
+  readonly sortColumns?: ReadonlyArray<SortColumnDefinition>;
+  readonly rangeSortColumnKey?: string;
+  readonly onRangeSortColumnChange?: (column: string) => void;
   readonly groupFilterLabel?: string;
   readonly availableGroups?: ReadonlyArray<string>;
   readonly selectedGroups?: ReadonlySet<string>;
@@ -75,6 +78,9 @@ export function QuizSetupPanel({
   rangeMaxValue,
   onRangeMinChange,
   onRangeMaxChange,
+  sortColumns,
+  rangeSortColumnKey,
+  onRangeSortColumnChange,
   groupFilterLabel,
   availableGroups,
   selectedGroups,
@@ -285,7 +291,7 @@ export function QuizSetupPanel({
         {rangeLabel && onRangeMinChange && onRangeMaxChange && (
           <section className={styles.section}>
             <span className={styles.sectionTitle}>
-              {rangeLabel} range
+              {rangeLabel}
             </span>
             <div className={styles.rangeRow}>
               <input
@@ -325,6 +331,22 @@ export function QuizSetupPanel({
                   }
                 }}
               />
+              {sortColumns && sortColumns.length > 1 && onRangeSortColumnChange && (
+                <>
+                  <span className={styles.rangeSeparator}>by</span>
+                  <select
+                    className={styles.rangeSortSelect}
+                    value={rangeSortColumnKey ?? sortColumns[0].column}
+                    onChange={(event) => onRangeSortColumnChange(event.target.value)}
+                  >
+                    {sortColumns.map((col) => (
+                      <option key={col.column} value={col.column}>
+                        {col.label}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
             </div>
           </section>
         )}

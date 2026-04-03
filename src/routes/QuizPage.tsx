@@ -160,6 +160,11 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         rangeColumn={definition.rangeColumn}
         rangeLabel={definition.rangeLabel}
         rangeMax={definition.rangeColumn ? rows.length : undefined}
+        sortColumns={definition.orderedRecallSortColumns}
+        elements={elements}
+        tributaryColumn={definition.tributaryColumn}
+        distributaryColumn={definition.distributaryColumn}
+        segmentColumn={definition.segmentColumn}
         groupFilterColumn={definition.groupFilterColumn}
         groupFilterLabel={definition.groupFilterLabel}
         availableGroups={availableGroups}
@@ -179,6 +184,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             lakePaths={allLakePaths}
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
+            sortColumns={definition.orderedRecallSortColumns}
             groupFilterColumn={definition.groupFilterColumn}
             hideFilteredElements={definition.hideFilteredElements}
             hideUnfocusedElements={definition.hideUnfocusedElements}
