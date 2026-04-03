@@ -568,8 +568,8 @@ function ZoomPanInner({
 
   // Show "Focus" when putInView targets are off-screen or small relative to the viewport.
   // Threshold: element must fill at least 25% of the smaller viewport dimension to hide the button.
-  const FOCUS_SCREEN_FRACTION = 0.5;
-  const FOCUS_SHOW_THRESHOLD = 0.25;
+  const FOCUS_SCREEN_FRACTION = 0.25;
+  const FOCUS_SHOW_THRESHOLD = 0.125;
   const showFocusButton = useMemo(() => {
     if (!putInView || putInView.length === 0) return false;
     const bbox = computeTargetBBox(putInView);
