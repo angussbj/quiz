@@ -139,4 +139,13 @@ export interface QuizDefinition<K extends string = string> {
   readonly whitespaceMatters?: boolean;
   /** When true, punctuation differences matter for answer matching. Default: false (punctuation stripped). */
   readonly punctuationMatters?: boolean;
+  /**
+   * Numeric columns available for sorting in ordered recall mode.
+   * When present, the setup panel shows "Order by", "Sort order", and "Missing values"
+   * controls for `free-recall-ordered` mode. The first column is the default sort.
+   */
+  readonly orderedRecallSortColumns?: ReadonlyArray<{
+    readonly column: string;
+    readonly label: string;
+  }>;
 }

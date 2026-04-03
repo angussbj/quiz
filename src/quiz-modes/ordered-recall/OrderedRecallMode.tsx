@@ -4,15 +4,22 @@ import { resolveElementToggles, type ElementQuizState } from '../resolveElementT
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { RecallInputBar } from '../RecallInputBar';
 import { useOrderedRecallSession } from './useOrderedRecallSession';
+import { sortDataRows, type MissingValuePlacement } from './sortDataRows';
+import { groupByTiedValue } from './groupByTiedValue';
 import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import { useWindowSize } from '@/utilities/useWindowSize';
 import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './OrderedRecallMode.module.css';
 
+function formatPromptLabel(start: number, end: number, total: number): string {
+  if (start === end) return `${start} of ${total}`;
+  return `${start}\u2013${end} of ${total}`;
+}
+
 /**
- * Ordered recall mode: elements must be named in their original data order.
- * The current element is highlighted on the visualization.
- * Shows "Element N of M" as the prompt.
+ * Ordered recall mode: elements must be named in sort order.
+ * Supports tie groups — when multiple elements share the same sort value,
+ * they are all highlighted simultaneously and can be answered in any order.
  */
 export function OrderedRecallMode({
   elements,
@@ -34,20 +41,44 @@ export function OrderedRecallMode({
 }: QuizModeProps) {
   const { width } = useWindowSize();
   const isNarrow = width < NARROW_WIDTH;
+
+  const orderByColumn = selectValues?.['orderBy'];
+
+  const sortedDataRows = useMemo(() => {
+    if (!orderByColumn) return dataRows;
+    const descending = selectValues?.['sortOrder'] === 'descending';
+    const missingValues = (selectValues?.['missingValues'] ?? 'exclude') as MissingValuePlacement;
+    return sortDataRows(dataRows, orderByColumn, descending, missingValues);
+  }, [dataRows, selectValues, orderByColumn]);
+
+  const interactiveIds = useMemo(
+    () => new Set(elements.filter((e) => e.interactive !== false).map((e) => e.id)),
+    [elements],
+  );
+
+  const orderedGroups = useMemo(
+    () => groupByTiedValue(sortedDataRows, orderByColumn, interactiveIds),
+    [sortedDataRows, orderByColumn, interactiveIds],
+  );
+
+  const highlightNext = toggleValues['highlightNext'] !== false;
+
   const quiz = useOrderedRecallSession({
     elements,
-    dataRows,
+    dataRows: sortedDataRows,
     answerColumn: columnMappings['answer'] ?? 'answer',
     normalizeOptions,
+    orderedGroups,
+    highlightNext,
   });
   const { revealingElementIds, triggerReveal } = useRevealPulse();
 
   const wrappedHandleSkip = useCallback(() => {
-    if (quiz.currentElementId) {
-      triggerReveal([quiz.currentElementId], quiz.totalPrompts);
+    if (quiz.remainingGroupIds.length > 0) {
+      triggerReveal([...quiz.remainingGroupIds], quiz.totalPrompts);
     }
     quiz.handleSkip();
-  }, [quiz.currentElementId, quiz.totalPrompts, quiz.handleSkip, triggerReveal]);
+  }, [quiz.remainingGroupIds, quiz.totalPrompts, quiz.handleSkip, triggerReveal]);
 
   const wrappedHandleGiveUp = useCallback(() => {
     const remainingIds = elements
@@ -59,7 +90,7 @@ export function OrderedRecallMode({
 
   const [inputText, setInputText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const prevPromptIndex = useRef(quiz.promptIndex);
+  const prevRemainingCount = useRef(quiz.remainingGroupIds.length);
 
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
@@ -76,16 +107,16 @@ export function OrderedRecallMode({
       hasCalledFinish.current = true;
       onFinishRef.current(quiz.score);
     }
-
   }, [quiz.isFinished, quiz.score]);
 
+  // Clear input and refocus when an element is answered or group advances
   useEffect(() => {
-    if (quiz.promptIndex > prevPromptIndex.current) {
+    if (quiz.remainingGroupIds.length < prevRemainingCount.current) {
       setInputText('');
       inputRef.current?.focus();
     }
-    prevPromptIndex.current = quiz.promptIndex;
-  }, [quiz.promptIndex]);
+    prevRemainingCount.current = quiz.remainingGroupIds.length;
+  }, [quiz.remainingGroupIds.length]);
 
   const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const text = event.target.value;
@@ -124,30 +155,37 @@ export function OrderedRecallMode({
     [reviewing, elementToggles, reviewElementStates, toggleDefinitions],
   );
 
-  const [putInViewId, setPutInViewId] = useState<string | undefined>(quiz.currentElementId);
-  const prevCurrentIdRef = useRef<string | undefined>(quiz.currentElementId);
+  // putInView: all remaining group IDs (when highlight is on), with delay after skip
+  const [putInViewIds, setPutInViewIds] = useState<ReadonlyArray<string>>(quiz.remainingGroupIds);
+  const prevGroupIdsRef = useRef<ReadonlyArray<string>>(quiz.remainingGroupIds);
   const elementStatesRef = useRef(quiz.elementStates);
   elementStatesRef.current = quiz.elementStates;
   const putInViewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const prevId = prevCurrentIdRef.current;
-    prevCurrentIdRef.current = quiz.currentElementId;
+    const prevIds = prevGroupIdsRef.current;
+    prevGroupIdsRef.current = quiz.remainingGroupIds;
+
+    if (!highlightNext) {
+      setPutInViewIds([]);
+      return;
+    }
 
     if (putInViewTimerRef.current) {
       clearTimeout(putInViewTimerRef.current);
       putInViewTimerRef.current = null;
     }
 
-    // If previous element was skipped (now 'missed'), wait ~500ms before panning to next
-    if (quiz.currentElementId && prevId && elementStatesRef.current[prevId] === 'missed') {
-      const nextId = quiz.currentElementId;
+    // If previous group was skipped (elements now 'missed'), wait before panning
+    const prevWasSkipped = prevIds.length > 0 && prevIds.some((id) => elementStatesRef.current[id] === 'missed');
+    if (quiz.remainingGroupIds.length > 0 && prevWasSkipped) {
+      const nextIds = [...quiz.remainingGroupIds];
       putInViewTimerRef.current = setTimeout(() => {
-        setPutInViewId(nextId);
+        setPutInViewIds(nextIds);
         putInViewTimerRef.current = null;
       }, 500);
     } else {
-      setPutInViewId(quiz.currentElementId);
+      setPutInViewIds([...quiz.remainingGroupIds]);
     }
 
     return () => {
@@ -156,12 +194,16 @@ export function OrderedRecallMode({
         putInViewTimerRef.current = null;
       }
     };
-  }, [quiz.currentElementId]);
+  }, [quiz.remainingGroupIds, highlightNext]);
 
   const putInView = useMemo(
-    () => (putInViewId ? [putInViewId] : undefined),
-    [putInViewId],
+    () => (putInViewIds.length > 0 ? putInViewIds : undefined),
+    [putInViewIds],
   );
+
+  const promptLabel = isNarrow
+    ? undefined
+    : formatPromptLabel(quiz.promptStart, quiz.promptEnd, quiz.totalPrompts);
 
   return (
     <div className={styles.container}>
@@ -183,7 +225,7 @@ export function OrderedRecallMode({
       <RecallInputBar
         correctCount={quiz.correctCount}
         totalCount={quiz.totalPrompts}
-        promptLabel={isNarrow ? undefined : `${quiz.promptIndex + 1} of ${quiz.totalPrompts}`}
+        promptLabel={promptLabel}
         inputValue={inputText}
         inputRef={inputRef}
         onInputChange={handleInputChange}

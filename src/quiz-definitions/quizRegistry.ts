@@ -341,6 +341,16 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     groupFilterLabel: 'Element category',
     locateDistanceMode: 'grid-centroid' as const,
     locateThresholds: { correct: 0, correctSecond: 1, correctThird: 2 },
+    orderedRecallSortColumns: [
+      { column: 'atomic_number', label: 'Atomic number' },
+      { column: 'atomic_weight', label: 'Atomic weight' },
+      { column: 'density', label: 'Density' },
+      { column: 'electronegativity', label: 'Electronegativity' },
+      { column: 'melting_point', label: 'Melting point' },
+      { column: 'boiling_point', label: 'Boiling point' },
+      { column: 'year_discovered', label: 'Year discovered' },
+      { column: 'half_life', label: 'Half-life' },
+    ],
   },
   {
     ...humanBonesQuizBase,

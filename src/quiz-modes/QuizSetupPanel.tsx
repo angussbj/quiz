@@ -4,9 +4,12 @@ import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
-import { TogglePanel } from './TogglePanel';
+import { TogglePanel, SelectToggleControl, togglePanelStyles } from './TogglePanel';
+import { Tooltip } from '@/layout/Tooltip';
 import { formatGroupLabel } from './formatGroupLabel';
 import styles from './QuizSetupPanel.module.css';
+
+const ORDERING_GROUP = 'ordering';
 
 const MODE_LABELS: Readonly<Record<QuizModeType, string>> = {
   'free-recall-unordered': 'Free Recall',
@@ -49,6 +52,7 @@ export interface QuizSetupPanelProps {
   readonly selectToggles?: ReadonlyArray<SelectToggleDefinition>;
   readonly selectValues?: Readonly<Record<string, string>>;
   readonly onSelectChange?: (key: string, value: string) => void;
+  readonly dataRows?: ReadonlyArray<Readonly<Record<string, string>>>;
 }
 
 export function QuizSetupPanel({
@@ -83,6 +87,7 @@ export function QuizSetupPanel({
   selectToggles,
   selectValues,
   onSelectChange,
+  dataRows,
 }: QuizSetupPanelProps) {
   const showModeSelector = availableModes.length > 1;
 
@@ -111,6 +116,47 @@ export function QuizSetupPanel({
     }
     return keys;
   }, [constraintResult]);
+
+  const orderingToggles = useMemo(() => {
+    if (!selectToggles) return [];
+    return selectToggles.filter(
+      (t) => t.group === ORDERING_GROUP && (!t.modes || t.modes.includes(selectedMode)),
+    );
+  }, [selectToggles, selectedMode]);
+
+  const nonOrderingSelectToggles = useMemo(() => {
+    if (!selectToggles) return undefined;
+    const filtered = selectToggles.filter((t) => t.group !== ORDERING_GROUP);
+    return filtered.length > 0 ? filtered : undefined;
+  }, [selectToggles]);
+
+  // Compute which orderBy columns have no missing numeric values.
+  // Used to disable the "Missing values" toggle when it's irrelevant.
+  const completeColumns = useMemo(() => {
+    if (!dataRows?.length || orderingToggles.length === 0) return new Set<string>();
+    const orderByToggle = orderingToggles.find((t) => t.key === 'orderBy');
+    if (!orderByToggle) return new Set<string>();
+    const complete = new Set<string>();
+    for (const option of orderByToggle.options) {
+      const col = option.value;
+      const allPresent = dataRows.every((row) => {
+        const val = row[col];
+        if (val === undefined || val === '' || val === '-') return false;
+        return !Number.isNaN(Number(val));
+      });
+      if (allPresent) complete.add(col);
+    }
+    return complete;
+  }, [dataRows, orderingToggles]);
+
+  const selectedOrderByColumn = selectValues?.['orderBy']
+    ?? orderingToggles.find((t) => t.key === 'orderBy')?.defaultValue;
+  const selectedColumnLabel = orderingToggles
+    .find((t) => t.key === 'orderBy')?.options
+    .find((o) => o.value === selectedOrderByColumn)?.label;
+  const orderByHasNoMissing = selectedOrderByColumn
+    ? completeColumns.has(selectedOrderByColumn)
+    : false;
 
   const allGroupsSelected = availableGroups && selectedGroups
     && selectedGroups.size === availableGroups.length;
@@ -143,6 +189,43 @@ export function QuizSetupPanel({
                 </option>
               ))}
             </select>
+          </section>
+        )}
+
+        {orderingToggles.length > 0 && (
+          <section className={styles.section}>
+            <span className={styles.sectionTitle}>Ordering</span>
+            <div className={togglePanelStyles.toggleList}>
+              {orderingToggles.map((toggle) => {
+                const isMissingToggle = toggle.key === 'missingValues';
+                const disabled = isMissingToggle && orderByHasNoMissing;
+                const tooltip = disabled && selectedColumnLabel
+                  ? `No missing ${selectedColumnLabel.toLowerCase()} values`
+                  : undefined;
+                const row = (
+                  <div
+                    key={toggle.key}
+                    className={`${togglePanelStyles.selectRow} ${disabled ? togglePanelStyles.toggleRowDisabled : ''}`}
+                  >
+                    <span className={`${togglePanelStyles.selectLabel} ${disabled ? togglePanelStyles.toggleLabelDisabled : ''}`}>
+                      {toggle.label}
+                    </span>
+                    <SelectToggleControl
+                      selectToggle={toggle}
+                      value={selectValues?.[toggle.key] ?? toggle.defaultValue}
+                      onChange={(value) => {
+                        if (!disabled) onSelectChange?.(toggle.key, value);
+                      }}
+                      disabled={disabled}
+                    />
+                  </div>
+                );
+                if (tooltip) {
+                  return <Tooltip key={toggle.key} text={tooltip}>{row}</Tooltip>;
+                }
+                return row;
+              })}
+            </div>
           </section>
         )}
 
@@ -301,7 +384,7 @@ export function QuizSetupPanel({
             disabledKeys={disabledKeys}
             tooltips={constraintResult.reasons}
             selectedMode={selectedMode}
-            selectToggles={selectToggles}
+            selectToggles={nonOrderingSelectToggles}
             selectValues={selectValues}
             onSelectChange={onSelectChange}
           />

@@ -10,6 +10,7 @@ import { extractEmbeddedLakePaths } from '@/visualizations/map/extractEmbeddedLa
 import { computeBackgroundLabels } from '@/visualizations/map/computeBackgroundLabels';
 import { QuizShell } from '@/quiz-modes/QuizShell';
 import { ActiveQuiz } from '@/quiz-modes/ActiveQuiz';
+import { buildOrderedRecallSelectToggles, buildOrderedRecallToggle } from '@/quiz-modes/ordered-recall/buildOrderedRecallSelectToggles';
 import styles from './QuizPage.module.css';
 
 /**
@@ -122,6 +123,19 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
   }, [backgroundPaths]);
   const Renderer = resolveRenderer(definition.visualizationType);
 
+  const allSelectToggles = useMemo(() => {
+    const base = definition.selectToggles ?? [];
+    if (!definition.orderedRecallSortColumns?.length) return base;
+    const sortToggles = buildOrderedRecallSelectToggles(definition.orderedRecallSortColumns);
+    return [...base, ...sortToggles];
+  }, [definition.selectToggles, definition.orderedRecallSortColumns]);
+
+  const allToggles = useMemo(() => {
+    // Add the "Highlight next" toggle for quizzes that support ordered recall
+    if (!definition.availableModes.includes('free-recall-ordered')) return definition.toggles;
+    return [...definition.toggles, buildOrderedRecallToggle()];
+  }, [definition.toggles, definition.availableModes]);
+
   const availableGroups = useMemo(() => {
     if (!definition.groupFilterColumn) return undefined;
     // Filter to rows that have a corresponding quiz element — e.g. territory rows that get
@@ -139,8 +153,8 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         availableModes={definition.availableModes}
         defaultMode={definition.defaultMode}
         defaultCountdownSeconds={definition.defaultCountdownSeconds}
-        toggles={definition.toggles}
-        selectToggles={definition.selectToggles}
+        toggles={allToggles}
+        selectToggles={allSelectToggles}
         presets={definition.presets}
         modeConstraints={definition.modeConstraints}
         rangeColumn={definition.rangeColumn}
@@ -158,8 +172,8 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             elements={elements}
             dataRows={rows}
             columnMappings={definition.columnMappings}
-            toggleDefinitions={definition.toggles}
-            selectToggleDefinitions={definition.selectToggles}
+            toggleDefinitions={allToggles}
+            selectToggleDefinitions={allSelectToggles}
             Renderer={Renderer}
             backgroundPaths={backgroundPaths}
             lakePaths={allLakePaths}
