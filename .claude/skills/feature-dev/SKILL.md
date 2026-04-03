@@ -23,7 +23,7 @@ Takes either:
    - **If a number**: Read `docs/features.md` and find the feature.
    - **If a description**: Use the description as the feature spec. Read `docs/features.md` anyway to check for related or overlapping features, and to understand the broader roadmap context.
 2. Announce: "Starting feature: **<title>**" and summarise the scope in 1–2 sentences.
-3. Enter a worktree using the `EnterWorktree` tool with a short name for the feature (e.g., `csv-loader`). This creates the worktree and branch (`worktree-<name>`), and switches the shell's working directory to it. Then run `npm install`.
+3. Enter a worktree using the `EnterWorktree` tool with a name like `angusj-csv-loader`. The branch name must always start with `angusj-` followed by a short description (e.g., `angusj-csv-loader`, `angusj-dark-mode`). Then run `npm install`.
 4. Start the dev server (`npm run dev`) and note the port. It will run in the background automatically. **DO NOT** add `&` to get it to run in the background.
 5. Verify the setup: run `npm run typecheck`, `npm test`, and `npx eslint .`.
 
@@ -32,7 +32,7 @@ Takes either:
 1. Read the type contracts and existing code relevant to this feature. Read from the worktree, not the main branch - use relative paths not absolute paths.
 2. Read the project CLAUDE.md for conventions.
 3. Understand how this feature fits into the three-tier architecture.
-4. Ask the user clarifying questions about anything ambiguous in the feature spec. Don't assume — ask. Keep questions focused and specific.
+4. Run `/grill-me` on the feature spec to stress-test the design and resolve ambiguities with the user before writing any code.
 5. Write a detailed plan for what you will implement.
 
 ## Phase 3: Implement
@@ -70,11 +70,11 @@ Takes either:
   3a. If it's all wired up, take screenshots using the dev server you started. Otherwise create a storybook, run it, and use it for screenshots.
   3b. If it involves animations or interactions that can't be captured in a screenshot, create a screen recording.
   3c. Pure logic features (parsers, scoring, etc.) can skip screenshots. Save all screenshots and screen recordings to a `screenshots/` directory in the worktree root (create it if it doesn't exist).
-4. Create a PR with `gh pr create`. Include:
-   - Summary of what was built
+4. Create a PR with `gh pr create`. The PR description should read like a narrative — flowing from context/problem into what was done and why, so the reader always understands the motivation before the solution. Don't just list what changed; explain the reasoning at each step. Include:
+   - The problem or context that motivated this change, then the approach taken and why
    - Screenshots (if applicable)
    - How to test it manually
-   - Any known limitations or follow-up work
+   - Any trade-offs, known limitations, or follow-up work — and why they exist
 5. Share the PR URL with the user and ask for feedback.
 
 ## Phase 6: Feedback & Merge
