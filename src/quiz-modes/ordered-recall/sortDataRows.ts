@@ -2,11 +2,13 @@ export type MissingValuePlacement = 'exclude' | 'first' | 'last';
 
 /**
  * Parses a CSV cell value as a number. Returns undefined for empty strings,
- * '-' sentinels, and non-numeric values. Handles scientific notation (e.g. '8.798e6').
+ * '-' sentinels, and non-numeric values. Handles scientific notation (e.g. '8.798e6')
+ * and cost-style markers ('~' prefix for approximate, '?' suffix for estimates).
  */
 export function parseNumericValue(value: string | undefined): number | undefined {
   if (value === undefined || value === '' || value === '-') return undefined;
-  const num = Number(value);
+  const stripped = value.replace(/^~/, '').replace(/\?$/, '');
+  const num = Number(stripped);
   if (Number.isNaN(num)) return undefined;
   return num;
 }
