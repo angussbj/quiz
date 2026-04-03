@@ -108,6 +108,46 @@ export function computePolylabel(d: string, precision: number = 0.01): ViewBoxPo
   return { x: result[0], y: result[1] };
 }
 
+/**
+ * Compute horizontal clearance for a point inside an SVG path polygon.
+ * Returns the minimum of the distances to the left and right polygon edges
+ * along a horizontal ray from the point. This measures how wide a centered
+ * text label can be before hitting the boundary on either side.
+ * Returns 0 if the point is outside the polygon or the path is degenerate.
+ */
+export function computeHorizontalClearance(d: string, point: ViewBoxPosition): number {
+  const points = parsePathPoints(d);
+  if (points.length < 3) return 0;
+
+  const ring = points.map((p) => [p.x, p.y] as const);
+  let leftDist = Infinity;
+  let rightDist = Infinity;
+
+  for (let i = 0, len = ring.length; i < len; i++) {
+    const a = ring[i];
+    const b = ring[(i + 1) % len];
+
+    // Skip horizontal edges (no crossing possible)
+    if (a[1] === b[1]) continue;
+
+    // Check if this edge crosses the horizontal line y = point.y
+    const minY = Math.min(a[1], b[1]);
+    const maxY = Math.max(a[1], b[1]);
+    if (point.y < minY || point.y >= maxY) continue;
+
+    // Compute x-intersection of the edge with y = point.y
+    const t = (point.y - a[1]) / (b[1] - a[1]);
+    const ix = a[0] + t * (b[0] - a[0]);
+    const dx = ix - point.x;
+
+    if (dx > 0 && dx < rightDist) rightDist = dx;
+    if (dx < 0 && -dx < leftDist) leftDist = -dx;
+  }
+
+  if (!Number.isFinite(leftDist) || !Number.isFinite(rightDist)) return 0;
+  return Math.min(leftDist, rightDist);
+}
+
 /** Signed distance from point to polygon (negative = inside). */
 function pointToPolygonDistance(
   x: number, y: number,

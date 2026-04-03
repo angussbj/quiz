@@ -1,4 +1,4 @@
-import { computePathCentroid, computePolylabel, computeBoundingBoxCenter } from '../computePathCentroid';
+import { computePathCentroid, computePolylabel, computeBoundingBoxCenter, computeHorizontalClearance } from '../computePathCentroid';
 
 describe('computePathCentroid', () => {
   it('computes centroid of a simple square path', () => {
@@ -116,5 +116,46 @@ describe('computePolylabel', () => {
 
   it('returns null for degenerate path', () => {
     expect(computePolylabel('M 5 5')).toBeNull();
+  });
+});
+
+describe('computeHorizontalClearance', () => {
+  const square = 'M 0 0 L 10 0 L 10 10 L 0 10 Z';
+
+  it('returns 5 for the center of a 10x10 square', () => {
+    const clearance = computeHorizontalClearance(square, { x: 5, y: 5 });
+    expect(clearance).toBeCloseTo(5, 1);
+  });
+
+  it('returns less clearance for a point near the left edge', () => {
+    const clearance = computeHorizontalClearance(square, { x: 2, y: 5 });
+    expect(clearance).toBeCloseTo(2, 1);
+  });
+
+  it('returns less clearance for a point near the right edge', () => {
+    const clearance = computeHorizontalClearance(square, { x: 8, y: 5 });
+    expect(clearance).toBeCloseTo(2, 1);
+  });
+
+  it('returns 0 for degenerate paths', () => {
+    expect(computeHorizontalClearance('M 5 5', { x: 5, y: 5 })).toBe(0);
+  });
+
+  it('prefers center of wide arm over polylabel for an L-shape', () => {
+    // Wide L-shape: top arm spans 0-20 (height 5), bottom arm spans 0-5 (height 5)
+    // The polylabel (max inscribed circle) will be in the junction area (~5,5),
+    // but a point centered in the wide arm has more horizontal clearance.
+    const lShape = 'M 0 0 L 20 0 L 20 5 L 5 5 L 5 10 L 0 10 Z';
+    const wideArmCenter = { x: 10, y: 2.5 };
+    const polylabel = computePolylabel(lShape);
+    expect(polylabel).not.toBeNull();
+
+    const wideArmClearance = computeHorizontalClearance(lShape, wideArmCenter);
+    const polylabelClearance = computeHorizontalClearance(lShape, polylabel!);
+
+    // Center of wide arm at y=2.5 has 10 units of clearance each side
+    expect(wideArmClearance).toBeCloseTo(10, 0);
+    // Polylabel is near the junction with less horizontal room
+    expect(wideArmClearance).toBeGreaterThan(polylabelClearance);
   });
 });

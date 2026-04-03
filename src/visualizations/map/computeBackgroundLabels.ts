@@ -1,7 +1,7 @@
 import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundPath } from '../VisualizationRendererProps';
 import type { BackgroundLabel } from './BackgroundLabel';
-import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter } from './computePathCentroid';
+import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter, computeHorizontalClearance } from './computePathCentroid';
 
 /**
  * Derive one label per unique country from background paths.
@@ -42,9 +42,15 @@ export function computeBackgroundLabels(
     const centroid = computePathCentroid(largest.svgPathData);
     const bboxCenter = computeBoundingBoxCenter(largest.svgPathData);
     const polylabelCenter = computePolylabel(largest.svgPathData);
-    // Order: polylabel first (best for most shapes), then bbox center, then centroid
+    // Sort centers by horizontal clearance (most room for centered text first).
+    // This picks the center that allows the widest label before hitting edges,
+    // which matters for wide/narrow shapes where polylabel (inscribed circle)
+    // isn't necessarily the best spot for rectangular text.
     const centers = [polylabelCenter, bboxCenter, centroid]
-      .filter((c): c is ViewBoxPosition => c !== null);
+      .filter((c): c is ViewBoxPosition => c !== null)
+      .sort((a, b) =>
+        computeHorizontalClearance(largest.svgPathData, b) - computeHorizontalClearance(largest.svgPathData, a),
+      );
     labels.push({
       id: name,
       name,

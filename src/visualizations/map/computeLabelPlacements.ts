@@ -243,31 +243,15 @@ function computeDimensions(
 }
 
 /**
- * Order centers for placement: polylabel first (index 0, the best general-purpose
- * position), then remaining centers sorted by distance from nearest dot (furthest first).
+ * Centers arrive pre-sorted by horizontal clearance (best for text) from
+ * computeBackgroundLabels / computeElementLabels. Preserve that ordering —
+ * collision with avoid points (city dots, element markers) is already handled
+ * by the tryPlace collision detection and the away-from-dot / spiral fallbacks.
  */
 function orderCentersForPlacement(
   centers: ReadonlyArray<ViewBoxPosition>,
-  avoidPoints: ReadonlyArray<ViewBoxPosition>,
 ): ReadonlyArray<ViewBoxPosition> {
-  if (centers.length <= 1) return centers;
-  const [polylabel, ...rest] = centers;
-  if (avoidPoints.length === 0 || rest.length === 0) return centers;
-  const sortedRest = [...rest].sort((a, b) => {
-    const distA = minDistanceToPoints(a, avoidPoints);
-    const distB = minDistanceToPoints(b, avoidPoints);
-    return distB - distA;
-  });
-  return [polylabel, ...sortedRest];
-}
-
-function minDistanceToPoints(point: ViewBoxPosition, points: ReadonlyArray<ViewBoxPosition>): number {
-  let minDist = Infinity;
-  for (const p of points) {
-    const dist = Math.sqrt((point.x - p.x) ** 2 + (point.y - p.y) ** 2);
-    if (dist < minDist) minDist = dist;
-  }
-  return minDist;
+  return centers;
 }
 
 export interface ComputeLabelPlacementsOptions {
@@ -316,7 +300,7 @@ export function computeLabelPlacements(options: ComputeLabelPlacementsOptions): 
       : 1;
     const areaBaseFontSize = baseFontSize * areaScaleFactor;
 
-    const centersToTry = orderCentersForPlacement(label.centers, avoidPoints);
+    const centersToTry = orderCentersForPlacement(label.centers);
 
     let didPlace = false;
 
