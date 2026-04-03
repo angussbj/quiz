@@ -159,10 +159,12 @@ const MapContent = memo(function MapContent({
   const { onPointerDown, isDrag } = useDragDetector();
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
 
+  // Only show the hover overlay for clickable elements (identify mode etc.),
+  // not for hover-only elements (Wikipedia preview in free recall mode).
   const handleElementHoverStart = useCallback((elementId: string) => {
-    setHoveredElementId(elementId);
+    if (onElementClick) setHoveredElementId(elementId);
     onElementHoverStart?.(elementId);
-  }, [onElementHoverStart]);
+  }, [onElementHoverStart, onElementClick]);
 
   const handleElementHoverEnd = useCallback(() => {
     setHoveredElementId(null);
