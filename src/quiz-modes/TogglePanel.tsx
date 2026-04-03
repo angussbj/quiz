@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import { Tooltip } from '@/layout/Tooltip';
 import styles from './TogglePanel.module.css';
@@ -220,26 +221,35 @@ function DropdownSelect({
   label,
   disabled = false,
 }: {
-  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
+  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string; readonly infoUrl?: string }>;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly label: string;
   readonly disabled?: boolean;
 }) {
+  const selectedOption = options.find((o) => o.value === value);
+  const infoUrl = selectedOption?.infoUrl;
   return (
-    <select
-      className={styles.dropdownSelect}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      aria-label={label}
-      disabled={disabled}
-    >
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <span className={styles.dropdownWrapper}>
+      <select
+        className={styles.dropdownSelect}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label={label}
+        disabled={disabled}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {infoUrl && (
+        <Link to={infoUrl} className={styles.dropdownInfoLink} title="How is this calculated?">
+          ?
+        </Link>
+      )}
+    </span>
   );
 }
 

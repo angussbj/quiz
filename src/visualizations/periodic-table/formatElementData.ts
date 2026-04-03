@@ -3,7 +3,7 @@ import { formatHalfLife } from './formatHalfLife';
 
 export type ElementDataField =
   | 'half-life' | 'density' | 'state' | 'electronegativity'
-  | 'year-discovered' | 'melting-point' | 'boiling-point';
+  | 'year-discovered' | 'melting-point' | 'boiling-point' | 'cost';
 
 function formatDensity(density: number | undefined): string {
   if (density === undefined) return '—';
@@ -35,6 +35,26 @@ function formatTemperature(kelvin: number | undefined): string {
   return `${kelvin.toFixed(2)} K`;
 }
 
+function formatCostValue(cost: number): string {
+  if (cost >= 1e15) {
+    const exp = Math.floor(Math.log10(cost));
+    return `$10^${exp}`;
+  }
+  if (cost >= 1e12) return `$${(cost / 1e12).toPrecision(2)}T`;
+  if (cost >= 1e9) return `$${(cost / 1e9).toPrecision(2)}B`;
+  if (cost >= 1e6) return `$${(cost / 1e6).toPrecision(2)}M`;
+  if (cost >= 1e3) return `$${(cost / 1e3).toPrecision(2)}K`;
+  if (cost >= 1) return `$${cost.toPrecision(2)}`;
+  return `$${cost.toPrecision(2)}`;
+}
+
+function formatCost(element: GridElement): string {
+  if (element.costUsdPerKg === undefined) return '—';
+  const prefix = element.costIsApproximate ? '~' : '';
+  const suffix = element.costIsEstimate ? '?' : '';
+  return `${prefix}${formatCostValue(element.costUsdPerKg)}/kg${suffix}`;
+}
+
 export function formatElementData(element: GridElement, field: ElementDataField): string {
   switch (field) {
     case 'half-life': return formatHalfLife(element.halfLifeSeconds);
@@ -44,5 +64,6 @@ export function formatElementData(element: GridElement, field: ElementDataField)
     case 'year-discovered': return formatYearDiscovered(element.yearDiscovered);
     case 'melting-point': return formatTemperature(element.meltingPoint);
     case 'boiling-point': return formatTemperature(element.boilingPoint);
+    case 'cost': return formatCost(element);
   }
 }
