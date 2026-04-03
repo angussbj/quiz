@@ -176,16 +176,20 @@ export function TogglePanel({
   );
 }
 
-function SelectToggleControl({
+export { styles as togglePanelStyles };
+
+export function SelectToggleControl({
   selectToggle,
   value,
   onChange,
   preventOff = false,
+  disabled = false,
 }: {
   readonly selectToggle: SelectToggleDefinition;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly preventOff?: boolean;
+  readonly disabled?: boolean;
 }) {
   if (selectToggle.renderAs === 'dropdown') {
     return (
@@ -194,6 +198,7 @@ function SelectToggleControl({
         value={value}
         onChange={onChange}
         label={selectToggle.label}
+        disabled={disabled}
       />
     );
   }
@@ -203,6 +208,7 @@ function SelectToggleControl({
       value={value}
       onChange={onChange}
       preventOff={preventOff}
+      disabled={disabled}
     />
   );
 }
@@ -212,11 +218,13 @@ function DropdownSelect({
   value,
   onChange,
   label,
+  disabled = false,
 }: {
   readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly label: string;
+  readonly disabled?: boolean;
 }) {
   return (
     <select
@@ -224,6 +232,7 @@ function DropdownSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       aria-label={label}
+      disabled={disabled}
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
@@ -239,16 +248,18 @@ function SegmentedControl({
   value,
   onChange,
   preventOff = false,
+  disabled = false,
 }: {
   readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly preventOff?: boolean;
+  readonly disabled?: boolean;
 }) {
   return (
     <div className={styles.segmentedControl}>
       {options.map((option) => {
-        const isDisabled = preventOff && option.value === 'off';
+        const isDisabled = disabled || (preventOff && option.value === 'off');
         return (
           <button
             key={option.value}

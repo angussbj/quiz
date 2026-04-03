@@ -238,6 +238,7 @@ export function QuizShell({
         selectToggles={selectToggles}
         selectValues={toggleState.selectValues}
         onSelectChange={handleSelectChange}
+        dataRows={dataRows}
       />
     );
   }
