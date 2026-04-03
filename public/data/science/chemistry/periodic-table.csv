@@ -11,7 +11,7 @@ fluorine,Fluorine,F,9,1,16,halogen,18.998,,p,gas,0.001696,3.98,1886,,Fluorine,53
 neon,Neon,Ne,10,1,17,noble-gas,20.18,,p,gas,0.0008999,,1898,,Neon,24.56,27.07
 sodium,Sodium,Na,11,2,0,alkali-metal,22.99,,s,solid,0.97,0.93,1807,,Sodium,370.87,1156
 magnesium,Magnesium,Mg,12,2,1,alkaline-earth-metal,24.305,,s,solid,1.74,1.31,1808,,Magnesium,923,1363
-aluminum,Aluminum,Al,13,2,12,post-transition-metal,26.982,,p,solid,2.7,1.61,,Aluminium,Aluminum,933.47,2792
+aluminium,Aluminium,Al,13,2,12,post-transition-metal,26.982,,p,solid,2.7,1.61,,Aluminum,Aluminium,933.47,2792
 silicon,Silicon,Si,14,2,13,metalloid,28.085,,p,solid,2.3296,1.9,1854,,Silicon,1687,3538
 phosphorus,Phosphorus,P,15,2,14,nonmetal,30.974,,p,solid,1.82,2.19,1669,,Phosphorus,317.3,553.65
 sulfur,Sulfur,S,16,2,15,nonmetal,32.06,,p,solid,2.067,2.58,,Sulphur,Sulfur,388.36,717.87
@@ -53,7 +53,7 @@ antimony,Antimony,Sb,51,4,14,metalloid,121.76,,p,solid,6.685,2.05,,,Antimony,903
 tellurium,Tellurium,Te,52,4,15,metalloid,127.6,,p,solid,6.232,2.1,1782,,Tellurium,722.66,1261
 iodine,Iodine,I,53,4,16,halogen,126.904,,p,solid,4.93,2.66,1811,,Iodine,386.85,457.4
 xenon,Xenon,Xe,54,4,17,noble-gas,131.293,,p,gas,0.005887,2.6,1898,,Xenon,161.4,165.03
-cesium,Cesium,Cs,55,5,0,alkali-metal,132.905,,s,solid,1.93,0.79,1860,Caesium,Cesium,301.59,944
+caesium,Caesium,Cs,55,5,0,alkali-metal,132.905,,s,solid,1.93,0.79,1860,Cesium,Caesium,301.59,944
 barium,Barium,Ba,56,5,1,alkaline-earth-metal,137.327,,s,solid,3.62,0.89,1808,,Barium,1000,2170
 lanthanum,Lanthanum,La,57,8,2,lanthanide,138.905,,f,solid,6.15,1.1,1839,,Lanthanum,1193,3737
 cerium,Cerium,Ce,58,8,3,lanthanide,140.116,,f,solid,6.77,1.12,1803,,Cerium,1068,3716
