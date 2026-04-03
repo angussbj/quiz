@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
@@ -13,6 +13,7 @@ import { MapCountryLabels } from './MapCountryLabels';
 import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
 import { MapElementShapes } from './MapElementOverlays';
+import { MapHoverOverlay } from './MapHoverOverlay';
 import { useDragDetector } from './useDragDetector';
 import styles from './MapRenderer.module.css';
 
@@ -156,6 +157,19 @@ const MapContent = memo(function MapContent({
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { onPointerDown, isDrag } = useDragDetector();
+  const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
+
+  // Only show the hover overlay for clickable elements (identify mode etc.),
+  // not for hover-only elements (Wikipedia preview in free recall mode).
+  const handleElementHoverStart = useCallback((elementId: string) => {
+    if (onElementClick) setHoveredElementId(elementId);
+    onElementHoverStart?.(elementId);
+  }, [onElementHoverStart, onElementClick]);
+
+  const handleElementHoverEnd = useCallback(() => {
+    setHoveredElementId(null);
+    onElementHoverEnd?.();
+  }, [onElementHoverEnd]);
 
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
@@ -270,13 +284,17 @@ const MapContent = memo(function MapContent({
         elementStates={elementStates}
         uniqueGroups={uniqueGroups}
         onElementClick={onElementClick}
-        onElementHoverStart={onElementHoverStart}
-        onElementHoverEnd={onElementHoverEnd}
+        onElementHoverStart={onElementHoverStart ? handleElementHoverStart : undefined}
+        onElementHoverEnd={onElementHoverStart ? handleElementHoverEnd : undefined}
         showRegionColors={showRegionColors}
         elementStateColorOverrides={elementStateColorOverrides}
         isDrag={isDrag}
         clusteredElementIds={clusteredElementIds}
       />
+
+      {/* Semi-transparent overlay on the hovered element — avoids modifying
+          original element styles which would trigger SVG-wide repaint. */}
+      <MapHoverOverlay elements={elements} hoveredElementId={hoveredElementId} />
 
       {/* Country/region name labels and flags — background context labels merged with polygon
           quiz element labels, run through unified placement (polylabel, collision detection). */}
@@ -288,8 +306,8 @@ const MapContent = memo(function MapContent({
           avoidPoints={visibleDotPositions}
           elementNameToState={elementNameToState}
           nameToElementId={nameToElementId}
-          onElementHoverStart={onElementHoverStart}
-          onElementHoverEnd={onElementHoverEnd}
+          onElementHoverStart={onElementHoverStart ? handleElementHoverStart : undefined}
+          onElementHoverEnd={onElementHoverStart ? handleElementHoverEnd : undefined}
         />
       )}
 
@@ -319,8 +337,8 @@ const MapContent = memo(function MapContent({
               strokeWidth: 0.5,
               strokeLinejoin: 'round',
             }}
-            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverEnd}
+            onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
           >
             {element.label}
           </text>
@@ -384,8 +402,8 @@ const MapContent = memo(function MapContent({
                   }
                 : undefined
             }
-            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverEnd}
+            onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
           />
         );
       })}
@@ -407,8 +425,8 @@ const MapContent = memo(function MapContent({
             {...labelProps}
             className={onElementHoverStart ? styles.cityLabelHoverable : styles.cityLabel}
             style={{ fontSize: `${fontSize}px` }}
-            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverEnd}
+            onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
           >
             {element.label}
           </text>
