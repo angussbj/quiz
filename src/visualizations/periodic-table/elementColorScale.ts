@@ -4,11 +4,11 @@ import type { VisualizationElement } from '../VisualizationElement';
 
 export type ElementColorField =
   | 'category' | 'density' | 'electronegativity' | 'melting-point'
-  | 'boiling-point' | 'year-discovered' | 'half-life';
+  | 'boiling-point' | 'year-discovered' | 'half-life' | 'cost';
 
 const ELEMENT_COLOR_FIELDS: ReadonlyArray<ElementColorField> = [
   'category', 'density', 'electronegativity', 'melting-point', 'boiling-point',
-  'year-discovered', 'half-life',
+  'year-discovered', 'half-life', 'cost',
 ];
 
 export function toElementColorField(value: string): ElementColorField | undefined {
@@ -26,6 +26,11 @@ function getNumericValue(element: GridElement, field: Exclude<ElementColorField,
       if (element.halfLifeSeconds === undefined) return undefined;
       if (element.halfLifeSeconds <= 0) return 0;
       return Math.log10(element.halfLifeSeconds);
+    }
+    case 'cost': {
+      if (element.costUsdPerKg === undefined) return undefined;
+      if (element.costUsdPerKg <= 0) return 0;
+      return Math.log10(element.costUsdPerKg);
     }
   }
 }

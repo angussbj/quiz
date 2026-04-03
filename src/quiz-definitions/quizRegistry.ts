@@ -307,6 +307,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
           { value: 'melting-point', label: 'Melting point' },
           { value: 'boiling-point', label: 'Boiling point' },
           { value: 'year-discovered', label: 'Year discovered' },
+          { value: 'cost', label: 'Cost per kg' },
         ],
       },
       {
@@ -324,6 +325,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
           { value: 'boiling-point', label: 'Boiling point' },
           { value: 'year-discovered', label: 'Year discovered' },
           { value: 'half-life', label: 'Half-life' },
+          { value: 'cost', label: 'Cost per kg' },
         ],
       },
     ],

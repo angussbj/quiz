@@ -241,7 +241,7 @@ function GridCell({
 
 const ELEMENT_DATA_FIELDS: ReadonlyArray<ElementDataField> = [
   'half-life', 'density', 'state', 'electronegativity', 'year-discovered',
-  'melting-point', 'boiling-point',
+  'melting-point', 'boiling-point', 'cost',
 ];
 
 function toElementDataField(value: string): ElementDataField | undefined {

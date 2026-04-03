@@ -50,6 +50,10 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     yearDiscovered: 1766,
     meltingPoint: 14.01,
     boilingPoint: 20.28,
+    costUsdPerKg: 1.39,
+    costIsApproximate: false,
+    costIsEstimate: false,
+    costDate: 2012,
     ...overrides,
   };
 }

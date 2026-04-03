@@ -30,6 +30,14 @@ export interface GridElement extends VisualizationElement {
   readonly meltingPoint: number | undefined;
   /** Boiling point in Kelvin, or undefined if unknown. */
   readonly boilingPoint: number | undefined;
+  /** Cost in USD per kilogram, or undefined if unknown. */
+  readonly costUsdPerKg: number | undefined;
+  /** Whether the cost value uses a `~` prefix (approximate). */
+  readonly costIsApproximate: boolean;
+  /** Whether the cost value uses a `?` suffix (order-of-magnitude estimate). */
+  readonly costIsEstimate: boolean;
+  /** Year the cost data was sourced, or undefined for undated estimates. */
+  readonly costDate: number | undefined;
 }
 
 export function isGridElement(element: VisualizationElement): element is GridElement {
