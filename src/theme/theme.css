@@ -2,12 +2,12 @@
   /* Background */
   --color-bg-primary: #fafaf9;
   --color-bg-secondary: #f0efed;
-  --color-bg-tertiary: #e5e4e1;
+  --color-bg-tertiary: #d8d7d3;
 
   /* Text */
   --color-text-primary: #1c1c1c;
-  --color-text-secondary: #5a5a58;
-  --color-text-muted: #787875;
+  --color-text-secondary: #484846;
+  --color-text-muted: #5c5c59;
 
   /* Interactive */
   --color-link: #2563b0;
@@ -25,8 +25,8 @@
   --color-incorrect-bg: #fdecea;
   --color-missed: #8b1a1a;
   --color-missed-bg: #f5dada;
-  --color-context: #787875;
-  --color-context-bg: #f0efed;
+  --color-context: #5c5c59;
+  --color-context-bg: #e8e7e4;
   --color-highlight: #f0c040;
   --color-highlight-bg: #fef9e7;
 
@@ -40,7 +40,7 @@
   --color-lake: #6ba3d6;
 
   /* Text on generated color fills (pastel backgrounds) — always dark for contrast */
-  --color-on-color-fill: #333;
+  --color-on-color-fill: #1c1c1c;
 
   /* Visualization groups (8 distinguishable colors) */
   --color-group-1: #4a6fa5;
@@ -53,7 +53,7 @@
   --color-group-8: #8d6e63;
 
   /* Borders & surfaces */
-  --color-border: #ddd;
+  --color-border: #aaa;
   --color-surface-raised: #ffffff;
   --color-overlay: rgba(0, 0, 0, 0.4);
   --color-hover-overlay: rgba(255, 255, 255, 0.25);
@@ -93,11 +93,11 @@
 [data-theme='dark'] {
   --color-bg-primary: #1a1a1a;
   --color-bg-secondary: #242424;
-  --color-bg-tertiary: #2e2e2e;
+  --color-bg-tertiary: #3a3a3a;
 
   --color-text-primary: #e8e8e6;
-  --color-text-secondary: #a8a8a5;
-  --color-text-muted: #7e7e7b;
+  --color-text-secondary: #bcbcb9;
+  --color-text-muted: #9a9a97;
 
   --color-link: #5ba3e6;
   --color-link-hover: #7db8ef;
@@ -114,8 +114,8 @@
   --color-incorrect-bg: #3a1a1a;
   --color-missed: #c84545;
   --color-missed-bg: #3a1a1a;
-  --color-context: #7e7e7b;
-  --color-context-bg: #2e2e2e;
+  --color-context: #9a9a97;
+  --color-context-bg: #333333;
   --color-highlight: #f0c040;
   --color-highlight-bg: #3a3520;
   --color-city-dot: #6b9fd4;
@@ -123,7 +123,7 @@
   --color-label-halo: #1a1a1a;
   --color-on-color-fill: #e8e8e6;
 
-  --color-border: #3a3a3a;
+  --color-border: #505050;
   --color-surface-raised: #2a2a2a;
   --color-overlay: rgba(0, 0, 0, 0.6);
   --color-hover-overlay: rgba(0, 0, 0, 0.2);

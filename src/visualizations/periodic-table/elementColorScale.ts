@@ -40,15 +40,18 @@ function hslColor(hue: number, saturation: number, lightness: number): string {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
-/** Light-mode lightness for pastel fills (dark text on light bg). */
-const LIGHT_LIGHTNESS = 82;
-/** Dark-mode lightness for deep fills (light text on dark bg). */
-const DARK_LIGHTNESS = 28;
+/** Gradient lightness — lower than category for stronger contrast on numeric scales. */
+const GRADIENT_LIGHT_LIGHTNESS = 70;
+const GRADIENT_DARK_LIGHTNESS = 22;
+
+/** Category lightness — softer pastels for distinguishable group fills. */
+const CATEGORY_LIGHT_LIGHTNESS = 82;
+const CATEGORY_DARK_LIGHTNESS = 28;
 
 /** Gradient color: blue (240°) → red (0°) via green. */
 function gradientColor(t: number, darkMode: boolean): string {
   const hue = 240 * (1 - t);
-  return hslColor(hue, 50, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
+  return hslColor(hue, 60, darkMode ? GRADIENT_DARK_LIGHTNESS : GRADIENT_LIGHT_LIGHTNESS);
 }
 
 /** Fixed category colors — 8 distinguishable hues. */
@@ -65,7 +68,7 @@ const CATEGORY_HUES: ReadonlyArray<readonly [number, number]> = [
 
 function categoryColor(index: number, darkMode: boolean): string {
   const [hue, sat] = CATEGORY_HUES[index % CATEGORY_HUES.length];
-  return hslColor(hue, sat, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
+  return hslColor(hue, sat, darkMode ? CATEGORY_DARK_LIGHTNESS : CATEGORY_LIGHT_LIGHTNESS);
 }
 
 export interface ElementColorMap {
