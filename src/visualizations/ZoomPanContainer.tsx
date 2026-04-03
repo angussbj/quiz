@@ -430,11 +430,11 @@ function ZoomPanInner({
   putInViewLatestRef.current = { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform };
   const pendingPutInViewRef = useRef(false);
 
-  const executePutInView = useCallback((ids: ReadonlyArray<string>, animationMs: number) => {
-    const { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform } = putInViewLatestRef.current;
-
+  /** Compute the bounding box of the given element IDs. Returns undefined if no elements match. */
+  const computeTargetBBox = useCallback((ids: ReadonlyArray<string>) => {
+    const { elements } = putInViewLatestRef.current;
     const targetElements = elements.filter((e) => ids.includes(e.id));
-    if (targetElements.length === 0 || containerSize.width === 0) return false;
+    if (targetElements.length === 0) return undefined;
 
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     for (const el of targetElements) {
@@ -443,29 +443,64 @@ function ZoomPanInner({
       maxX = Math.max(maxX, el.viewBoxBounds.maxX);
       maxY = Math.max(maxY, el.viewBoxBounds.maxY);
     }
+    return { minX, minY, maxX, maxY };
+  }, []);
 
-    const cx = (minX + maxX) / 2;
-    const cy = (minY + maxY) / 2;
-    const bboxWidth = maxX - minX;
-    const bboxHeight = maxY - minY;
+  /**
+   * Check whether elements with the given bounding box are fully on-screen
+   * and at least `minPx` pixels in diagonal size.
+   */
+  const isBBoxVisible = useCallback((
+    bbox: { minX: number; minY: number; maxX: number; maxY: number },
+    minPx: number,
+  ): boolean => {
+    const { containerSize, viewBox, basePixelsPerViewBoxUnit } = putInViewLatestRef.current;
+    if (containerSize.width === 0) return false;
+
+    const bboxWidth = bbox.maxX - bbox.minX;
+    const bboxHeight = bbox.maxY - bbox.minY;
 
     const { posX, posY, scale } = currentTransformRef.current;
     const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
     const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
     const ox = (containerSize.width - svgPixelWidth) / 2;
     const oy = (containerSize.height - svgPixelHeight) / 2;
-    // Convert screen edges to viewBox coordinates
     const visMinX = ((0 - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
     const visMaxX = ((containerSize.width - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
     const visMinY = ((0 - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
     const visMaxY = ((containerSize.height - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
-    const isFullyOnScreen = minX >= visMinX && maxX <= visMaxX && minY >= visMinY && maxY <= visMaxY;
+    const isFullyOnScreen = bbox.minX >= visMinX && bbox.maxX <= visMaxX && bbox.minY >= visMinY && bbox.maxY <= visMaxY;
 
-    // Even if on-screen, don't bail out if the element is too small to see.
-    const MIN_VISIBLE_PX = 8;
     const bboxDiagonal = Math.sqrt(bboxWidth * bboxWidth + bboxHeight * bboxHeight);
     const screenDiagonal = bboxDiagonal * basePixelsPerViewBoxUnit * scale;
-    if (isFullyOnScreen && screenDiagonal >= MIN_VISIBLE_PX) return true;
+    return isFullyOnScreen && screenDiagonal >= minPx;
+  }, []);
+
+  /** Minimum screen pixels for an element to be considered visible during putInView. */
+  const PUT_IN_VIEW_MIN_VISIBLE_PX = 8;
+
+  /**
+   * Pan/zoom to bring elements into view.
+   * @param minScreenFraction — if set, zoom in so the element fills at least this
+   *   fraction of the smaller viewport dimension (e.g. 0.5 = half the screen).
+   *   Without this, the function never zooms in past the current scale.
+   */
+  const executePutInView = useCallback((
+    ids: ReadonlyArray<string>,
+    animationMs: number,
+    options?: { readonly force?: boolean; readonly minScreenFraction?: number },
+  ) => {
+    const { containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform } = putInViewLatestRef.current;
+
+    const bbox = computeTargetBBox(ids);
+    if (!bbox || containerSize.width === 0) return false;
+
+    if (!options?.force && isBBoxVisible(bbox, PUT_IN_VIEW_MIN_VISIBLE_PX)) return true;
+
+    const cx = (bbox.minX + bbox.maxX) / 2;
+    const cy = (bbox.minY + bbox.maxY) / 2;
+    const bboxWidth = bbox.maxX - bbox.minX;
+    const bboxHeight = bbox.maxY - bbox.minY;
 
     // Scale to zoom OUT if bbox is larger than the screen (same as handleClusterClick).
     const ZOOM_PADDING = 0.7;
@@ -480,16 +515,30 @@ function ZoomPanInner({
       : scaleRef.current;
 
     // Scale to zoom IN until the element is at least MIN_VISIBLE_PX on screen.
+    const bboxDiagonal = Math.sqrt(bboxWidth * bboxWidth + bboxHeight * bboxHeight);
     const minVisibleScale = bboxDiagonal > 0
-      ? MIN_VISIBLE_PX / (bboxDiagonal * basePixelsPerViewBoxUnit)
+      ? PUT_IN_VIEW_MIN_VISIBLE_PX / (bboxDiagonal * basePixelsPerViewBoxUnit)
       : 0;
 
-    // Zoom out if needed (cap at current scale), then zoom in if still below min size.
+    // If a minimum screen fraction is requested, compute the scale that achieves it.
+    const minViewportDim = Math.min(containerSize.width, containerSize.height);
+    const bboxMaxDim = Math.max(bboxWidth, bboxHeight);
+    const fractionScale = (options?.minScreenFraction && bboxMaxDim > 0)
+      ? (minViewportDim * options.minScreenFraction) / (bboxMaxDim * basePixelsPerViewBoxUnit)
+      : 0;
+
+    // Without minScreenFraction: zoom out if needed (cap at current scale), zoom in if below min size.
+    // With minScreenFraction: also zoom in to meet the requested fraction.
+    const floorScale = Math.max(minVisibleScale, fractionScale);
     const finalScale = Math.min(
       MAX_CLUSTER_SCALE,
-      Math.max(Math.min(fitScale, scaleRef.current), minVisibleScale),
+      Math.max(Math.min(fitScale, scaleRef.current), floorScale),
     );
 
+    const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
+    const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
+    const ox = (containerSize.width - svgPixelWidth) / 2;
+    const oy = (containerSize.height - svgPixelHeight) / 2;
     const contentX = ox + (cx - viewBox.x) * basePixelsPerViewBoxUnit;
     const contentY = oy + (cy - viewBox.y) * basePixelsPerViewBoxUnit;
 
@@ -501,7 +550,7 @@ function ZoomPanInner({
       'easeOut',
     );
     return true;
-  }, []);
+  }, [computeTargetBBox, isBBoxVisible]);
 
   useEffect(() => {
     if (!putInView || putInView.length === 0) return;
@@ -516,6 +565,27 @@ function ZoomPanInner({
     const executed = executePutInView(putInView, 0);
     if (executed) pendingPutInViewRef.current = false;
   }, [containerSize, putInView, executePutInView]);
+
+  // Show "Focus" when putInView targets are off-screen or small relative to the viewport.
+  // Threshold: element must fill at least 25% of the smaller viewport dimension to hide the button.
+  const FOCUS_SCREEN_FRACTION = 0.25;
+  const FOCUS_SHOW_THRESHOLD = 0.125;
+  const showFocusButton = useMemo(() => {
+    if (!putInView || putInView.length === 0) return false;
+    const bbox = computeTargetBBox(putInView);
+    if (!bbox) return false;
+    const { containerSize, basePixelsPerViewBoxUnit } = putInViewLatestRef.current;
+    if (containerSize.width === 0) return false;
+    const bboxMaxDim = Math.max(bbox.maxX - bbox.minX, bbox.maxY - bbox.minY);
+    const screenSize = bboxMaxDim * basePixelsPerViewBoxUnit * currentTransform.scale;
+    const minViewportDim = Math.min(containerSize.width, containerSize.height);
+    return screenSize < minViewportDim * FOCUS_SHOW_THRESHOLD;
+  }, [putInView, computeTargetBBox, currentTransform]);
+
+  const handleFocus = useCallback(() => {
+    if (!putInView || putInView.length === 0) return;
+    executePutInView(putInView, 400, { force: true, minScreenFraction: FOCUS_SCREEN_FRACTION });
+  }, [putInView, executePutInView]);
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
 
@@ -568,10 +638,19 @@ function ZoomPanInner({
           )}
         </div>
       </TransformComponent>
-      {showResetButton && (
-        <button className={styles.resetButton} onClick={handleReset}>
-          Reset
-        </button>
+      {(showResetButton || showFocusButton) && (
+        <div className={styles.overlayButtons}>
+          {showFocusButton && (
+            <button className={styles.overlayButton} onClick={handleFocus}>
+              Focus
+            </button>
+          )}
+          {showResetButton && (
+            <button className={styles.overlayButton} onClick={handleReset}>
+              Reset
+            </button>
+          )}
+        </div>
       )}
     </ZoomPanContext.Provider>
   );
