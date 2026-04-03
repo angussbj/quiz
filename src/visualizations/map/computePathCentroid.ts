@@ -108,6 +108,19 @@ export function computePolylabel(d: string, precision: number = 0.01): ViewBoxPo
   return { x: result[0], y: result[1] };
 }
 
+/**
+ * Compute the signed distance from a point to the nearest edge of an SVG path polygon.
+ * Positive = inside, negative = outside. Larger positive values mean further from edges.
+ */
+export function computeDistanceToEdge(d: string, point: ViewBoxPosition): number {
+  const points = parsePathPoints(d);
+  if (points.length < 3) return 0;
+  const polygon: ReadonlyArray<ReadonlyArray<readonly [number, number]>> = [
+    points.map((p) => [p.x, p.y] as const),
+  ];
+  return pointToPolygonDistance(point.x, point.y, polygon);
+}
+
 /** Signed distance from point to polygon (negative = inside). */
 function pointToPolygonDistance(
   x: number, y: number,

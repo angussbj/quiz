@@ -243,22 +243,21 @@ function computeDimensions(
 }
 
 /**
- * Order centers for placement: polylabel first (index 0, the best general-purpose
- * position), then remaining centers sorted by distance from nearest dot (furthest first).
+ * Order centers for placement. Centers arrive pre-sorted by distance-to-edge
+ * (best interior position first) from computeBackgroundLabels. When there are
+ * avoid points (city dots), re-sort by distance from nearest dot (furthest first)
+ * so labels are less likely to collide with dots.
  */
 function orderCentersForPlacement(
   centers: ReadonlyArray<ViewBoxPosition>,
   avoidPoints: ReadonlyArray<ViewBoxPosition>,
 ): ReadonlyArray<ViewBoxPosition> {
-  if (centers.length <= 1) return centers;
-  const [polylabel, ...rest] = centers;
-  if (avoidPoints.length === 0 || rest.length === 0) return centers;
-  const sortedRest = [...rest].sort((a, b) => {
+  if (centers.length <= 1 || avoidPoints.length === 0) return centers;
+  return [...centers].sort((a, b) => {
     const distA = minDistanceToPoints(a, avoidPoints);
     const distB = minDistanceToPoints(b, avoidPoints);
     return distB - distA;
   });
-  return [polylabel, ...sortedRest];
 }
 
 function minDistanceToPoints(point: ViewBoxPosition, points: ReadonlyArray<ViewBoxPosition>): number {

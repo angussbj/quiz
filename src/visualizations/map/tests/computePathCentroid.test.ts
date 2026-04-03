@@ -1,4 +1,4 @@
-import { computePathCentroid, computePolylabel, computeBoundingBoxCenter } from '../computePathCentroid';
+import { computePathCentroid, computePolylabel, computeBoundingBoxCenter, computeDistanceToEdge } from '../computePathCentroid';
 
 describe('computePathCentroid', () => {
   it('computes centroid of a simple square path', () => {
@@ -116,5 +116,29 @@ describe('computePolylabel', () => {
 
   it('returns null for degenerate path', () => {
     expect(computePolylabel('M 5 5')).toBeNull();
+  });
+});
+
+describe('computeDistanceToEdge', () => {
+  const square = 'M 0 0 L 10 0 L 10 10 L 0 10 Z';
+
+  it('returns positive distance for a point inside the polygon', () => {
+    const dist = computeDistanceToEdge(square, { x: 5, y: 5 });
+    expect(dist).toBeCloseTo(5, 0);
+  });
+
+  it('returns negative distance for a point outside the polygon', () => {
+    const dist = computeDistanceToEdge(square, { x: 15, y: 5 });
+    expect(dist).toBeLessThan(0);
+  });
+
+  it('returns higher distance for center than for point near edge', () => {
+    const centerDist = computeDistanceToEdge(square, { x: 5, y: 5 });
+    const nearEdgeDist = computeDistanceToEdge(square, { x: 1, y: 5 });
+    expect(centerDist).toBeGreaterThan(nearEdgeDist);
+  });
+
+  it('returns 0 for degenerate paths', () => {
+    expect(computeDistanceToEdge('M 5 5', { x: 5, y: 5 })).toBe(0);
   });
 });

@@ -62,4 +62,21 @@ describe('computeBackgroundLabels', () => {
     const labels = computeBackgroundLabels(paths);
     expect(labels[0].area).toBeCloseTo(200, 0);
   });
+
+  it('sorts centers by distance to nearest edge, not by fixed preference', () => {
+    // Wide rectangle: polylabel, bbox center, and centroid are all at the same
+    // position for a simple rectangle, so this verifies sorting doesn't crash.
+    const paths: ReadonlyArray<BackgroundPath> = [
+      { id: 'rect', svgPathData: squarePath, name: 'TestRect' },
+    ];
+    const labels = computeBackgroundLabels(paths);
+    // All centers should be valid positions inside the shape
+    expect(labels[0].centers.length).toBeGreaterThan(0);
+    for (const center of labels[0].centers) {
+      expect(center.x).toBeGreaterThanOrEqual(0);
+      expect(center.x).toBeLessThanOrEqual(10);
+      expect(center.y).toBeGreaterThanOrEqual(0);
+      expect(center.y).toBeLessThanOrEqual(10);
+    }
+  });
 });

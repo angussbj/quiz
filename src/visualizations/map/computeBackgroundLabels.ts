@@ -1,7 +1,7 @@
 import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundPath } from '../VisualizationRendererProps';
 import type { BackgroundLabel } from './BackgroundLabel';
-import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter } from './computePathCentroid';
+import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter, computeDistanceToEdge } from './computePathCentroid';
 
 /**
  * Derive one label per unique country from background paths.
@@ -42,9 +42,14 @@ export function computeBackgroundLabels(
     const centroid = computePathCentroid(largest.svgPathData);
     const bboxCenter = computeBoundingBoxCenter(largest.svgPathData);
     const polylabelCenter = computePolylabel(largest.svgPathData);
-    // Order: polylabel first (best for most shapes), then bbox center, then centroid
+    // Sort centers by distance to nearest polygon edge (furthest inside first).
+    // This usually picks polylabel but adapts for shapes where another center
+    // happens to sit deeper inside (e.g., wide/narrow or irregular polygons).
     const centers = [polylabelCenter, bboxCenter, centroid]
-      .filter((c): c is ViewBoxPosition => c !== null);
+      .filter((c): c is ViewBoxPosition => c !== null)
+      .sort((a, b) =>
+        computeDistanceToEdge(largest.svgPathData, b) - computeDistanceToEdge(largest.svgPathData, a),
+      );
     labels.push({
       id: name,
       name,
