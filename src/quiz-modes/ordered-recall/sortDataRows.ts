@@ -23,12 +23,18 @@ export function parseNumericValue(value: string | undefined): number | undefined
  *   - 'last': place them after all numeric rows
  * @returns A new sorted array (never mutates the input)
  */
+function parseMissingValuePlacement(value: string): MissingValuePlacement {
+  if (value === 'first' || value === 'last') return value;
+  return 'exclude';
+}
+
 export function sortDataRows(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   column: string,
   descending: boolean,
-  missingValues: MissingValuePlacement,
+  missingValues: string,
 ): ReadonlyArray<Readonly<Record<string, string>>> {
+  const placement = parseMissingValuePlacement(missingValues);
   const withValues: Array<{ readonly row: Readonly<Record<string, string>>; readonly value: number }> = [];
   const withoutValues: Array<Readonly<Record<string, string>>> = [];
 
@@ -45,7 +51,7 @@ export function sortDataRows(
 
   const sortedWithValues = withValues.map((item) => item.row);
 
-  switch (missingValues) {
+  switch (placement) {
     case 'exclude':
       return sortedWithValues;
     case 'first':

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { VisualizationElement, ElementVisualState } from '@/visualizations/VisualizationElement';
+
+const EMPTY_GROUP: ReadonlyArray<string> = [];
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import { calculateScore } from '@/scoring/calculateScore';
 import { matchAnswer, type NormalizeOptions } from '../free-recall/matchAnswer';
@@ -126,7 +128,7 @@ export function useOrderedRecallSession({
 
   const isFinished = groupIndex >= groups.length;
   const currentGroup = useMemo(
-    () => isFinished ? [] as ReadonlyArray<string> : groups[groupIndex],
+    () => isFinished ? EMPTY_GROUP : groups[groupIndex],
     [isFinished, groups, groupIndex],
   );
   const remainingGroupIds = useMemo(
@@ -220,13 +222,13 @@ export function useOrderedRecallSession({
         return;
       }
 
-      // Wrong answer — flash incorrect for all remaining
-      for (const id of remainingGroupIds) {
-        setWrongAttempts((prev) => ({
-          ...prev,
-          [id]: (prev[id] ?? 0) + 1,
-        }));
-      }
+      // Wrong answer — increment wrong attempts for the first remaining element only
+      // (the group shares a wrong attempt count via the first member as representative)
+      const representativeId = remainingGroupIds[0];
+      setWrongAttempts((prev) => ({
+        ...prev,
+        [representativeId]: (prev[representativeId] ?? 0) + 1,
+      }));
       setFlashIncorrect(true);
       if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
       flashTimeoutRef.current = setTimeout(() => {
@@ -240,35 +242,44 @@ export function useOrderedRecallSession({
   const handleSkip = useCallback(() => {
     if (isFinished || remainingGroupIds.length === 0) return;
     clearFlash();
-    const newSkipped = new Set(skippedIds);
-    const newAnswered = new Set(answeredIds);
-    for (const id of remainingGroupIds) {
-      newSkipped.add(id);
-      newAnswered.add(id);
-    }
-    setSkippedIds(newSkipped);
-    setAnsweredIds(newAnswered);
-  }, [isFinished, remainingGroupIds, skippedIds, answeredIds, clearFlash]);
+    const idsToSkip = [...remainingGroupIds];
+    setSkippedIds((prev) => {
+      const next = new Set(prev);
+      for (const id of idsToSkip) next.add(id);
+      return next;
+    });
+    setAnsweredIds((prev) => {
+      const next = new Set(prev);
+      for (const id of idsToSkip) next.add(id);
+      return next;
+    });
+  }, [isFinished, remainingGroupIds, clearFlash]);
 
   // Give up: mark all remaining elements in all groups as missed
   const handleGiveUp = useCallback(() => {
     if (isFinished) return;
     clearFlash();
 
-    const newSkipped = new Set(skippedIds);
-    const newAnswered = new Set(answeredIds);
+    const remainingIds: Array<string> = [];
     for (let i = groupIndex; i < groups.length; i++) {
       for (const id of groups[i]) {
-        if (!correctIds.has(id)) {
-          newSkipped.add(id);
-        }
-        newAnswered.add(id);
+        remainingIds.push(id);
       }
     }
-    setSkippedIds(newSkipped);
-    setAnsweredIds(newAnswered);
+    setSkippedIds((prev) => {
+      const next = new Set(prev);
+      for (const id of remainingIds) {
+        if (!correctIds.has(id)) next.add(id);
+      }
+      return next;
+    });
+    setAnsweredIds((prev) => {
+      const next = new Set(prev);
+      for (const id of remainingIds) next.add(id);
+      return next;
+    });
     setGroupIndex(groups.length);
-  }, [isFinished, groupIndex, groups, correctIds, skippedIds, answeredIds, clearFlash]);
+  }, [isFinished, groupIndex, groups, correctIds, clearFlash]);
 
   return {
     currentGroupIds: currentGroup,

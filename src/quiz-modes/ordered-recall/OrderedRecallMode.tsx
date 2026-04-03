@@ -4,7 +4,7 @@ import { resolveElementToggles, type ElementQuizState } from '../resolveElementT
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { RecallInputBar } from '../RecallInputBar';
 import { useOrderedRecallSession } from './useOrderedRecallSession';
-import { sortDataRows, type MissingValuePlacement } from './sortDataRows';
+import { sortDataRows } from './sortDataRows';
 import { groupByTiedValue } from './groupByTiedValue';
 import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import { useWindowSize } from '@/utilities/useWindowSize';
@@ -47,7 +47,7 @@ export function OrderedRecallMode({
   const sortedDataRows = useMemo(() => {
     if (!orderByColumn) return dataRows;
     const descending = selectValues?.['sortOrder'] === 'descending';
-    const missingValues = (selectValues?.['missingValues'] ?? 'exclude') as MissingValuePlacement;
+    const missingValues = selectValues?.['missingValues'] ?? 'exclude';
     return sortDataRows(dataRows, orderByColumn, descending, missingValues);
   }, [dataRows, selectValues, orderByColumn]);
 
