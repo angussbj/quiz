@@ -403,7 +403,7 @@ export function ActiveQuiz({
       activeDataRows: activeDataRowsAugmented,
       filteredBgElementIds: filteredBgIds,
     };
-  }, [elements, dataRows, columnMappings, rangeColumn, rangeSortColumn, sortColumns, config.elementRange, config.selectValues, groupFilterColumn, config.selectedGroups, tributaryColumn, distributaryColumn, segmentColumn, config.toggleValues]);
+  }, [elements, dataRows, columnMappings, rangeColumn, rangeSortColumn, sortColumns, config.elementRange, groupFilterColumn, config.selectedGroups, tributaryColumn, distributaryColumn, segmentColumn, config.toggleValues]);
 
 /** Build the prompt subtitle string from the set of merged element kinds. */
 function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 'segment'>): string | undefined {
