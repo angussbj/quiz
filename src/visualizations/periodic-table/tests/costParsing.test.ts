@@ -99,7 +99,7 @@ describe('formatElementData cost', () => {
 
   it('formats extreme estimate with ~ and ?', () => {
     const el = makeElement({ costUsdPerKg: 1e25, costIsApproximate: true, costIsEstimate: true });
-    expect(formatElementData(el, 'cost')).toBe('~$1.0e+13T/kg?');
+    expect(formatElementData(el, 'cost')).toBe('~$10^25/kg?');
   });
 
   it('shows dash for undefined cost', () => {

@@ -36,6 +36,10 @@ function formatTemperature(kelvin: number | undefined): string {
 }
 
 function formatCostValue(cost: number): string {
+  if (cost >= 1e15) {
+    const exp = Math.floor(Math.log10(cost));
+    return `$10^${exp}`;
+  }
   if (cost >= 1e12) return `$${(cost / 1e12).toPrecision(2)}T`;
   if (cost >= 1e9) return `$${(cost / 1e9).toPrecision(2)}B`;
   if (cost >= 1e6) return `$${(cost / 1e6).toPrecision(2)}M`;
