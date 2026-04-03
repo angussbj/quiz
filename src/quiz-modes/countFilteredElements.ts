@@ -92,7 +92,7 @@ export function countFilteredElementsFromElements(
     return { id, sortValue: sortValues.get(id), label: el?.label ?? '', viewBoxCenter: { x: 0, y: 0 }, viewBoxBounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 }, interactive: true } as VisualizationElement;
   });
 
-  // Step 6: Rank and count
+  // Step 6: Rank and count (ascending=true means lowest value gets rank 1)
   const ranks = computeSortRanks(tempElements, !descending);
   const min = rangeMin ?? 1;
   const max = rangeMax ?? ranks.size;

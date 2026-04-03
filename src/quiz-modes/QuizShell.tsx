@@ -158,7 +158,7 @@ export function QuizShell({
         rangeMin, rangeMaxValue,
         groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
         tributaryColumn, distributaryColumn, segmentColumn,
-        false, // ascending by default for range filtering
+        activeSortColumn.rankDescending ?? false,
       );
     }
     return countFilteredElements(

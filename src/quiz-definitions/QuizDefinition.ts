@@ -160,4 +160,10 @@ export interface SortColumnDefinition {
    * - 'sum': sum the parent + all merged children's values.
    */
   readonly mergeAggregation?: 'parent' | 'sum';
+  /**
+   * When true, rank 1 = highest value ("top N by X" semantics).
+   * When false (default), rank 1 = lowest value (sequential index semantics).
+   * Most columns want true; atomic_number is a notable exception.
+   */
+  readonly rankDescending?: boolean;
 }

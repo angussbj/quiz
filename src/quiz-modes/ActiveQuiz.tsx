@@ -274,7 +274,6 @@ export function ActiveQuiz({
     // Compute aggregated sort values and apply rank-based range filtering
     if (useSortValueRanking) {
       const dataRowById = new Map(dataRows.map((row) => [row['id'] ?? '', row]));
-      const sortValueDescending = config.selectValues['sortOrder'] === 'descending';
 
       // Compute sort values for ALL sort columns (for ordered recall dataRow augmentation)
       const allColumnSortValues = new Map<string, ReadonlyMap<string, number>>();
@@ -299,7 +298,8 @@ export function ActiveQuiz({
 
       // Compute ranks and apply range filter
       if (config.elementRange) {
-        const ranks = computeSortRanks(mergedActiveElements, !sortValueDescending);
+        const rankAscending = !rangeSortColumn.rankDescending;
+        const ranks = computeSortRanks(mergedActiveElements, rankAscending);
         const rangeMin = config.elementRange.min;
         const rangeMax = config.elementRange.max;
         const excludeIds = new Set<string>();

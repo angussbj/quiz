@@ -1,0 +1,75 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - link "Quizzical" [ref=e5] [cursor=pointer]:
+          - /url: /quiz
+        - navigation "Breadcrumbs" [ref=e6]:
+          - generic [ref=e7]:
+            - generic [ref=e8]: /
+            - link "Geography" [ref=e9] [cursor=pointer]:
+              - /url: /quiz/geography
+          - generic [ref=e10]:
+            - generic [ref=e11]: /
+            - generic [ref=e12]: World Rivers
+      - button "System theme" [ref=e13] [cursor=pointer]:
+        - img [ref=e15]
+  - main [ref=e18]:
+    - generic [ref=e22]:
+      - heading "World Rivers" [level=1] [ref=e23]
+      - paragraph [ref=e24]: Name the major rivers of the world.
+      - generic [ref=e25]:
+        - generic [ref=e26]: Mode
+        - combobox "Mode" [ref=e27] [cursor=pointer]:
+          - option "Free Recall"
+          - option "Ordered Recall"
+          - option "Identify" [selected]
+          - option "Locate"
+          - option "Prompted Recall"
+      - generic [ref=e28]:
+        - generic [ref=e29]: Time limit
+        - generic [ref=e30]:
+          - button "Decrease time limit" [ref=e31] [cursor=pointer]: −
+          - textbox "Time limit" [ref=e32]:
+            - /placeholder: —
+          - button "Increase time limit" [ref=e33] [cursor=pointer]: +
+          - generic [ref=e34]: minutes
+      - generic [ref=e35]:
+        - generic [ref=e36]: Top rivers
+        - generic [ref=e37]:
+          - textbox "1" [ref=e38]
+          - generic [ref=e39]: to
+          - textbox "343" [active] [ref=e40]
+          - generic [ref=e41]: by
+          - combobox [ref=e42] [cursor=pointer]:
+            - option "Discharge"
+            - option "Length" [selected]
+      - generic [ref=e43]:
+        - generic [ref=e44]: Continent
+        - button "Deselect all" [ref=e46] [cursor=pointer]
+        - group "Continent" [ref=e47]:
+          - button "Oceania" [pressed] [ref=e48] [cursor=pointer]
+          - button "Africa" [pressed] [ref=e49] [cursor=pointer]
+          - button "South America" [pressed] [ref=e50] [cursor=pointer]
+          - button "Asia" [pressed] [ref=e51] [cursor=pointer]
+          - button "North America" [pressed] [ref=e52] [cursor=pointer]
+          - button "Europe" [pressed] [ref=e53] [cursor=pointer]
+      - generic [ref=e55]:
+        - heading "Display" [level=2] [ref=e56]
+        - generic [ref=e57]:
+          - generic [ref=e58] [cursor=pointer]:
+            - generic [ref=e59]: Country borders
+            - switch [checked] [ref=e60]
+          - generic [ref=e62] [cursor=pointer]:
+            - generic [ref=e63]: Lakes
+            - switch [checked] [ref=e64]
+          - generic [ref=e66] [cursor=pointer]:
+            - generic [ref=e67]: Merge tributaries
+            - switch [ref=e68]
+          - generic [ref=e70] [cursor=pointer]:
+            - generic [ref=e71]: Merge distributaries
+            - switch [checked] [ref=e72]
+          - generic [ref=e74] [cursor=pointer]:
+            - generic [ref=e75]: Merge segment names
+            - switch [checked] [ref=e76]
+      - button "Start Quiz" [ref=e79] [cursor=pointer]

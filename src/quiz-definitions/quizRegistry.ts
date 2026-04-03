@@ -181,8 +181,8 @@ const riversQuizBase = {
     context: 'var(--color-lake)',
   },
   orderedRecallSortColumns: [
-    { column: 'discharge_m3s', label: 'Discharge' },
-    { column: 'length_km', label: 'Length', mergeAggregation: 'sum' as const },
+    { column: 'discharge_m3s', label: 'Discharge', rankDescending: true },
+    { column: 'length_km', label: 'Length', mergeAggregation: 'sum' as const, rankDescending: true },
   ],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
@@ -339,8 +339,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/science/chemistry/periodic-table.csv',
     supportingDataPaths: [],
-    rangeColumn: 'atomic_number',
-    rangeLabel: 'Atomic number',
+    rangeLabel: 'Elements',
     groupFilterColumn: 'category',
     groupFilterLabel: 'Element category',
     locateDistanceMode: 'grid-centroid' as const,
