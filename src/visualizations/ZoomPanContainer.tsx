@@ -479,13 +479,23 @@ function ZoomPanInner({
   /** Minimum screen pixels for an element to be considered visible during putInView. */
   const PUT_IN_VIEW_MIN_VISIBLE_PX = 8;
 
-  const executePutInView = useCallback((ids: ReadonlyArray<string>, animationMs: number, force?: boolean) => {
+  /**
+   * Pan/zoom to bring elements into view.
+   * @param minScreenFraction — if set, zoom in so the element fills at least this
+   *   fraction of the smaller viewport dimension (e.g. 0.5 = half the screen).
+   *   Without this, the function never zooms in past the current scale.
+   */
+  const executePutInView = useCallback((
+    ids: ReadonlyArray<string>,
+    animationMs: number,
+    options?: { readonly force?: boolean; readonly minScreenFraction?: number },
+  ) => {
     const { containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform } = putInViewLatestRef.current;
 
     const bbox = computeTargetBBox(ids);
     if (!bbox || containerSize.width === 0) return false;
 
-    if (!force && isBBoxVisible(bbox, PUT_IN_VIEW_MIN_VISIBLE_PX)) return true;
+    if (!options?.force && isBBoxVisible(bbox, PUT_IN_VIEW_MIN_VISIBLE_PX)) return true;
 
     const cx = (bbox.minX + bbox.maxX) / 2;
     const cy = (bbox.minY + bbox.maxY) / 2;
@@ -510,10 +520,19 @@ function ZoomPanInner({
       ? PUT_IN_VIEW_MIN_VISIBLE_PX / (bboxDiagonal * basePixelsPerViewBoxUnit)
       : 0;
 
-    // Zoom out if needed (cap at current scale), then zoom in if still below min size.
+    // If a minimum screen fraction is requested, compute the scale that achieves it.
+    const minViewportDim = Math.min(containerSize.width, containerSize.height);
+    const bboxMaxDim = Math.max(bboxWidth, bboxHeight);
+    const fractionScale = (options?.minScreenFraction && bboxMaxDim > 0)
+      ? (minViewportDim * options.minScreenFraction) / (bboxMaxDim * basePixelsPerViewBoxUnit)
+      : 0;
+
+    // Without minScreenFraction: zoom out if needed (cap at current scale), zoom in if below min size.
+    // With minScreenFraction: also zoom in to meet the requested fraction.
+    const floorScale = Math.max(minVisibleScale, fractionScale);
     const finalScale = Math.min(
       MAX_CLUSTER_SCALE,
-      Math.max(Math.min(fitScale, scaleRef.current), minVisibleScale),
+      Math.max(Math.min(fitScale, scaleRef.current), floorScale),
     );
 
     const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
@@ -547,18 +566,25 @@ function ZoomPanInner({
     if (executed) pendingPutInViewRef.current = false;
   }, [containerSize, putInView, executePutInView]);
 
-  // Show "Focus" when putInView targets are off-screen or too small to see (<4px).
-  const FOCUS_MIN_VISIBLE_PX = 4;
+  // Show "Focus" when putInView targets are off-screen or small relative to the viewport.
+  // Threshold: element must fill at least 25% of the smaller viewport dimension to hide the button.
+  const FOCUS_SCREEN_FRACTION = 0.5;
+  const FOCUS_SHOW_THRESHOLD = 0.25;
   const showFocusButton = useMemo(() => {
     if (!putInView || putInView.length === 0) return false;
     const bbox = computeTargetBBox(putInView);
     if (!bbox) return false;
-    return !isBBoxVisible(bbox, FOCUS_MIN_VISIBLE_PX);
-  }, [putInView, computeTargetBBox, isBBoxVisible, currentTransform]); // eslint-disable-line react-hooks/exhaustive-deps -- currentTransform included to recheck on pan/zoom; FOCUS_MIN_VISIBLE_PX is a constant
+    const { containerSize, basePixelsPerViewBoxUnit } = putInViewLatestRef.current;
+    if (containerSize.width === 0) return false;
+    const bboxMaxDim = Math.max(bbox.maxX - bbox.minX, bbox.maxY - bbox.minY);
+    const screenSize = bboxMaxDim * basePixelsPerViewBoxUnit * currentTransform.scale;
+    const minViewportDim = Math.min(containerSize.width, containerSize.height);
+    return screenSize < minViewportDim * FOCUS_SHOW_THRESHOLD;
+  }, [putInView, computeTargetBBox, currentTransform]);
 
   const handleFocus = useCallback(() => {
     if (!putInView || putInView.length === 0) return;
-    executePutInView(putInView, 400, true);
+    executePutInView(putInView, 400, { force: true, minScreenFraction: FOCUS_SCREEN_FRACTION });
   }, [putInView, executePutInView]);
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;

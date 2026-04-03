@@ -81,14 +81,16 @@ describe('ZoomPanContainer', () => {
     expect(y + h).toBeGreaterThan(205);
   });
 
-  it('shows Focus button when putInView IDs are set', () => {
+  it('does not show Focus button without a sized container (jsdom has no ResizeObserver)', () => {
+    // Focus button requires a non-zero container to compute viewport-relative size.
+    // In jsdom, containerSize stays at {0,0}, so Focus never appears.
     const elements = [element('a', 50, 50), element('b', 100, 100)];
     render(
       <ZoomPanContainer elements={elements} putInView={['a']}>
         <text>content</text>
       </ZoomPanContainer>,
     );
-    expect(screen.getByText('Focus')).toBeInTheDocument();
+    expect(screen.queryByText('Focus')).not.toBeInTheDocument();
   });
 
   it('does not show Focus button when putInView is empty', () => {
