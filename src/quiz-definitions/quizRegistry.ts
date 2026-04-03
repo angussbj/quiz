@@ -151,7 +151,7 @@ const largestCitiesQuiz = {
 const riversQuizBase = {
   path: ['Geography'],
   visualizationType: 'map' as const,
-  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
+  availableModes: ['free-recall-unordered', 'free-recall-ordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'identify' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
@@ -180,6 +180,10 @@ const riversQuizBase = {
     default: 'var(--color-lake)',
     context: 'var(--color-lake)',
   },
+  orderedRecallSortColumns: [
+    { column: 'discharge_m3s', label: 'Discharge' },
+    { column: 'length_km', label: 'Length', mergeAggregation: 'sum' as const },
+  ],
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 
@@ -429,8 +433,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Name the major rivers of the world.',
     dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
     initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
-    rangeColumn: 'discharge_rank',
-    rangeLabel: 'Top rivers by discharge',
+    rangeLabel: 'Top rivers',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
     groupFilterCameraPositions: {

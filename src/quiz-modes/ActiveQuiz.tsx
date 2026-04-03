@@ -13,7 +13,6 @@ import { computeGroupCameraPosition } from './computeGroupCameraPosition';
 import { computeAggregatedSortValues } from './computeAggregatedSortValues';
 import { computeSortRanks } from './computeSortRanks';
 import { normalizeText, type NormalizeOptions } from './free-recall/matchAnswer';
-import { parseNumericValue } from './ordered-recall/sortDataRows';
 import { Timer } from './Timer';
 import { resolveMode } from './resolveMode';
 import { useWikipediaPreview, type WikipediaPreviewState } from '@/visualizations/wikipedia/useWikipediaPreview';

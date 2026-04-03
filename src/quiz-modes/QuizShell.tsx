@@ -225,6 +225,12 @@ export function QuizShell({
     return { ...toggleState.values, ...result.forcedValues };
   }, [modeConstraints, selectedMode, toggleState.values, toggleState.selectValues]);
 
+  // Include range sort column in select values so ActiveQuiz can read it
+  const effectiveSelectValues = useMemo(() => {
+    if (!rangeSortColumnKey) return toggleState.selectValues;
+    return { ...toggleState.selectValues, rangeSortColumn: rangeSortColumnKey };
+  }, [toggleState.selectValues, rangeSortColumnKey]);
+
   const { setQuizActive, clearQuizActive } = useQuizActiveRegister();
   useEffect(() => {
     if (phase === 'active') {
@@ -280,12 +286,6 @@ export function QuizShell({
   const elementRange = rangeMin !== undefined || rangeMaxValue !== undefined
     ? { min: rangeMin ?? 1, max: rangeMaxValue ?? (rangeMax ?? 999) }
     : undefined;
-
-  // Include range sort column in select values so ActiveQuiz can read it
-  const effectiveSelectValues = useMemo(() => {
-    if (!rangeSortColumnKey) return toggleState.selectValues;
-    return { ...toggleState.selectValues, rangeSortColumn: rangeSortColumnKey };
-  }, [toggleState.selectValues, rangeSortColumnKey]);
 
   const config: QuizConfig = {
     toggleValues: effectiveToggleValues,

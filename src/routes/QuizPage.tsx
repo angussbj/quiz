@@ -159,7 +159,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         modeConstraints={definition.modeConstraints}
         rangeColumn={definition.rangeColumn}
         rangeLabel={definition.rangeLabel}
-        rangeMax={definition.rangeColumn ? rows.length : undefined}
+        rangeMax={(definition.rangeColumn || definition.orderedRecallSortColumns?.length) ? elements.length : undefined}
         sortColumns={definition.orderedRecallSortColumns}
         elements={elements}
         tributaryColumn={definition.tributaryColumn}
