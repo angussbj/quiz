@@ -13,6 +13,7 @@ dist-ssr
 coverage
 
 .worktrees
+screenshots/
 
 # Large source data files (download URLs in script headers)
 scripts/source-data/
