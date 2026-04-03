@@ -13,9 +13,9 @@ export function computeSortRanks(
   elements: ReadonlyArray<VisualizationElement>,
   ascending: boolean = true,
 ): ReadonlyMap<string, number> {
-  const withValue = elements
-    .filter((el) => el.sortValue !== undefined)
-    .map((el) => ({ id: el.id, value: el.sortValue as number }));
+  const withValue = elements.flatMap((el) =>
+    el.sortValue !== undefined ? [{ id: el.id, value: el.sortValue }] : [],
+  );
 
   withValue.sort((a, b) => ascending ? a.value - b.value : b.value - a.value);
 

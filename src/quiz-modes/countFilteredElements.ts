@@ -87,9 +87,16 @@ export function countFilteredElementsFromElements(
   const sortValues = computeAggregatedSortValues(activeIds, mergeMap, dataRowById, sortColumn);
 
   // Step 5: Build temporary elements with sortValue for ranking
-  const tempElements = [...activeIds].map((id) => {
+  const tempElements: ReadonlyArray<VisualizationElement> = [...activeIds].map((id) => {
     const el = elementById.get(id);
-    return { id, sortValue: sortValues.get(id), label: el?.label ?? '', viewBoxCenter: { x: 0, y: 0 }, viewBoxBounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 }, interactive: true } as VisualizationElement;
+    return {
+      id,
+      sortValue: sortValues.get(id),
+      label: el?.label ?? '',
+      viewBoxCenter: { x: 0, y: 0 },
+      viewBoxBounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
+      interactive: true,
+    };
   });
 
   // Step 6: Rank and count (ascending=true means lowest value gets rank 1)
