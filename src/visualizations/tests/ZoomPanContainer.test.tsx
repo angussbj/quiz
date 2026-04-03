@@ -81,6 +81,26 @@ describe('ZoomPanContainer', () => {
     expect(y + h).toBeGreaterThan(205);
   });
 
+  it('shows Focus button when putInView IDs are set', () => {
+    const elements = [element('a', 50, 50), element('b', 100, 100)];
+    render(
+      <ZoomPanContainer elements={elements} putInView={['a']}>
+        <text>content</text>
+      </ZoomPanContainer>,
+    );
+    expect(screen.getByText('Focus')).toBeInTheDocument();
+  });
+
+  it('does not show Focus button when putInView is empty', () => {
+    const elements = [element('a', 50, 50)];
+    render(
+      <ZoomPanContainer elements={elements}>
+        <text>content</text>
+      </ZoomPanContainer>,
+    );
+    expect(screen.queryByText('Focus')).not.toBeInTheDocument();
+  });
+
   it('renders with empty elements', () => {
     const { container } = render(
       <ZoomPanContainer elements={[]}>
