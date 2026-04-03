@@ -352,7 +352,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { column: 'boiling_point', label: 'Boiling point' },
       { column: 'year_discovered', label: 'Year discovered' },
       { column: 'half_life', label: 'Half-life' },
-      { column: 'cost_usd_per_kg', label: 'Cost (USD/kg)' },
+      { column: 'cost_usd_per_kg', label: 'Cost USD/kg (1999\u20132025)' },
     ],
   },
   {
