@@ -6,6 +6,7 @@ import { getQuizById } from '@/quiz-definitions/getQuizById';
 
 const HomePage = lazy(() => import('./routes/HomePage.tsx'));
 const QuizPage = lazy(() => import('./routes/QuizPage.tsx'));
+const ElementCostMethodology = lazy(() => import('./routes/ElementCostMethodology.tsx'));
 
 function QuizOrCategoryPage() {
   const { '*': slug } = useParams();
@@ -23,6 +24,7 @@ export function App() {
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/about/element-costs" element={<ElementCostMethodology />} />
             <Route path="/*" element={<QuizOrCategoryPage />} />
           </Routes>
         </Suspense>
