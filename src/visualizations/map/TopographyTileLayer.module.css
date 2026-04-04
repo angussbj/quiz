@@ -1,0 +1,11 @@
+.topographyLayer {
+  pointer-events: none;
+}
+
+.topographyTile {
+  image-rendering: auto; /* bilinear interpolation for smooth zoom */
+}
+
+[data-theme='dark'] .topographyTile {
+  filter: brightness(0.65);
+}
