@@ -20,9 +20,25 @@ export function parseCostValue(raw: string | undefined): {
   return { value, isApproximate, isEstimate };
 }
 
+function extractDataColumns(
+  row: Readonly<Record<string, string>>,
+  keys: ReadonlyArray<string> | undefined,
+): Readonly<Record<string, string>> | undefined {
+  if (!keys || keys.length === 0) return undefined;
+  const result: Record<string, string> = {};
+  for (const key of keys) {
+    const val = row[key];
+    if (val !== undefined && val !== '') {
+      result[key] = val;
+    }
+  }
+  return result;
+}
+
 export function buildGridElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
+  dataColumnKeys?: ReadonlyArray<string>,
 ): ReadonlyArray<GridElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
@@ -63,6 +79,7 @@ export function buildGridElements(
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
       wikipediaSlug: row[wikipediaColumn] || undefined,
+      dataColumns: extractDataColumns(row, dataColumnKeys),
     };
   });
 }

@@ -124,9 +124,25 @@ function mergeTerritoryRows(
   return mergedRows.filter((_, i) => !indicesToRemove.has(i));
 }
 
+function extractDataColumns(
+  row: Readonly<Record<string, string>>,
+  keys: ReadonlyArray<string> | undefined,
+): Readonly<Record<string, string>> | undefined {
+  if (!keys || keys.length === 0) return undefined;
+  const result: Record<string, string> = {};
+  for (const key of keys) {
+    const val = row[key];
+    if (val !== undefined && val !== '') {
+      result[key] = val;
+    }
+  }
+  return result;
+}
+
 export function buildMapElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
+  dataColumnKeys?: ReadonlyArray<string>,
 ): ReadonlyArray<MapElement> {
   const mergedRows = mergeTerritoryRows(rows);
   const labelColumn = columnMappings['label'] ?? 'label';
@@ -182,6 +198,7 @@ export function buildMapElements(
       distributaryOf,
       segmentOf,
       wikipediaSlug: row[wikipediaColumn] || undefined,
+      dataColumns: extractDataColumns(row, dataColumnKeys),
     };
   });
 }
