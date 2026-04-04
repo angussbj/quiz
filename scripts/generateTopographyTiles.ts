@@ -32,7 +32,9 @@ import { tileColumns, tileRows } from '../src/visualizations/map/topographyTiles
 // ------------------------------------------------------------------
 
 const TILE_SIZE = 512;
-const MAX_LEVEL = 3;
+const MAX_LEVEL = 4;
+/** Skip tiles that are entirely ocean (all pixels transparent). */
+const SKIP_EMPTY_TILES = true;
 const SOURCE_PATH = 'scripts/source-data/ETOPO_2022_v1_60s_N90W180_surface.tif';
 const OUTPUT_BASE = 'public/data/topography';
 
@@ -145,6 +147,7 @@ async function main(): Promise<void> {
         );
 
         const rgba = new Uint8Array(TILE_SIZE * TILE_SIZE * 4);
+        let hasLand = false;
         for (let i = 0; i < TILE_SIZE * TILE_SIZE; i++) {
           const elevation = elevations[i];
           const offset = i * 4;
@@ -155,12 +158,18 @@ async function main(): Promise<void> {
             rgba[offset + 2] = 0;
             rgba[offset + 3] = 0;
           } else {
+            hasLand = true;
             const { r, g, b } = elevationToRgb(elevation);
             rgba[offset] = r;
             rgba[offset + 1] = g;
             rgba[offset + 2] = b;
             rgba[offset + 3] = 255;
           }
+        }
+
+        if (SKIP_EMPTY_TILES && !hasLand) {
+          process.stdout.write(` skipped (ocean)\n`);
+          continue;
         }
 
         const outPath = `${dirPath}/${tileCol}_${tileRow}.png`;

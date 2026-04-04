@@ -265,7 +265,7 @@ const MapContent = memo(function MapContent({
       )}
 
       {/* Topographic elevation tiles */}
-      {toggles['showTopography'] === true && <TopographyTileLayer maxLevel={3} />}
+      {toggles['showTopography'] === true && <TopographyTileLayer maxLevel={4} />}
 
       {/* Background country borders — transparent fill when topography is on */}
       {showBorders && backgroundPaths?.map((path) => (
