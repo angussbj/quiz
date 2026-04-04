@@ -1,11 +1,12 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
+import type { QuizModeType, SortColumnDefinition } from '@/quiz-definitions/QuizDefinition';
+import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
-import { countFilteredElements } from './countFilteredElements';
+import { countFilteredElements, countFilteredElementsFromElements } from './countFilteredElements';
 import { useQuizActiveRegister } from './QuizActiveContext';
 import styles from './QuizShell.module.css';
 
@@ -37,10 +38,22 @@ interface QuizShellProps {
   readonly rangeColumn?: string;
   readonly rangeLabel?: string;
   readonly rangeMax?: number;
+  /** Sort columns for range dropdown and ordered recall. When present, replaces rangeColumn. */
+  readonly sortColumns?: ReadonlyArray<SortColumnDefinition>;
   readonly groupFilterColumn?: string;
   readonly groupFilterLabel?: string;
   readonly availableGroups?: ReadonlyArray<string>;
+  readonly elements?: ReadonlyArray<VisualizationElement>;
   readonly dataRows?: ReadonlyArray<Readonly<Record<string, string>>>;
+  /** Merge columns for accurate count preview with sort-value ranking. */
+  readonly tributaryColumn?: string;
+  readonly distributaryColumn?: string;
+  readonly segmentColumn?: string;
+  readonly toggleControlledFilter?: {
+    readonly toggleKey: string;
+    readonly column: string;
+    readonly values: ReadonlyArray<string>;
+  };
   /** Key of the select toggle that drives dynamic grouping (if any). */
   readonly dynamicGroupingKey?: string;
   /** Called when the dynamic grouping select toggle changes value. */
@@ -68,10 +81,16 @@ export function QuizShell({
   rangeColumn,
   rangeLabel,
   rangeMax,
+  sortColumns,
   groupFilterColumn,
   groupFilterLabel,
   availableGroups,
+  elements,
   dataRows,
+  tributaryColumn,
+  distributaryColumn,
+  segmentColumn,
+  toggleControlledFilter,
   dynamicGroupingKey,
   onGroupByChange,
   children,
@@ -86,6 +105,9 @@ export function QuizShell({
   );
   const [rangeMin, setRangeMin] = useState<number | undefined>(undefined);
   const [rangeMaxValue, setRangeMaxValue] = useState<number | undefined>(undefined);
+  const [rangeSortColumnKey, setRangeSortColumnKey] = useState<string | undefined>(
+    sortColumns?.[0]?.column,
+  );
   const [selectedGroups, setSelectedGroups] = useState<ReadonlySet<string>>(
     () => new Set(availableGroups ?? []),
   );
@@ -128,13 +150,45 @@ export function QuizShell({
     setSelectedGroups(new Set<string>());
   }, []);
 
+  const activeSortColumn = useMemo(() => {
+    if (!sortColumns?.length) return undefined;
+    return sortColumns.find((c) => c.column === rangeSortColumnKey) ?? sortColumns[0];
+  }, [sortColumns, rangeSortColumnKey]);
+
+  // Dynamic range max: number of rankable elements with current sort column, merge state, and group filter.
+  // Used as the placeholder in the range max input when sort columns are active.
+  const dynamicRangeMax = useMemo(() => {
+    if (!activeSortColumn || !elements || !dataRows) return undefined;
+    return countFilteredElementsFromElements(
+      elements, dataRows, toggleState.values, activeSortColumn,
+      undefined, undefined, // no range limits — count all rankable elements
+      groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
+      tributaryColumn, distributaryColumn, segmentColumn,
+      activeSortColumn.rankDescending ?? false,
+      toggleControlledFilter,
+    );
+  }, [elements, dataRows, activeSortColumn, toggleState.values, groupFilterColumn, selectedGroups, tributaryColumn, distributaryColumn, segmentColumn, toggleControlledFilter]);
+
+  const effectiveRangeMax = dynamicRangeMax ?? rangeMax;
+
   const filteredCount = useMemo(() => {
     if (!dataRows) return undefined;
+    // Use element-based counting when sort columns are available (accurate with merge state)
+    if (activeSortColumn && elements) {
+      return countFilteredElementsFromElements(
+        elements, dataRows, toggleState.values, activeSortColumn,
+        rangeMin, rangeMaxValue,
+        groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
+        tributaryColumn, distributaryColumn, segmentColumn,
+        activeSortColumn.rankDescending ?? false,
+        toggleControlledFilter,
+      );
+    }
     return countFilteredElements(
-      dataRows, rangeColumn, rangeMin, rangeMaxValue, rangeMax,
+      dataRows, rangeColumn, rangeMin, rangeMaxValue, effectiveRangeMax,
       groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
     );
-  }, [dataRows, rangeColumn, rangeMin, rangeMaxValue, rangeMax, groupFilterColumn, selectedGroups]);
+  }, [dataRows, elements, activeSortColumn, toggleState.values, rangeColumn, rangeMin, rangeMaxValue, effectiveRangeMax, groupFilterColumn, selectedGroups, tributaryColumn, distributaryColumn, segmentColumn]);
 
   const applyModeConstraints = useCallback((mode: QuizModeType) => {
     const constraints = modeConstraints?.[mode] ?? [];
@@ -194,6 +248,12 @@ export function QuizShell({
     return { ...toggleState.values, ...result.forcedValues };
   }, [modeConstraints, selectedMode, toggleState.values, toggleState.selectValues]);
 
+  // Include range sort column in select values so ActiveQuiz can read it
+  const effectiveSelectValues = useMemo(() => {
+    if (!rangeSortColumnKey) return toggleState.selectValues;
+    return { ...toggleState.selectValues, rangeSortColumn: rangeSortColumnKey };
+  }, [toggleState.selectValues, rangeSortColumnKey]);
+
   const { setQuizActive, clearQuizActive } = useQuizActiveRegister();
   useEffect(() => {
     if (phase === 'active') {
@@ -220,8 +280,11 @@ export function QuizShell({
         activePreset={toggleState.activePreset}
         onToggleChange={toggleState.set}
         onPreset={toggleState.applyPreset}
-        rangeLabel={rangeColumn ? rangeLabel : undefined}
-        rangeMax={rangeMax}
+        rangeLabel={(rangeColumn || sortColumns?.length) ? rangeLabel : undefined}
+        rangeMax={effectiveRangeMax}
+        sortColumns={sortColumns}
+        rangeSortColumnKey={rangeSortColumnKey}
+        onRangeSortColumnChange={setRangeSortColumnKey}
         rangeMinValue={rangeMin}
         rangeMaxValue={rangeMaxValue}
         onRangeMinChange={setRangeMin}
@@ -244,12 +307,12 @@ export function QuizShell({
   }
 
   const elementRange = rangeMin !== undefined || rangeMaxValue !== undefined
-    ? { min: rangeMin ?? 1, max: rangeMaxValue ?? (rangeMax ?? 999) }
+    ? { min: rangeMin ?? 1, max: rangeMaxValue ?? (effectiveRangeMax ?? 999) }
     : undefined;
 
   const config: QuizConfig = {
     toggleValues: effectiveToggleValues,
-    selectValues: toggleState.selectValues,
+    selectValues: effectiveSelectValues,
     selectedMode,
     countdownSeconds: countdownMinutes !== undefined ? countdownMinutes * 60 : undefined,
     elementRange,

@@ -27,6 +27,18 @@ When sorting by a column with duplicate values (e.g., year discovered), elements
 
 `groupByTiedValue()` in `src/quiz-modes/ordered-recall/groupByTiedValue.ts` computes groups from sorted data rows. The session hook (`useOrderedRecallSession`) tracks group index and remaining elements within the current group.
 
+## Range Sort Dropdown
+
+When `orderedRecallSortColumns` has multiple entries, the range filter section shows a "by [Column ▾]" dropdown. This lets users select e.g. "top 10 by length" vs "top 10 by discharge". The same column list drives both the range dropdown and the ordered recall "Order by" dropdown — they're independent selections from the same list.
+
+Range filtering uses runtime rank computation via `computeSortRanks()`. For merged elements (e.g. rivers with tributaries), sort values are aggregated per `SortColumnDefinition.mergeAggregation`:
+- `'parent'` (default): use the parent element's CSV value (e.g. discharge at the mouth)
+- `'sum'`: sum parent + all merged children (e.g. total length of river system)
+
+The `rankDescending` flag controls ranking direction:
+- `true`: highest value = rank 1 ("top N by discharge/length")
+- `false` (default): lowest value = rank 1 (sequential index like atomic number)
+
 ## Adding Sort Columns to a Quiz
 
 Add `orderedRecallSortColumns` to the quiz definition:
@@ -34,8 +46,17 @@ Add `orderedRecallSortColumns` to the quiz definition:
 ```ts
 orderedRecallSortColumns: [
   { column: 'atomic_number', label: 'Atomic number' },
-  { column: 'density', label: 'Density' },
+  { column: 'density', label: 'Density', rankDescending: true },
 ],
 ```
 
 The first column is the default. The quiz must include `'free-recall-ordered'` in `availableModes`.
+
+For quizzes with element merging (e.g. rivers), specify `mergeAggregation` to control how merged elements' sort values are computed:
+
+```ts
+orderedRecallSortColumns: [
+  { column: 'discharge_m3s', label: 'Discharge', rankDescending: true },
+  { column: 'length_km', label: 'Length', mergeAggregation: 'sum', rankDescending: true },
+],
+```

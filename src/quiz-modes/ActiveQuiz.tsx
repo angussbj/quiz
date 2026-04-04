@@ -7,8 +7,11 @@ import type { BackgroundLabel } from '@/visualizations/map/BackgroundLabel';
 import type { ScoreResult } from '@/scoring/ScoreResult';
 import type { ReviewResult } from './QuizModeProps';
 import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinition';
+import type { SortColumnDefinition } from '@/quiz-definitions/QuizDefinition';
 import type { QuizConfig } from './QuizShell';
 import { computeGroupCameraPosition } from './computeGroupCameraPosition';
+import { computeAggregatedSortValues } from './computeAggregatedSortValues';
+import { computeSortRanks } from './computeSortRanks';
 import { normalizeText, type NormalizeOptions } from './free-recall/matchAnswer';
 import { Timer } from './Timer';
 import { resolveMode } from './resolveMode';
@@ -46,7 +49,13 @@ export interface ActiveQuizProps {
   readonly lakePaths?: ReadonlyArray<LakePath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   readonly rangeColumn?: string;
+  readonly sortColumns?: ReadonlyArray<SortColumnDefinition>;
   readonly groupFilterColumn?: string;
+  readonly toggleControlledFilter?: {
+    readonly toggleKey: string;
+    readonly column: string;
+    readonly values: ReadonlyArray<string>;
+  };
   readonly hideFilteredElements?: boolean;
   /** When false, locate mode shows all elements visible from the start. See QuizDefinition. */
   readonly hideUnfocusedElements?: boolean;
@@ -88,7 +97,9 @@ export function ActiveQuiz({
   lakePaths,
   backgroundLabels,
   rangeColumn,
+  sortColumns,
   groupFilterColumn,
+  toggleControlledFilter,
   hideFilteredElements,
   hideUnfocusedElements,
   tributaryColumn,
@@ -102,15 +113,29 @@ export function ActiveQuiz({
   elementStateColorOverrides,
   normalizeOptions,
 }: ActiveQuizProps) {
+  // Resolve the selected range sort column from config
+  const rangeSortColumn = useMemo(() => {
+    if (!sortColumns?.length) return undefined;
+    const selectedCol = config.selectValues['rangeSortColumn'];
+    return sortColumns.find((c) => c.column === selectedCol) ?? sortColumns[0];
+  }, [sortColumns, config.selectValues]);
+
   const { activeElements, activeDataRows, filteredBgElementIds } = useMemo(() => {
-    const hasRangeFilter = rangeColumn && config.elementRange;
+    const useSortValueRanking = rangeSortColumn !== undefined;
+    const hasLegacyRangeFilter = !useSortValueRanking && rangeColumn && config.elementRange;
     const hasGroupFilter = groupFilterColumn && config.selectedGroups;
     const mergeTributaries  = tributaryColumn   && config.toggleValues['mergeTributaries']   === true;
     const mergeDistributaries = distributaryColumn && config.toggleValues['mergeDistributaries'] === true;
     // mergeSegmentNames defaults to true — segments are always merged unless explicitly set false
     const mergeSegments = segmentColumn && config.toggleValues['mergeSegmentNames'] !== false;
 
-    const hasAnyFilter = hasRangeFilter || hasGroupFilter || tributaryColumn || distributaryColumn || segmentColumn;
+    // Toggle-controlled data filter: when the toggle is OFF, only matching rows pass
+    const hasToggleFilter = toggleControlledFilter
+      && config.toggleValues[toggleControlledFilter.toggleKey] !== true;
+    const toggleFilterCol = hasToggleFilter ? toggleControlledFilter.column : undefined;
+    const toggleFilterValues = hasToggleFilter ? new Set(toggleControlledFilter.values) : undefined;
+
+    const hasAnyFilter = hasLegacyRangeFilter || useSortValueRanking || hasGroupFilter || hasToggleFilter || tributaryColumn || distributaryColumn || segmentColumn;
 
     let mergedActiveElements: ReadonlyArray<VisualizationElement>;
     let activeElementsFiltered: ReadonlyArray<VisualizationElement>;
@@ -118,6 +143,8 @@ export function ActiveQuiz({
     const filteredBgIds = new Set<string>();
     // Maps canonical answer value → extra alternate names collected from segment rows
     const segmentAltsByCanonical: Record<string, Array<string>> = {};
+    // Maps merge-source ID → resolved parent element ID (for sort value aggregation)
+    const mergeChildToParentId = new Map<string, string>();
 
     if (!hasAnyFilter) {
       activeElementsFiltered = elements;
@@ -173,9 +200,13 @@ export function ActiveQuiz({
           if (mergeSegments) continue;
         }
 
-        // Apply range and group filters to non-tributary/distributary/segment rows
+        // Apply toggle-controlled filter, group filter, and legacy range filter
         let passes = true;
-        if (hasRangeFilter) {
+        if (passes && toggleFilterCol && toggleFilterValues) {
+          const cellValue = row[toggleFilterCol] ?? '';
+          if (!toggleFilterValues.has(cellValue)) passes = false;
+        }
+        if (passes && hasLegacyRangeFilter) {
           const value = parseInt(row[rangeColumn] ?? '', 10);
           if (Number.isNaN(value) || value < config.elementRange.min || value > config.elementRange.max) passes = false;
         }
@@ -240,6 +271,9 @@ export function ActiveQuiz({
 
         if (!mergedKindsByActiveId.has(parentEl.id)) mergedKindsByActiveId.set(parentEl.id, new Set());
         mergedKindsByActiveId.get(parentEl.id)!.add(kind);
+
+        // Track merge relationship for sort value aggregation
+        mergeChildToParentId.set(src.id, parentEl.id);
       }
 
       mergedActiveElements = activeElementsFiltered.map((el) => {
@@ -253,9 +287,102 @@ export function ActiveQuiz({
       });
     }
 
-    // Augment data rows with element label alternates so grouped elements
-    // (bilateral merge, numbered merge) can be matched by their merged label.
-    // E.g. bilateral merge: row name "Femur (right)" → element label "Femur".
+    // Compute aggregated sort values and apply rank-based range filtering
+    if (useSortValueRanking) {
+      const dataRowById = new Map(dataRows.map((row) => [row['id'] ?? '', row]));
+
+      // Compute sort values for ALL sort columns (for ordered recall dataRow augmentation)
+      const allColumnSortValues = new Map<string, ReadonlyMap<string, number>>();
+      for (const col of sortColumns ?? []) {
+        const values = computeAggregatedSortValues(
+          activeRowIds instanceof Set ? activeRowIds : new Set(activeRowIds),
+          mergeChildToParentId,
+          dataRowById,
+          col,
+        );
+        allColumnSortValues.set(col.column, values);
+      }
+
+      // Set sortValue on elements for the range sort column
+      const rangeSortValues = allColumnSortValues.get(rangeSortColumn.column);
+      if (rangeSortValues) {
+        mergedActiveElements = mergedActiveElements.map((el) => {
+          const sv = rangeSortValues.get(el.id);
+          return sv !== undefined ? { ...el, sortValue: sv } : el;
+        });
+      }
+
+      // Compute ranks and apply range filter
+      if (config.elementRange) {
+        const rankAscending = !rangeSortColumn.rankDescending;
+        const ranks = computeSortRanks(mergedActiveElements, rankAscending);
+        const rangeMin = config.elementRange.min;
+        const rangeMax = config.elementRange.max;
+        const excludeIds = new Set<string>();
+        for (const el of mergedActiveElements) {
+          const rank = ranks.get(el.id);
+          if (rank === undefined || rank < rangeMin || rank > rangeMax) {
+            excludeIds.add(el.id);
+            filteredBgIds.add(el.id);
+          }
+        }
+        if (excludeIds.size > 0) {
+          mergedActiveElements = mergedActiveElements.filter((el) => !excludeIds.has(el.id));
+          activeElementsFiltered = activeElementsFiltered.filter((el) => !excludeIds.has(el.id));
+          activeRowIds = new Set([...activeRowIds].filter((id) => !excludeIds.has(id)));
+        }
+      }
+
+      // Augment data rows with aggregated sort values for ordered recall
+      if (allColumnSortValues.size > 0) {
+        const augmentedDataRows = dataRows
+          .filter((row) => (activeRowIds instanceof Set ? activeRowIds : new Set(activeRowIds)).has(row['id'] ?? ''))
+          .map((row) => {
+            const id = row['id'] ?? '';
+            let augmented = row;
+            for (const [colName, values] of allColumnSortValues) {
+              const aggValue = values.get(id);
+              if (aggValue !== undefined) {
+                augmented = { ...augmented, [colName]: String(aggValue) };
+              }
+            }
+            return augmented;
+          });
+
+        // Continue with augmented rows for the data row processing below
+        // (need to assign to a mutable variable since we're inside the useMemo)
+        const answerColumn = columnMappings['answer'] ?? 'name';
+        const altsColumn = `${answerColumn}_alternates`;
+        const elementLabelById = new Map<string, string>();
+        for (const el of activeElementsFiltered) {
+          elementLabelById.set(el.id, el.label);
+        }
+
+        const finalDataRows = augmentedDataRows.map((row) => {
+          const rowId = row['id'] ?? '';
+          const canonicalName = row[answerColumn] ?? '';
+          const parts: Array<string> = [];
+          const extraAlts = segmentAltsByCanonical[canonicalName];
+          if (extraAlts?.length) parts.push(...extraAlts);
+          const elLabel = elementLabelById.get(rowId);
+          if (elLabel && normalizeText(elLabel) !== normalizeText(canonicalName)) {
+            parts.push(elLabel);
+          }
+          if (parts.length === 0) return row;
+          const existing = row[altsColumn] ?? '';
+          const merged = [existing, ...parts].filter(Boolean).join('|');
+          return { ...row, [altsColumn]: merged };
+        });
+
+        return {
+          activeElements: mergedActiveElements,
+          activeDataRows: finalDataRows,
+          filteredBgElementIds: filteredBgIds,
+        };
+      }
+    }
+
+    // Standard data row augmentation (legacy path or no sort columns)
     const answerColumn = columnMappings['answer'] ?? 'name';
     const altsColumn = `${answerColumn}_alternates`;
 
@@ -265,7 +392,7 @@ export function ActiveQuiz({
     }
 
     const activeDataRowsAugmented = dataRows
-      .filter((row) => activeRowIds.has(row['id'] ?? ''))
+      .filter((row) => (activeRowIds instanceof Set ? activeRowIds : new Set(activeRowIds)).has(row['id'] ?? ''))
       .map((row) => {
         const rowId = row['id'] ?? '';
         const canonicalName = row[answerColumn] ?? '';
@@ -292,7 +419,7 @@ export function ActiveQuiz({
       activeDataRows: activeDataRowsAugmented,
       filteredBgElementIds: filteredBgIds,
     };
-  }, [elements, dataRows, columnMappings, rangeColumn, config.elementRange, groupFilterColumn, config.selectedGroups, tributaryColumn, distributaryColumn, segmentColumn, config.toggleValues]);
+  }, [elements, dataRows, columnMappings, rangeColumn, rangeSortColumn, sortColumns, config.elementRange, groupFilterColumn, config.selectedGroups, toggleControlledFilter, tributaryColumn, distributaryColumn, segmentColumn, config.toggleValues]);
 
 /** Build the prompt subtitle string from the set of merged element kinds. */
 function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 'segment'>): string | undefined {
