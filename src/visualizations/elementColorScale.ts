@@ -1,11 +1,6 @@
 import type { VisualizationElement } from './VisualizationElement';
 import { computeAdaptiveScale } from '../utilities/adaptiveScale';
 
-export function toElementColorField(value: string): string | undefined {
-  if (value === 'none') return undefined;
-  return value;
-}
-
 /** Get the numeric value for a color scale field from an element's dataColumns. */
 function getNumericValue(element: VisualizationElement, column: string): number | undefined {
   const raw = element.dataColumns?.[column];

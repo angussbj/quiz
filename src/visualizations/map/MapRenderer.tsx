@@ -18,7 +18,7 @@ import { useDragDetector } from './useDragDetector';
 import { useStrokePathCache } from './useStrokePathCache';
 import { findClosestStrokeElement } from './findClosestStrokeElement';
 import { formatDataValue } from '../formatDataValue';
-import { computeElementColors, toElementColorField } from '../elementColorScale';
+import { computeElementColors } from '../elementColorScale';
 import type { ElementColorMap } from '../elementColorScale';
 import { useTheme } from '@/theme/ThemeProvider';
 import styles from './MapRenderer.module.css';
@@ -370,9 +370,7 @@ const MapContent = memo(function MapContent({
 
   const elementColorMap: ElementColorMap | undefined = useMemo(() => {
     if (!colorColumnName) return undefined;
-    const colorField = toElementColorField(colorColumnName);
-    if (!colorField) return undefined;
-    return computeElementColors(elements, colorField, darkMode);
+    return computeElementColors(elements, colorColumnName, darkMode);
   }, [elements, colorColumnName, darkMode]);
 
   const handleBackgroundClick = useCallback(

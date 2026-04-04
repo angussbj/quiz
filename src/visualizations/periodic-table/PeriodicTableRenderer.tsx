@@ -12,7 +12,7 @@ import { gridElementToVisualizationElement } from './gridElementToVisualizationE
 import { GridFeedbackOverlay } from './GridFeedbackOverlay';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 import { formatElementData, ELEMENT_DATA_COLUMNS } from './formatElementData';
-import { computeElementColors, toElementColorField } from '../elementColorScale';
+import { computeElementColors } from '../elementColorScale';
 import type { ElementColorMap } from '../elementColorScale';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -262,7 +262,7 @@ function PeriodicTableGrid({
   const elementDataValue = selectValues?.['elementData'] ?? 'none';
   const elementDataField = toElementDataColumn(elementDataValue);
   const elementColorValue = selectValues?.['elementColors'] ?? 'none';
-  const elementColorField = toElementColorField(elementColorValue);
+  const elementColorField = elementColorValue !== 'none' ? elementColorValue : undefined;
 
   const elementColorMap: ElementColorMap | undefined = useMemo(() => {
     if (elementColorField === undefined) return undefined;
