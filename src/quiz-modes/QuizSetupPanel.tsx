@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import type { QuizModeType, SortColumnDefinition } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
@@ -105,6 +105,16 @@ export function QuizSetupPanel({
     () => resolveToggleConstraints(activeConstraints, toggleValues, selectValues),
     [activeConstraints, toggleValues, selectValues],
   );
+
+  // Sync forced values into the actual toggle state so that when constraints
+  // relax, the toggle retains the value the user saw (not the stale underlying state).
+  useEffect(() => {
+    for (const [key, value] of Object.entries(constraintResult.forcedValues)) {
+      if (toggleValues[key] !== value) {
+        onToggleChange(key, value);
+      }
+    }
+  }, [constraintResult.forcedValues, toggleValues, onToggleChange]);
 
   // Merge forced values into the displayed toggle values
   const effectiveToggleValues = useMemo(() => ({
