@@ -159,7 +159,13 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         modeConstraints={definition.modeConstraints}
         rangeColumn={definition.rangeColumn}
         rangeLabel={definition.rangeLabel}
-        rangeMax={definition.rangeColumn ? rows.length : undefined}
+        rangeMax={(definition.rangeColumn || definition.orderedRecallSortColumns?.length) ? elements.length : undefined}
+        sortColumns={definition.orderedRecallSortColumns}
+        elements={elements}
+        tributaryColumn={definition.tributaryColumn}
+        distributaryColumn={definition.distributaryColumn}
+        segmentColumn={definition.segmentColumn}
+        toggleControlledFilter={definition.toggleControlledFilter}
         groupFilterColumn={definition.groupFilterColumn}
         groupFilterLabel={definition.groupFilterLabel}
         availableGroups={availableGroups}
@@ -179,7 +185,9 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             lakePaths={allLakePaths}
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
+            sortColumns={definition.orderedRecallSortColumns}
             groupFilterColumn={definition.groupFilterColumn}
+            toggleControlledFilter={definition.toggleControlledFilter}
             hideFilteredElements={definition.hideFilteredElements}
             hideUnfocusedElements={definition.hideUnfocusedElements}
             tributaryColumn={definition.tributaryColumn}

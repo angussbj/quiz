@@ -27,9 +27,21 @@ When sorting by a column with duplicate values (e.g., year discovered), elements
 
 `groupByTiedValue()` in `src/quiz-modes/ordered-recall/groupByTiedValue.ts` computes groups from sorted data rows. The session hook (`useOrderedRecallSession`) tracks group index and remaining elements within the current group.
 
+## Range Sort Dropdown
+
+When `orderedRecallSortColumns` has multiple entries, the range filter section shows a "by [Column ▾]" dropdown. This lets users select e.g. "top 10 by length" vs "top 10 by discharge". The same column list drives both the range dropdown and the ordered recall "Order by" dropdown — they're independent selections from the same list.
+
+Range filtering uses runtime rank computation via `computeSortRanks()`. For merged elements (e.g. rivers with tributaries), sort values are aggregated per `SortColumnDefinition.mergeAggregation`:
+- `'parent'` (default): use the parent element's CSV value (e.g. discharge at the mouth)
+- `'sum'`: sum parent + all merged children (e.g. total length of river system)
+
+The `rankDescending` flag controls ranking direction:
+- `true`: highest value = rank 1 ("top N by discharge/length")
+- `false` (default): lowest value = rank 1 (sequential index like atomic number)
+
 ## Coverage Indicator
 
-When a column has missing values, `QuizSetupPanel` displays a coverage note below the ordering controls: "X of Y countries have data". The coverage computation filters to quiz-participating rows (rows that have at least one stat column populated), excluding territories and non-quiz rows.
+When a column has missing values, `QuizSetupPanel` displays a coverage note below the ordering controls: "Data present for X out of Y". The coverage computation filters to quiz-participating rows (rows that have at least one stat column populated), excluding territories and non-quiz rows.
 
 ## Info Links
 
@@ -42,12 +54,21 @@ Add `orderedRecallSortColumns` to the quiz definition:
 ```ts
 orderedRecallSortColumns: [
   { column: 'atomic_number', label: 'Atomic number' },
-  { column: 'density', label: 'Density' },
+  { column: 'density', label: 'Density', rankDescending: true },
   { column: 'population', label: 'Population', infoUrl: '/about/country-statistics' },
 ],
 ```
 
 The first column is the default. The quiz must include `'free-recall-ordered'` in `availableModes`.
+
+For quizzes with element merging (e.g. rivers), specify `mergeAggregation` to control how merged elements' sort values are computed:
+
+```ts
+orderedRecallSortColumns: [
+  { column: 'discharge_m3s', label: 'Discharge', rankDescending: true },
+  { column: 'length_km', label: 'Length', mergeAggregation: 'sum', rankDescending: true },
+],
+```
 
 ## Country Statistics Data
 
