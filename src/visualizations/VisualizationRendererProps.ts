@@ -79,6 +79,8 @@ export interface VisualizationRendererProps {
   readonly elementToggles?: Readonly<Record<string, Readonly<Record<string, boolean>>>>;
   /** Current values for multi-value select toggles (e.g., which element data field to display). */
   readonly selectValues?: Readonly<Record<string, string>>;
+  /** Maps select toggle option values to their display labels (for data display formatting). */
+  readonly selectValueLabels?: Readonly<Record<string, string>>;
   readonly clustering?: ClusteringConfig;
   /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;

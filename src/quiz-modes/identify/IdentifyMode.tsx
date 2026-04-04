@@ -21,6 +21,7 @@ export function IdentifyMode({
   selectToggleDefinitions = [],
   toggleValues = {},
   selectValues = {},
+  selectValueLabels,
   Renderer,
   backgroundPaths,
   lakePaths,
@@ -195,6 +196,7 @@ export function IdentifyMode({
           onElementClick={reviewing ? undefined : handleElementClick}
           toggles={toggleValues}
           selectValues={selectValues}
+          selectValueLabels={selectValueLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

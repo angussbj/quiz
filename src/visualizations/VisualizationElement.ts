@@ -61,6 +61,9 @@ export interface VisualizationElement {
    *  Populated by the quiz page based on the selected sort column.
    *  For merged elements (e.g. rivers with tributaries), this is the aggregated value. */
   readonly sortValue?: number;
+  /** Raw CSV column values for data display. Only columns referenced by selectToggle
+   *  options are included — not the full CSV row. Keyed by CSV column name. */
+  readonly dataColumns?: Readonly<Record<string, string>>;
 }
 
 /** Pre-computed label position for leader-line style labels (e.g. anatomy diagrams) */

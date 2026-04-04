@@ -13,12 +13,13 @@ export function buildElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
   timeScale?: TimeScale,
+  dataColumnKeys?: ReadonlyArray<string>,
 ): ReadonlyArray<VisualizationElement> {
   switch (visualizationType) {
     case 'map':
-      return buildMapElements(rows, columnMappings);
+      return buildMapElements(rows, columnMappings, dataColumnKeys);
     case 'grid':
-      return buildGridElements(rows, columnMappings);
+      return buildGridElements(rows, columnMappings, dataColumnKeys);
     case 'timeline':
       return buildTimelineElementsFromRows(rows, columnMappings, timeScale);
     case 'flag-grid':

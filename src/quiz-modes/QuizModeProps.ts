@@ -29,6 +29,8 @@ export interface QuizModeProps {
   readonly selectToggleDefinitions?: ReadonlyArray<SelectToggleDefinition>;
   readonly toggleValues: Readonly<Record<string, boolean>>;
   readonly selectValues?: Readonly<Record<string, string>>;
+  /** Maps select toggle option values to their display labels (for data display formatting). */
+  readonly selectValueLabels?: Readonly<Record<string, string>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly lakePaths?: ReadonlyArray<LakePath>;

@@ -37,21 +37,26 @@ interface MapCountryLabelsProps {
   readonly nameToElementId?: Readonly<Record<string, string>>;
   readonly onElementHoverStart?: (elementId: string) => void;
   readonly onElementHoverEnd?: () => void;
+  /** Formatted data values keyed by element name (e.g. "Australia" → "25.7M"). */
+  readonly dataValues?: Readonly<Record<string, string>>;
 }
 
-export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, elementNameToState, nameToElementId, onElementHoverStart, onElementHoverEnd }: MapCountryLabelsProps) {
+export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, elementNameToState, nameToElementId, onElementHoverStart, onElementHoverEnd, dataValues }: MapCountryLabelsProps) {
   const { scale } = useZoomPan();
   const quantizedScale = quantizeScale(scale);
 
-  // Filter labels to those that should be visible based on element state and toggles.
-  // Labels for answered elements always show; others show per toggle.
+  const hasDataValues = !!dataValues && Object.keys(dataValues).length > 0;
+
+  // Filter labels to those that should be visible based on element state, toggles, and data display.
+  // Labels for answered elements always show; others show per toggle or if data values are active.
   const filteredLabels = useMemo(() => {
-    if (!elementNameToState) return showNames || showFlags ? labels : [];
+    if (!elementNameToState) return showNames || showFlags || hasDataValues ? labels : [];
     return labels.filter((label) => {
       const state = elementNameToState[label.name];
-      return shouldShowLabel(state, showNames || showFlags);
+      const hasData = hasDataValues && dataValues[label.name] !== undefined;
+      return shouldShowLabel(state, showNames || showFlags || hasData);
     });
-  }, [labels, elementNameToState, showNames, showFlags]);
+  }, [labels, elementNameToState, showNames, showFlags, hasDataValues, dataValues]);
 
   const visibleItems = useMemo(() => {
     if (filteredLabels.length === 0) return [];
@@ -74,6 +79,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
           || state === 'missed' || state === 'context';
         const labelShowName = isAnswered || showNames;
         const labelShowFlag = showFlags && !!label.code;
+        const dataValue = dataValues?.[label.name];
         const flagWidth = flagHeight * 4 / 3;
         const cx = x + width / 2;
         const textColor = isAnswered
@@ -85,6 +91,11 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
 
         let textBaseY = y;
         if (labelShowFlag) textBaseY += flagHeight + gapSize;
+
+        // Data value position: below the name if name is visible, otherwise at the name position
+        const nameLineCount = labelShowName ? Math.max(lines.length, 1) : 0;
+        const dataFontSize = fontSize * 0.75;
+        const dataY = textBaseY + fontSize * 0.85 + nameLineCount * lineHeight + dataFontSize * 0.3;
 
         return (
           <g
@@ -125,6 +136,26 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                     {line}
                   </tspan>
                 ))}
+              </text>
+            )}
+            {dataValue !== undefined && (
+              <text
+                x={cx}
+                y={labelShowName ? dataY : textBaseY + fontSize * 0.85}
+                textAnchor="middle"
+                fontSize={dataFontSize}
+                fill={textColor}
+                opacity={0.7}
+                pointerEvents={canHover ? 'auto' : 'none'}
+                style={{
+                  userSelect: 'none',
+                  paintOrder: 'stroke',
+                  stroke: 'var(--color-label-halo)',
+                  strokeWidth: dataFontSize * 0.5,
+                  strokeLinejoin: 'round',
+                }}
+              >
+                {dataValue}
               </text>
             )}
           </g>

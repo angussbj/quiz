@@ -11,8 +11,7 @@ import { STATUS_COLORS } from '../elementStateColors';
 import { gridElementToVisualizationElement } from './gridElementToVisualizationElement';
 import { GridFeedbackOverlay } from './GridFeedbackOverlay';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
-import { formatElementData } from './formatElementData';
-import type { ElementDataField } from './formatElementData';
+import { formatElementData, ELEMENT_DATA_COLUMNS } from './formatElementData';
 import { computeElementColors, toElementColorField } from './elementColorScale';
 import type { ElementColorMap } from './elementColorScale';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -26,7 +25,7 @@ interface CellProps {
   readonly showAtomicNumber: boolean;
   readonly showName: boolean;
   readonly showAtomicWeight: boolean;
-  readonly elementDataField: ElementDataField | undefined;
+  readonly elementDataField: string | undefined;
   readonly colorFill: string | undefined;
   readonly isClustered: boolean;
   readonly zoomedIn: boolean;
@@ -239,13 +238,8 @@ function GridCell({
   );
 }
 
-const ELEMENT_DATA_FIELDS: ReadonlyArray<ElementDataField> = [
-  'half-life', 'density', 'state', 'electronegativity', 'year-discovered',
-  'melting-point', 'boiling-point', 'cost',
-];
-
-function toElementDataField(value: string): ElementDataField | undefined {
-  return ELEMENT_DATA_FIELDS.find((f) => f === value);
+function toElementDataColumn(value: string): string | undefined {
+  return ELEMENT_DATA_COLUMNS.find((c) => c === value);
 }
 
 function PeriodicTableGrid({
@@ -266,7 +260,7 @@ function PeriodicTableGrid({
   const zoomedIn = scale >= ZOOM_DETAIL_THRESHOLD;
   const showAtomicWeight = elementToggle(elementToggles, toggles, '', 'showAtomicWeight');
   const elementDataValue = selectValues?.['elementData'] ?? 'none';
-  const elementDataField = toElementDataField(elementDataValue);
+  const elementDataField = toElementDataColumn(elementDataValue);
   const elementColorValue = selectValues?.['elementColors'] ?? 'none';
   const elementColorField = toElementColorField(elementColorValue);
 

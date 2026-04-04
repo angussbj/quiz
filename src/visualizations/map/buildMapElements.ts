@@ -1,5 +1,6 @@
 import type { MapElement } from './MapElement';
 import { projectGeo, wrapPathCoordinates } from './projectGeo';
+import { extractDataColumns } from '../extractDataColumns';
 
 const DOT_RADIUS = 0.3;
 
@@ -127,6 +128,7 @@ function mergeTerritoryRows(
 export function buildMapElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
+  dataColumnKeys?: ReadonlyArray<string>,
 ): ReadonlyArray<MapElement> {
   const mergedRows = mergeTerritoryRows(rows);
   const labelColumn = columnMappings['label'] ?? 'label';
@@ -182,6 +184,7 @@ export function buildMapElements(
       distributaryOf,
       segmentOf,
       wikipediaSlug: row[wikipediaColumn] || undefined,
+      dataColumns: extractDataColumns(row, dataColumnKeys),
     };
   });
 }
