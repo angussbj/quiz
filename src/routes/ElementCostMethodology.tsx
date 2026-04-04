@@ -7,9 +7,6 @@ function ExtLink({ href, children }: { readonly href: string; readonly children:
 export default function ElementCostMethodology() {
   return (
     <div className={styles.page}>
-      <a href="#" onClick={(e) => { e.preventDefault(); history.back(); }} className={styles.backLink}>
-        &larr; Back
-      </a>
 
       <h1 className={styles.title}>How We Calculated Element Costs</h1>
       <p className={styles.subtitle}>
@@ -36,19 +33,19 @@ export default function ElementCostMethodology() {
           </thead>
           <tbody>
             <tr>
-              <td><span className={`${styles.tierBadge} ${styles.tierMarket}`}>Market</span></td>
+              <td><strong>Market</strong></td>
               <td>Plain number</td>
               <td>Commodity or exchange price from a major market</td>
               <td>Copper: $6.00/kg</td>
             </tr>
             <tr>
-              <td><span className={`${styles.tierBadge} ${styles.tierApproximate}`}>Approximate</span></td>
+              <td><strong>Approximate</strong></td>
               <td><span className={styles.mono}>~</span> prefix</td>
               <td>Published but from a specialty supplier, older data, or institutional cost</td>
               <td>Scandium: ~$3,460/kg</td>
             </tr>
             <tr>
-              <td><span className={`${styles.tierBadge} ${styles.tierEstimate}`}>Estimate</span></td>
+              <td><strong>Estimate</strong></td>
               <td><span className={styles.mono}>~</span> prefix + <span className={styles.mono}>?</span> suffix</td>
               <td>Order-of-magnitude estimate based on production costs; no published price</td>
               <td>Oganesson: ~$10<sup>31</sup>/kg?</td>

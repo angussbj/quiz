@@ -35,16 +35,22 @@ function formatTemperature(kelvin: number | undefined): string {
   return `${kelvin.toFixed(2)} K`;
 }
 
+function formatCompact(value: number): string {
+  if (value >= 100) return Math.round(value).toString();
+  if (value >= 10) return value.toFixed(1).replace(/\.0$/, '');
+  return value.toPrecision(2);
+}
+
 function formatCostValue(cost: number): string {
   if (cost >= 1e15) {
     const exp = Math.floor(Math.log10(cost));
     return `$10^${exp}`;
   }
-  if (cost >= 1e12) return `$${(cost / 1e12).toPrecision(2)}T`;
-  if (cost >= 1e9) return `$${(cost / 1e9).toPrecision(2)}B`;
-  if (cost >= 1e6) return `$${(cost / 1e6).toPrecision(2)}M`;
-  if (cost >= 1e3) return `$${(cost / 1e3).toPrecision(2)}K`;
-  if (cost >= 1) return `$${cost.toPrecision(2)}`;
+  if (cost >= 1e12) return `$${formatCompact(cost / 1e12)}T`;
+  if (cost >= 1e9) return `$${formatCompact(cost / 1e9)}B`;
+  if (cost >= 1e6) return `$${formatCompact(cost / 1e6)}M`;
+  if (cost >= 1e3) return `$${formatCompact(cost / 1e3)}K`;
+  if (cost >= 1) return `$${formatCompact(cost)}`;
   return `$${cost.toPrecision(2)}`;
 }
 

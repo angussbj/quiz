@@ -94,7 +94,7 @@ describe('formatElementData cost', () => {
 
   it('formats trillions with T suffix', () => {
     const el = makeElement({ costUsdPerKg: 4.92e13, costIsApproximate: true, costIsEstimate: false });
-    expect(formatElementData(el, 'cost')).toBe('~$49T/kg');
+    expect(formatElementData(el, 'cost')).toBe('~$49.2T/kg');
   });
 
   it('formats extreme estimate with ~ and ?', () => {

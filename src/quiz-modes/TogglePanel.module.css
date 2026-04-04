@@ -126,6 +126,11 @@
   gap: var(--spacing-md);
 }
 
+.selectRowDisabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .selectLabel {
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
@@ -177,8 +182,12 @@
   transition: border-color var(--transition-fast);
 }
 
-.dropdownSelect:hover {
+.dropdownSelect:hover:not(:disabled) {
   border-color: var(--color-accent);
+}
+
+.dropdownSelect:disabled {
+  cursor: not-allowed;
 }
 
 .dropdownSelect:focus {
@@ -211,8 +220,12 @@
   border-right: none;
 }
 
-.segmentButton:hover {
+.segmentButton:hover:not(:disabled) {
   background: var(--color-bg-secondary);
+}
+
+.segmentButton:disabled {
+  cursor: not-allowed;
 }
 
 .segmentButton[data-active] {

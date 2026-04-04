@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import { Tooltip } from '@/layout/Tooltip';
+import { assetPath } from '@/utilities/assetPath';
 import styles from './TogglePanel.module.css';
 
 interface TogglePanelProps {
@@ -129,13 +129,14 @@ export function TogglePanel({
                 const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
                 const selectTooltip = tooltips?.[selectToggle.key];
                 const selectRow = (
-                  <div key={selectToggle.key} className={styles.selectRow}>
-                    <span className={styles.selectLabel}>{selectToggle.label}</span>
+                  <div key={selectToggle.key} className={`${styles.selectRow} ${cannotDisable ? styles.selectRowDisabled : ''}`}>
+                    <span className={`${styles.selectLabel} ${cannotDisable ? styles.toggleLabelDisabled : ''}`}>{selectToggle.label}</span>
                     <SelectToggleControl
                       selectToggle={selectToggle}
                       value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
                       onChange={(value) => onSelectChange?.(selectToggle.key, value)}
                       preventOff={cannotDisable}
+                      disabled={cannotDisable}
                     />
                   </div>
                 );
@@ -154,13 +155,14 @@ export function TogglePanel({
           const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
           const selectTooltip = tooltips?.[selectToggle.key];
           const selectRow = (
-            <div className={styles.selectRow}>
-              <span className={styles.selectLabel}>{selectToggle.label}</span>
+            <div className={`${styles.selectRow} ${cannotDisable ? styles.selectRowDisabled : ''}`}>
+              <span className={`${styles.selectLabel} ${cannotDisable ? styles.toggleLabelDisabled : ''}`}>{selectToggle.label}</span>
               <SelectToggleControl
                 selectToggle={selectToggle}
                 value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
                 onChange={(value) => onSelectChange?.(selectToggle.key, value)}
                 preventOff={cannotDisable}
+                disabled={cannotDisable}
               />
             </div>
           );
@@ -245,9 +247,9 @@ function DropdownSelect({
         ))}
       </select>
       {infoUrl && (
-        <Link to={infoUrl} className={styles.dropdownInfoLink} title="How is this calculated?">
+        <a href={assetPath(infoUrl)} target="_blank" rel="noopener noreferrer" className={styles.dropdownInfoLink} title="How is this calculated?">
           ?
-        </Link>
+        </a>
       )}
     </span>
   );
