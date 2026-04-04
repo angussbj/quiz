@@ -144,7 +144,7 @@ const countriesQuizBase = {
     // Aid
     { column: 'oda_given_per_capita', label: 'Foreign aid given per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
     { column: 'oda_received_per_capita', label: 'Foreign aid received per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Quality of Life & Culture
+    // Quality of Life
     { column: 'happiness_score', label: 'Happiness score', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
     { column: 'internet_penetration_pct', label: 'Internet users (%)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
     { column: 'mobile_subscriptions_per_100', label: 'Mobile subscriptions (per 100)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
