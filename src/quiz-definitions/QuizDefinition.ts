@@ -148,4 +148,10 @@ export interface QuizDefinition<K extends string = string> {
     readonly column: string;
     readonly label: string;
   }>;
+  /**
+   * Default value for the topography toggle on map quizzes.
+   * When true, the topographic elevation layer is shown by default.
+   * All map quizzes get this toggle automatically; this field controls the default.
+   */
+  readonly topographyDefault?: boolean;
 }

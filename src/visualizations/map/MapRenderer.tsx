@@ -15,6 +15,7 @@ import { shouldShowLabel } from '../shouldShowLabel';
 import { MapElementShapes } from './MapElementOverlays';
 import { MapHoverOverlay } from './MapHoverOverlay';
 import { useDragDetector } from './useDragDetector';
+import { TopographyTileLayer } from './TopographyTileLayer';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -257,6 +258,9 @@ const MapContent = memo(function MapContent({
           className={styles.oceanBackground}
         />
       )}
+
+      {/* Topographic elevation tiles */}
+      {toggles['showTopography'] === true && <TopographyTileLayer maxLevel={3} />}
 
       {/* Background country borders */}
       {showBorders && backgroundPaths?.map((path) => (

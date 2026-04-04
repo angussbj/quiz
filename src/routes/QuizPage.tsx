@@ -131,10 +131,23 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
   }, [definition.selectToggles, definition.orderedRecallSortColumns]);
 
   const allToggles = useMemo(() => {
+    const toggles = [...definition.toggles];
     // Add the "Highlight next" toggle for quizzes that support ordered recall
-    if (!definition.availableModes.includes('free-recall-ordered')) return definition.toggles;
-    return [...definition.toggles, buildOrderedRecallToggle()];
-  }, [definition.toggles, definition.availableModes]);
+    if (definition.availableModes.includes('free-recall-ordered')) {
+      toggles.push(buildOrderedRecallToggle());
+    }
+    // Auto-inject the topography toggle for all map quizzes
+    if (definition.visualizationType === 'map') {
+      toggles.push({
+        key: 'showTopography',
+        label: 'Topography',
+        defaultValue: definition.topographyDefault ?? false,
+        group: 'display',
+        hiddenBehavior: 'never',
+      });
+    }
+    return toggles;
+  }, [definition.toggles, definition.availableModes, definition.visualizationType, definition.topographyDefault]);
 
   const availableGroups = useMemo(() => {
     if (!definition.groupFilterColumn) return undefined;
