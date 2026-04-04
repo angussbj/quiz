@@ -245,7 +245,7 @@ export function QuizSetupPanel({
             </div>
             {selectedCoverage && selectedCoverage.valid < selectedCoverage.total && (
               <p className={styles.coverageNote}>
-                {selectedCoverage.valid} of {selectedCoverage.total} countries have data
+                Data present for {selectedCoverage.valid} out of {selectedCoverage.total}
               </p>
             )}
           </section>
