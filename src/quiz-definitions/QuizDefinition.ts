@@ -147,5 +147,7 @@ export interface QuizDefinition<K extends string = string> {
   readonly orderedRecallSortColumns?: ReadonlyArray<{
     readonly column: string;
     readonly label: string;
+    /** URL for a methodology/source page explaining this metric. Rendered as a "?" link next to the dropdown. */
+    readonly infoUrl?: string;
   }>;
 }
