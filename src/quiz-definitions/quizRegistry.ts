@@ -184,6 +184,53 @@ const riversQuizBase = {
 
 
 /**
+ * Shared configuration for mountain range quizzes.
+ * Uses fill-style polygons with transparent default state —
+ * the topographic tile layer shows the mountains visually,
+ * while the polygons are invisible interaction targets that
+ * light up during quiz interactions.
+ *
+ * Labels go through MapCountryLabels (which checks 'showCountryNames'),
+ * so we use that key with a quiz-appropriate label.
+ */
+const mountainRangesQuizBase = {
+  path: ['Geography'],
+  visualizationType: 'map' as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
+  defaultMode: 'identify' as const,
+  toggles: [
+    { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'showCountryNames', label: 'Mountain range names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
+  ],
+  presets: [],
+  columnMappings: {
+    answer: 'name',
+    label: 'name',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    group: 'continent',
+  },
+  dataPath: '/data/mountains/world-mountain-ranges.csv',
+  supportingDataPaths: ['/data/borders/world-borders.csv'],
+  topographyDefault: true,
+  locateDistanceMode: 'polygon-boundary' as const,
+  locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
+  hideFilteredElements: true,
+  elementStateColorOverrides: {
+    default: 'transparent',
+    context: 'transparent',
+  },
+  elementFillOpacityOverrides: {
+    correct: 0.1,
+    'correct-second': 0.1,
+    'correct-third': 0.1,
+    incorrect: 0.1,
+    missed: 0.1,
+    highlighted: 0.15,
+  },
+} satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
+
+/**
  * Shared configuration for all country subdivision quizzes (states, provinces, etc.).
  * Each definition overrides id, title, description, dataPath, supportingDataPaths,
  * initialCameraPosition, and groupFilterColumn/Label.
@@ -421,6 +468,23 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       label: 'emperor',
     },
     dataPath: '/data/history/ancient/roman-emperors.csv',
+  },
+  {
+    ...mountainRangesQuizBase,
+    id: 'geo-mountain-ranges-world',
+    title: 'World Mountain Ranges',
+    description: 'Name the major mountain ranges of the world.',
+    initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
+    groupFilterColumn: 'continent',
+    groupFilterLabel: 'Continent',
+    groupFilterCameraPositions: {
+      Europe: { x: -25, y: -72, width: 77, height: 42 },
+      Asia: { x: 25, y: -70, width: 155, height: 80 },
+      Africa: { x: -25, y: -40, width: 85, height: 80 },
+      'North America': { x: -130, y: -55, width: 80, height: 50 },
+      'South America': { x: -85, y: -15, width: 55, height: 73 },
+      Oceania: { x: 100, y: -15, width: 80, height: 55 },
+    },
   },
   {
     ...riversQuizBase,

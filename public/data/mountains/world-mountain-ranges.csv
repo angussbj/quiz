@@ -1,0 +1,5 @@
+id,name,continent,latitude,longitude,paths
+himalayas,Himalayas,Asia,28.0,84.0,M 70.0 -28.0 L 95.0 -28.0 L 95.0 -36.0 L 70.0 -36.0 Z
+alps,Alps,Europe,46.5,10.0,M 5.0 -44.0 L 17.0 -44.0 L 17.0 -48.0 L 5.0 -48.0 Z
+andes,Andes,South America,-20.0,-68.0,M -82.0 10.0 L -65.0 10.0 L -65.0 55.0 L -82.0 55.0 Z
+rockies,Rocky Mountains,North America,45.0,-112.0,M -125.0 -30.0 L -100.0 -30.0 L -100.0 -60.0 L -125.0 -60.0 Z
