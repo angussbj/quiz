@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
@@ -15,6 +15,8 @@ import { shouldShowLabel } from '../shouldShowLabel';
 import { MapElementShapes } from './MapElementOverlays';
 import { MapHoverOverlay } from './MapHoverOverlay';
 import { useDragDetector } from './useDragDetector';
+import { useStrokePathCache } from './useStrokePathCache';
+import { findClosestStrokeElement } from './findClosestStrokeElement';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -171,6 +173,69 @@ const MapContent = memo(function MapContent({
     onElementHoverEnd?.();
   }, [onElementHoverEnd]);
 
+  // ── Closest-path detection for stroke elements (rivers) ──────────────
+  const strokePathCache = useStrokePathCache(elements);
+
+  // Candidate set: stroke elements that are interactive and not hidden/clustered
+  const strokeCandidateIds = useMemo(() => {
+    if (!onElementClick && !onElementHoverStart) return new Set<string>();
+    const ids = new Set<string>();
+    for (const el of elements) {
+      if (!isMapElement(el) || el.pathRenderStyle !== 'stroke') continue;
+      if (clusteredElementIds.has(el.id)) continue;
+      const state = elementStates[el.id];
+      if (state === 'hidden') continue;
+      ids.add(el.id);
+    }
+    return ids;
+  }, [elements, elementStates, clusteredElementIds, onElementClick, onElementHoverStart]);
+
+  // Max detection distance: 20 screen pixels converted to viewBox units (squared)
+  const STROKE_HIT_THRESHOLD_PX = 20;
+  const pixelsPerViewBoxUnit = scale * basePixelsPerViewBoxUnit;
+  const maxDistanceVB = pixelsPerViewBoxUnit > 0 ? STROKE_HIT_THRESHOLD_PX / pixelsPerViewBoxUnit : 2;
+  const maxDistanceSq = maxDistanceVB * maxDistanceVB;
+
+  /** Convert a mouse event to viewBox coordinates using the SVG CTM. */
+  const toViewBox = useCallback((event: React.MouseEvent): ViewBoxPosition | undefined => {
+    const svg = (event.currentTarget as SVGElement).ownerSVGElement ?? (event.currentTarget as unknown as SVGSVGElement);
+    if (!svg.createSVGPoint) return undefined;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return undefined;
+    const svgPoint = point.matrixTransform(ctm.inverse());
+    return { x: svgPoint.x, y: svgPoint.y };
+  }, []);
+
+  // Track which stroke element is currently hovered via closest-path detection
+  const strokeHoveredRef = useRef<string | null>(null);
+
+  const handleStrokeMouseMove = useCallback((event: React.MouseEvent<SVGGElement>) => {
+    if (strokeCandidateIds.size === 0) return;
+    const vbPoint = toViewBox(event);
+    if (!vbPoint) return;
+
+    const closestId = findClosestStrokeElement(vbPoint, strokePathCache, strokeCandidateIds, maxDistanceSq);
+    const prevId = strokeHoveredRef.current;
+
+    if (closestId === prevId) return; // no change
+
+    // End hover on previous element
+    if (prevId !== null) {
+      strokeHoveredRef.current = null;
+      handleElementHoverEnd();
+    }
+
+    // Start hover on new element
+    if (closestId !== undefined) {
+      strokeHoveredRef.current = closestId;
+      handleElementHoverStart(closestId);
+    }
+  }, [strokeCandidateIds, strokePathCache, maxDistanceSq, toViewBox, handleElementHoverStart, handleElementHoverEnd]);
+
+
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
   // Map from element label → element state, used by MapCountryLabels for state-aware colours.
@@ -223,27 +288,37 @@ const MapContent = memo(function MapContent({
 
   const handleBackgroundClick = useCallback(
     (event: React.MouseEvent<SVGGElement>) => {
-      if (!onPositionClick) return;
       if (isDrag(event)) return;
-      const svg = (event.currentTarget as SVGElement).ownerSVGElement;
-      if (!svg) return;
-      const point = svg.createSVGPoint();
-      point.x = event.clientX;
-      point.y = event.clientY;
-      const ctm = svg.getScreenCTM();
-      if (!ctm) return;
-      const svgPoint = point.matrixTransform(ctm.inverse());
-      onPositionClick({ x: svgPoint.x, y: svgPoint.y });
+
+      // Check for stroke element click first (rivers)
+      if (onElementClick && strokeCandidateIds.size > 0) {
+        const vbPoint = toViewBox(event);
+        if (vbPoint) {
+          const closestId = findClosestStrokeElement(vbPoint, strokePathCache, strokeCandidateIds, maxDistanceSq);
+          if (closestId !== undefined) {
+            event.stopPropagation();
+            onElementClick(closestId);
+            return;
+          }
+        }
+      }
+
+      if (!onPositionClick) return;
+      const vbPoint = toViewBox(event);
+      if (vbPoint) {
+        onPositionClick(vbPoint);
+      }
     },
-    [onPositionClick, isDrag],
+    [onPositionClick, onElementClick, isDrag, strokeCandidateIds, strokePathCache, maxDistanceSq, toViewBox],
   );
 
   return (
-    <g onPointerDown={onPointerDown} onClick={handleBackgroundClick}>
-      {/* Invisible rect to catch clicks on empty SVG space.
-          Without this, clicks on areas with no visible children
-          don't trigger the <g>'s onClick handler. */}
-      {onPositionClick && (
+    <g onPointerDown={onPointerDown} onClick={handleBackgroundClick} onMouseMove={handleStrokeMouseMove}>
+      {/* Invisible rect to catch clicks and mousemove on empty SVG space.
+          Without this, events on areas with no visible children
+          don't trigger the <g>'s handlers. Also needed for stroke
+          closest-path detection (mousemove + click). */}
+      {(onPositionClick || strokeCandidateIds.size > 0) && (
         <rect
           x={-1e4} y={-1e4} width={2e4} height={2e4}
           fill="transparent"
