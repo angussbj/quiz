@@ -32,7 +32,7 @@ import { tileColumns, tileRows } from '../src/visualizations/map/topographyTiles
 // ------------------------------------------------------------------
 
 const TILE_SIZE = 512;
-const MAX_LEVEL = 4;
+const MAX_LEVEL = 5;
 /** Skip tiles that are entirely ocean (all pixels transparent). */
 const SKIP_EMPTY_TILES = true;
 const SOURCE_PATH = 'scripts/source-data/ETOPO_2022_v1_60s_N90W180_surface.tif';

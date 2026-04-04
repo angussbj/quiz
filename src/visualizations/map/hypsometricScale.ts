@@ -4,56 +4,94 @@ export interface RgbColor {
   readonly b: number;
 }
 
-interface ColorStop {
-  readonly elevation: number;
-  readonly color: RgbColor;
+/** Maximum elevation for color mapping. */
+const MAX_ELEVATION = 8849;
+
+/**
+ * Hue rotation color scale matching the periodic table's continuous gradient.
+ * Maps elevation 0–8849m through:
+ *   deep purple (280°) → blue (240°) → cyan (180°) → green (120°)
+ *   → yellow (60°) → orange (30°) → red (0°) → pink/magenta (320°)
+ *
+ * Uses sqrt scaling so low elevations (Australian 1000m ranges) are
+ * clearly differentiated from lowlands, while high elevations (Himalayas)
+ * still have distinct colors.
+ *
+ * Saturation: 55%, Lightness: 48% — vivid enough to read as topography
+ * while not clashing with UI elements.
+ */
+export function elevationToRgb(elevation: number): RgbColor {
+  const clamped = Math.max(0, Math.min(elevation, MAX_ELEVATION));
+  // sqrt scaling: more color range at low elevations
+  const t = Math.sqrt(clamped / MAX_ELEVATION);
+
+  // Hue path: 280 → 240 → 180 → 120 → 60 → 0 → 320
+  // This wraps around the color wheel from purple through warm colors to magenta.
+  // t=0 → 280° (purple), t=1 → 320° (magenta)
+  // Linear interpolation through the stops:
+  const hue = hueForT(t);
+  const saturation = 55;
+  const lightness = 48;
+
+  return hslToRgb(hue, saturation, lightness);
 }
 
-export const COLOR_STOPS: ReadonlyArray<ColorStop> = [
-  { elevation: 0,    color: { r: 106, g: 153, b: 88 } },   // Deep green (lowland)
-  { elevation: 50,   color: { r: 126, g: 163, b: 100 } },   // Medium green
-  { elevation: 100,  color: { r: 152, g: 178, b: 116 } },   // Light green
-  { elevation: 200,  color: { r: 184, g: 196, b: 134 } },   // Yellow-green
-  { elevation: 300,  color: { r: 210, g: 208, b: 150 } },   // Pale yellow
-  { elevation: 500,  color: { r: 224, g: 208, b: 156 } },   // Tan
-  { elevation: 700,  color: { r: 214, g: 190, b: 144 } },   // Light brown
-  { elevation: 1000, color: { r: 196, g: 168, b: 128 } },   // Medium brown
-  { elevation: 1500, color: { r: 176, g: 144, b: 112 } },   // Brown
-  { elevation: 2000, color: { r: 160, g: 128, b: 104 } },   // Dark brown
-  { elevation: 2500, color: { r: 152, g: 128, b: 112 } },   // Brown-grey
-  { elevation: 3000, color: { r: 148, g: 132, b: 120 } },   // Grey-brown
-  { elevation: 4000, color: { r: 160, g: 156, b: 148 } },   // Light grey
-  { elevation: 5000, color: { r: 176, g: 172, b: 168 } },   // Medium grey
-  { elevation: 6000, color: { r: 200, g: 196, b: 192 } },   // Pale grey
-  { elevation: 7000, color: { r: 224, g: 220, b: 216 } },   // Near white
-  { elevation: 8849, color: { r: 248, g: 244, b: 240 } },   // White (Everest)
-];
+/**
+ * Map normalized t (0–1) to a hue value along the color path.
+ * Piecewise linear through defined hue stops.
+ */
+function hueForT(t: number): number {
+  const stops: ReadonlyArray<readonly [number, number]> = [
+    [0.0, 280],   // deep purple
+    [0.15, 240],  // blue
+    [0.3, 180],   // cyan
+    [0.45, 120],  // green
+    [0.6, 60],    // yellow
+    [0.72, 30],   // orange
+    [0.85, 0],    // red
+    [1.0, 320],   // pink/magenta (wrap around)
+  ];
 
-export function elevationToRgb(elevation: number): RgbColor {
-  if (elevation <= COLOR_STOPS[0].elevation) {
-    return COLOR_STOPS[0].color;
-  }
+  if (t <= stops[0][0]) return stops[0][1];
+  if (t >= stops[stops.length - 1][0]) return stops[stops.length - 1][1];
 
-  const lastStop = COLOR_STOPS[COLOR_STOPS.length - 1];
-  if (elevation >= lastStop.elevation) {
-    return lastStop.color;
-  }
+  for (let i = 1; i < stops.length; i++) {
+    if (t <= stops[i][0]) {
+      const [t0, h0] = stops[i - 1];
+      const [t1, h1] = stops[i];
+      const frac = (t - t0) / (t1 - t0);
 
-  let low = COLOR_STOPS[0];
-  let high = COLOR_STOPS[1];
-  for (let i = 1; i < COLOR_STOPS.length; i++) {
-    if (COLOR_STOPS[i].elevation >= elevation) {
-      low = COLOR_STOPS[i - 1];
-      high = COLOR_STOPS[i];
-      break;
+      // For the red→magenta segment, we go through 360 (0→320 the short way around)
+      if (h0 === 0 && h1 === 320) {
+        // Go 0 → 360 → 320 (i.e., through 360)
+        return (360 + frac * (320 - 360)) % 360;
+      }
+
+      return h0 + frac * (h1 - h0);
     }
   }
+  return stops[stops.length - 1][1];
+}
 
-  const t = (elevation - low.elevation) / (high.elevation - low.elevation);
+/** Convert HSL (h: 0-360, s: 0-100, l: 0-100) to RGB. */
+function hslToRgb(h: number, s: number, l: number): RgbColor {
+  const sNorm = s / 100;
+  const lNorm = l / 100;
+  const c = (1 - Math.abs(2 * lNorm - 1)) * sNorm;
+  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  const m = lNorm - c / 2;
+
+  let r1: number, g1: number, b1: number;
+  if (h < 60)      { r1 = c; g1 = x; b1 = 0; }
+  else if (h < 120) { r1 = x; g1 = c; b1 = 0; }
+  else if (h < 180) { r1 = 0; g1 = c; b1 = x; }
+  else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
+  else if (h < 300) { r1 = x; g1 = 0; b1 = c; }
+  else              { r1 = c; g1 = 0; b1 = x; }
 
   return {
-    r: Math.round(low.color.r + t * (high.color.r - low.color.r)),
-    g: Math.round(low.color.g + t * (high.color.g - low.color.g)),
-    b: Math.round(low.color.b + t * (high.color.b - low.color.b)),
+    r: Math.round((r1 + m) * 255),
+    g: Math.round((g1 + m) * 255),
+    b: Math.round((b1 + m) * 255),
   };
 }
