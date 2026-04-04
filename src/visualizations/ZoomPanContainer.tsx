@@ -27,8 +27,6 @@ interface ZoomPanContainerProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   /** Element IDs to bring into view when this array reference changes. Only pans if the target is off-screen; never zooms in. */
   readonly putInView?: ReadonlyArray<string>;
-  /** Content rendered in separate SVG layers (outside the main SVG) for compositing isolation. */
-  readonly elementOverlays?: ReactNode;
 }
 
 interface ContainerSize {
@@ -108,7 +106,6 @@ export function ZoomPanContainer({
   initialCameraPosition,
   backgroundPaths,
   putInView,
-  elementOverlays,
 }: ZoomPanContainerProps) {
   const viewBox = useMemo(
     () => computeViewBox(elements, backgroundPaths),
@@ -178,7 +175,6 @@ export function ZoomPanContainer({
           initialCameraPosition={effectiveCameraPosition}
           initialScale={initialCamera?.scale ?? 1}
           putInView={putInView}
-          elementOverlays={elementOverlays}
         >
           {children}
         </ZoomPanInner>
@@ -198,7 +194,6 @@ interface ZoomPanInnerProps {
   readonly initialCameraPosition?: ViewBox;
   readonly initialScale: number;
   readonly putInView?: ReadonlyArray<string>;
-  readonly elementOverlays?: ReactNode;
 }
 
 function ZoomPanInner({
@@ -212,7 +207,6 @@ function ZoomPanInner({
   initialCameraPosition,
   initialScale,
   putInView,
-  elementOverlays,
 }: ZoomPanInnerProps) {
   const { setTransform, centerView } = useControls();
   const scaleRef = useRef(initialScale);
@@ -606,37 +600,26 @@ function ZoomPanInner({
         wrapperClass={styles.transformWrapper}
         contentClass={styles.transformContent}
       >
-        <div className={styles.svgStack}>
-          <svg
-            className={styles.svg}
-            viewBox={viewBoxString}
-            preserveAspectRatio="xMidYMid meet"
-          >
-            {children}
-          </svg>
-          {elementOverlays}
-          {clusters.length > 0 && (
-            <svg
-              className={styles.overlaySvg}
-              viewBox={viewBoxString}
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <AnimatePresence>
-                {clusters.map((cluster) => (
-                  <ClusterBadge
-                    key={cluster.elementIds.join(',')}
-                    cluster={cluster}
-                    matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
-                    elementStates={elementStates}
-                    scale={quantisedScale}
-                    basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
-                    onClick={handleClusterClick}
-                  />
-                ))}
-              </AnimatePresence>
-            </svg>
-          )}
-        </div>
+        <svg
+          className={styles.svg}
+          viewBox={viewBoxString}
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {children}
+          <AnimatePresence>
+            {clusters.map((cluster) => (
+              <ClusterBadge
+                key={cluster.elementIds.join(',')}
+                cluster={cluster}
+                matchedCount={countMatchedInCluster(cluster, elementStates, clustering?.countedState)}
+                elementStates={elementStates}
+                scale={quantisedScale}
+                basePixelsPerViewBoxUnit={basePixelsPerViewBoxUnit}
+                onClick={handleClusterClick}
+              />
+            ))}
+          </AnimatePresence>
+        </svg>
       </TransformComponent>
       {(showResetButton || showFocusButton) && (
         <div className={styles.overlayButtons}>
