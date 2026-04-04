@@ -12,8 +12,8 @@ import { gridElementToVisualizationElement } from './gridElementToVisualizationE
 import { GridFeedbackOverlay } from './GridFeedbackOverlay';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 import { formatElementData, ELEMENT_DATA_COLUMNS } from './formatElementData';
-import { computeElementColors, toElementColorField } from './elementColorScale';
-import type { ElementColorMap } from './elementColorScale';
+import { computeElementColors, toElementColorField } from '../elementColorScale';
+import type { ElementColorMap } from '../elementColorScale';
 import { useTheme } from '@/theme/ThemeProvider';
 
 export const ZOOM_DETAIL_THRESHOLD = 1.8;
