@@ -53,7 +53,19 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - `renderShapeElements` renders shapes in state layers (default, incorrect, missed, context, correct, highlighted) so state-colored shapes aren't obscured by neighbours.
 **Notes for other features:** The `pathRenderStyle` pattern could be reused for other line-based geographic features (e.g. mountain ranges, coastlines).
 
-### 31. Closest-Path Click/Hover for Stroke Elements — DONE
+### 31. Mountain Ranges Quiz — DONE
+**Branch:** `worktree-angusj-mountain-ranges`
+**Scope:** Mountain ranges quiz with topographic elevation tile layer. Global DEM-based topography rendered as PNG tiles at 4 zoom levels (z0-z3), loaded/unloaded based on viewport. ~63 mountain range polygons extracted from DEM + OSM data, invisible by default with low-opacity fills on quiz interactions. All map quizzes get an auto-injected "Topography" toggle (default off; mountain ranges default on). Four quiz modes: free recall, identify, locate (polygon-boundary), prompted recall. Ordered recall by peak elevation and area deferred to future rebase. Dark mode via CSS brightness filter on tiles.
+**Key design decisions:**
+- Topographic tiles use SVG `<image>` with bilinear interpolation for smooth zoom
+- Hypsometric color scale with 17 stops, dense at low elevations for Australian-range visibility
+- Mountain range polygons are invisible-by-default with `elementStateColorOverrides: { default: 'transparent', context: 'transparent' }`
+- `elementFillOpacityOverrides` provides per-state opacity control (0.1 for answered states)
+- Visible viewport bounds exposed via ZoomPanContext for tile loading
+- Tile coordinate system: level N has 2^N columns × max(1, 2^(N-1)) rows
+**Notes for other features:** The topographic tile layer is available to all map quizzes. Future map projections will need tile system adaptation. Tile system supports arbitrary zoom levels — add z4+ by running the generation script with higher MAX_LEVEL.
+
+### 32. Closest-Path Click/Hover for Stroke Elements — DONE
 **Scope:** Replace SVG hit-area strokes with a custom closest-path detection system for river-style (stroke) elements. Currently rivers use invisible wide strokes (2.0 viewBox units) for hover/click detection, but overlapping hit areas make nearby rivers unclickable.
 **Approach:**
 - **Pre-parse paths**: When map elements are built, pre-parse SVG path `d` strings into point arrays (not on every interaction). Store on the element or in a side map.
