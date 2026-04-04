@@ -1,6 +1,7 @@
 import type { GridElement } from './GridElement';
 import { isGridElement } from './GridElement';
 import type { VisualizationElement } from '../VisualizationElement';
+import { computeAdaptiveScale } from '../../utilities/adaptiveScale';
 
 export type ElementColorField =
   | 'category' | 'density' | 'electronegativity' | 'melting-point'
@@ -22,16 +23,8 @@ function getNumericValue(element: GridElement, field: Exclude<ElementColorField,
     case 'melting-point': return element.meltingPoint;
     case 'boiling-point': return element.boilingPoint;
     case 'year-discovered': return element.yearDiscovered;
-    case 'half-life': {
-      if (element.halfLifeSeconds === undefined) return undefined;
-      if (element.halfLifeSeconds <= 0) return 0;
-      return Math.log10(element.halfLifeSeconds);
-    }
-    case 'cost': {
-      if (element.costUsdPerKg === undefined) return undefined;
-      if (element.costUsdPerKg <= 0) return 0;
-      return Math.log10(element.costUsdPerKg);
-    }
+    case 'half-life': return element.halfLifeSeconds;
+    case 'cost': return element.costUsdPerKg;
   }
 }
 
@@ -45,10 +38,28 @@ const LIGHT_LIGHTNESS = 82;
 /** Dark-mode lightness for deep fills (light text on dark bg). */
 const DARK_LIGHTNESS = 28;
 
-/** Gradient color: blue (240°) → red (0°) via green. */
+/**
+ * Gradient color mapping across three ranges:
+ *   [-1, 0] → deep purple (270°) to blue-purple (255°) for low outliers
+ *   [0,  1] → blue (240°) → red (0°) via green for normal values
+ *   [1,  2] → red-pink (345°) to magenta (320°) for high outliers
+ */
 function gradientColor(t: number, darkMode: boolean): string {
+  const lightness = darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS;
+  if (t > 1) {
+    // High outlier: red-pink (345°) → magenta (320°)
+    const outlierT = Math.min(t - 1, 1);
+    const hue = 345 - 25 * outlierT;
+    return hslColor(hue, 50, lightness);
+  }
+  if (t < 0) {
+    // Low outlier: blue-purple (255°) → deep purple (270°)
+    const outlierT = Math.min(-t, 1);
+    const hue = 255 + 15 * outlierT;
+    return hslColor(hue, 50, lightness);
+  }
   const hue = 240 * (1 - t);
-  return hslColor(hue, 50, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
+  return hslColor(hue, 50, lightness);
 }
 
 /** Fixed category colors — 8 distinguishable hues. */
@@ -96,34 +107,29 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, da
   return { get: (id) => colorMap.get(id) };
 }
 
-/** Compute numeric-gradient-based color map. */
+/** Compute numeric-gradient-based color map using adaptive scaling. */
 function computeGradientColors(
   elements: ReadonlyArray<GridElement>,
   field: Exclude<ElementColorField, 'category'>,
   darkMode: boolean,
 ): ElementColorMap {
-  const values = new Map<string, number>();
-  let min = Infinity;
-  let max = -Infinity;
+  const valuesByElement = new Map<string, number>();
 
   for (const element of elements) {
     const value = getNumericValue(element, field);
     if (value !== undefined) {
-      values.set(element.id, value);
-      if (value < min) min = value;
-      if (value > max) max = value;
+      valuesByElement.set(element.id, value);
     }
   }
 
-  const range = max - min;
+  const numericValues = [...valuesByElement.values()];
+  const scale = computeAdaptiveScale(numericValues);
 
   return {
     get(elementId: string): string | undefined {
-      const value = values.get(elementId);
+      const value = valuesByElement.get(elementId);
       if (value === undefined) return undefined;
-      if (range <= 0) return gradientColor(0.5, darkMode);
-      const t = (value - min) / range;
-      return gradientColor(t, darkMode);
+      return gradientColor(scale.transform(value), darkMode);
     },
   };
 }
