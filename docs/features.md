@@ -53,7 +53,7 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - `renderShapeElements` renders shapes in state layers (default, incorrect, missed, context, correct, highlighted) so state-colored shapes aren't obscured by neighbours.
 **Notes for other features:** The `pathRenderStyle` pattern could be reused for other line-based geographic features (e.g. mountain ranges, coastlines).
 
-### 31. Closest-Path Click/Hover for Stroke Elements
+### 31. Closest-Path Click/Hover for Stroke Elements — DONE
 **Scope:** Replace SVG hit-area strokes with a custom closest-path detection system for river-style (stroke) elements. Currently rivers use invisible wide strokes (2.0 viewBox units) for hover/click detection, but overlapping hit areas make nearby rivers unclickable.
 **Approach:**
 - **Pre-parse paths**: When map elements are built, pre-parse SVG path `d` strings into point arrays (not on every interaction). Store on the element or in a side map.

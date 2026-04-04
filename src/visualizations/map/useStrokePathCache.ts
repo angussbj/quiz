@@ -4,6 +4,17 @@ import { isMapElement } from './MapElement';
 import { parsePathPoints } from './closestPointOnPath';
 import type { ParsedStrokePath } from './findClosestStrokeElement';
 
+/**
+ * Filter an SVG path string to only include open subpaths (not ending with Z).
+ * Closed subpaths are typically lake polygons embedded in river data.
+ */
+function filterStrokeSubpaths(pathData: string): string {
+  return pathData
+    .split(/(?=M\s)/)
+    .filter((sub) => !sub.trimEnd().endsWith('Z'))
+    .join(' ');
+}
+
 interface CacheEntry {
   readonly path: string;
   readonly parsed: ParsedStrokePath;
@@ -36,8 +47,9 @@ export function useStrokePathCache(
         // Path unchanged — reuse cached parsed data
         nextCache.set(element.id, existing);
       } else {
-        // New or changed — parse the path
-        const points = parsePathPoints(pathData);
+        // New or changed — parse the path, filtering out closed subpaths (lake polygons)
+        const strokeOnly = filterStrokeSubpaths(pathData);
+        const points = parsePathPoints(strokeOnly);
         const parsed: ParsedStrokePath = { elementId: element.id, points };
         nextCache.set(element.id, { path: pathData, parsed });
       }
