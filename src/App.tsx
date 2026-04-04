@@ -8,6 +8,7 @@ const HomePage = lazy(() => import('./routes/HomePage.tsx'));
 const QuizPage = lazy(() => import('./routes/QuizPage.tsx'));
 const AboutPage = lazy(() => import('./routes/AboutPage.tsx'));
 const ElementCostMethodology = lazy(() => import('./routes/ElementCostMethodology.tsx'));
+const CountryStatisticsMethodology = lazy(() => import('./routes/CountryStatisticsMethodology.tsx'));
 
 function QuizOrCategoryPage() {
   const { '*': slug } = useParams();
@@ -27,6 +28,7 @@ export function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/about/element-costs" element={<ElementCostMethodology />} />
+            <Route path="/about/country-statistics" element={<CountryStatisticsMethodology />} />
             <Route path="/*" element={<QuizOrCategoryPage />} />
           </Routes>
         </Suspense>
