@@ -1,6 +1,7 @@
 import type { GridElement } from './GridElement';
 import { isGridElement } from './GridElement';
 import type { VisualizationElement } from '../VisualizationElement';
+import { computeAdaptiveScale } from '../../utilities/adaptiveScale';
 
 export type ElementColorField =
   | 'category' | 'density' | 'electronegativity' | 'melting-point'
@@ -22,16 +23,8 @@ function getNumericValue(element: GridElement, field: Exclude<ElementColorField,
     case 'melting-point': return element.meltingPoint;
     case 'boiling-point': return element.boilingPoint;
     case 'year-discovered': return element.yearDiscovered;
-    case 'half-life': {
-      if (element.halfLifeSeconds === undefined) return undefined;
-      if (element.halfLifeSeconds <= 0) return 0;
-      return Math.log10(element.halfLifeSeconds);
-    }
-    case 'cost': {
-      if (element.costUsdPerKg === undefined) return undefined;
-      if (element.costUsdPerKg <= 0) return 0;
-      return Math.log10(element.costUsdPerKg);
-    }
+    case 'half-life': return element.halfLifeSeconds;
+    case 'cost': return element.costUsdPerKg;
   }
 }
 
@@ -96,34 +89,29 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, da
   return { get: (id) => colorMap.get(id) };
 }
 
-/** Compute numeric-gradient-based color map. */
+/** Compute numeric-gradient-based color map using adaptive scaling. */
 function computeGradientColors(
   elements: ReadonlyArray<GridElement>,
   field: Exclude<ElementColorField, 'category'>,
   darkMode: boolean,
 ): ElementColorMap {
-  const values = new Map<string, number>();
-  let min = Infinity;
-  let max = -Infinity;
+  const valuesByElement = new Map<string, number>();
 
   for (const element of elements) {
     const value = getNumericValue(element, field);
     if (value !== undefined) {
-      values.set(element.id, value);
-      if (value < min) min = value;
-      if (value > max) max = value;
+      valuesByElement.set(element.id, value);
     }
   }
 
-  const range = max - min;
+  const numericValues = [...valuesByElement.values()];
+  const scale = computeAdaptiveScale(numericValues);
 
   return {
     get(elementId: string): string | undefined {
-      const value = values.get(elementId);
+      const value = valuesByElement.get(elementId);
       if (value === undefined) return undefined;
-      if (range <= 0) return gradientColor(0.5, darkMode);
-      const t = (value - min) / range;
-      return gradientColor(t, darkMode);
+      return gradientColor(scale.transform(value), darkMode);
     },
   };
 }
