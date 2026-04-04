@@ -1,0 +1,195 @@
+country,hdi,mean_years_schooling
+Afghanistan,0.462,3.8
+Albania,0.789,10.5
+Algeria,0.745,8.0
+Andorra,0.884,10.2
+Angola,0.586,5.8
+Antigua and Barbuda,0.794,9.2
+Argentina,0.842,10.8
+Armenia,0.786,11.3
+Australia,0.946,12.7
+Austria,0.926,12.3
+Azerbaijan,0.760,10.8
+Bahamas,0.812,10.5
+Bahrain,0.875,10.3
+Bangladesh,0.670,7.0
+Barbados,0.809,10.6
+Belarus,0.808,12.4
+Belgium,0.942,11.8
+Belize,0.700,10.5
+Benin,0.504,3.8
+Bhutan,0.666,5.2
+Bolivia,0.698,9.0
+Bosnia and Herzegovina,0.779,10.1
+Botswana,0.708,10.1
+Brazil,0.760,8.1
+Brunei,0.829,9.1
+Bulgaria,0.795,11.4
+Burkina Faso,0.438,1.9
+Burundi,0.426,3.3
+Cambodia,0.600,5.1
+Cameroon,0.576,6.3
+Canada,0.935,13.4
+Cape Verde,0.662,6.3
+Central African Republic,0.387,4.3
+Chad,0.394,2.5
+Chile,0.860,10.6
+China,0.788,7.6
+Colombia,0.758,8.9
+Comoros,0.596,5.2
+Costa Rica,0.806,8.7
+Côte d'Ivoire,0.534,5.3
+Croatia,0.878,11.3
+Cuba,0.764,11.8
+Cyprus,0.907,12.1
+Czechia,0.895,12.7
+Democratic Republic of the Congo,0.479,6.7
+Denmark,0.952,12.6
+Djibouti,0.509,4.1
+Dominica,0.720,7.7
+Dominican Republic,0.766,8.3
+Ecuador,0.765,9.0
+Egypt,0.728,8.0
+El Salvador,0.675,7.1
+Equatorial Guinea,0.596,5.5
+Eritrea,0.492,3.9
+Estonia,0.899,13.0
+Eswatini,0.597,6.6
+Ethiopia,0.492,3.1
+Fiji,0.729,10.1
+Finland,0.942,12.6
+France,0.903,11.6
+Gabon,0.706,8.7
+Gambia,0.500,3.9
+Georgia,0.814,12.8
+Germany,0.950,14.1
+Ghana,0.602,8.3
+Greece,0.893,10.8
+Grenada,0.795,8.7
+Guatemala,0.627,5.7
+Guinea,0.465,2.6
+Guinea-Bissau,0.483,3.5
+Guyana,0.742,8.5
+Haiti,0.535,5.6
+Honduras,0.621,6.6
+Hungary,0.851,11.8
+Iceland,0.959,12.8
+India,0.644,6.7
+Indonesia,0.713,8.0
+Iran,0.780,10.6
+Iraq,0.686,7.3
+Ireland,0.950,11.6
+Israel,0.915,13.3
+Italy,0.906,10.7
+Jamaica,0.709,9.7
+Japan,0.920,13.4
+Jordan,0.736,10.5
+Kazakhstan,0.802,11.8
+Kenya,0.601,6.6
+Kiribati,0.624,7.8
+Kuwait,0.831,7.3
+Kyrgyzstan,0.701,11.4
+Laos,0.620,5.4
+Latvia,0.879,12.8
+Lebanon,0.723,8.7
+Lesotho,0.514,6.1
+Liberia,0.487,4.6
+Libya,0.718,7.3
+Liechtenstein,0.935,12.5
+Lithuania,0.879,13.1
+Luxembourg,0.927,12.1
+Madagascar,0.487,4.8
+Malawi,0.508,4.7
+Malaysia,0.803,10.6
+Maldives,0.747,7.0
+Mali,0.410,2.4
+Malta,0.918,11.3
+Marshall Islands,0.639,10.4
+Mauritania,0.540,4.7
+Mauritius,0.796,9.5
+Mexico,0.781,9.2
+Micronesia,0.628,9.7
+Moldova,0.763,11.8
+Monaco,0.956,13.1
+Mongolia,0.741,10.2
+Montenegro,0.844,11.4
+Morocco,0.698,6.0
+Mozambique,0.461,3.5
+Myanmar,0.585,5.1
+Namibia,0.610,7.0
+Nepal,0.601,5.0
+Netherlands,0.946,12.2
+New Zealand,0.939,12.8
+Nicaragua,0.667,7.0
+Niger,0.394,2.1
+Nigeria,0.548,6.7
+North Korea,0.733,11.0
+North Macedonia,0.770,9.7
+Norway,0.966,12.6
+Oman,0.816,10.3
+Pakistan,0.544,5.2
+Palau,0.767,11.3
+Palestine,0.716,9.1
+Panama,0.805,10.2
+Papua New Guinea,0.558,4.6
+Paraguay,0.717,8.5
+Peru,0.762,9.2
+Philippines,0.710,9.4
+Poland,0.881,12.4
+Portugal,0.874,9.3
+Qatar,0.875,10.0
+Republic of the Congo,0.571,6.2
+Romania,0.821,11.3
+Russia,0.822,12.8
+Rwanda,0.548,4.4
+Saint Kitts and Nevis,0.777,8.4
+Saint Lucia,0.725,8.3
+Saint Vincent and the Grenadines,0.733,8.8
+Samoa,0.707,10.8
+San Marino,0.853,10.1
+São Tomé and Príncipe,0.613,5.6
+Saudi Arabia,0.875,10.3
+Senegal,0.517,3.2
+Serbia,0.805,11.2
+Seychelles,0.802,9.7
+Sierra Leone,0.477,4.6
+Singapore,0.949,11.9
+Slovakia,0.855,12.6
+Slovenia,0.926,12.1
+Solomon Islands,0.568,5.4
+Somalia,0.380,2.2
+South Africa,0.717,10.2
+South Korea,0.929,12.5
+South Sudan,0.381,4.8
+Spain,0.911,10.6
+Sri Lanka,0.780,10.8
+Sudan,0.516,3.8
+Suriname,0.695,9.4
+Sweden,0.952,12.6
+Switzerland,0.967,13.9
+Syria,0.577,5.1
+Taiwan,0.926,12.4
+Tajikistan,0.679,11.2
+Tanzania,0.532,6.0
+Thailand,0.803,8.3
+Timor-Leste,0.607,4.6
+Togo,0.539,4.9
+Tonga,0.745,11.1
+Trinidad and Tobago,0.814,11.0
+Tunisia,0.732,7.2
+Türkiye,0.838,8.6
+Turkmenistan,0.745,10.3
+Tuvalu,0.641,8.0
+Uganda,0.550,5.7
+Ukraine,0.734,11.3
+United Arab Emirates,0.937,12.1
+United Kingdom,0.940,13.4
+United States of America,0.927,13.7
+Uruguay,0.830,9.0
+Uzbekistan,0.727,12.0
+Vanuatu,0.604,6.8
+Venezuela,0.691,10.3
+Vietnam,0.726,8.3
+Yemen,0.424,3.2
+Zambia,0.565,7.0
+Zimbabwe,0.550,8.5
