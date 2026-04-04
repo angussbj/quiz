@@ -12,6 +12,14 @@
   pointer-events: none;
 }
 
+.borderPathTransparent {
+  fill: transparent;
+  stroke: var(--color-border);
+  stroke-width: 0.075;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
 .lakePath {
   fill: var(--color-lake);
   fill-opacity: 0.3;

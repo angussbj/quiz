@@ -163,6 +163,7 @@ const MapContent = memo(function MapContent({
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { onPointerDown, isDrag } = useDragDetector();
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
+  const showTopography = toggles['showTopography'] === true;
 
   // Only show the hover overlay for clickable elements (identify mode etc.),
   // not for hover-only elements (Wikipedia preview in free recall mode).
@@ -266,13 +267,13 @@ const MapContent = memo(function MapContent({
       {/* Topographic elevation tiles */}
       {toggles['showTopography'] === true && <TopographyTileLayer maxLevel={3} />}
 
-      {/* Background country borders */}
+      {/* Background country borders — transparent fill when topography is on */}
       {showBorders && backgroundPaths?.map((path) => (
         <path
           key={path.id}
           d={path.svgPathData}
           fillRule="evenodd"
-          className={styles.borderPath}
+          className={showTopography ? styles.borderPathTransparent : styles.borderPath}
         />
       ))}
 
@@ -299,6 +300,7 @@ const MapContent = memo(function MapContent({
         elementFillOpacityOverrides={elementFillOpacityOverrides}
         isDrag={isDrag}
         clusteredElementIds={clusteredElementIds}
+        showTopography={showTopography}
       />
 
       {/* Semi-transparent overlay on the hovered element — avoids modifying

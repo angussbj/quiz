@@ -115,6 +115,8 @@ interface MapElementShapesProps {
   readonly elementFillOpacityOverrides: VisualizationRendererProps['elementFillOpacityOverrides'];
   readonly isDrag: (e: React.MouseEvent) => boolean;
   readonly clusteredElementIds: ReadonlySet<string>;
+  /** When true, fill elements use transparent fills so topographic tiles show through. */
+  readonly showTopography?: boolean;
 }
 
 export const MapElementShapes = memo(function MapElementShapes({
@@ -129,6 +131,7 @@ export const MapElementShapes = memo(function MapElementShapes({
   elementFillOpacityOverrides,
   isDrag,
   clusteredElementIds,
+  showTopography,
 }: MapElementShapesProps) {
   // Sort elements by state render priority so highlighted elements paint last (on top).
   const sortedElements = useMemo(() => {
@@ -165,6 +168,7 @@ export const MapElementShapes = memo(function MapElementShapes({
             elementStateColorOverrides={elementStateColorOverrides}
             elementFillOpacityOverrides={elementFillOpacityOverrides}
             isDrag={isDrag}
+            showTopography={showTopography}
           />
         );
       })}
@@ -183,6 +187,7 @@ interface ElementShapeProps {
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
   readonly elementFillOpacityOverrides: VisualizationRendererProps['elementFillOpacityOverrides'];
   readonly isDrag: (e: React.MouseEvent) => boolean;
+  readonly showTopography?: boolean;
 }
 
 const ElementShape = memo(function ElementShape({
@@ -196,6 +201,7 @@ const ElementShape = memo(function ElementShape({
   elementStateColorOverrides,
   elementFillOpacityOverrides,
   isDrag,
+  showTopography,
 }: ElementShapeProps) {
   const isStrokePath = element.pathRenderStyle === 'stroke';
   const isTransparentDefault = elementStateColorOverrides?.default === 'transparent';
@@ -251,19 +257,25 @@ const ElementShape = memo(function ElementShape({
   }
 
   // Context fill shapes: transparent-default elements are invisible in context;
-  // normal elements render like background borders.
+  // normal elements render like background borders (transparent when topography is on).
   if (state === 'context') {
     if (isTransparentDefault) return null;
     return (
       <path
         d={element.svgPathData ?? ''}
         fillRule="evenodd"
-        className={styles.borderPath}
+        className={showTopography ? styles.borderPathTransparent : styles.borderPath}
       />
     );
   }
 
-  const fillOpacity = elementFillOpacityOverrides?.[state ?? 'default']
+  // When topography is on, default/undefined fill elements should be transparent
+  // so the elevation tiles show through, while keeping border strokes visible.
+  const topographyFillOpacity = (showTopography && (state === undefined || state === 'default'))
+    ? 0
+    : undefined;
+  const fillOpacity = topographyFillOpacity
+    ?? elementFillOpacityOverrides?.[state ?? 'default']
     ?? stateFillOpacity(state);
   const effectiveStrokeWidth = (isTransparentDefault && state === 'highlighted') ? 0.3 : 0.075;
   const effectiveStrokeOpacity = (isTransparentDefault && state === 'highlighted') ? 0.8 : undefined;
