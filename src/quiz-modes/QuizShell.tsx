@@ -149,6 +149,21 @@ export function QuizShell({
     return sortColumns.find((c) => c.column === rangeSortColumnKey) ?? sortColumns[0];
   }, [sortColumns, rangeSortColumnKey]);
 
+  // Dynamic range max: number of rankable elements with current sort column, merge state, and group filter.
+  // Used as the placeholder in the range max input when sort columns are active.
+  const dynamicRangeMax = useMemo(() => {
+    if (!activeSortColumn || !elements || !dataRows) return undefined;
+    return countFilteredElementsFromElements(
+      elements, dataRows, toggleState.values, activeSortColumn,
+      undefined, undefined, // no range limits — count all rankable elements
+      groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
+      tributaryColumn, distributaryColumn, segmentColumn,
+      activeSortColumn.rankDescending ?? false,
+    );
+  }, [elements, dataRows, activeSortColumn, toggleState.values, groupFilterColumn, selectedGroups, tributaryColumn, distributaryColumn, segmentColumn]);
+
+  const effectiveRangeMax = dynamicRangeMax ?? rangeMax;
+
   const filteredCount = useMemo(() => {
     if (!dataRows) return undefined;
     // Use element-based counting when sort columns are available (accurate with merge state)
@@ -162,10 +177,10 @@ export function QuizShell({
       );
     }
     return countFilteredElements(
-      dataRows, rangeColumn, rangeMin, rangeMaxValue, rangeMax,
+      dataRows, rangeColumn, rangeMin, rangeMaxValue, effectiveRangeMax,
       groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
     );
-  }, [dataRows, elements, activeSortColumn, toggleState.values, rangeColumn, rangeMin, rangeMaxValue, rangeMax, groupFilterColumn, selectedGroups, tributaryColumn, distributaryColumn, segmentColumn]);
+  }, [dataRows, elements, activeSortColumn, toggleState.values, rangeColumn, rangeMin, rangeMaxValue, effectiveRangeMax, groupFilterColumn, selectedGroups, tributaryColumn, distributaryColumn, segmentColumn]);
 
   const applyModeConstraints = useCallback((mode: QuizModeType) => {
     const constraints = modeConstraints?.[mode] ?? [];
@@ -258,7 +273,7 @@ export function QuizShell({
         onToggleChange={toggleState.set}
         onPreset={toggleState.applyPreset}
         rangeLabel={(rangeColumn || sortColumns?.length) ? rangeLabel : undefined}
-        rangeMax={rangeMax}
+        rangeMax={effectiveRangeMax}
         sortColumns={sortColumns}
         rangeSortColumnKey={rangeSortColumnKey}
         onRangeSortColumnChange={setRangeSortColumnKey}
@@ -284,7 +299,7 @@ export function QuizShell({
   }
 
   const elementRange = rangeMin !== undefined || rangeMaxValue !== undefined
-    ? { min: rangeMin ?? 1, max: rangeMaxValue ?? (rangeMax ?? 999) }
+    ? { min: rangeMin ?? 1, max: rangeMaxValue ?? (effectiveRangeMax ?? 999) }
     : undefined;
 
   const config: QuizConfig = {
