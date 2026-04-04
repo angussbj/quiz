@@ -51,3 +51,14 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - River stroke width uses fixed viewBox units (0.15 visible, 2.0 hit area), matching how country borders work.
 - `renderShapeElements` renders shapes in state layers (default, incorrect, missed, context, correct, highlighted) so state-colored shapes aren't obscured by neighbours.
 **Notes for other features:** The `pathRenderStyle` pattern could be reused for other line-based geographic features (e.g. mountain ranges, coastlines).
+
+### 31. Closest-Path Click/Hover for Stroke Elements
+**Scope:** Replace SVG hit-area strokes with a custom closest-path detection system for river-style (stroke) elements. Currently rivers use invisible wide strokes (2.0 viewBox units) for hover/click detection, but overlapping hit areas make nearby rivers unclickable.
+**Approach:**
+- **Pre-parse paths**: When map elements are built, pre-parse SVG path `d` strings into point arrays (not on every interaction). Store on the element or in a side map.
+- **Closest-path on mousemove**: On each mousemove, compute distance from cursor to all stroke-style element paths using point-to-segment projection. Select the closest element within a max pixel-space distance. Update hover state.
+- **Closest-path on click**: Same computation on click. Replaces SVG native pointer events for stroke elements.
+- **Max distance threshold in pixel space**: Convert viewBox distance to screen pixels using the current zoom scale. Reject matches beyond the threshold (clicking far from any river shouldn't select the closest one).
+- **Remove invisible hit-area strokes**: Once custom detection works, the wide invisible strokes can be removed, simplifying the SVG.
+**Key files:** `src/visualizations/map/closestPointOnPath.ts` (existing utility, needs pre-parsed variant), `src/visualizations/map/renderShapeElements.tsx` (renders stroke hit areas), `src/visualizations/map/MapRenderer.tsx` (pointer event handling).
+**Performance note:** ~343 rivers × ~20 segments = ~7000 distance calculations per mousemove — well under 1ms with pre-parsed paths. The bottleneck is string parsing, which pre-parsing eliminates.
