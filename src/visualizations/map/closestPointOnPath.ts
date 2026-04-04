@@ -3,8 +3,9 @@ import type { ViewBoxPosition } from '../VisualizationElement';
 /**
  * Parse an SVG path `d` string (M/L commands only) into an array of points.
  * Our river and border paths use only absolute M and L commands.
+ * Closed subpaths (ending with Z, typically lake polygons) are skipped.
  */
-function parsePathPoints(svgPathData: string): ReadonlyArray<ViewBoxPosition> {
+export function parsePathPoints(svgPathData: string): ReadonlyArray<ViewBoxPosition> {
   const points: Array<ViewBoxPosition> = [];
   const numbers = svgPathData.match(/-?\d+(?:\.\d+)?/g);
   if (!numbers) return points;
@@ -22,7 +23,7 @@ function parsePathPoints(svgPathData: string): ReadonlyArray<ViewBoxPosition> {
  * Find the closest point on a line segment to a given point.
  * Returns the projected point and the squared distance to it.
  */
-function closestPointOnSegment(
+export function closestPointOnSegment(
   point: ViewBoxPosition,
   segStart: ViewBoxPosition,
   segEnd: ViewBoxPosition,
