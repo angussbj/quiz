@@ -52,6 +52,11 @@ export function countFilteredElementsFromElements(
   distributaryColumn: string | undefined,
   segmentColumn: string | undefined,
   descending: boolean,
+  toggleControlledFilter?: {
+    readonly toggleKey: string;
+    readonly column: string;
+    readonly values: ReadonlyArray<string>;
+  },
 ): number {
   if (groupFilterColumn && selectedGroups && selectedGroups.size === 0) {
     return 0;
@@ -62,11 +67,21 @@ export function countFilteredElementsFromElements(
     dataRows, toggleValues, tributaryColumn, distributaryColumn, segmentColumn,
   );
 
-  // Step 2: Apply group filter to standalone rows
+  // Step 2: Apply toggle-controlled filter and group filter to standalone rows
+  const hasToggleFilter = toggleControlledFilter
+    && toggleValues[toggleControlledFilter.toggleKey] !== true;
+  const toggleFilterValues = hasToggleFilter
+    ? new Set(toggleControlledFilter.values)
+    : undefined;
+
   const activeIds = new Set<string>();
   for (const row of dataRows) {
     const id = row['id'] ?? '';
     if (!standaloneIds.has(id)) continue;
+    if (toggleFilterValues && toggleControlledFilter) {
+      const cellValue = row[toggleControlledFilter.column] ?? '';
+      if (!toggleFilterValues.has(cellValue)) continue;
+    }
     if (groupFilterColumn && selectedGroups) {
       const group = row[groupFilterColumn] ?? '';
       if (!group.split('|').some((seg) => selectedGroups.has(seg.trim()))) continue;

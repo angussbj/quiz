@@ -49,6 +49,11 @@ interface QuizShellProps {
   readonly tributaryColumn?: string;
   readonly distributaryColumn?: string;
   readonly segmentColumn?: string;
+  readonly toggleControlledFilter?: {
+    readonly toggleKey: string;
+    readonly column: string;
+    readonly values: ReadonlyArray<string>;
+  };
   /** Key of the select toggle that drives dynamic grouping (if any). */
   readonly dynamicGroupingKey?: string;
   /** Called when the dynamic grouping select toggle changes value. */
@@ -85,6 +90,7 @@ export function QuizShell({
   tributaryColumn,
   distributaryColumn,
   segmentColumn,
+  toggleControlledFilter,
   dynamicGroupingKey,
   onGroupByChange,
   children,
@@ -159,8 +165,9 @@ export function QuizShell({
       groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
       tributaryColumn, distributaryColumn, segmentColumn,
       activeSortColumn.rankDescending ?? false,
+      toggleControlledFilter,
     );
-  }, [elements, dataRows, activeSortColumn, toggleState.values, groupFilterColumn, selectedGroups, tributaryColumn, distributaryColumn, segmentColumn]);
+  }, [elements, dataRows, activeSortColumn, toggleState.values, groupFilterColumn, selectedGroups, tributaryColumn, distributaryColumn, segmentColumn, toggleControlledFilter]);
 
   const effectiveRangeMax = dynamicRangeMax ?? rangeMax;
 
@@ -174,6 +181,7 @@ export function QuizShell({
         groupFilterColumn, groupFilterColumn ? selectedGroups : undefined,
         tributaryColumn, distributaryColumn, segmentColumn,
         activeSortColumn.rankDescending ?? false,
+        toggleControlledFilter,
       );
     }
     return countFilteredElements(

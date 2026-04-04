@@ -157,6 +157,7 @@ const riversQuizBase = {
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'includeSmallerRivers', label: 'Include smaller rivers', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'mergeTributaries', label: 'Merge tributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'mergeDistributaries', label: 'Merge distributaries', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'mergeSegmentNames', label: 'Merge segment names', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
@@ -176,6 +177,11 @@ const riversQuizBase = {
   distributaryColumn: 'distributary_of',
   segmentColumn: 'segment_of',
   hideFilteredElements: true,
+  toggleControlledFilter: {
+    toggleKey: 'includeSmallerRivers',
+    column: 'scalerank',
+    values: ['0', '1', '2', '3', '4', '5', '6'],
+  },
   elementStateColorOverrides: {
     default: 'var(--color-lake)',
     context: 'var(--color-lake)',
@@ -430,7 +436,6 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'geo-rivers-world',
     title: 'World Rivers',
     description: 'Name the major rivers of the world.',
-    dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
     initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
     rangeLabel: 'Top rivers',
     groupFilterColumn: 'continent',

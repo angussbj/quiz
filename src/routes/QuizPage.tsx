@@ -165,6 +165,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         tributaryColumn={definition.tributaryColumn}
         distributaryColumn={definition.distributaryColumn}
         segmentColumn={definition.segmentColumn}
+        toggleControlledFilter={definition.toggleControlledFilter}
         groupFilterColumn={definition.groupFilterColumn}
         groupFilterLabel={definition.groupFilterLabel}
         availableGroups={availableGroups}
@@ -186,6 +187,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             rangeColumn={definition.rangeColumn}
             sortColumns={definition.orderedRecallSortColumns}
             groupFilterColumn={definition.groupFilterColumn}
+            toggleControlledFilter={definition.toggleControlledFilter}
             hideFilteredElements={definition.hideFilteredElements}
             hideUnfocusedElements={definition.hideUnfocusedElements}
             tributaryColumn={definition.tributaryColumn}

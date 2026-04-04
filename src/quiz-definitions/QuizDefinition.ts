@@ -68,6 +68,16 @@ export interface QuizDefinition<K extends string = string> {
   }>>;
   /** When true, elements excluded by range/group filters are hidden entirely instead of shown as context. */
   readonly hideFilteredElements?: boolean;
+  /**
+   * A data filter that is only applied when a toggle is OFF.
+   * When the toggle is ON, the filter is bypassed and all rows pass.
+   * Use this for "include more data" toggles (e.g. "Include smaller rivers").
+   */
+  readonly toggleControlledFilter?: {
+    readonly toggleKey: string;
+    readonly column: string;
+    readonly values: ReadonlyArray<string>;
+  };
   /** Column in the data CSV that stores the parent river name for tributary rivers.
    *  When the 'mergeTributaries' toggle is true, tributary paths are merged into the parent
    *  element's svgPathData and a subtitle "(and tributaries)" appears in the prompt. */

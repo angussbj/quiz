@@ -51,6 +51,11 @@ export interface ActiveQuizProps {
   readonly rangeColumn?: string;
   readonly sortColumns?: ReadonlyArray<SortColumnDefinition>;
   readonly groupFilterColumn?: string;
+  readonly toggleControlledFilter?: {
+    readonly toggleKey: string;
+    readonly column: string;
+    readonly values: ReadonlyArray<string>;
+  };
   readonly hideFilteredElements?: boolean;
   /** When false, locate mode shows all elements visible from the start. See QuizDefinition. */
   readonly hideUnfocusedElements?: boolean;
@@ -94,6 +99,7 @@ export function ActiveQuiz({
   rangeColumn,
   sortColumns,
   groupFilterColumn,
+  toggleControlledFilter,
   hideFilteredElements,
   hideUnfocusedElements,
   tributaryColumn,
@@ -123,7 +129,13 @@ export function ActiveQuiz({
     // mergeSegmentNames defaults to true — segments are always merged unless explicitly set false
     const mergeSegments = segmentColumn && config.toggleValues['mergeSegmentNames'] !== false;
 
-    const hasAnyFilter = hasLegacyRangeFilter || useSortValueRanking || hasGroupFilter || tributaryColumn || distributaryColumn || segmentColumn;
+    // Toggle-controlled data filter: when the toggle is OFF, only matching rows pass
+    const hasToggleFilter = toggleControlledFilter
+      && config.toggleValues[toggleControlledFilter.toggleKey] !== true;
+    const toggleFilterCol = hasToggleFilter ? toggleControlledFilter.column : undefined;
+    const toggleFilterValues = hasToggleFilter ? new Set(toggleControlledFilter.values) : undefined;
+
+    const hasAnyFilter = hasLegacyRangeFilter || useSortValueRanking || hasGroupFilter || hasToggleFilter || tributaryColumn || distributaryColumn || segmentColumn;
 
     let mergedActiveElements: ReadonlyArray<VisualizationElement>;
     let activeElementsFiltered: ReadonlyArray<VisualizationElement>;
@@ -188,9 +200,13 @@ export function ActiveQuiz({
           if (mergeSegments) continue;
         }
 
-        // Apply group filter (and legacy range filter if not using sortValue ranking)
+        // Apply toggle-controlled filter, group filter, and legacy range filter
         let passes = true;
-        if (hasLegacyRangeFilter) {
+        if (passes && toggleFilterCol && toggleFilterValues) {
+          const cellValue = row[toggleFilterCol] ?? '';
+          if (!toggleFilterValues.has(cellValue)) passes = false;
+        }
+        if (passes && hasLegacyRangeFilter) {
           const value = parseInt(row[rangeColumn] ?? '', 10);
           if (Number.isNaN(value) || value < config.elementRange.min || value > config.elementRange.max) passes = false;
         }
@@ -403,7 +419,7 @@ export function ActiveQuiz({
       activeDataRows: activeDataRowsAugmented,
       filteredBgElementIds: filteredBgIds,
     };
-  }, [elements, dataRows, columnMappings, rangeColumn, rangeSortColumn, sortColumns, config.elementRange, groupFilterColumn, config.selectedGroups, tributaryColumn, distributaryColumn, segmentColumn, config.toggleValues]);
+  }, [elements, dataRows, columnMappings, rangeColumn, rangeSortColumn, sortColumns, config.elementRange, groupFilterColumn, config.selectedGroups, toggleControlledFilter, tributaryColumn, distributaryColumn, segmentColumn, config.toggleValues]);
 
 /** Build the prompt subtitle string from the set of merged element kinds. */
 function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 'segment'>): string | undefined {
