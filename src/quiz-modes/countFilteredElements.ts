@@ -74,7 +74,7 @@ export function countFilteredElementsFromElements(
     activeIds.add(id);
   }
 
-  if (!sortColumn || (rangeMin === undefined && rangeMax === undefined)) {
+  if (!sortColumn) {
     return activeIds.size;
   }
 
@@ -100,7 +100,13 @@ export function countFilteredElementsFromElements(
   });
 
   // Step 6: Rank and count (ascending=true means lowest value gets rank 1)
+  // Elements without a valid sort value don't get a rank and are excluded.
   const ranks = computeSortRanks(tempElements, !descending);
+
+  if (rangeMin === undefined && rangeMax === undefined) {
+    return ranks.size;
+  }
+
   const min = rangeMin ?? 1;
   const max = rangeMax ?? ranks.size;
 
