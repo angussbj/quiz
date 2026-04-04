@@ -109,43 +109,236 @@ export function computePolylabel(d: string, precision: number = 0.01): ViewBoxPo
 }
 
 /**
- * Compute horizontal clearance for a point inside an SVG path polygon.
- * Returns the minimum of the distances to the left and right polygon edges
- * along a horizontal ray from the point. This measures how wide a centered
- * text label can be before hitting the boundary on either side.
- * Returns 0 if the point is outside the polygon or the path is degenerate.
+ * Compute the center of the largest axis-aligned rectangle that fits inside
+ * an SVG path polygon. Uses a grid rasterization + histogram approach.
+ * Returns null for degenerate paths.
  */
-export function computeHorizontalClearance(d: string, point: ViewBoxPosition): number {
+export function computeLargestInscribedRectCenter(d: string): ViewBoxPosition | null {
+  const points = parsePathPoints(d);
+  if (points.length < 3) return null;
+
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const p of points) {
+    if (p.x < minX) minX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y > maxY) maxY = p.y;
+  }
+  const width = maxX - minX;
+  const height = maxY - minY;
+  if (width === 0 || height === 0) return null;
+
+  const GRID = 40;
+  const cellW = width / GRID;
+  const cellH = height / GRID;
+  const ring = points.map((p) => [p.x, p.y] as const);
+
+  // Build binary grid: true if cell center is inside the polygon.
+  const grid: ReadonlyArray<ReadonlyArray<boolean>> = Array.from({ length: GRID }, (_, r) =>
+    Array.from({ length: GRID }, (_, c) =>
+      isPointInsideRing(minX + (c + 0.5) * cellW, minY + (r + 0.5) * cellH, ring),
+    ),
+  );
+
+  // Build heights matrix: for each cell, how many consecutive "inside" cells
+  // extend upward (including this one). Used for the histogram algorithm.
+  const heights: number[][] = [];
+  for (let r = 0; r < GRID; r++) {
+    const row: number[] = [];
+    for (let c = 0; c < GRID; c++) {
+      row.push(grid[r][c] ? (r > 0 ? heights[r - 1][c] + 1 : 1) : 0);
+    }
+    heights.push(row);
+  }
+
+  // Find largest rectangle using the "largest rectangle in histogram" algorithm.
+  let bestArea = 0;
+  let bestLeft = 0;
+  let bestRight = 0;
+  let bestTop = 0;
+  let bestBottom = 0;
+
+  for (let r = 0; r < GRID; r++) {
+    const h = heights[r];
+    const stack: number[] = [];
+    for (let c = 0; c <= GRID; c++) {
+      const curH = c < GRID ? h[c] : 0;
+      while (stack.length > 0 && h[stack[stack.length - 1]] > curH) {
+        const idx = stack.pop()!;
+        const rectH = h[idx];
+        const rectW = stack.length > 0 ? c - stack[stack.length - 1] - 1 : c;
+        const area = rectH * rectW;
+        if (area > bestArea) {
+          bestArea = area;
+          bestRight = c - 1;
+          bestLeft = stack.length > 0 ? stack[stack.length - 1] + 1 : 0;
+          bestBottom = r;
+          bestTop = r - rectH + 1;
+        }
+      }
+      stack.push(c);
+    }
+  }
+
+  if (bestArea === 0) return null;
+
+  const centerX = minX + ((bestLeft + bestRight) / 2 + 0.5) * cellW;
+  const centerY = minY + ((bestTop + bestBottom) / 2 + 0.5) * cellH;
+  return { x: centerX, y: centerY };
+}
+
+function isPointInsideRing(
+  x: number, y: number,
+  ring: ReadonlyArray<readonly [number, number]>,
+): boolean {
+  let inside = false;
+  for (let i = 0, len = ring.length, j = len - 1; i < len; j = i++) {
+    const a = ring[i];
+    const b = ring[j];
+    if ((a[1] > y) !== (b[1] > y) && x < ((b[0] - a[0]) * (y - a[1])) / (b[1] - a[1]) + a[0]) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+/**
+ * Approximate character width relative to line height. Matches the 0.6 factor
+ * used in computeDimensions for text width estimation.
+ */
+const CHAR_WIDTH_RATIO = 0.6;
+
+/** Line height relative to font size. Matches computeDimensions. */
+const LINE_HEIGHT_RATIO = 1.3;
+
+/** Max characters per line before wrapping. Must match splitNameIntoLines. */
+const TEXT_CLEARANCE_MAX_CHARS_PER_LINE = 12;
+
+/**
+ * Estimate how the label name will be split into lines — simplified version of
+ * splitNameIntoLines from computeLabelPlacements.ts (duplicated to avoid a
+ * circular dependency between the two modules).
+ */
+function estimateLineCount(name: string): { readonly lineCount: number; readonly longestLine: number } {
+  if (name.length <= TEXT_CLEARANCE_MAX_CHARS_PER_LINE) {
+    return { lineCount: 1, longestLine: name.length };
+  }
+  const words = name.split(' ');
+  let lineCount = 1;
+  let longestLine = 0;
+  let currentLength = 0;
+  for (const word of words) {
+    const addedLength = currentLength > 0 ? 1 + word.length : word.length;
+    if (currentLength > 0 && currentLength + addedLength > TEXT_CLEARANCE_MAX_CHARS_PER_LINE) {
+      if (currentLength > longestLine) longestLine = currentLength;
+      lineCount++;
+      currentLength = word.length;
+    } else {
+      currentLength += addedLength;
+    }
+  }
+  if (currentLength > longestLine) longestLine = currentLength;
+  return { lineCount, longestLine };
+}
+
+/**
+ * Estimate how well a text label fits inside a polygon when centered at a point.
+ *
+ * Raycasts in 4 directions from the center to find the polygon boundary, then
+ * subtracts the estimated text half-dimensions to get the gap between each edge
+ * of the text rectangle and the polygon boundary. Returns the minimum gap —
+ * negative means the text overflows the shape.
+ *
+ * The text dimensions are estimated from the label name using the same character
+ * width ratio and line wrapping rules as the actual renderer, scaled relative to
+ * the polygon's bounding box height so that edge rays land at realistic positions.
+ */
+export function computeTextClearance(d: string, point: ViewBoxPosition, name: string): number {
   const points = parsePathPoints(d);
   if (points.length < 3) return 0;
 
-  const ring = points.map((p) => [p.x, p.y] as const);
-  let leftDist = Infinity;
-  let rightDist = Infinity;
+  const { lineCount, longestLine } = estimateLineCount(name);
 
+  // Scale text dimensions relative to the polygon's bounding box height.
+  // At typical zoom the rendered font is roughly 25–35% of the polygon height;
+  // using 30% keeps the edge rays inside the polygon so they can detect narrow
+  // regions near the text's top/bottom edges.
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const p of points) {
+    if (p.x < minX) minX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y > maxY) maxY = p.y;
+  }
+  const bboxHeight = maxY - minY;
+  const unitSize = bboxHeight > 0 ? bboxHeight * 0.3 : 1;
+  const textHalfWidth = (longestLine * CHAR_WIDTH_RATIO * unitSize) / 2;
+  const textHalfHeight = (lineCount * LINE_HEIGHT_RATIO * unitSize) / 2;
+
+  const ring = points.map((p) => [p.x, p.y] as const);
+
+  // Cast horizontal rays at the top, center, and bottom of the text rectangle.
+  // A single center ray can be fooled by irregular coastlines (e.g. Massachusetts)
+  // where the polygon is wide at the center y but very narrow at the text edges.
+  // Each ray computes left/right clearance independently. If an edge ray finds no
+  // crossings (that text edge is outside the polygon), it's skipped — this lets
+  // the center row still discriminate while edge rows add constraint when they can.
+  const horizontalRayYs = [point.y - textHalfHeight, point.y, point.y + textHalfHeight];
+
+  let minHorizontalClearance = Infinity;
+
+  for (const rayY of horizontalRayYs) {
+    let leftDist = Infinity;
+    let rightDist = Infinity;
+    for (let i = 0, len = ring.length; i < len; i++) {
+      const a = ring[i];
+      const b = ring[(i + 1) % len];
+      if (a[1] === b[1]) continue;
+      const minY = Math.min(a[1], b[1]);
+      const maxY = Math.max(a[1], b[1]);
+      if (rayY >= minY && rayY < maxY) {
+        const t = (rayY - a[1]) / (b[1] - a[1]);
+        const ix = a[0] + t * (b[0] - a[0]);
+        const dx = ix - point.x;
+        if (dx > 0 && dx < rightDist) rightDist = dx;
+        if (dx < 0 && -dx < leftDist) leftDist = -dx;
+      }
+    }
+    // Skip rays that don't find crossings in both directions (text edge outside polygon).
+    if (!Number.isFinite(leftDist) || !Number.isFinite(rightDist)) continue;
+    const clearance = Math.min(leftDist - textHalfWidth, rightDist - textHalfWidth);
+    if (clearance < minHorizontalClearance) minHorizontalClearance = clearance;
+  }
+
+  // Vertical raycasting from center x (for top/bottom clearance).
+  let topDist = Infinity;
+  let bottomDist = Infinity;
   for (let i = 0, len = ring.length; i < len; i++) {
     const a = ring[i];
     const b = ring[(i + 1) % len];
-
-    // Skip horizontal edges (no crossing possible)
-    if (a[1] === b[1]) continue;
-
-    // Check if this edge crosses the horizontal line y = point.y
-    const minY = Math.min(a[1], b[1]);
-    const maxY = Math.max(a[1], b[1]);
-    if (point.y < minY || point.y >= maxY) continue;
-
-    // Compute x-intersection of the edge with y = point.y
-    const t = (point.y - a[1]) / (b[1] - a[1]);
-    const ix = a[0] + t * (b[0] - a[0]);
-    const dx = ix - point.x;
-
-    if (dx > 0 && dx < rightDist) rightDist = dx;
-    if (dx < 0 && -dx < leftDist) leftDist = -dx;
+    if (a[0] === b[0]) continue;
+    const minX = Math.min(a[0], b[0]);
+    const maxX = Math.max(a[0], b[0]);
+    if (point.x >= minX && point.x < maxX) {
+      const t = (point.x - a[0]) / (b[0] - a[0]);
+      const iy = a[1] + t * (b[1] - a[1]);
+      const dy = iy - point.y;
+      if (dy > 0 && dy < bottomDist) bottomDist = dy;
+      if (dy < 0 && -dy < topDist) topDist = -dy;
+    }
   }
 
-  if (!Number.isFinite(leftDist) || !Number.isFinite(rightDist)) return 0;
-  return Math.min(leftDist, rightDist);
+  if (!Number.isFinite(topDist) || !Number.isFinite(bottomDist)) return 0;
+  // If no horizontal ray found valid crossings, only vertical clearance applies.
+  if (!Number.isFinite(minHorizontalClearance)) {
+    return Math.min(topDist - textHalfHeight, bottomDist - textHalfHeight);
+  }
+
+  return Math.min(
+    minHorizontalClearance,
+    topDist - textHalfHeight,
+    bottomDist - textHalfHeight,
+  );
 }
 
 /** Signed distance from point to polygon (negative = inside). */

@@ -1,7 +1,7 @@
 import type { ViewBoxPosition } from '../VisualizationElement';
 import type { BackgroundPath } from '../VisualizationRendererProps';
 import type { BackgroundLabel } from './BackgroundLabel';
-import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter, computeHorizontalClearance } from './computePathCentroid';
+import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter, computeLargestInscribedRectCenter, computeTextClearance } from './computePathCentroid';
 
 /**
  * Derive one label per unique country from background paths.
@@ -42,14 +42,15 @@ export function computeBackgroundLabels(
     const centroid = computePathCentroid(largest.svgPathData);
     const bboxCenter = computeBoundingBoxCenter(largest.svgPathData);
     const polylabelCenter = computePolylabel(largest.svgPathData);
-    // Sort centers by horizontal clearance (most room for centered text first).
-    // This picks the center that allows the widest label before hitting edges,
-    // which matters for wide/narrow shapes where polylabel (inscribed circle)
-    // isn't necessarily the best spot for rectangular text.
-    const centers = [polylabelCenter, bboxCenter, centroid]
+    const rectCenter = computeLargestInscribedRectCenter(largest.svgPathData);
+    // Sort centers by text clearance — the minimum gap between the estimated text
+    // rectangle and the polygon boundary. This accounts for the label's width
+    // (based on name length and line wrapping) and height (based on line count),
+    // picking the center where the text fits best inside the shape.
+    const centers = [rectCenter, polylabelCenter, bboxCenter, centroid]
       .filter((c): c is ViewBoxPosition => c !== null)
       .sort((a, b) =>
-        computeHorizontalClearance(largest.svgPathData, b) - computeHorizontalClearance(largest.svgPathData, a),
+        computeTextClearance(largest.svgPathData, b, name) - computeTextClearance(largest.svgPathData, a, name),
       );
     labels.push({
       id: name,

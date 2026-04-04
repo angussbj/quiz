@@ -196,15 +196,23 @@ const MapContent = memo(function MapContent({
     return [...filteredBg, ...elementPolygonLabels];
   }, [backgroundLabels, elementPolygonLabels]);
 
+  const hasShowCityDotsToggle = 'showCityDots' in toggles;
   const visibleDotPositions = useMemo(
-    () => elements
-      .filter((el) => {
-        if (!elementToggle(elementToggles, toggles, el.id, 'showCityDots')) return false;
-        const state = elementStates[el.id];
-        return state !== 'hidden';
-      })
-      .map((el) => el.viewBoxCenter),
-    [elements, elementToggles, toggles, elementStates],
+    () => {
+      // Only compute avoid points when the quiz defines a showCityDots toggle.
+      // Without this check, elementToggle defaults to true for undefined toggles,
+      // causing all element centers to become avoid points even for fill-style
+      // polygon quizzes (like subdivisions) that don't render dots at all.
+      if (!hasShowCityDotsToggle) return [];
+      return elements
+        .filter((el) => {
+          if (!elementToggle(elementToggles, toggles, el.id, 'showCityDots')) return false;
+          const state = elementStates[el.id];
+          return state !== 'hidden';
+        })
+        .map((el) => el.viewBoxCenter);
+    },
+    [elements, elementToggles, toggles, elementStates, hasShowCityDotsToggle],
   );
 
   const handleBackgroundClick = useCallback(

@@ -91,7 +91,7 @@ describe('Portugal label placement diagnostics', () => {
     expect(labels).toHaveLength(1);
     expect(labels[0].name).toBe('Portugal');
     expect(labels[0].area).toBeGreaterThan(5);
-    expect(labels[0].centers.length).toBe(3);
+    expect(labels[0].centers.length).toBe(4);
     // All centers should be within Portugal's bounds
     for (const center of labels[0].centers) {
       expect(center.x).toBeGreaterThan(-10);
