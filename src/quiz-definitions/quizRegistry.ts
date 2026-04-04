@@ -25,7 +25,7 @@ const capitalsQuizBase = {
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['prompted-recall'] } as const,
+    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: true, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['prompted-recall'] } as const,
   ],
   selectToggles: [
     { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: 'off', group: 'display', modes: ['prompted-recall'], promptField: { type: 'flag', column: 'country_code' }, options: [
