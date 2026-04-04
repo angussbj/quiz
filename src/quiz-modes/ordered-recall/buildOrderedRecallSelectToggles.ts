@@ -4,6 +4,7 @@ interface SortColumnConfig {
   readonly column: string;
   readonly label: string;
   readonly infoUrl?: string;
+  readonly category?: string;
 }
 
 /**
@@ -30,6 +31,7 @@ export function buildOrderedRecallSelectToggles(
       value: col.column,
       label: col.label,
       ...(col.infoUrl ? { infoUrl: col.infoUrl } : {}),
+      ...(col.category ? { category: col.category } : {}),
     })),
   };
 

@@ -216,6 +216,18 @@ export function SelectToggleControl({
   );
 }
 
+export interface DropdownOption {
+  readonly value: string;
+  readonly label: string;
+  readonly infoUrl?: string;
+  readonly category?: string;
+}
+
+/**
+ * Renders a native <select> dropdown. When options have `category` fields,
+ * groups them into <optgroup> sections. Options without a category render
+ * outside any group.
+ */
 function DropdownSelect({
   options,
   value,
@@ -223,7 +235,7 @@ function DropdownSelect({
   label,
   disabled = false,
 }: {
-  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string; readonly infoUrl?: string }>;
+  readonly options: ReadonlyArray<DropdownOption>;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly label: string;
@@ -231,6 +243,7 @@ function DropdownSelect({
 }) {
   const selectedOption = options.find((o) => o.value === value);
   const infoUrl = selectedOption?.infoUrl;
+  const hasCategories = options.some((o) => o.category);
   return (
     <span className={styles.dropdownWrapper}>
       <select
@@ -240,7 +253,7 @@ function DropdownSelect({
         aria-label={label}
         disabled={disabled}
       >
-        {options.map((option) => (
+        {hasCategories ? renderGroupedOptions(options) : options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
@@ -253,6 +266,45 @@ function DropdownSelect({
       )}
     </span>
   );
+}
+
+/**
+ * Group options by category into <optgroup> elements.
+ * Preserves the original order — consecutive options with the same category
+ * are grouped together. Options without a category render ungrouped.
+ */
+export function renderGroupedOptions(options: ReadonlyArray<DropdownOption>): React.ReactNode[] {
+  const result: React.ReactNode[] = [];
+  let currentCategory: string | undefined;
+  let currentGroupOptions: DropdownOption[] = [];
+
+  function flushGroup() {
+    if (currentGroupOptions.length === 0) return;
+    if (currentCategory) {
+      result.push(
+        <optgroup key={`group-${currentCategory}`} label={currentCategory}>
+          {currentGroupOptions.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </optgroup>,
+      );
+    } else {
+      for (const o of currentGroupOptions) {
+        result.push(<option key={o.value} value={o.value}>{o.label}</option>);
+      }
+    }
+    currentGroupOptions = [];
+  }
+
+  for (const option of options) {
+    if (option.category !== currentCategory) {
+      flushGroup();
+      currentCategory = option.category;
+    }
+    currentGroupOptions.push(option);
+  }
+  flushGroup();
+  return result;
 }
 
 function SegmentedControl({
