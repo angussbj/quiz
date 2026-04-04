@@ -113,7 +113,7 @@ const countriesQuizBase = {
     { column: 'average_temperature_c', label: 'Average temperature (\u00B0C)', infoUrl: '/about/country-statistics' },
     { column: 'average_rainfall_mm', label: 'Average rainfall (mm/year)', infoUrl: '/about/country-statistics' },
     { column: 'co2_per_capita_tonnes', label: 'CO\u2082 per capita (tonnes)', infoUrl: '/about/country-statistics' },
-    { column: 'co2_total_mt', label: 'CO\u2082 total (kt)', infoUrl: '/about/country-statistics' },
+    { column: 'co2_total_mt', label: 'CO\u2082 total (Mt)', infoUrl: '/about/country-statistics' },
     { column: 'pm25_concentration', label: 'PM2.5 (µg/m\u00B3)', infoUrl: '/about/country-statistics' },
     { column: 'renewable_energy_pct', label: 'Renewable energy (%)', infoUrl: '/about/country-statistics' },
     { column: 'protected_land_pct', label: 'Protected land area (%)', infoUrl: '/about/country-statistics' },
