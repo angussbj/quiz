@@ -112,6 +112,7 @@ interface MapElementShapesProps {
   readonly onElementHoverEnd?: () => void;
   readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly elementFillOpacityOverrides: VisualizationRendererProps['elementFillOpacityOverrides'];
   readonly isDrag: (e: React.MouseEvent) => boolean;
   readonly clusteredElementIds: ReadonlySet<string>;
 }
@@ -125,6 +126,7 @@ export const MapElementShapes = memo(function MapElementShapes({
   onElementHoverEnd,
   showRegionColors,
   elementStateColorOverrides,
+  elementFillOpacityOverrides,
   isDrag,
   clusteredElementIds,
 }: MapElementShapesProps) {
@@ -161,6 +163,7 @@ export const MapElementShapes = memo(function MapElementShapes({
             onElementHoverEnd={onElementHoverEnd}
             showRegionColors={showRegionColors}
             elementStateColorOverrides={elementStateColorOverrides}
+            elementFillOpacityOverrides={elementFillOpacityOverrides}
             isDrag={isDrag}
           />
         );
@@ -178,6 +181,7 @@ interface ElementShapeProps {
   readonly onElementHoverEnd?: () => void;
   readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly elementFillOpacityOverrides: VisualizationRendererProps['elementFillOpacityOverrides'];
   readonly isDrag: (e: React.MouseEvent) => boolean;
 }
 
@@ -190,9 +194,11 @@ const ElementShape = memo(function ElementShape({
   onElementHoverEnd,
   showRegionColors,
   elementStateColorOverrides,
+  elementFillOpacityOverrides,
   isDrag,
 }: ElementShapeProps) {
   const isStrokePath = element.pathRenderStyle === 'stroke';
+  const isTransparentDefault = elementStateColorOverrides?.default === 'transparent';
   const color = (state !== undefined && state !== 'hidden')
     ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
     : (isStrokePath ? 'var(--color-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--color-bg-primary)'));
@@ -244,8 +250,10 @@ const ElementShape = memo(function ElementShape({
     );
   }
 
-  // Context fill shapes render like background borders
+  // Context fill shapes: transparent-default elements are invisible in context;
+  // normal elements render like background borders.
   if (state === 'context') {
+    if (isTransparentDefault) return null;
     return (
       <path
         d={element.svgPathData ?? ''}
@@ -255,15 +263,21 @@ const ElementShape = memo(function ElementShape({
     );
   }
 
+  const fillOpacity = elementFillOpacityOverrides?.[state ?? 'default']
+    ?? stateFillOpacity(state);
+  const effectiveStrokeWidth = (isTransparentDefault && state === 'highlighted') ? 0.3 : 0.075;
+  const effectiveStrokeOpacity = (isTransparentDefault && state === 'highlighted') ? 0.8 : undefined;
+
   return (
     <path
       d={element.svgPathData ?? ''}
       fillRule="evenodd"
       style={{
         fill: color,
-        fillOpacity: stateFillOpacity(state),
+        fillOpacity,
         stroke: color,
-        strokeWidth: 0.075,
+        strokeWidth: effectiveStrokeWidth,
+        strokeOpacity: effectiveStrokeOpacity,
         pointerEvents: 'auto',
       }}
       className={onElementClick ? styles.interactivePath : onElementHoverStart ? styles.hoverablePath : styles.borderPath}

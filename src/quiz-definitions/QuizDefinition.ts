@@ -124,6 +124,11 @@ export interface QuizDefinition<K extends string = string> {
    */
   readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;
   /**
+   * Override fill opacity for specific element visual states.
+   * Used by mountain range quizzes for low-opacity transparent polygon fills.
+   */
+  readonly elementFillOpacityOverrides?: Readonly<Partial<Record<ElementVisualState, number>>>;
+  /**
    * Dynamic grouping: lets the user switch the group-by column at runtime via a select toggle.
    * `selectToggleKey` names the select toggle, `options` maps each option value to a column
    * config (or undefined for "no grouping").

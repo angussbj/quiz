@@ -26,6 +26,7 @@ interface FilterOverrides {
   readonly filteredBgElementIds: ReadonlySet<string>;
   readonly timeScale: TimeScale | undefined;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly elementFillOpacityOverrides: VisualizationRendererProps['elementFillOpacityOverrides'];
   readonly wikipediaOnHoverStart: (elementId: string, slug: string) => void;
   readonly wikipediaOnHoverEnd: () => void;
   /** Toggle key that reveals the answer label (e.g. 'showLabels', 'showNames'). */
@@ -68,6 +69,7 @@ export interface ActiveQuizProps {
   };
   readonly timeScale?: TimeScale;
   readonly elementStateColorOverrides?: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly elementFillOpacityOverrides?: VisualizationRendererProps['elementFillOpacityOverrides'];
   readonly normalizeOptions?: NormalizeOptions;
 }
 
@@ -100,6 +102,7 @@ export function ActiveQuiz({
   locateThresholds,
   timeScale,
   elementStateColorOverrides,
+  elementFillOpacityOverrides,
   normalizeOptions,
 }: ActiveQuizProps) {
   const { activeElements, activeDataRows, filteredBgElementIds } = useMemo(() => {
@@ -367,6 +370,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
     filteredBgElementIds,
     timeScale,
     elementStateColorOverrides,
+    elementFillOpacityOverrides,
     wikipediaOnHoverStart: wrappedWikipediaHoverStart,
     wikipediaOnHoverEnd: wrappedWikipediaHoverEnd,
     labelToggleKey,
@@ -379,7 +383,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
     function StableFilterRenderer(props: VisualizationRendererProps) {
       // The ref is always assigned before this component renders, so current is never null.
       // Read values from the ref to avoid changing component identity on every render.
-      const { Renderer: Inner, showFilteredBg: showBg, extendedElements: extEls, filteredBgElementIds: bgIds, timeScale: ts, elementStateColorOverrides: colorOverrides, wikipediaOnHoverStart, wikipediaOnHoverEnd, labelToggleKey: lblKey, wikipediaPreviewState: wpState } = filterOverridesRef.current ?? {} as FilterOverrides;
+      const { Renderer: Inner, showFilteredBg: showBg, extendedElements: extEls, filteredBgElementIds: bgIds, timeScale: ts, elementStateColorOverrides: colorOverrides, elementFillOpacityOverrides: fillOpacityOverrides, wikipediaOnHoverStart, wikipediaOnHoverEnd, labelToggleKey: lblKey, wikipediaPreviewState: wpState } = filterOverridesRef.current ?? {} as FilterOverrides;
 
       const mergedStates = useMemo(() => {
         if (!showBg) return props.elementStates;
@@ -440,6 +444,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
             elementToggles={mergedToggles}
             timeScale={ts}
             elementStateColorOverrides={colorOverrides}
+            elementFillOpacityOverrides={fillOpacityOverrides}
             onElementHoverStart={handleWikipediaHoverStart}
             onElementHoverEnd={handleWikipediaHoverEnd}
           />

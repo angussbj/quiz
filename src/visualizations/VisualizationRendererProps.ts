@@ -113,6 +113,12 @@ export interface VisualizationRendererProps {
    * STATUS_COLORS.main for the specified states.
    */
   readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;
+  /**
+   * Override fill opacity for specific element visual states.
+   * When a state has an entry here, it replaces the default stateFillOpacity value.
+   * Used by mountain range quizzes for low-opacity polygon fills.
+   */
+  readonly elementFillOpacityOverrides?: Readonly<Partial<Record<ElementVisualState, number>>>;
   /** Distance feedback lines for the renderer to draw (e.g., locate mode click-to-target paths). */
   readonly distanceFeedbackLines?: ReadonlyArray<DistanceFeedbackLine>;
   /**

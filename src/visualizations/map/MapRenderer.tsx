@@ -46,6 +46,7 @@ export function MapRenderer({
   initialCameraPosition,
   putInView,
   elementStateColorOverrides,
+  elementFillOpacityOverrides,
   autoRevealElementIds,
 }: VisualizationRendererProps) {
   const uniqueGroups = useMemo(
@@ -86,6 +87,7 @@ export function MapRenderer({
         uniqueGroups={uniqueGroups}
         showRegionColors={showRegionColors}
         elementStateColorOverrides={elementStateColorOverrides}
+        elementFillOpacityOverrides={elementFillOpacityOverrides}
       />
       {svgOverlay}
       <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
@@ -137,6 +139,7 @@ interface MapContentProps {
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly elementFillOpacityOverrides: VisualizationRendererProps['elementFillOpacityOverrides'];
 }
 
 const MapContent = memo(function MapContent({
@@ -155,6 +158,7 @@ const MapContent = memo(function MapContent({
   uniqueGroups,
   showRegionColors,
   elementStateColorOverrides,
+  elementFillOpacityOverrides,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { onPointerDown, isDrag } = useDragDetector();
@@ -292,6 +296,7 @@ const MapContent = memo(function MapContent({
         onElementHoverEnd={onElementHoverStart ? handleElementHoverEnd : undefined}
         showRegionColors={showRegionColors}
         elementStateColorOverrides={elementStateColorOverrides}
+        elementFillOpacityOverrides={elementFillOpacityOverrides}
         isDrag={isDrag}
         clusteredElementIds={clusteredElementIds}
       />
