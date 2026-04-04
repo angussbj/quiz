@@ -17,6 +17,7 @@ import { MapHoverOverlay } from './MapHoverOverlay';
 import { useDragDetector } from './useDragDetector';
 import { useStrokePathCache } from './useStrokePathCache';
 import { findClosestStrokeElement } from './findClosestStrokeElement';
+import { formatDataValue } from '../formatDataValue';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -46,6 +47,8 @@ export function MapRenderer({
   svgOverlay,
   initialCameraPosition,
   putInView,
+  selectValues,
+  selectValueLabels,
   elementStateColorOverrides,
   autoRevealElementIds,
 }: VisualizationRendererProps) {
@@ -87,6 +90,8 @@ export function MapRenderer({
         uniqueGroups={uniqueGroups}
         showRegionColors={showRegionColors}
         elementStateColorOverrides={elementStateColorOverrides}
+        selectValues={selectValues}
+        selectValueLabels={selectValueLabels}
       />
       {svgOverlay}
       <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
@@ -138,6 +143,8 @@ interface MapContentProps {
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly selectValues?: Readonly<Record<string, string>>;
+  readonly selectValueLabels?: Readonly<Record<string, string>>;
 }
 
 const MapContent = memo(function MapContent({
@@ -156,6 +163,8 @@ const MapContent = memo(function MapContent({
   uniqueGroups,
   showRegionColors,
   elementStateColorOverrides,
+  selectValues,
+  selectValueLabels,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { onPointerDown, isDrag } = useDragDetector();
@@ -302,6 +311,42 @@ const MapContent = memo(function MapContent({
     [elements, elementToggles, toggles, elementStates],
   );
 
+  // ── Data display: find active data column and build element→value map ──
+  // Select toggles like 'countryData' or 'riverData' have values that are CSV column names.
+  // Find the first one that's set to something other than 'none'.
+  const orderingKeys = useMemo(() => new Set(['orderBy', 'sortOrder', 'missingValues', 'rangeSortColumn']), []);
+  const activeDataColumnName = useMemo(() => {
+    if (!selectValues || !selectValueLabels) return undefined;
+    for (const [key, value] of Object.entries(selectValues)) {
+      if (orderingKeys.has(key)) continue;
+      if (value && value !== 'none' && selectValueLabels[value]) return value;
+    }
+    return undefined;
+  }, [selectValues, selectValueLabels, orderingKeys]);
+  const activeDataColumnLabel = activeDataColumnName ? selectValueLabels?.[activeDataColumnName] : undefined;
+
+  // Build maps of element id → formatted data value and element name → formatted data value
+  const { elementDataValues, elementNameDataValues } = useMemo(() => {
+    if (!activeDataColumnName || !activeDataColumnLabel) {
+      return { elementDataValues: undefined, elementNameDataValues: undefined };
+    }
+    const idMap: Record<string, string> = {};
+    const nameMap: Record<string, string> = {};
+    for (const el of elements) {
+      const raw = el.dataColumns?.[activeDataColumnName];
+      const formatted = formatDataValue(raw, activeDataColumnLabel);
+      if (formatted !== '—') {
+        idMap[el.id] = formatted;
+        nameMap[el.label] = formatted;
+      }
+    }
+    const hasValues = Object.keys(idMap).length > 0;
+    return {
+      elementDataValues: hasValues ? idMap : undefined,
+      elementNameDataValues: hasValues ? nameMap : undefined,
+    };
+  }, [elements, activeDataColumnName, activeDataColumnLabel]);
+
   const handleBackgroundClick = useCallback(
     (event: React.MouseEvent<SVGGElement>) => {
       if (isDrag(event)) return;
@@ -399,15 +444,18 @@ const MapContent = memo(function MapContent({
           nameToElementId={nameToElementId}
           onElementHoverStart={onElementHoverStart ? handleElementHoverStart : undefined}
           onElementHoverEnd={onElementHoverStart ? handleElementHoverEnd : undefined}
+          dataValues={elementNameDataValues}
         />
       )}
 
-      {/* River name labels (for stroke-style path elements like rivers) */}
+      {/* River name labels and data values (for stroke-style path elements like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
-        if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showRiverNames'))) return null;
+        const showName = shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showRiverNames'));
+        const dataValue = elementDataValues?.[element.id];
+        if (!showName && !dataValue) return null;
         const color = (state !== undefined && state !== 'hidden')
           ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
           : 'var(--color-text-primary)';
@@ -416,23 +464,45 @@ const MapContent = memo(function MapContent({
         const labelOffset = 0.8; // viewBox units
         const labelProps = computeLabelProps(anchor, pos, labelOffset);
         return (
-          <text
-            key={`river-label-${element.id}`}
-            {...labelProps}
-            className={onElementHoverStart ? styles.riverLabelHoverable : styles.riverLabel}
-            style={{
-              fill: color,
-              strokeOpacity: 0.75,
-              paintOrder: 'stroke',
-              stroke: 'var(--color-label-halo)',
-              strokeWidth: 0.5,
-              strokeLinejoin: 'round',
-            }}
-            onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
-          >
-            {element.label}
-          </text>
+          <g key={`river-label-${element.id}`}>
+            {showName && (
+              <text
+                {...labelProps}
+                className={onElementHoverStart ? styles.riverLabelHoverable : styles.riverLabel}
+                style={{
+                  fill: color,
+                  strokeOpacity: 0.75,
+                  paintOrder: 'stroke',
+                  stroke: 'var(--color-label-halo)',
+                  strokeWidth: 0.5,
+                  strokeLinejoin: 'round',
+                }}
+                onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
+                onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
+              >
+                {element.label}
+              </text>
+            )}
+            {dataValue !== undefined && (
+              <text
+                {...labelProps}
+                y={labelProps.y + (showName ? 1.0 : 0)}
+                className={styles.riverLabel}
+                style={{
+                  fill: color,
+                  fontSize: '75%',
+                  strokeOpacity: 0.75,
+                  paintOrder: 'stroke',
+                  stroke: 'var(--color-label-halo)',
+                  strokeWidth: 0.4,
+                  strokeLinejoin: 'round',
+                  opacity: 0.7,
+                }}
+              >
+                {dataValue}
+              </text>
+            )}
+          </g>
         );
       })}
 

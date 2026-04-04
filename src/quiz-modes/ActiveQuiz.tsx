@@ -113,6 +113,20 @@ export function ActiveQuiz({
   elementStateColorOverrides,
   normalizeOptions,
 }: ActiveQuizProps) {
+  // Build a value→label lookup from all selectToggle definitions for data display formatting
+  const selectValueLabels = useMemo(() => {
+    if (!selectToggleDefinitions?.length) return undefined;
+    const map: Record<string, string> = {};
+    for (const toggle of selectToggleDefinitions) {
+      for (const option of toggle.options) {
+        if (option.value !== 'none') {
+          map[option.value] = option.label;
+        }
+      }
+    }
+    return Object.keys(map).length > 0 ? map : undefined;
+  }, [selectToggleDefinitions]);
+
   // Resolve the selected range sort column from config
   const rangeSortColumn = useMemo(() => {
     if (!sortColumns?.length) return undefined;
@@ -655,6 +669,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           selectToggleDefinitions={selectToggleDefinitions}
           toggleValues={config.toggleValues}
           selectValues={config.selectValues}
+          selectValueLabels={selectValueLabels}
           Renderer={FilterAwareRenderer}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

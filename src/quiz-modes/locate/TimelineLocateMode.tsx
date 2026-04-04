@@ -18,6 +18,7 @@ export function TimelineLocateMode({
   toggleValues,
   toggleDefinitions = [],
   selectValues,
+  selectValueLabels,
   Renderer,
   backgroundPaths,
   lakePaths,
@@ -228,6 +229,7 @@ export function TimelineLocateMode({
           onPositionClick={reviewing || quiz.isFinished ? undefined : quiz.handlePositionClick}
           toggles={toggleValues}
           selectValues={selectValues}
+          selectValueLabels={selectValueLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

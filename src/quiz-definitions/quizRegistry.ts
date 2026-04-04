@@ -1,4 +1,28 @@
-import type { QuizDefinition } from './QuizDefinition';
+import type { QuizDefinition, SortColumnDefinition } from './QuizDefinition';
+import type { SelectToggleDefinition } from '../quiz-modes/ToggleDefinition';
+
+/** Build a data display selectToggle from sort column definitions. */
+function buildDataDisplayToggle(
+  key: string,
+  label: string,
+  sortColumns: ReadonlyArray<SortColumnDefinition>,
+): SelectToggleDefinition {
+  return {
+    key,
+    label,
+    group: 'display',
+    defaultValue: 'none',
+    renderAs: 'dropdown',
+    options: [
+      { value: 'none', label: 'None' },
+      ...sortColumns.map((c) => ({
+        value: c.column,
+        label: c.label,
+        ...(c.category ? { category: c.category } : {}),
+      })),
+    ],
+  };
+}
 
 /**
  * Static registry of all available quizzes.
@@ -57,6 +81,76 @@ const capitalsQuizBase = {
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
+ * Sort columns for country statistics, shared between orderedRecallSortColumns and
+ * the data display selectToggle. Extracted so both can reference the same array.
+ */
+const countrySortColumns: ReadonlyArray<SortColumnDefinition> = [
+  // Demographics
+  { column: 'population', label: 'Population', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'population_density', label: 'Population density (per km\u00B2)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'population_growth_pct', label: 'Population growth (% annual)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'median_age', label: 'Median age (years)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'urban_population_pct', label: 'Urban population (%)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'fertility_rate', label: 'Fertility rate (births per woman)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'net_migration_rate', label: 'Net migration', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Economy
+  { column: 'gdp_nominal', label: 'GDP nominal (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gdp_per_capita', label: 'GDP per capita (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gdp_ppp_per_capita', label: 'GDP PPP per capita (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gdp_growth_pct', label: 'GDP growth (% annual)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gini_coefficient', label: 'Gini coefficient', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'unemployment_rate', label: 'Unemployment rate (%)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'inflation_rate', label: 'Inflation rate (% annual)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'government_debt_pct_gdp', label: 'Government debt (% of GDP)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'tax_revenue_pct_gdp', label: 'Tax revenue (% of GDP)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Geography & Environment
+  { column: 'land_area_km2', label: 'Land area (km\u00B2)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'average_elevation_m', label: 'Average elevation (m)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'highest_point_m', label: 'Highest point (m)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'coastline_km', label: 'Coastline (km)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'forest_cover_pct', label: 'Forest cover (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'average_temperature_c', label: 'Average temperature (\u00B0C)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'average_rainfall_mm', label: 'Average rainfall (mm/year)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'co2_per_capita_tonnes', label: 'CO\u2082 per capita (tonnes)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'co2_total_mt', label: 'CO\u2082 total (Mt)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'pm25_concentration', label: 'PM2.5 (µg/m\u00B3)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'renewable_energy_pct', label: 'Renewable energy (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'protected_land_pct', label: 'Protected land area (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Health
+  { column: 'life_expectancy', label: 'Life expectancy (years)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'infant_mortality_rate', label: 'Infant mortality (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'child_mortality_rate', label: 'Child mortality, under-5 (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'maternal_mortality_ratio', label: 'Maternal mortality (per 100,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'health_expenditure_pct_gdp', label: 'Health expenditure (% of GDP)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'physicians_per_1000', label: 'Physicians (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'hospital_beds_per_1000', label: 'Hospital beds (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'obesity_rate_pct', label: 'Obesity rate (% of adults)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Education & Development
+  { column: 'hdi', label: 'Human Development Index', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'literacy_rate_pct', label: 'Literacy rate (%)', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'mean_years_schooling', label: 'Mean years of schooling', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'education_expenditure_pct_gdp', label: 'Education expenditure (% of GDP)', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Governance & Security
+  { column: 'military_expenditure_pct_gdp', label: 'Military expenditure (% of GDP)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'military_expenditure_per_capita', label: 'Military expenditure per capita (USD)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'corruption_perceptions_index', label: 'Corruption Perceptions Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'press_freedom_index', label: 'Press Freedom Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'democracy_index', label: 'Democracy Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'homicide_rate', label: 'Homicide rate (per 100,000)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'incarceration_rate', label: 'Incarceration rate (per 100,000)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'global_peace_index', label: 'Global Peace Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Aid
+  { column: 'oda_given_per_capita', label: 'Foreign aid given per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'oda_received_per_capita', label: 'Foreign aid received per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Quality of Life
+  { column: 'happiness_score', label: 'Happiness score', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'internet_penetration_pct', label: 'Internet users (%)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'mobile_subscriptions_per_100', label: 'Mobile subscriptions (per 100)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'tourism_per_capita', label: 'Tourism arrivals per capita', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'unesco_world_heritage_sites', label: 'UNESCO World Heritage Sites', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+];
+
+/**
  * Shared configuration for all countries quizzes.
  * Individual definitions spread this and add id, title, description, dataFilter, and group mapping.
  */
@@ -73,6 +167,7 @@ const countriesQuizBase = {
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
+  selectToggles: [buildDataDisplayToggle('countryData', 'Country data', countrySortColumns)],
   presets: [],
   columnMappings: {
     answer: 'name',
@@ -86,71 +181,7 @@ const countriesQuizBase = {
   locateDistanceMode: 'polygon-boundary' as const,
   locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
   rangeLabel: 'Top countries',
-  orderedRecallSortColumns: [
-    // Demographics
-    { column: 'population', label: 'Population', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'population_density', label: 'Population density (per km\u00B2)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'population_growth_pct', label: 'Population growth (% annual)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'median_age', label: 'Median age (years)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'urban_population_pct', label: 'Urban population (%)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'fertility_rate', label: 'Fertility rate (births per woman)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'net_migration_rate', label: 'Net migration', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Economy
-    { column: 'gdp_nominal', label: 'GDP nominal (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'gdp_per_capita', label: 'GDP per capita (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'gdp_ppp_per_capita', label: 'GDP PPP per capita (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'gdp_growth_pct', label: 'GDP growth (% annual)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'gini_coefficient', label: 'Gini coefficient', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'unemployment_rate', label: 'Unemployment rate (%)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'inflation_rate', label: 'Inflation rate (% annual)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'government_debt_pct_gdp', label: 'Government debt (% of GDP)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'tax_revenue_pct_gdp', label: 'Tax revenue (% of GDP)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Geography & Environment
-    { column: 'land_area_km2', label: 'Land area (km\u00B2)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'average_elevation_m', label: 'Average elevation (m)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'highest_point_m', label: 'Highest point (m)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'coastline_km', label: 'Coastline (km)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'forest_cover_pct', label: 'Forest cover (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'average_temperature_c', label: 'Average temperature (\u00B0C)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'average_rainfall_mm', label: 'Average rainfall (mm/year)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'co2_per_capita_tonnes', label: 'CO\u2082 per capita (tonnes)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'co2_total_mt', label: 'CO\u2082 total (Mt)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'pm25_concentration', label: 'PM2.5 (µg/m\u00B3)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'renewable_energy_pct', label: 'Renewable energy (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'protected_land_pct', label: 'Protected land area (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Health
-    { column: 'life_expectancy', label: 'Life expectancy (years)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'infant_mortality_rate', label: 'Infant mortality (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'child_mortality_rate', label: 'Child mortality, under-5 (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'maternal_mortality_ratio', label: 'Maternal mortality (per 100,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'health_expenditure_pct_gdp', label: 'Health expenditure (% of GDP)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'physicians_per_1000', label: 'Physicians (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'hospital_beds_per_1000', label: 'Hospital beds (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'obesity_rate_pct', label: 'Obesity rate (% of adults)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Education & Development
-    { column: 'hdi', label: 'Human Development Index', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'literacy_rate_pct', label: 'Literacy rate (%)', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'mean_years_schooling', label: 'Mean years of schooling', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'education_expenditure_pct_gdp', label: 'Education expenditure (% of GDP)', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Governance & Security
-    { column: 'military_expenditure_pct_gdp', label: 'Military expenditure (% of GDP)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'military_expenditure_per_capita', label: 'Military expenditure per capita (USD)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'corruption_perceptions_index', label: 'Corruption Perceptions Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'press_freedom_index', label: 'Press Freedom Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'democracy_index', label: 'Democracy Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'homicide_rate', label: 'Homicide rate (per 100,000)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'incarceration_rate', label: 'Incarceration rate (per 100,000)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'global_peace_index', label: 'Global Peace Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Aid
-    { column: 'oda_given_per_capita', label: 'Foreign aid given per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'oda_received_per_capita', label: 'Foreign aid received per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
-    // Quality of Life
-    { column: 'happiness_score', label: 'Happiness score', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'internet_penetration_pct', label: 'Internet users (%)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'mobile_subscriptions_per_100', label: 'Mobile subscriptions (per 100)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'tourism_per_capita', label: 'Tourism arrivals per capita', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
-    { column: 'unesco_world_heritage_sites', label: 'UNESCO World Heritage Sites', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
-  ],
+  orderedRecallSortColumns: countrySortColumns,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
@@ -211,6 +242,12 @@ const largestCitiesQuiz = {
   hideFilteredElements: true,
 } satisfies QuizDefinition;
 
+/** Sort columns for rivers, shared between orderedRecallSortColumns and data display. */
+const riverSortColumns: ReadonlyArray<SortColumnDefinition> = [
+  { column: 'discharge_m3s', label: 'Discharge (m\u00B3/s)', rankDescending: true },
+  { column: 'length_km', label: 'Length (km)', mergeAggregation: 'sum' as const, rankDescending: true },
+];
+
 /**
  * Shared configuration for all rivers quizzes.
  */
@@ -228,6 +265,7 @@ const riversQuizBase = {
     { key: 'mergeDistributaries', label: 'Merge distributaries', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'mergeSegmentNames', label: 'Merge segment names', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
+  selectToggles: [buildDataDisplayToggle('riverData', 'River data', riverSortColumns)],
   presets: [],
   columnMappings: {
     answer: 'name',
@@ -252,10 +290,7 @@ const riversQuizBase = {
     default: 'var(--color-lake)',
     context: 'var(--color-lake)',
   },
-  orderedRecallSortColumns: [
-    { column: 'discharge_m3s', label: 'Discharge', rankDescending: true },
-    { column: 'length_km', label: 'Length', mergeAggregation: 'sum' as const, rankDescending: true },
-  ],
+  orderedRecallSortColumns: riverSortColumns,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 

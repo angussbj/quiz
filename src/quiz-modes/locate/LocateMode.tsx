@@ -18,6 +18,7 @@ export function LocateMode({
   elements,
   toggleValues,
   selectValues,
+  selectValueLabels,
   toggleDefinitions = [],
   Renderer,
   backgroundPaths,
@@ -178,6 +179,7 @@ export function LocateMode({
           onElementClick={reviewing || quiz.isFinished ? undefined : quiz.handleElementClick}
           toggles={toggleValues}
           selectValues={selectValues}
+          selectValueLabels={selectValueLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
