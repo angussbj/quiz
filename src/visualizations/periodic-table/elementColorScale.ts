@@ -38,10 +38,28 @@ const LIGHT_LIGHTNESS = 82;
 /** Dark-mode lightness for deep fills (light text on dark bg). */
 const DARK_LIGHTNESS = 28;
 
-/** Gradient color: blue (240°) → red (0°) via green. */
+/**
+ * Gradient color mapping across three ranges:
+ *   [-1, 0] → deep purple (270°) to blue-purple (255°) for low outliers
+ *   [0,  1] → blue (240°) → red (0°) via green for normal values
+ *   [1,  2] → red-pink (345°) to magenta (320°) for high outliers
+ */
 function gradientColor(t: number, darkMode: boolean): string {
+  const lightness = darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS;
+  if (t > 1) {
+    // High outlier: red-pink (345°) → magenta (320°)
+    const outlierT = Math.min(t - 1, 1);
+    const hue = 345 - 25 * outlierT;
+    return hslColor(hue, 50, lightness);
+  }
+  if (t < 0) {
+    // Low outlier: blue-purple (255°) → deep purple (270°)
+    const outlierT = Math.min(-t, 1);
+    const hue = 255 + 15 * outlierT;
+    return hslColor(hue, 50, lightness);
+  }
   const hue = 240 * (1 - t);
-  return hslColor(hue, 50, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
+  return hslColor(hue, 50, lightness);
 }
 
 /** Fixed category colors — 8 distinguishable hues. */

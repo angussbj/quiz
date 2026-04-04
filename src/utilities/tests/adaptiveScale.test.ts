@@ -34,14 +34,14 @@ describe('computeAdaptiveScale', () => {
       expect(scale.transform(10)).toBeCloseTo(1);
     });
 
-    it('clamps values below minimum to 0', () => {
+    it('returns negative values for inputs below the range', () => {
       const scale = computeAdaptiveScale([10, 20, 30]);
-      expect(scale.transform(0)).toBe(0);
+      expect(scale.transform(0)).toBeLessThan(0);
     });
 
-    it('clamps values above maximum to 1', () => {
+    it('returns values above 1 for inputs above the range', () => {
       const scale = computeAdaptiveScale([10, 20, 30]);
-      expect(scale.transform(100)).toBe(1);
+      expect(scale.transform(100)).toBeGreaterThan(1);
     });
 
     it('produces values between 0 and 1 for interior points', () => {
@@ -201,6 +201,40 @@ describe('computeAdaptiveScale', () => {
       expect(scale1.curve).toBe(scale2.curve);
       for (const v of values) {
         expect(scale1.transform(v)).toBeCloseTo(scale2.transform(v));
+      }
+    });
+  });
+
+  describe('outlier handling', () => {
+    it('maps extreme outliers outside [0, 1]', () => {
+      // One massive outlier at 1e10, rest clustered 1-100
+      const values = [1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1e10];
+      const scale = computeAdaptiveScale(values);
+
+      // The outlier should map above 1
+      expect(scale.transform(1e10)).toBeGreaterThan(1);
+      // Non-outlier values should still span [0, 1]
+      expect(scale.transform(1)).toBeCloseTo(0, 1);
+      expect(scale.transform(100)).toBeCloseTo(1, 1);
+    });
+
+    it('maps low outliers below 0', () => {
+      const values = [-1e10, 1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+      const scale = computeAdaptiveScale(values);
+
+      expect(scale.transform(-1e10)).toBeLessThan(0);
+      expect(scale.transform(100)).toBeCloseTo(1, 1);
+    });
+
+    it('does not create outliers when data is evenly distributed', () => {
+      const values = Array.from({ length: 20 }, (_, i) => i * 5);
+      const scale = computeAdaptiveScale(values);
+
+      // All values should be in [0, 1]
+      for (const v of values) {
+        const t = scale.transform(v);
+        expect(t).toBeGreaterThanOrEqual(-0.01);
+        expect(t).toBeLessThanOrEqual(1.01);
       }
     });
   });

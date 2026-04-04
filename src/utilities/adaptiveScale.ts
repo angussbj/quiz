@@ -16,11 +16,15 @@
 export type ScaleCurve = 'linear' | 'log' | 'centered-log' | 'centered-sqrt';
 
 export interface AdaptiveScale {
-  /** Maps a raw value to [0, 1]. Values outside the original range are clamped. */
+  /**
+   * Maps a raw value to a normalized position. Non-outlier values map to [0, 1].
+   * Outliers may return values < 0 (low outlier) or > 1 (high outlier).
+   * Consumers should handle out-of-range values (e.g., special outlier colours).
+   */
   readonly transform: (value: number) => number;
   /** Which curve was selected. */
   readonly curve: ScaleCurve;
-  /** The center point for log/sqrt transforms, undefined for linear. */
+  /** The center point for centered-log/centered-sqrt transforms, undefined otherwise. */
   readonly center: number | undefined;
 }
 
@@ -76,17 +80,43 @@ export function computeAdaptiveScale(values: ReadonlyArray<number>): AdaptiveSca
 
   const { curve: bestCurve, center: bestCenter, applyRaw: bestApply } = bestCandidate;
 
-  // Precompute the output range for the winning transform
-  const outMin = bestApply(min);
-  const outMax = bestApply(max);
-  const outRange = outMax - outMin;
+  // Apply the winning transform and detect outliers via Tukey fences.
+  // Fences are applied on the transformed values (already in log/sqrt space),
+  // so outlier detection works correctly for all curve types.
+  const transformed = sorted.map(bestApply);
+  const { lower: fenceLower, upper: fenceUpper } = tukeyFences(transformed);
+
+  // Find the effective range excluding outliers
+  let rangeMin = transformed[0];
+  let rangeMax = transformed[transformed.length - 1];
+  for (const t of transformed) {
+    if (t >= fenceLower) { rangeMin = t; break; }
+  }
+  for (let i = transformed.length - 1; i >= 0; i--) {
+    if (transformed[i] <= fenceUpper) { rangeMax = transformed[i]; break; }
+  }
+  const outRange = rangeMax - rangeMin;
+
+  // Precompute outlier ranges for secondary normalization
+  const transformedMin = transformed[0];
+  const transformedMax = transformed[transformed.length - 1];
+  const highOutlierRange = transformedMax - rangeMax;
+  const lowOutlierRange = rangeMin - transformedMin;
 
   function transform(value: number): number {
     if (outRange <= 0) return 0.5;
     const raw = bestApply(value);
-    const t = (raw - outMin) / outRange;
-    // Clamp to [0, 1] for values outside the original range
-    return Math.max(0, Math.min(1, t));
+    const t = (raw - rangeMin) / outRange;
+
+    if (t > 1 && highOutlierRange > 0) {
+      // High outlier: normalize into [1, 2]
+      return 1 + (raw - rangeMax) / highOutlierRange;
+    }
+    if (t < 0 && lowOutlierRange > 0) {
+      // Low outlier: normalize into [-1, 0]
+      return -(rangeMin - raw) / lowOutlierRange;
+    }
+    return t;
   }
 
   return { transform, curve: bestCurve, center: bestCenter };
@@ -151,6 +181,21 @@ function medianAbsoluteDeviation(sorted: ReadonlyArray<number>): number {
   const deviations = sorted.map((v) => Math.abs(v - median));
   deviations.sort((a, b) => a - b);
   return deviations[Math.floor(n / 2)];
+}
+
+/**
+ * Tukey fences for outlier detection on sorted transformed values.
+ * Since the values are already in the chosen scale space (log/sqrt/linear),
+ * the IQR-based fences work naturally — e.g., for log-scale data, outliers
+ * are detected in log space where the distribution is more uniform.
+ */
+function tukeyFences(sorted: ReadonlyArray<number>): { readonly lower: number; readonly upper: number } {
+  const n = sorted.length;
+  if (n < 4) return { lower: sorted[0], upper: sorted[n - 1] };
+  const q1 = sorted[Math.floor(n * 0.25)];
+  const q3 = sorted[Math.floor(n * 0.75)];
+  const iqr = q3 - q1;
+  return { lower: q1 - 0.75 * iqr, upper: q3 + 0.75 * iqr };
 }
 
 /**
