@@ -1,4 +1,4 @@
-import { computePathCentroid, computePolylabel, computeBoundingBoxCenter } from '../computePathCentroid';
+import { computePathCentroid, computePolylabel, computeBoundingBoxCenter, computeTextClearance } from '../computePathCentroid';
 
 describe('computePathCentroid', () => {
   it('computes centroid of a simple square path', () => {
@@ -116,5 +116,52 @@ describe('computePolylabel', () => {
 
   it('returns null for degenerate path', () => {
     expect(computePolylabel('M 5 5')).toBeNull();
+  });
+});
+
+describe('computeTextClearance', () => {
+  const square = 'M 0 0 L 10 0 L 10 10 L 0 10 Z';
+
+  it('returns positive clearance for a short name at the center of a large square', () => {
+    const clearance = computeTextClearance(square, { x: 5, y: 5 }, 'Ohio');
+    expect(clearance).toBeGreaterThan(0);
+  });
+
+  it('returns less clearance near an edge', () => {
+    const center = computeTextClearance(square, { x: 5, y: 5 }, 'Ohio');
+    const nearEdge = computeTextClearance(square, { x: 2, y: 5 }, 'Ohio');
+    expect(center).toBeGreaterThan(nearEdge);
+  });
+
+  it('returns less clearance for longer names at the same position', () => {
+    const short = computeTextClearance(square, { x: 5, y: 5 }, 'Ohio');
+    const long = computeTextClearance(square, { x: 5, y: 5 }, 'Pennsylvania');
+    expect(short).toBeGreaterThan(long);
+  });
+
+  it('accounts for multi-line wrapping in height', () => {
+    // In a wide but short rectangle, vertical clearance is the constraint.
+    // "North Carolina" wraps to 2 lines (more height) → less vertical room.
+    const wideRect = 'M 0 0 L 20 0 L 20 4 L 0 4 Z';
+    const oneLine = computeTextClearance(wideRect, { x: 10, y: 2 }, 'California');
+    const twoLine = computeTextClearance(wideRect, { x: 10, y: 2 }, 'North Carolina');
+    expect(oneLine).toBeGreaterThan(twoLine);
+  });
+
+  it('returns 0 for degenerate paths', () => {
+    expect(computeTextClearance('M 5 5', { x: 5, y: 5 }, 'Test')).toBe(0);
+  });
+
+  it('prefers wide arm center for a long name in an L-shape', () => {
+    // Wide L-shape: top arm spans 0-20 (height 5), bottom arm spans 0-5 (height 5)
+    const lShape = 'M 0 0 L 20 0 L 20 5 L 5 5 L 5 10 L 0 10 Z';
+    const wideArmCenter = { x: 10, y: 2.5 };
+    const polylabel = computePolylabel(lShape);
+    expect(polylabel).not.toBeNull();
+
+    // A long name needs horizontal room — wide arm center should win
+    const wideArmClearance = computeTextClearance(lShape, wideArmCenter, 'Massachusetts');
+    const polylabelClearance = computeTextClearance(lShape, polylabel!, 'Massachusetts');
+    expect(wideArmClearance).toBeGreaterThan(polylabelClearance);
   });
 });

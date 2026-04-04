@@ -1,7 +1,7 @@
 import type { ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
 import type { BackgroundLabel } from './BackgroundLabel';
 import { isMapElement } from './MapElement';
-import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter } from './computePathCentroid';
+import { computePathCentroid, computePathArea, computePolylabel, computeBoundingBoxCenter, computeLargestInscribedRectCenter, computeTextClearance } from './computePathCentroid';
 
 /**
  * Build BackgroundLabel objects from fill-style polygon quiz elements, so they
@@ -38,10 +38,14 @@ export function computeElementLabels(
     const centroid = computePathCentroid(largestPath);
     const bboxCenter = computeBoundingBoxCenter(largestPath);
     const polylabelCenter = computePolylabel(largestPath);
+    const rectCenter = computeLargestInscribedRectCenter(largestPath);
 
-    // Order: polylabel first (best for most shapes), then bbox center, then centroid
-    const centers = [polylabelCenter, bboxCenter, centroid]
-      .filter((c): c is ViewBoxPosition => c !== null);
+    // Sort centers by text clearance (most room for estimated text rectangle first).
+    const centers = [rectCenter, polylabelCenter, bboxCenter, centroid]
+      .filter((c): c is ViewBoxPosition => c !== null)
+      .sort((a, b) =>
+        computeTextClearance(largestPath, b, el.label) - computeTextClearance(largestPath, a, el.label),
+      );
 
     labels.push({
       id: el.id,
