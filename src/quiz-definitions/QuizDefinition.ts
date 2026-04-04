@@ -164,6 +164,8 @@ export interface QuizDefinition<K extends string = string> {
 export interface SortColumnDefinition {
   readonly column: string;
   readonly label: string;
+  /** URL for a methodology/source page explaining this metric. Rendered as a "?" link next to the dropdown. */
+  readonly infoUrl?: string;
   /**
    * How to aggregate values when elements are merged (e.g. tributaries into parent river).
    * - 'parent' (default): use the parent element's value, ignore merged children.

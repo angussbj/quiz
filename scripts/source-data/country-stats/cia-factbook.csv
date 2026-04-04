@@ -1,0 +1,198 @@
+country,median_age,average_elevation_m,highest_point_m,coastline_km
+Afghanistan,19.5,1884,7492,0
+Albania,36.4,708,2764,362
+Algeria,29.1,800,3003,998
+Andorra,46.2,1996,2946,0
+Angola,15.6,1112,2620,1600
+Antigua and Barbuda,33.7,48,402,153
+Argentina,32.4,595,6960,4989
+Armenia,37.5,1792,4090,0
+Australia,37.5,330,2228,25760
+Austria,44.5,910,3798,0
+Azerbaijan,33.0,384,4466,0
+Bahamas,34.2,24,63,3542
+Bahrain,32.9,10,134,161
+Bangladesh,28.2,85,1052,580
+Barbados,40.2,180,336,97
+Belarus,41.1,160,346,0
+Belgium,41.6,181,694,66
+Belize,23.9,173,1124,386
+Benin,18.4,273,658,121
+Bhutan,29.5,2220,7570,0
+Bolivia,25.8,1192,6542,0
+Bosnia and Herzegovina,44.4,500,2386,20
+Botswana,25.7,1013,1489,0
+Brazil,34.3,320,2994,7491
+Brunei,32.0,478,1850,161
+Bulgaria,45.2,472,2925,354
+Burkina Faso,17.6,297,749,0
+Burundi,17.7,1504,2670,0
+Cambodia,27.0,126,1810,443
+Cameroon,19.2,667,4095,402
+Canada,41.8,487,5959,202080
+Cape Verde,27.2,395,1394,965
+Central African Republic,15.0,635,1420,0
+Chad,16.1,543,3445,0
+Chile,36.4,1871,6880,6435
+China,39.5,1840,8848,14500
+Colombia,32.6,593,5700,3208
+Comoros,21.2,207,2361,340
+Costa Rica,33.9,746,3820,1290
+Côte d'Ivoire,19.5,250,1752,515
+Croatia,44.3,331,1831,5835
+Cuba,42.6,108,1974,3735
+Cyprus,38.4,91,1951,648
+Czechia,43.4,433,1602,0
+Democratic Republic of the Congo,16.9,726,5110,37
+Denmark,42.0,34,171,7314
+Djibouti,25.4,430,2028,314
+Dominica,35.7,284,1447,148
+Dominican Republic,28.8,424,3098,1288
+Ecuador,29.5,1117,6263,2237
+Egypt,24.1,321,2629,2450
+El Salvador,28.4,442,2730,307
+Equatorial Guinea,22.3,577,3008,296
+Eritrea,20.9,853,3018,2234
+Estonia,43.7,61,318,3794
+Eswatini,23.7,305,1862,0
+Ethiopia,19.8,1330,4550,0
+Fiji,29.2,118,1324,1129
+Finland,43.3,164,1324,1250
+France,42.3,375,4810,4853
+Gabon,22.1,377,1575,885
+Gambia,18.5,48,53,80
+Georgia,38.7,1432,5193,310
+Germany,46.8,263,2962,2389
+Ghana,21.5,190,883,539
+Greece,45.5,498,2917,13676
+Grenada,34.5,313,840,121
+Guatemala,23.8,759,4211,400
+Guinea,19.8,472,1752,320
+Guinea-Bissau,19.4,70,300,350
+Guyana,27.7,207,2775,459
+Haiti,24.5,470,2680,1771
+Honduras,24.7,684,2870,823
+Hungary,43.6,143,1014,0
+Iceland,37.8,557,2110,4970
+India,29.8,160,8598,7000
+Indonesia,31.4,367,4884,54716
+Iran,33.0,1305,5610,2440
+Iraq,21.2,312,3611,58
+Ireland,38.7,118,1041,1448
+Israel,30.4,508,1208,273
+Italy,47.4,538,4748,7600
+Jamaica,30.4,18,2256,1022
+Japan,49.5,438,3776,29751
+Jordan,24.3,812,1854,26
+Kazakhstan,32.0,387,6995,0
+Kenya,20.3,762,5199,536
+Kiribati,26.0,2,81,1143
+Kosovo,31.0,450,2656,0
+Kuwait,30.0,108,306,499
+Kyrgyzstan,27.6,2988,7439,0
+Laos,24.4,710,2817,0
+Latvia,44.6,87,312,498
+Lebanon,31.3,1250,3088,225
+Lesotho,25.0,2161,3482,0
+Liberia,18.3,243,1440,579
+Libya,26.4,423,2267,1770
+Liechtenstein,43.7,2106,2599,0
+Lithuania,44.5,110,294,90
+Luxembourg,39.8,325,559,0
+Madagascar,20.3,615,2876,4828
+Malawi,16.5,779,3002,0
+Malaysia,30.4,419,4095,4675
+Maldives,30.6,2,5,644
+Mali,16.4,343,1155,0
+Malta,42.6,117,253,196
+Marshall Islands,23.8,10,10,370
+Mauritania,21.8,276,910,754
+Mauritius,37.5,167,828,177
+Mexico,29.5,1111,5636,9330
+Micronesia,26.3,141,791,6112
+Moldova,38.0,139,430,0
+Monaco,55.4,62,162,4
+Mongolia,29.8,1528,4374,0
+Montenegro,40.7,1086,2534,293
+Morocco,30.3,909,4165,1835
+Mozambique,17.3,345,2436,2470
+Myanmar,29.2,702,5881,1930
+Namibia,22.0,1141,2606,1572
+Nauru,27.4,21,61,30
+Nepal,25.8,2565,8848,0
+Netherlands,42.8,30,322,451
+New Zealand,37.2,388,3724,15134
+Nicaragua,28.0,298,2438,910
+Niger,14.8,274,2022,0
+Nigeria,18.6,380,2419,853
+North Korea,35.6,600,2744,2495
+North Macedonia,39.9,741,2764,0
+Norway,39.7,460,2469,25148
+Oman,26.2,310,3004,2092
+Pakistan,22.5,900,8611,1046
+Palau,34.0,80,242,1519
+Palestine,19.5,290,1022,40
+Panama,30.4,360,3475,2490
+Papua New Guinea,24.0,667,4509,5152
+Paraguay,29.7,178,842,0
+Peru,29.1,1555,6768,2414
+Philippines,25.7,442,2954,36289
+Poland,42.4,173,2499,440
+Portugal,46.2,372,2351,1793
+Qatar,33.7,28,103,563
+Republic of the Congo,19.1,430,903,169
+Romania,43.6,414,2544,225
+Russia,40.3,600,5642,37653
+Rwanda,20.1,1598,4519,0
+Saint Kitts and Nevis,37.0,168,1156,135
+Saint Lucia,36.9,298,948,158
+Saint Vincent and the Grenadines,37.0,211,1234,84
+Samoa,25.6,96,1857,403
+San Marino,45.2,468,739,0
+São Tomé and Príncipe,20.8,407,2024,209
+Saudi Arabia,32.4,665,3133,2640
+Senegal,19.4,69,581,531
+Serbia,43.3,442,2169,0
+Seychelles,37.5,276,905,491
+Sierra Leone,19.1,279,1948,402
+Singapore,36.8,15,166,193
+Slovakia,41.8,458,2655,0
+Slovenia,44.9,492,2864,46
+Solomon Islands,23.5,290,2335,5313
+Somalia,18.5,410,2416,3025
+South Africa,28.5,1034,3408,2798
+South Korea,44.5,282,1950,2413
+South Sudan,18.6,500,3187,0
+Spain,44.7,660,3718,4964
+Sri Lanka,33.7,228,2524,1340
+Sudan,18.9,568,3042,853
+Suriname,31.1,246,1230,386
+Sweden,41.1,320,2111,3218
+Switzerland,43.1,1350,4634,0
+Syria,24.0,514,2814,193
+Taiwan,42.3,1150,3952,1566
+Tajikistan,25.6,3186,7495,0
+Tanzania,18.2,1018,5895,1424
+Thailand,40.1,287,2565,3219
+Timor-Leste,20.8,525,2963,706
+Togo,19.9,236,986,56
+Tonga,24.1,63,1033,419
+Trinidad and Tobago,37.6,83,940,362
+Tunisia,33.7,246,1544,1148
+Türkiye,33.4,1132,5137,7200
+Turkmenistan,30.5,230,3139,0
+Tuvalu,27.2,2,5,24
+Uganda,15.7,1100,5110,0
+Ukraine,41.2,175,2061,2782
+United Arab Emirates,33.5,149,1527,1318
+United Kingdom,40.8,162,1345,12429
+United States of America,38.7,760,6190,19924
+Uruguay,36.1,109,514,660
+Uzbekistan,30.1,353,4643,420
+Vanuatu,24.0,234,1877,2528
+Vatican City,-,-,-,0
+Venezuela,30.4,450,4978,2800
+Vietnam,32.5,398,3144,3444
+Yemen,20.3,999,3666,1906
+Zambia,16.9,1138,2301,0
+Zimbabwe,20.5,961,2592,0

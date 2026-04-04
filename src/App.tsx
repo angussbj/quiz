@@ -3,11 +3,11 @@ import { BrowserRouter, Routes, Route, useParams } from 'react-router';
 import { Layout } from './layout/Layout';
 import { QuizActiveProvider } from '@/quiz-modes/QuizActiveContext';
 import { getQuizById } from '@/quiz-definitions/getQuizById';
+import { aboutPageComponents } from './routes/aboutPageRegistry';
 
 const HomePage = lazy(() => import('./routes/HomePage.tsx'));
 const QuizPage = lazy(() => import('./routes/QuizPage.tsx'));
 const AboutPage = lazy(() => import('./routes/AboutPage.tsx'));
-const ElementCostMethodology = lazy(() => import('./routes/ElementCostMethodology.tsx'));
 
 function QuizOrCategoryPage() {
   const { '*': slug } = useParams();
@@ -26,7 +26,9 @@ export function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/about/element-costs" element={<ElementCostMethodology />} />
+            {aboutPageComponents.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
             <Route path="/*" element={<QuizOrCategoryPage />} />
           </Routes>
         </Suspense>

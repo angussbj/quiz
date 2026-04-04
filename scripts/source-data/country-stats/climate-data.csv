@@ -1,0 +1,198 @@
+country,avg_temperature_c,avg_rainfall_mm
+Afghanistan,13.0,327
+Albania,13.5,1485
+Algeria,22.5,89
+Andorra,7.6,1071
+Angola,21.6,1010
+Antigua and Barbuda,26.3,1030
+Argentina,14.8,591
+Armenia,7.2,562
+Australia,21.7,534
+Austria,6.3,1110
+Azerbaijan,12.4,447
+Bahamas,25.2,1292
+Bahrain,27.2,83
+Bangladesh,25.1,2666
+Barbados,26.6,1422
+Belarus,6.4,618
+Belgium,10.0,847
+Belize,25.7,1705
+Benin,27.6,1039
+Bhutan,14.4,2200
+Bolivia,21.2,1146
+Bosnia and Herzegovina,9.1,1028
+Botswana,21.8,416
+Brazil,25.0,1761
+Brunei,27.1,2722
+Bulgaria,10.6,608
+Burkina Faso,28.3,748
+Burundi,20.2,1274
+Cambodia,27.2,1904
+Cameroon,24.7,1604
+Canada,-5.3,537
+Cape Verde,24.4,228
+Central African Republic,25.3,1343
+Chad,27.3,322
+Chile,8.5,716
+China,6.9,645
+Colombia,24.5,3240
+Comoros,25.6,2300
+Costa Rica,24.8,2926
+Côte d'Ivoire,26.6,1348
+Croatia,10.9,1113
+Cuba,25.2,1335
+Cyprus,19.2,498
+Czechia,7.8,677
+Democratic Republic of the Congo,24.6,1543
+Denmark,8.3,703
+Djibouti,28.0,164
+Dominica,26.0,2083
+Dominican Republic,25.0,1410
+Ecuador,21.3,2087
+Egypt,22.1,51
+El Salvador,24.8,1784
+Equatorial Guinea,25.2,2156
+Eritrea,25.4,384
+Estonia,5.1,626
+Eswatini,18.4,788
+Ethiopia,22.2,848
+Fiji,25.3,2592
+Finland,1.7,536
+France,11.2,867
+Gabon,25.6,1831
+Gambia,27.3,836
+Georgia,7.2,1026
+Germany,8.5,700
+Ghana,27.4,1187
+Greece,16.0,652
+Grenada,26.5,2350
+Guatemala,23.6,1996
+Guinea,25.7,1651
+Guinea-Bissau,26.8,1577
+Guyana,25.7,2387
+Haiti,25.3,1440
+Honduras,24.1,1976
+Hungary,10.3,589
+Iceland,1.0,1940
+India,24.0,1083
+Indonesia,25.9,2702
+Iran,17.2,228
+Iraq,22.1,216
+Ireland,9.3,1118
+Israel,19.7,435
+Italy,13.5,832
+Jamaica,25.1,2051
+Japan,11.8,1668
+Jordan,19.5,111
+Kazakhstan,6.4,250
+Kenya,24.3,630
+Kiribati,28.0,2100
+Kosovo,10.0,800
+Kuwait,25.3,121
+Kyrgyzstan,2.1,533
+Laos,23.5,1834
+Latvia,5.8,641
+Lebanon,16.4,661
+Lesotho,13.0,788
+Liberia,25.4,2391
+Libya,21.8,56
+Liechtenstein,7.2,900
+Lithuania,6.2,656
+Luxembourg,8.6,865
+Madagascar,22.6,1513
+Malawi,22.1,1181
+Malaysia,25.6,2875
+Maldives,27.5,1972
+Mali,28.3,282
+Malta,18.7,553
+Marshall Islands,27.8,3350
+Mauritania,27.7,92
+Mauritius,22.4,2041
+Mexico,21.0,758
+Micronesia,27.3,4500
+Moldova,9.7,553
+Monaco,15.3,867
+Mongolia,-0.7,241
+Montenegro,10.6,1798
+Morocco,17.1,346
+Mozambique,24.0,1032
+Myanmar,23.9,2091
+Namibia,19.5,285
+Nauru,27.5,2080
+Nepal,14.0,1500
+Netherlands,9.8,778
+New Zealand,10.5,1732
+Nicaragua,25.6,2391
+Niger,27.2,151
+Nigeria,26.9,1150
+North Korea,8.3,1054
+North Macedonia,10.4,619
+Norway,1.5,1414
+Oman,27.8,125
+Pakistan,20.2,494
+Palau,27.8,3737
+Palestine,18.7,402
+Panama,25.4,2928
+Papua New Guinea,24.0,3142
+Paraguay,23.0,1130
+Peru,18.3,1738
+Philippines,25.7,2348
+Poland,7.9,600
+Portugal,15.2,854
+Qatar,27.1,74
+Republic of the Congo,24.6,1646
+Romania,8.8,637
+Russia,-5.1,460
+Rwanda,19.0,1212
+Saint Kitts and Nevis,26.6,1427
+Saint Lucia,26.3,2301
+Saint Vincent and the Grenadines,26.7,1583
+Samoa,26.5,2880
+San Marino,12.2,780
+São Tomé and Príncipe,25.6,2000
+Saudi Arabia,25.1,59
+Senegal,28.3,686
+Serbia,10.6,686
+Seychelles,27.2,2330
+Sierra Leone,26.0,2526
+Singapore,27.0,2497
+Slovakia,8.5,824
+Slovenia,8.9,1162
+Solomon Islands,26.5,3028
+Somalia,27.0,282
+South Africa,17.5,495
+South Korea,11.5,1274
+South Sudan,27.0,1000
+Spain,14.1,636
+Sri Lanka,27.0,1712
+Sudan,27.0,418
+Suriname,26.0,2331
+Sweden,2.1,624
+Switzerland,5.5,1537
+Syria,18.7,252
+Taiwan,22.6,2515
+Tajikistan,2.0,691
+Tanzania,23.0,1071
+Thailand,26.3,1622
+Timor-Leste,24.3,1500
+Togo,27.2,1168
+Tonga,24.1,1714
+Trinidad and Tobago,26.0,2200
+Tunisia,19.2,313
+Türkiye,12.1,593
+Turkmenistan,15.2,161
+Tuvalu,28.0,3000
+Uganda,22.3,1180
+Ukraine,7.8,565
+United Arab Emirates,27.4,78
+United Kingdom,8.5,1220
+United States of America,8.6,715
+Uruguay,17.5,1300
+Uzbekistan,14.0,264
+Vanuatu,24.8,2200
+Vatican City,15.5,744
+Venezuela,25.4,1625
+Vietnam,24.0,1821
+Yemen,24.0,167
+Zambia,21.4,1020
+Zimbabwe,21.0,657

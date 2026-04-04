@@ -63,4 +63,23 @@ describe('buildOrderedRecallSelectToggles', () => {
       expect(toggle.group).toBe('ordering');
     }
   });
+
+  it('passes through infoUrl when present on sort columns', () => {
+    const columns = [
+      { column: 'population', label: 'Population', infoUrl: '/about/country-statistics' },
+      { column: 'gdp', label: 'GDP' },
+    ];
+    const result = buildOrderedRecallSelectToggles(columns);
+    const orderBy = result.find((t) => t.key === 'orderBy');
+
+    expect(orderBy?.options[0]).toEqual({
+      value: 'population',
+      label: 'Population',
+      infoUrl: '/about/country-statistics',
+    });
+    expect(orderBy?.options[1]).toEqual({
+      value: 'gdp',
+      label: 'GDP',
+    });
+  });
 });
