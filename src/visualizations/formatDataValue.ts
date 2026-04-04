@@ -8,8 +8,13 @@
 
 import { formatHalfLife } from './periodic-table/formatHalfLife';
 
-/** Format a large number compactly with K/M/B suffixes. */
+/** Format a large number compactly with K/M/B/T suffixes. */
 function formatCompactNumber(value: number): string {
+  // Extremely large values: use scientific notation
+  if (value >= 1e15) {
+    const exp = Math.floor(Math.log10(value));
+    return `10^${exp}`;
+  }
   if (value >= 1e12) return `${formatShort(value / 1e12)}T`;
   if (value >= 1e9) return `${formatShort(value / 1e9)}B`;
   if (value >= 1e6) return `${formatShort(value / 1e6)}M`;
@@ -22,7 +27,7 @@ function formatShort(value: number): string {
   if (value >= 100) return Math.round(value).toString();
   if (value >= 10) return value.toFixed(1).replace(/\.0$/, '');
   if (value >= 1) return value.toPrecision(3).replace(/\.?0+$/, '');
-  if (value >= 0.01) return value.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+  if (value >= 0.001) return value.toPrecision(2).replace(/\.?0+$/, '');
   if (value === 0) return '0';
   return value.toPrecision(2);
 }

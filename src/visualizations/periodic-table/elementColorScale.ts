@@ -1,38 +1,31 @@
-import type { GridElement } from './GridElement';
 import { isGridElement } from './GridElement';
 import type { VisualizationElement } from '../VisualizationElement';
 
-export type ElementColorField =
-  | 'category' | 'density' | 'electronegativity' | 'melting-point'
-  | 'boiling-point' | 'year-discovered' | 'half-life' | 'cost';
-
-const ELEMENT_COLOR_FIELDS: ReadonlyArray<ElementColorField> = [
-  'category', 'density', 'electronegativity', 'melting-point', 'boiling-point',
-  'year-discovered', 'half-life', 'cost',
+/** Valid color field values — CSV column names or 'category'. */
+const ELEMENT_COLOR_FIELDS: ReadonlyArray<string> = [
+  'category', 'density', 'electronegativity', 'melting_point', 'boiling_point',
+  'year_discovered', 'half_life', 'cost_usd_per_kg',
 ];
 
-export function toElementColorField(value: string): ElementColorField | undefined {
+export function toElementColorField(value: string): string | undefined {
   return ELEMENT_COLOR_FIELDS.find((f) => f === value);
 }
 
-function getNumericValue(element: GridElement, field: Exclude<ElementColorField, 'category'>): number | undefined {
-  switch (field) {
-    case 'density': return element.density;
-    case 'electronegativity': return element.electronegativity;
-    case 'melting-point': return element.meltingPoint;
-    case 'boiling-point': return element.boilingPoint;
-    case 'year-discovered': return element.yearDiscovered;
-    case 'half-life': {
-      if (element.halfLifeSeconds === undefined) return undefined;
-      if (element.halfLifeSeconds <= 0) return 0;
-      return Math.log10(element.halfLifeSeconds);
-    }
-    case 'cost': {
-      if (element.costUsdPerKg === undefined) return undefined;
-      if (element.costUsdPerKg <= 0) return 0;
-      return Math.log10(element.costUsdPerKg);
-    }
+/** Get the numeric value for a color scale field from an element's dataColumns. */
+function getNumericValue(element: VisualizationElement, column: string): number | undefined {
+  const raw = element.dataColumns?.[column];
+  if (raw === undefined || raw === '') return undefined;
+
+  // Strip approximate/estimate markers for numeric parsing
+  const stripped = raw.replace(/^~/, '').replace(/\?$/, '');
+  const value = parseFloat(stripped);
+  if (isNaN(value)) return undefined;
+
+  // Use log scale for half-life and cost (huge range of values)
+  if (column === 'half_life' || column === 'cost_usd_per_kg') {
+    return value <= 0 ? 0 : Math.log10(value);
   }
+  return value;
 }
 
 /** HSL color string. */
@@ -96,10 +89,10 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, da
   return { get: (id) => colorMap.get(id) };
 }
 
-/** Compute numeric-gradient-based color map. */
+/** Compute numeric-gradient-based color map using dataColumns. */
 function computeGradientColors(
-  elements: ReadonlyArray<GridElement>,
-  field: Exclude<ElementColorField, 'category'>,
+  elements: ReadonlyArray<VisualizationElement>,
+  column: string,
   darkMode: boolean,
 ): ElementColorMap {
   const values = new Map<string, number>();
@@ -107,7 +100,7 @@ function computeGradientColors(
   let max = -Infinity;
 
   for (const element of elements) {
-    const value = getNumericValue(element, field);
+    const value = getNumericValue(element, column);
     if (value !== undefined) {
       values.set(element.id, value);
       if (value < min) min = value;
@@ -135,12 +128,11 @@ function computeGradientColors(
  */
 export function computeElementColors(
   elements: ReadonlyArray<VisualizationElement>,
-  field: ElementColorField,
+  field: string,
   darkMode: boolean,
 ): ElementColorMap {
   if (field === 'category') {
     return computeCategoryColors(elements, darkMode);
   }
-  const gridElements = elements.filter(isGridElement);
-  return computeGradientColors(gridElements, field, darkMode);
+  return computeGradientColors(elements, field, darkMode);
 }

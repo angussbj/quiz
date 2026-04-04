@@ -51,7 +51,6 @@ export function buildGridElements(
     const x = colIndex * CELL_STEP;
     const y = rowIndex * CELL_STEP;
     const { trueRow, trueColumn } = computeTrueGridPosition(rowIndex, colIndex);
-    const cost = parseCostValue(row['cost_usd_per_kg']);
 
     return {
       id,
@@ -63,17 +62,6 @@ export function buildGridElements(
       trueRow,
       trueColumn,
       atomicWeight: row['atomic_weight'] ?? '',
-      halfLifeSeconds: row['half_life'] ? parseFloat(row['half_life']) : undefined,
-      density: row['density'] ? parseFloat(row['density']) : undefined,
-      electronegativity: row['electronegativity'] ? parseFloat(row['electronegativity']) : undefined,
-      standardState: row['standard_state'] || undefined,
-      yearDiscovered: row['year_discovered'] ? parseInt(row['year_discovered'], 10) : undefined,
-      meltingPoint: row['melting_point'] && !isNaN(Number(row['melting_point'])) ? parseFloat(row['melting_point']) : undefined,
-      boilingPoint: row['boiling_point'] && !isNaN(Number(row['boiling_point'])) ? parseFloat(row['boiling_point']) : undefined,
-      costUsdPerKg: cost.value,
-      costIsApproximate: cost.isApproximate,
-      costIsEstimate: cost.isEstimate,
-      costDate: row['cost_date'] ? parseInt(row['cost_date'], 10) : undefined,
       viewBoxCenter: { x: x + CELL_SIZE / 2, y: y + CELL_SIZE / 2 },
       viewBoxBounds: { minX: x, minY: y, maxX: x + CELL_SIZE, maxY: y + CELL_SIZE },
       interactive: true,
