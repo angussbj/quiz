@@ -4,8 +4,8 @@ export interface RgbColor {
   readonly b: number;
 }
 
-/** Minimum land elevation (Dead Sea shore). */
-const MIN_ELEVATION = -500;
+/** Minimum land elevation (Dead Sea shore, −430m). */
+const MIN_ELEVATION = -430;
 /** Maximum elevation (Everest). */
 const MAX_ELEVATION = 8849;
 

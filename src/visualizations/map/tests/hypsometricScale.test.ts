@@ -33,8 +33,8 @@ describe('elevationToRgb', () => {
     expect(colorDistance(negative, zero)).toBeGreaterThan(10);
   });
 
-  it('clamps below minimum to the first color', () => {
-    const atMin = elevationToRgb(-500);
+  it('clamps below minimum (-430m) to the first color', () => {
+    const atMin = elevationToRgb(-430);
     const belowMin = elevationToRgb(-1000);
     expect(belowMin).toEqual(atMin);
   });
