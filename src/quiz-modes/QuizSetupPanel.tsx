@@ -4,7 +4,7 @@ import type { QuizModeType, SortColumnDefinition } from '@/quiz-definitions/Quiz
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
-import { TogglePanel, SelectToggleControl, togglePanelStyles } from './TogglePanel';
+import { TogglePanel, SelectToggleControl, togglePanelStyles, renderGroupedOptions } from './TogglePanel';
 import { Tooltip } from '@/layout/Tooltip';
 import { formatGroupLabel } from './formatGroupLabel';
 import styles from './QuizSetupPanel.module.css';
@@ -371,11 +371,18 @@ export function QuizSetupPanel({
                     value={rangeSortColumnKey ?? sortColumns[0].column}
                     onChange={(event) => onRangeSortColumnChange(event.target.value)}
                   >
-                    {sortColumns.map((col) => (
-                      <option key={col.column} value={col.column}>
-                        {col.label}
-                      </option>
-                    ))}
+                    {sortColumns.some((col) => col.category)
+                      ? renderGroupedOptions(sortColumns.map((col) => ({
+                        value: col.column,
+                        label: col.label,
+                        category: col.category,
+                      })))
+                      : sortColumns.map((col) => (
+                        <option key={col.column} value={col.column}>
+                          {col.label}
+                        </option>
+                      ))
+                    }
                   </select>
                 </>
               )}

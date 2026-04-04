@@ -216,7 +216,7 @@ export function SelectToggleControl({
   );
 }
 
-interface DropdownOption {
+export interface DropdownOption {
   readonly value: string;
   readonly label: string;
   readonly infoUrl?: string;
@@ -273,7 +273,7 @@ function DropdownSelect({
  * Preserves the original order — consecutive options with the same category
  * are grouped together. Options without a category render ungrouped.
  */
-function renderGroupedOptions(options: ReadonlyArray<DropdownOption>): React.ReactNode[] {
+export function renderGroupedOptions(options: ReadonlyArray<DropdownOption>): React.ReactNode[] {
   const result: React.ReactNode[] = [];
   let currentCategory: string | undefined;
   let currentGroupOptions: DropdownOption[] = [];
