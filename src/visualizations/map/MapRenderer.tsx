@@ -210,6 +210,23 @@ const MapContent = memo(function MapContent({
     return [...filteredBg, ...elementPolygonLabels];
   }, [backgroundLabels, elementPolygonLabels]);
 
+  // Sort city elements so highlighted render on top of interactive, which render on
+  // top of non-interactive. SVG paint order = z-order, so last painted = on top.
+  const sortedCityElements = useMemo(() => {
+    const cityElements = elements.filter((el) => {
+      if (isMapElement(el) && el.pathRenderStyle === 'stroke') return false;
+      return true;
+    });
+    cityElements.sort((a, b) => {
+      const stateA = elementStates[a.id];
+      const stateB = elementStates[b.id];
+      const priorityA = stateA === 'highlighted' ? 2 : a.interactive ? 1 : 0;
+      const priorityB = stateB === 'highlighted' ? 2 : b.interactive ? 1 : 0;
+      return priorityA - priorityB;
+    });
+    return cityElements;
+  }, [elements, elementStates]);
+
   const visibleDotPositions = useMemo(
     () => elements
       .filter((el) => {
@@ -346,11 +363,10 @@ const MapContent = memo(function MapContent({
       })}
 
       {/* Flag images near city dots (capitals quizzes — not for stroke-style paths like rivers) */}
-      {elements.map((element) => {
+      {sortedCityElements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showMapFlags')) return null;
         if (!isMapElement(element) || !element.code) return null;
-        if (element.pathRenderStyle === 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         const flagHeight = dotRadius * 4;
@@ -369,11 +385,10 @@ const MapContent = memo(function MapContent({
       })}
 
       {/* City dot markers (rendered last = on top of flags — not for stroke-style paths like rivers or large fill polygons) */}
-      {elements.map((element) => {
+      {sortedCityElements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
-        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         // Skip dots for fill-style polygon elements unless the polygon is tiny
-        if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') {
+        if (isMapElement(element) && element.svgPathData) {
           const { minX, minY, maxX, maxY } = element.viewBoxBounds;
           const dx = maxX - minX;
           const dy = maxY - minY;
@@ -409,11 +424,10 @@ const MapContent = memo(function MapContent({
       })}
 
       {/* City name labels (rendered on top of dots — not for stroke-style paths like rivers or fill shapes like countries) */}
-      {elements.map((element) => {
+      {sortedCityElements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
-        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         // Shape elements (countries/states) use the "Region polygon labels" section above
-        if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') return null;
+        if (isMapElement(element) && element.svgPathData) return null;
         const state = elementStates[element.id];
         if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showCityNames'))) return null;
         const offset = dotRadius * 1.5;
