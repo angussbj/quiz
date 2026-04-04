@@ -1,6 +1,20 @@
-import { parseCostValue } from '../buildGridElements';
 import { formatElementData } from '../formatElementData';
 import type { VisualizationElement } from '../../VisualizationElement';
+
+/** Parse a cost value that may have `~` prefix and/or `?` suffix. */
+function parseCostValue(raw: string | undefined): {
+  readonly value: number | undefined;
+  readonly isApproximate: boolean;
+  readonly isEstimate: boolean;
+} {
+  if (!raw) return { value: undefined, isApproximate: false, isEstimate: false };
+  const isApproximate = raw.startsWith('~');
+  const isEstimate = raw.endsWith('?');
+  const stripped = raw.replace(/^~/, '').replace(/\?$/, '');
+  const value = parseFloat(stripped);
+  if (isNaN(value)) return { value: undefined, isApproximate, isEstimate };
+  return { value, isApproximate, isEstimate };
+}
 
 describe('parseCostValue', () => {
   it('parses a plain number', () => {

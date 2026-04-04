@@ -1,39 +1,7 @@
 import type { GridElement } from './GridElement';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 import { computeTrueGridPosition } from '@/quiz-definitions/quiz-specific-logic/periodicTableTrueGrid';
-
-/**
- * Parse a cost value that may have `~` prefix (approximate) and/or `?` suffix (estimate).
- * Returns the numeric value and the marker flags.
- */
-export function parseCostValue(raw: string | undefined): {
-  readonly value: number | undefined;
-  readonly isApproximate: boolean;
-  readonly isEstimate: boolean;
-} {
-  if (!raw) return { value: undefined, isApproximate: false, isEstimate: false };
-  const isApproximate = raw.startsWith('~');
-  const isEstimate = raw.endsWith('?');
-  const stripped = raw.replace(/^~/, '').replace(/\?$/, '');
-  const value = parseFloat(stripped);
-  if (isNaN(value)) return { value: undefined, isApproximate, isEstimate };
-  return { value, isApproximate, isEstimate };
-}
-
-function extractDataColumns(
-  row: Readonly<Record<string, string>>,
-  keys: ReadonlyArray<string> | undefined,
-): Readonly<Record<string, string>> | undefined {
-  if (!keys || keys.length === 0) return undefined;
-  const result: Record<string, string> = {};
-  for (const key of keys) {
-    const val = row[key];
-    if (val !== undefined && val !== '') {
-      result[key] = val;
-    }
-  }
-  return result;
-}
+import { extractDataColumns } from '../extractDataColumns';
 
 export function buildGridElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,

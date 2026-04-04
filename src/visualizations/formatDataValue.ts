@@ -93,23 +93,24 @@ export function formatDataValue(rawValue: string | undefined, label: string): st
   const prefix = isApprox ? '~' : '';
   const suffix = isEstimate ? '?' : '';
 
+  const sign = value < 0 ? '-' : '';
+  const absValue = Math.abs(value);
+
   // USD-based columns: dollar prefix
   if (unit?.includes('USD') || label.includes('USD')) {
-    return `${prefix}$${formatCompactNumber(Math.abs(value))}${suffix}`;
+    return `${prefix}${sign}$${formatCompactNumber(absValue)}${suffix}`;
   }
 
   // Percentage columns
   if (unit === '%' || unit?.includes('% ')) {
-    return `${prefix}${formatShort(value)}%${suffix}`;
+    return `${prefix}${sign}${formatShort(absValue)}%${suffix}`;
   }
 
   // Columns with a parenthesized unit — show compact number + unit
   if (unit) {
-    // Strip "per " prefix for compact display (e.g. "per km²" → "km²" is still unclear)
-    // Keep the full unit for clarity
-    return `${prefix}${formatCompactNumber(Math.abs(value))} ${unit}${suffix}`;
+    return `${prefix}${sign}${formatCompactNumber(absValue)} ${unit}${suffix}`;
   }
 
   // No unit detected — just compact number
-  return `${prefix}${formatCompactNumber(Math.abs(value))}${suffix}`;
+  return `${prefix}${sign}${formatCompactNumber(absValue)}${suffix}`;
 }

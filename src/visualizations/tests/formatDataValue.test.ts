@@ -133,6 +133,20 @@ describe('formatDataValue', () => {
     });
   });
 
+  describe('negative values', () => {
+    it('preserves negative sign for percentages', () => {
+      expect(formatDataValue('-0.5', 'Population growth (% annual)')).toBe('-0.5%');
+    });
+
+    it('preserves negative sign for USD', () => {
+      expect(formatDataValue('-1200', 'Net value (USD)')).toBe('-$1.2K');
+    });
+
+    it('preserves negative sign for unit columns', () => {
+      expect(formatDataValue('-50000', 'Net migration')).toBe('-50K');
+    });
+  });
+
   describe('non-numeric values', () => {
     it('returns non-numeric strings as-is', () => {
       expect(formatDataValue('N/A', 'Some column')).toBe('N/A');

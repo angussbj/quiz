@@ -1,5 +1,6 @@
 import type { MapElement } from './MapElement';
 import { projectGeo, wrapPathCoordinates } from './projectGeo';
+import { extractDataColumns } from '../extractDataColumns';
 
 const DOT_RADIUS = 0.3;
 
@@ -122,21 +123,6 @@ function mergeTerritoryRows(
 
   if (indicesToRemove.size === 0) return rows;
   return mergedRows.filter((_, i) => !indicesToRemove.has(i));
-}
-
-function extractDataColumns(
-  row: Readonly<Record<string, string>>,
-  keys: ReadonlyArray<string> | undefined,
-): Readonly<Record<string, string>> | undefined {
-  if (!keys || keys.length === 0) return undefined;
-  const result: Record<string, string> = {};
-  for (const key of keys) {
-    const val = row[key];
-    if (val !== undefined && val !== '') {
-      result[key] = val;
-    }
-  }
-  return result;
 }
 
 export function buildMapElements(

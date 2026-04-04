@@ -30,6 +30,9 @@ const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
 
 /** City dot radius in screen pixels. Converted to viewBox units at render time. */
 const DOT_SCREEN_RADIUS = 5;
+
+/** Select toggle keys used for ordering, not data display. */
+const ORDERING_KEYS = new Set(['orderBy', 'sortOrder', 'missingValues', 'rangeSortColumn']);
 export function MapRenderer({
   elements,
   elementStates,
@@ -314,15 +317,14 @@ const MapContent = memo(function MapContent({
   // ── Data display: find active data column and build element→value map ──
   // Select toggles like 'countryData' or 'riverData' have values that are CSV column names.
   // Find the first one that's set to something other than 'none'.
-  const orderingKeys = useMemo(() => new Set(['orderBy', 'sortOrder', 'missingValues', 'rangeSortColumn']), []);
   const activeDataColumnName = useMemo(() => {
     if (!selectValues || !selectValueLabels) return undefined;
     for (const [key, value] of Object.entries(selectValues)) {
-      if (orderingKeys.has(key)) continue;
+      if (ORDERING_KEYS.has(key)) continue;
       if (value && value !== 'none' && selectValueLabels[value]) return value;
     }
     return undefined;
-  }, [selectValues, selectValueLabels, orderingKeys]);
+  }, [selectValues, selectValueLabels]);
   const activeDataColumnLabel = activeDataColumnName ? selectValueLabels?.[activeDataColumnName] : undefined;
 
   // Build maps of element id → formatted data value and element name → formatted data value
