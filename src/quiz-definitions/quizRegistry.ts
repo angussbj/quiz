@@ -24,6 +24,31 @@ function buildDataDisplayToggle(
   };
 }
 
+/** Build a color-by-data selectToggle from sort column definitions. */
+function buildColorToggle(
+  key: string,
+  label: string,
+  sortColumns: ReadonlyArray<SortColumnDefinition>,
+  extraOptions?: ReadonlyArray<{ readonly value: string; readonly label: string }>,
+): SelectToggleDefinition {
+  return {
+    key,
+    label,
+    group: 'display',
+    defaultValue: 'none',
+    renderAs: 'dropdown',
+    options: [
+      { value: 'none', label: 'None' },
+      ...(extraOptions ?? []),
+      ...sortColumns.map((c) => ({
+        value: c.column,
+        label: c.label,
+        ...(c.category ? { category: c.category } : {}),
+      })),
+    ],
+  };
+}
+
 /**
  * Static registry of all available quizzes.
  * Each entry is a complete QuizDefinition with metadata and data paths.
@@ -161,13 +186,15 @@ const countriesQuizBase = {
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'showRegionColors', label: 'Region colors', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showCityDots', label: 'City dots', defaultValue: false, group: 'display', hiddenBehavior: 'never', modes: [] } as const,
     { key: 'showCountryNames', label: 'Country names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
-  selectToggles: [buildDataDisplayToggle('countryData', 'Country data', countrySortColumns)],
+  selectToggles: [
+    buildDataDisplayToggle('countryData', 'Country data', countrySortColumns),
+    buildColorToggle('countryColors', 'Country colors', countrySortColumns, [{ value: 'region', label: 'Region' }]),
+  ],
   presets: [],
   columnMappings: {
     answer: 'name',
