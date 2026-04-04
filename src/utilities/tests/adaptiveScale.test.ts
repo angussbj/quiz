@@ -101,6 +101,14 @@ describe('computeAdaptiveScale', () => {
       expect(gapVar).toBeLessThan(0.01);
     });
 
+    it('picks pure log for data spanning many orders of magnitude', () => {
+      // Values like element costs: $0.1 to $10^20 — log-uniform
+      const values = Array.from({ length: 20 }, (_, i) => Math.pow(10, i));
+      const scale = computeAdaptiveScale(values);
+      expect(scale.curve).toBe('log');
+      expect(scale.center).toBeUndefined();
+    });
+
     it('handles data clustered in the middle', () => {
       // Most values near 50, with outliers at 0 and 100
       const values = [0, 1, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 99, 100];
@@ -114,17 +122,19 @@ describe('computeAdaptiveScale', () => {
   });
 
   describe('center finding', () => {
-    it('finds center in a right-skewed distribution', () => {
-      // Many small values, few large ones
+    it('finds center in a right-skewed distribution when centered curve wins', () => {
+      // Many small values, few large ones — pure log or centered curve should win
       const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000];
       const scale = computeAdaptiveScale(values);
+      // Should pick a non-linear curve
+      expect(scale.curve).not.toBe('linear');
+      // If a centered curve won, center should be near the cluster
       if (scale.center !== undefined) {
-        // Center should be near the dense cluster (1-10), not near 10000
         expect(scale.center).toBeLessThan(50);
       }
     });
 
-    it('finds center in a left-skewed distribution', () => {
+    it('finds center in a left-skewed distribution when centered curve wins', () => {
       // Few small values, many large ones clustered together
       const values = [1, 100, 900, 910, 920, 930, 940, 950, 960, 970, 980, 990, 1000];
       const scale = computeAdaptiveScale(values);

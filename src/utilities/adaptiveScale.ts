@@ -1,14 +1,19 @@
 /**
- * Adaptive scale: automatically chooses the best curve (linear, log, sqrt)
- * to produce the most even spread of data points across [0, 1].
+ * Adaptive scale: automatically chooses the best curve to produce the most
+ * even spread of data points across [0, 1].
  *
- * The algorithm finds the densest region of the data via a sliding window,
- * then evaluates centered log and sqrt transforms (which expand that region)
- * against plain linear scaling, picking whichever gives the most uniform
+ * Candidates:
+ *   - linear: identity
+ *   - log: pure log(x - min + 1), ideal for data spanning many orders of magnitude
+ *   - centered-log: sign(x-c)·log(|x-c|+1), expands a dense cluster
+ *   - centered-sqrt: sign(x-c)·√|x-c|, mild cluster expansion
+ *
+ * The algorithm finds the densest region via a sliding window (MAD-based width),
+ * evaluates all candidates, and picks whichever gives the most uniform
  * distribution as measured by gap variance.
  */
 
-export type ScaleCurve = 'linear' | 'log' | 'sqrt';
+export type ScaleCurve = 'linear' | 'log' | 'centered-log' | 'centered-sqrt';
 
 export interface AdaptiveScale {
   /** Maps a raw value to [0, 1]. Values outside the original range are clamped. */
@@ -22,7 +27,7 @@ export interface AdaptiveScale {
 /**
  * Compute an adaptive scale for a set of numeric values.
  * Returns a transform function that maps raw values to [0, 1] with
- * the most even spread achievable from linear, centered-log, or centered-sqrt.
+ * the most even spread achievable from the candidate curves.
  */
 export function computeAdaptiveScale(values: ReadonlyArray<number>): AdaptiveScale {
   if (values.length === 0) {
@@ -44,8 +49,9 @@ export function computeAdaptiveScale(values: ReadonlyArray<number>): AdaptiveSca
 
   const candidates: ReadonlyArray<{ readonly curve: ScaleCurve; readonly center: number | undefined; readonly applyRaw: (x: number) => number }> = [
     { curve: 'linear', center: undefined, applyRaw: (x: number) => x },
-    { curve: 'log', center, applyRaw: (x: number) => centeredLog(x, center) },
-    { curve: 'sqrt', center, applyRaw: (x: number) => centeredSqrt(x, center) },
+    { curve: 'log', center: undefined, applyRaw: (x: number) => pureLog(x, min) },
+    { curve: 'centered-log', center, applyRaw: (x: number) => centeredLog(x, center) },
+    { curve: 'centered-sqrt', center, applyRaw: (x: number) => centeredSqrt(x, center) },
   ];
 
   let bestVariance = Infinity;
@@ -84,6 +90,11 @@ export function computeAdaptiveScale(values: ReadonlyArray<number>): AdaptiveSca
   }
 
   return { transform, curve: bestCurve, center: bestCenter };
+}
+
+/** Pure log: log(x - min + 1). Ideal for data spanning many orders of magnitude. */
+function pureLog(x: number, min: number): number {
+  return Math.log(x - min + 1);
 }
 
 /** sign(x - c) * log(|x - c| + 1) */
