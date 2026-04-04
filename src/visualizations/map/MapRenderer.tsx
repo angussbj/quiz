@@ -18,6 +18,9 @@ import { useDragDetector } from './useDragDetector';
 import { useStrokePathCache } from './useStrokePathCache';
 import { findClosestStrokeElement } from './findClosestStrokeElement';
 import { formatDataValue } from '../formatDataValue';
+import { computeElementColors } from '../elementColorScale';
+import type { ElementColorMap } from '../elementColorScale';
+import { useTheme } from '@/theme/ThemeProvider';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -31,8 +34,12 @@ const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
 /** City dot radius in screen pixels. Converted to viewBox units at render time. */
 const DOT_SCREEN_RADIUS = 5;
 
-/** Select toggle keys used for ordering, not data display. */
-const ORDERING_KEYS = new Set(['orderBy', 'sortOrder', 'missingValues', 'rangeSortColumn']);
+/** Select toggle keys that are not data display columns. */
+const NON_DATA_DISPLAY_KEYS = new Set([
+  'orderBy', 'sortOrder', 'missingValues', 'rangeSortColumn',
+  'countryColors', 'riverColors', 'elementColors', // color toggles
+  'showPromptFlags', // prompt display toggles
+]);
 export function MapRenderer({
   elements,
   elementStates,
@@ -65,6 +72,7 @@ export function MapRenderer({
   const hasStrokeElements = elements.some((e) => isMapElement(e) && e.pathRenderStyle === 'stroke');
   const effectiveClustering = clustering ?? (hasStrokeElements ? undefined : DEFAULT_MAP_CLUSTERING);
 
+  // Legacy boolean toggle (used by capitals and other quizzes that don't have the dropdown)
   const showRegionColors = toggles['showRegionColors'] === true;
 
   return (
@@ -170,6 +178,8 @@ const MapContent = memo(function MapContent({
   selectValueLabels,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
+  const { resolved: theme } = useTheme();
+  const darkMode = theme === 'dark';
   const { onPointerDown, isDrag } = useDragDetector();
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
 
@@ -323,12 +333,10 @@ const MapContent = memo(function MapContent({
   );
 
   // ── Data display: find active data column and build element→value map ──
-  // Select toggles like 'countryData' or 'riverData' have values that are CSV column names.
-  // Find the first one that's set to something other than 'none'.
   const activeDataColumnName = useMemo(() => {
     if (!selectValues || !selectValueLabels) return undefined;
     for (const [key, value] of Object.entries(selectValues)) {
-      if (ORDERING_KEYS.has(key)) continue;
+      if (NON_DATA_DISPLAY_KEYS.has(key)) continue;
       if (value && value !== 'none' && selectValueLabels[value]) return value;
     }
     return undefined;
@@ -356,6 +364,22 @@ const MapContent = memo(function MapContent({
       elementNameDataValues: hasValues ? nameMap : undefined,
     };
   }, [elements, activeDataColumnName, activeDataColumnLabel]);
+
+  // ── Element color map: color-by-data for fill-style elements ──
+  // Look for color toggle keys (countryColors, riverColors, elementColors) in selectValues.
+  const colorColumnName = useMemo(() => {
+    if (!selectValues) return undefined;
+    for (const key of ['countryColors', 'riverColors', 'elementColors']) {
+      const value = selectValues[key];
+      if (value && value !== 'none') return value;
+    }
+    return undefined;
+  }, [selectValues]);
+
+  const elementColorMap: ElementColorMap | undefined = useMemo(() => {
+    if (!colorColumnName) return undefined;
+    return computeElementColors(elements, colorColumnName, darkMode);
+  }, [elements, colorColumnName, darkMode]);
 
   const handleBackgroundClick = useCallback(
     (event: React.MouseEvent<SVGGElement>) => {
@@ -433,6 +457,7 @@ const MapContent = memo(function MapContent({
         onElementHoverStart={onElementHoverStart ? handleElementHoverStart : undefined}
         onElementHoverEnd={onElementHoverStart ? handleElementHoverEnd : undefined}
         showRegionColors={showRegionColors}
+        elementColorMap={elementColorMap}
         elementStateColorOverrides={elementStateColorOverrides}
         isDrag={isDrag}
         clusteredElementIds={clusteredElementIds}

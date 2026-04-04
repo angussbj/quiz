@@ -1,16 +1,5 @@
-import { isGridElement } from './GridElement';
-import type { VisualizationElement } from '../VisualizationElement';
-import { computeAdaptiveScale } from '../../utilities/adaptiveScale';
-
-/** Valid color field values — CSV column names or 'category'. */
-const ELEMENT_COLOR_FIELDS: ReadonlyArray<string> = [
-  'category', 'density', 'electronegativity', 'melting_point', 'boiling_point',
-  'year_discovered', 'half_life', 'cost_usd_per_kg',
-];
-
-export function toElementColorField(value: string): string | undefined {
-  return ELEMENT_COLOR_FIELDS.find((f) => f === value);
-}
+import type { VisualizationElement } from './VisualizationElement';
+import { computeAdaptiveScale } from '../utilities/adaptiveScale';
 
 /** Get the numeric value for a color scale field from an element's dataColumns. */
 function getNumericValue(element: VisualizationElement, column: string): number | undefined {
@@ -22,10 +11,6 @@ function getNumericValue(element: VisualizationElement, column: string): number 
   const value = parseFloat(stripped);
   if (isNaN(value)) return undefined;
 
-  // Use log scale for half-life and cost (huge range of values)
-  if (column === 'half_life' || column === 'cost_usd_per_kg') {
-    return value <= 0 ? 0 : Math.log10(value);
-  }
   return value;
 }
 
@@ -97,7 +82,7 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, da
 
   const colorMap = new Map<string, string>();
   for (const element of elements) {
-    if (isGridElement(element) && element.group) {
+    if (element.group) {
       const groupIndex = groupIndexMap.get(element.group);
       if (groupIndex !== undefined) {
         colorMap.set(element.id, categoryColor(groupIndex, darkMode));
@@ -137,7 +122,7 @@ function computeGradientColors(
 
 /**
  * Compute a color map for all elements based on a field.
- * 'category' uses fixed distinguishable hues; numeric fields use a gradient.
+ * 'category' / 'region' uses fixed distinguishable hues; numeric fields use a gradient.
  * In dark mode, colors use low lightness with light text; in light mode, high lightness with dark text.
  */
 export function computeElementColors(
@@ -145,7 +130,7 @@ export function computeElementColors(
   field: string,
   darkMode: boolean,
 ): ElementColorMap {
-  if (field === 'category') {
+  if (field === 'category' || field === 'region') {
     return computeCategoryColors(elements, darkMode);
   }
   return computeGradientColors(elements, field, darkMode);

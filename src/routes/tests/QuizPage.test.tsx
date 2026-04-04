@@ -3,6 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import QuizPage from '../QuizPage';
 
+jest.mock('@/theme/ThemeProvider', () => ({
+  useTheme: () => ({ preference: 'system', resolved: 'light', setPreference: jest.fn() }),
+}));
+
 function renderQuizPage(quizId: string) {
   return render(
     <MemoryRouter initialEntries={[`/${quizId}`]}>

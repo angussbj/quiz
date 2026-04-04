@@ -5,6 +5,7 @@
  */
 import { memo, useMemo } from 'react';
 import type { VisualizationRendererProps } from '../VisualizationRendererProps';
+import type { ElementColorMap } from '../elementColorScale';
 import type { ElementVisualState } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
 import { isMapElement } from './MapElement';
@@ -110,6 +111,7 @@ interface MapElementShapesProps {
   readonly onElementHoverStart?: (elementId: string) => void;
   readonly onElementHoverEnd?: () => void;
   readonly showRegionColors: boolean;
+  readonly elementColorMap?: ElementColorMap;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
   readonly isDrag: (e: React.MouseEvent) => boolean;
   readonly clusteredElementIds: ReadonlySet<string>;
@@ -123,6 +125,7 @@ export const MapElementShapes = memo(function MapElementShapes({
   onElementHoverStart,
   onElementHoverEnd,
   showRegionColors,
+  elementColorMap,
   elementStateColorOverrides,
   isDrag,
   clusteredElementIds,
@@ -159,6 +162,7 @@ export const MapElementShapes = memo(function MapElementShapes({
             onElementHoverStart={onElementHoverStart}
             onElementHoverEnd={onElementHoverEnd}
             showRegionColors={showRegionColors}
+            colorFill={elementColorMap?.get(element.id)}
             elementStateColorOverrides={elementStateColorOverrides}
             isDrag={isDrag}
           />
@@ -176,6 +180,7 @@ interface ElementShapeProps {
   readonly onElementHoverStart?: (elementId: string) => void;
   readonly onElementHoverEnd?: () => void;
   readonly showRegionColors: boolean;
+  readonly colorFill?: string;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
   readonly isDrag: (e: React.MouseEvent) => boolean;
 }
@@ -188,13 +193,22 @@ const ElementShape = memo(function ElementShape({
   onElementHoverStart,
   onElementHoverEnd,
   showRegionColors,
+  colorFill,
   elementStateColorOverrides,
   isDrag,
 }: ElementShapeProps) {
   const isStrokePath = element.pathRenderStyle === 'stroke';
-  const color = (state !== undefined && state !== 'hidden')
-    ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
-    : (isStrokePath ? 'var(--color-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--color-bg-primary)'));
+
+  // Color fill applies to unanswered states only (hidden, default, context),
+  // same as the periodic table. Answered elements keep their feedback colors.
+  const isUnanswered = state === undefined || state === 'hidden' || state === 'default' || state === 'context';
+  const useColorFill = colorFill !== undefined && isUnanswered && !isStrokePath;
+
+  const color = useColorFill
+    ? colorFill
+    : (state !== undefined && state !== 'hidden')
+      ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
+      : (isStrokePath ? 'var(--color-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--color-bg-primary)'));
 
   if (isStrokePath) {
     const subpaths = splitSubpaths(element.svgPathData ?? '');
@@ -220,8 +234,8 @@ const ElementShape = memo(function ElementShape({
     );
   }
 
-  // Context fill shapes render like background borders
-  if (state === 'context') {
+  // Context fill shapes render like background borders — unless color fill is active
+  if (state === 'context' && !useColorFill) {
     return (
       <path
         d={element.svgPathData ?? ''}
