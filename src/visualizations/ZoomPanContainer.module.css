@@ -20,34 +20,22 @@
   height: 100% !important;
 }
 
-.svgStack {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
 .svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-.overlaySvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.overlaySvg > * {
-  pointer-events: auto;
-}
-
-.resetButton {
+.overlayButtons {
   position: absolute;
   top: var(--spacing-sm);
   right: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+  z-index: 10;
+}
+
+.overlayButton {
   padding: var(--spacing-xs) var(--spacing-md);
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
@@ -55,11 +43,10 @@
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
   cursor: pointer;
-  z-index: 10;
   opacity: 0.9;
 }
 
-.resetButton:hover {
+.overlayButton:hover {
   opacity: 1;
   background: var(--color-bg-secondary);
 }

@@ -1,10 +1,12 @@
 import type { GridElement } from './GridElement';
 import { CELL_SIZE, CELL_STEP } from './cellLayout';
 import { computeTrueGridPosition } from '@/quiz-definitions/quiz-specific-logic/periodicTableTrueGrid';
+import { extractDataColumns } from '../extractDataColumns';
 
 export function buildGridElements(
   rows: ReadonlyArray<Readonly<Record<string, string>>>,
   columnMappings: Readonly<Record<string, string>>,
+  dataColumnKeys?: ReadonlyArray<string>,
 ): ReadonlyArray<GridElement> {
   const labelColumn = columnMappings['label'] ?? 'label';
   const groupColumn = columnMappings['group'];
@@ -28,18 +30,12 @@ export function buildGridElements(
       trueRow,
       trueColumn,
       atomicWeight: row['atomic_weight'] ?? '',
-      halfLifeSeconds: row['half_life'] ? parseFloat(row['half_life']) : undefined,
-      density: row['density'] ? parseFloat(row['density']) : undefined,
-      electronegativity: row['electronegativity'] ? parseFloat(row['electronegativity']) : undefined,
-      standardState: row['standard_state'] || undefined,
-      yearDiscovered: row['year_discovered'] ? parseInt(row['year_discovered'], 10) : undefined,
-      meltingPoint: row['melting_point'] && !isNaN(Number(row['melting_point'])) ? parseFloat(row['melting_point']) : undefined,
-      boilingPoint: row['boiling_point'] && !isNaN(Number(row['boiling_point'])) ? parseFloat(row['boiling_point']) : undefined,
       viewBoxCenter: { x: x + CELL_SIZE / 2, y: y + CELL_SIZE / 2 },
       viewBoxBounds: { minX: x, minY: y, maxX: x + CELL_SIZE, maxY: y + CELL_SIZE },
       interactive: true,
       group: groupColumn ? row[groupColumn] : undefined,
       wikipediaSlug: row[wikipediaColumn] || undefined,
+      dataColumns: extractDataColumns(row, dataColumnKeys),
     };
   });
 }

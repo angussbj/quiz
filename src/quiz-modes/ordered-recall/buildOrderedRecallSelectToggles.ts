@@ -3,6 +3,8 @@ import type { ToggleDefinition, SelectToggleDefinition } from '../ToggleDefiniti
 interface SortColumnConfig {
   readonly column: string;
   readonly label: string;
+  readonly infoUrl?: string;
+  readonly category?: string;
 }
 
 /**
@@ -28,6 +30,8 @@ export function buildOrderedRecallSelectToggles(
     options: sortColumns.map((col) => ({
       value: col.column,
       label: col.label,
+      ...(col.infoUrl ? { infoUrl: col.infoUrl } : {}),
+      ...(col.category ? { category: col.category } : {}),
     })),
   };
 

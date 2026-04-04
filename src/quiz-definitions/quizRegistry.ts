@@ -1,4 +1,28 @@
-import type { QuizDefinition } from './QuizDefinition';
+import type { QuizDefinition, SortColumnDefinition } from './QuizDefinition';
+import type { SelectToggleDefinition } from '../quiz-modes/ToggleDefinition';
+
+/** Build a data display selectToggle from sort column definitions. */
+function buildDataDisplayToggle(
+  key: string,
+  label: string,
+  sortColumns: ReadonlyArray<SortColumnDefinition>,
+): SelectToggleDefinition {
+  return {
+    key,
+    label,
+    group: 'display',
+    defaultValue: 'none',
+    renderAs: 'dropdown',
+    options: [
+      { value: 'none', label: 'None' },
+      ...sortColumns.map((c) => ({
+        value: c.column,
+        label: c.label,
+        ...(c.category ? { category: c.category } : {}),
+      })),
+    ],
+  };
+}
 
 /**
  * Static registry of all available quizzes.
@@ -25,7 +49,7 @@ const capitalsQuizBase = {
     { key: 'showCountryNames', label: 'Country names on map', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
-    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: false, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['prompted-recall'] } as const,
+    { key: 'showPromptCountryNames', label: 'Country names in prompt', defaultValue: true, group: 'display', hiddenBehavior: 'never', promptField: { type: 'text', column: 'country' }, modes: ['prompted-recall'] } as const,
   ],
   selectToggles: [
     { key: 'showPromptFlags', label: 'Flags in prompt', defaultValue: 'off', group: 'display', modes: ['prompted-recall'], promptField: { type: 'flag', column: 'country_code' }, options: [
@@ -57,13 +81,83 @@ const capitalsQuizBase = {
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
+ * Sort columns for country statistics, shared between orderedRecallSortColumns and
+ * the data display selectToggle. Extracted so both can reference the same array.
+ */
+const countrySortColumns: ReadonlyArray<SortColumnDefinition> = [
+  // Demographics
+  { column: 'population', label: 'Population', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'population_density', label: 'Population density (per km\u00B2)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'population_growth_pct', label: 'Population growth (% annual)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'median_age', label: 'Median age (years)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'urban_population_pct', label: 'Urban population (%)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'fertility_rate', label: 'Fertility rate (births per woman)', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'net_migration_rate', label: 'Net migration', category: 'Demographics', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Economy
+  { column: 'gdp_nominal', label: 'GDP nominal (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gdp_per_capita', label: 'GDP per capita (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gdp_ppp_per_capita', label: 'GDP PPP per capita (USD)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gdp_growth_pct', label: 'GDP growth (% annual)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'gini_coefficient', label: 'Gini coefficient', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'unemployment_rate', label: 'Unemployment rate (%)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'inflation_rate', label: 'Inflation rate (% annual)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'government_debt_pct_gdp', label: 'Government debt (% of GDP)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'tax_revenue_pct_gdp', label: 'Tax revenue (% of GDP)', category: 'Economy', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Geography & Environment
+  { column: 'land_area_km2', label: 'Land area (km\u00B2)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'average_elevation_m', label: 'Average elevation (m)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'highest_point_m', label: 'Highest point (m)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'coastline_km', label: 'Coastline (km)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'forest_cover_pct', label: 'Forest cover (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'average_temperature_c', label: 'Average temperature (\u00B0C)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'average_rainfall_mm', label: 'Average rainfall (mm/year)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'co2_per_capita_tonnes', label: 'CO\u2082 per capita (tonnes)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'co2_total_mt', label: 'CO\u2082 total (Mt)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'pm25_concentration', label: 'PM2.5 (µg/m\u00B3)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'renewable_energy_pct', label: 'Renewable energy (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'protected_land_pct', label: 'Protected land area (%)', category: 'Geography & Environment', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Health
+  { column: 'life_expectancy', label: 'Life expectancy (years)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'infant_mortality_rate', label: 'Infant mortality (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'child_mortality_rate', label: 'Child mortality, under-5 (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'maternal_mortality_ratio', label: 'Maternal mortality (per 100,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'health_expenditure_pct_gdp', label: 'Health expenditure (% of GDP)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'physicians_per_1000', label: 'Physicians (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'hospital_beds_per_1000', label: 'Hospital beds (per 1,000)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'obesity_rate_pct', label: 'Obesity rate (% of adults)', category: 'Health', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Education & Development
+  { column: 'hdi', label: 'Human Development Index', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'literacy_rate_pct', label: 'Literacy rate (%)', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'mean_years_schooling', label: 'Mean years of schooling', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'education_expenditure_pct_gdp', label: 'Education expenditure (% of GDP)', category: 'Education & Development', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Governance & Security
+  { column: 'military_expenditure_pct_gdp', label: 'Military expenditure (% of GDP)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'military_expenditure_per_capita', label: 'Military expenditure per capita (USD)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'corruption_perceptions_index', label: 'Corruption Perceptions Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'press_freedom_index', label: 'Press Freedom Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'democracy_index', label: 'Democracy Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'homicide_rate', label: 'Homicide rate (per 100,000)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'incarceration_rate', label: 'Incarceration rate (per 100,000)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'global_peace_index', label: 'Global Peace Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Aid
+  { column: 'oda_given_per_capita', label: 'Foreign aid given per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'oda_received_per_capita', label: 'Foreign aid received per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
+  // Quality of Life
+  { column: 'happiness_score', label: 'Happiness score', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'internet_penetration_pct', label: 'Internet users (%)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'mobile_subscriptions_per_100', label: 'Mobile subscriptions (per 100)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'tourism_per_capita', label: 'Tourism arrivals per capita', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'unesco_world_heritage_sites', label: 'UNESCO World Heritage Sites', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
+];
+
+/**
  * Shared configuration for all countries quizzes.
  * Individual definitions spread this and add id, title, description, dataFilter, and group mapping.
  */
 const countriesQuizBase = {
   path: ['Geography'],
   visualizationType: 'map' as const,
-  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
+  availableModes: ['free-recall-unordered', 'free-recall-ordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'free-recall-unordered' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
@@ -73,6 +167,7 @@ const countriesQuizBase = {
     { key: 'showMapFlags', label: 'Flags on map', defaultValue: false, group: 'display', hiddenBehavior: { hintAfter: 2 } } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
+  selectToggles: [buildDataDisplayToggle('countryData', 'Country data', countrySortColumns)],
   presets: [],
   columnMappings: {
     answer: 'name',
@@ -85,6 +180,8 @@ const countriesQuizBase = {
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
   locateDistanceMode: 'polygon-boundary' as const,
   locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
+  rangeLabel: 'Top countries',
+  orderedRecallSortColumns: countrySortColumns,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
@@ -145,22 +242,30 @@ const largestCitiesQuiz = {
   hideFilteredElements: true,
 } satisfies QuizDefinition;
 
+/** Sort columns for rivers, shared between orderedRecallSortColumns and data display. */
+const riverSortColumns: ReadonlyArray<SortColumnDefinition> = [
+  { column: 'discharge_m3s', label: 'Discharge (m\u00B3/s)', rankDescending: true },
+  { column: 'length_km', label: 'Length (km)', mergeAggregation: 'sum' as const, rankDescending: true },
+];
+
 /**
  * Shared configuration for all rivers quizzes.
  */
 const riversQuizBase = {
   path: ['Geography'],
   visualizationType: 'map' as const,
-  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
+  availableModes: ['free-recall-unordered', 'free-recall-ordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'identify' as const,
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showRiverNames', label: 'River names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
     { key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
+    { key: 'includeSmallerRivers', label: 'Include smaller rivers', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'mergeTributaries', label: 'Merge tributaries', defaultValue: false, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'mergeDistributaries', label: 'Merge distributaries', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'mergeSegmentNames', label: 'Merge segment names', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
   ],
+  selectToggles: [buildDataDisplayToggle('riverData', 'River data', riverSortColumns)],
   presets: [],
   columnMappings: {
     answer: 'name',
@@ -176,10 +281,16 @@ const riversQuizBase = {
   distributaryColumn: 'distributary_of',
   segmentColumn: 'segment_of',
   hideFilteredElements: true,
+  toggleControlledFilter: {
+    toggleKey: 'includeSmallerRivers',
+    column: 'scalerank',
+    values: ['0', '1', '2', '3', '4', '5', '6'],
+  },
   elementStateColorOverrides: {
     default: 'var(--color-lake)',
     context: 'var(--color-lake)',
   },
+  orderedRecallSortColumns: riverSortColumns,
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 
@@ -296,17 +407,18 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         key: 'elementData',
         label: 'Element data',
         group: 'display',
-        defaultValue: 'half-life',
+        defaultValue: 'half_life',
         renderAs: 'dropdown',
         options: [
           { value: 'none', label: 'None' },
-          { value: 'half-life', label: 'Half-life' },
-          { value: 'density', label: 'Density' },
-          { value: 'state', label: 'State' },
+          { value: 'half_life', label: 'Half-life' },
+          { value: 'density', label: 'Density (g/cm\u00B3)' },
+          { value: 'standard_state', label: 'State' },
           { value: 'electronegativity', label: 'Electronegativity' },
-          { value: 'melting-point', label: 'Melting point' },
-          { value: 'boiling-point', label: 'Boiling point' },
-          { value: 'year-discovered', label: 'Year discovered' },
+          { value: 'melting_point', label: 'Melting point (K)' },
+          { value: 'boiling_point', label: 'Boiling point (K)' },
+          { value: 'year_discovered', label: 'Year discovered' },
+          { value: 'cost_usd_per_kg', label: 'Cost USD/kg (1999\u20132025)', infoUrl: '/about/element-costs' },
         ],
       },
       {
@@ -318,12 +430,13 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         options: [
           { value: 'none', label: 'None' },
           { value: 'category', label: 'Category' },
-          { value: 'density', label: 'Density' },
+          { value: 'density', label: 'Density (g/cm\u00B3)' },
           { value: 'electronegativity', label: 'Electronegativity' },
-          { value: 'melting-point', label: 'Melting point' },
-          { value: 'boiling-point', label: 'Boiling point' },
-          { value: 'year-discovered', label: 'Year discovered' },
-          { value: 'half-life', label: 'Half-life' },
+          { value: 'melting_point', label: 'Melting point (K)' },
+          { value: 'boiling_point', label: 'Boiling point (K)' },
+          { value: 'year_discovered', label: 'Year discovered' },
+          { value: 'half_life', label: 'Half-life' },
+          { value: 'cost_usd_per_kg', label: 'Cost USD/kg (1999\u20132025)', infoUrl: '/about/element-costs' },
         ],
       },
     ],
@@ -335,8 +448,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     },
     dataPath: '/data/science/chemistry/periodic-table.csv',
     supportingDataPaths: [],
-    rangeColumn: 'atomic_number',
-    rangeLabel: 'Atomic number',
+    rangeLabel: 'Elements',
     groupFilterColumn: 'category',
     groupFilterLabel: 'Element category',
     locateDistanceMode: 'grid-centroid' as const,
@@ -350,6 +462,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { column: 'boiling_point', label: 'Boiling point' },
       { column: 'year_discovered', label: 'Year discovered' },
       { column: 'half_life', label: 'Half-life' },
+      { column: 'cost_usd_per_kg', label: 'Cost USD/kg (1999\u20132025)' },
     ],
   },
   {
@@ -427,10 +540,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     id: 'geo-rivers-world',
     title: 'World Rivers',
     description: 'Name the major rivers of the world.',
-    dataFilter: { column: 'scalerank', values: ['0', '1', '2', '3', '4', '5', '6'] },
     initialCameraPosition: { x: -169, y: -70, width: 360, height: 130 },
-    rangeColumn: 'discharge_rank',
-    rangeLabel: 'Top rivers by discharge',
+    rangeLabel: 'Top rivers',
     groupFilterColumn: 'continent',
     groupFilterLabel: 'Continent',
     groupFilterCameraPositions: {

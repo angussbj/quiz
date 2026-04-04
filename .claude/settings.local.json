@@ -106,7 +106,11 @@
       "mcp__plugin_playwright_playwright__browser_tabs",
       "mcp__plugin_playwright_playwright__browser_take_screenshot",
       "mcp__plugin_playwright_playwright__browser_type",
-      "mcp__plugin_playwright_playwright__browser_wait_for"
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "WebFetch(domain:www.google.com)",
+      "Bash(gh api:*)",
+      "Skill(commit-commands:commit)",
+      "WebFetch(domain:www.naturalearthdata.com)"
     ]
   }
 }

@@ -24,11 +24,7 @@
 .interactivePath {
   cursor: pointer;
   stroke-linejoin: round;
-  transition: fill var(--transition-normal), fill-opacity var(--transition-normal), stroke var(--transition-normal), opacity var(--transition-fast);
-}
-
-.interactivePath:hover {
-  opacity: 0.8;
+  transition: fill var(--transition-normal), fill-opacity var(--transition-normal), stroke var(--transition-normal);
 }
 
 /* Like interactivePath but without cursor/brightness — just enables pointer-events for hover detection */
@@ -42,10 +38,6 @@
    themselves. */
 .interactiveGroup {
   cursor: pointer;
-}
-
-.interactiveGroup:hover > path {
-  opacity: 0.8;
 }
 
 .interactiveDot {

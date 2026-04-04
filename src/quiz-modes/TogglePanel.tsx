@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import { Tooltip } from '@/layout/Tooltip';
+import { assetPath } from '@/utilities/assetPath';
 import styles from './TogglePanel.module.css';
 
 interface TogglePanelProps {
@@ -128,13 +129,14 @@ export function TogglePanel({
                 const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
                 const selectTooltip = tooltips?.[selectToggle.key];
                 const selectRow = (
-                  <div key={selectToggle.key} className={styles.selectRow}>
-                    <span className={styles.selectLabel}>{selectToggle.label}</span>
+                  <div key={selectToggle.key} className={`${styles.selectRow} ${cannotDisable ? styles.selectRowDisabled : ''}`}>
+                    <span className={`${styles.selectLabel} ${cannotDisable ? styles.toggleLabelDisabled : ''}`}>{selectToggle.label}</span>
                     <SelectToggleControl
                       selectToggle={selectToggle}
                       value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
                       onChange={(value) => onSelectChange?.(selectToggle.key, value)}
                       preventOff={cannotDisable}
+                      disabled={cannotDisable}
                     />
                   </div>
                 );
@@ -153,13 +155,14 @@ export function TogglePanel({
           const cannotDisable = disabledKeys?.has(selectToggle.key) ?? false;
           const selectTooltip = tooltips?.[selectToggle.key];
           const selectRow = (
-            <div className={styles.selectRow}>
-              <span className={styles.selectLabel}>{selectToggle.label}</span>
+            <div className={`${styles.selectRow} ${cannotDisable ? styles.selectRowDisabled : ''}`}>
+              <span className={`${styles.selectLabel} ${cannotDisable ? styles.toggleLabelDisabled : ''}`}>{selectToggle.label}</span>
               <SelectToggleControl
                 selectToggle={selectToggle}
                 value={selectValues[selectToggle.key] ?? selectToggle.defaultValue}
                 onChange={(value) => onSelectChange?.(selectToggle.key, value)}
                 preventOff={cannotDisable}
+                disabled={cannotDisable}
               />
             </div>
           );
@@ -213,6 +216,18 @@ export function SelectToggleControl({
   );
 }
 
+export interface DropdownOption {
+  readonly value: string;
+  readonly label: string;
+  readonly infoUrl?: string;
+  readonly category?: string;
+}
+
+/**
+ * Renders a native <select> dropdown. When options have `category` fields,
+ * groups them into <optgroup> sections. Options without a category render
+ * outside any group.
+ */
 function DropdownSelect({
   options,
   value,
@@ -220,27 +235,76 @@ function DropdownSelect({
   label,
   disabled = false,
 }: {
-  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
+  readonly options: ReadonlyArray<DropdownOption>;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly label: string;
   readonly disabled?: boolean;
 }) {
+  const selectedOption = options.find((o) => o.value === value);
+  const infoUrl = selectedOption?.infoUrl;
+  const hasCategories = options.some((o) => o.category);
   return (
-    <select
-      className={styles.dropdownSelect}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      aria-label={label}
-      disabled={disabled}
-    >
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <span className={styles.dropdownWrapper}>
+      <select
+        className={styles.dropdownSelect}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label={label}
+        disabled={disabled}
+      >
+        {hasCategories ? renderGroupedOptions(options) : options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {infoUrl && (
+        <a href={assetPath(infoUrl)} target="_blank" rel="noopener noreferrer" className={styles.dropdownInfoLink} title="How is this calculated?">
+          ?
+        </a>
+      )}
+    </span>
   );
+}
+
+/**
+ * Group options by category into <optgroup> elements.
+ * Preserves the original order — consecutive options with the same category
+ * are grouped together. Options without a category render ungrouped.
+ */
+export function renderGroupedOptions(options: ReadonlyArray<DropdownOption>): React.ReactNode[] {
+  const result: React.ReactNode[] = [];
+  let currentCategory: string | undefined;
+  let currentGroupOptions: DropdownOption[] = [];
+
+  function flushGroup() {
+    if (currentGroupOptions.length === 0) return;
+    if (currentCategory) {
+      result.push(
+        <optgroup key={`group-${currentCategory}`} label={currentCategory}>
+          {currentGroupOptions.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </optgroup>,
+      );
+    } else {
+      for (const o of currentGroupOptions) {
+        result.push(<option key={o.value} value={o.value}>{o.label}</option>);
+      }
+    }
+    currentGroupOptions = [];
+  }
+
+  for (const option of options) {
+    if (option.category !== currentCategory) {
+      flushGroup();
+      currentCategory = option.category;
+    }
+    currentGroupOptions.push(option);
+  }
+  flushGroup();
+  return result;
 }
 
 function SegmentedControl({

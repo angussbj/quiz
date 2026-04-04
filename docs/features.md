@@ -24,6 +24,8 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 **Branch:** `feat/periodic-table-quiz`
 **Scope:** Create a complete periodic table quiz with all 118 elements. CSV data with symbol, name, atomic number, group, period, category. Register quiz definition with appropriate modes (free recall by name/symbol, identify by clicking the element, ordered recall following the order by atomic number, prompted recall (new) where element squares are highlighted in a random order and you have to name them). Sensible toggles (show/hide symbols, show/hide atomic numbers, show/hide category colours).
 **Note:** Now includes element subset filtering — users can filter by atomic number range AND by element category (chip toggles). The group filter is a generic mechanism on `QuizDefinition` (`groupFilterColumn`, `groupFilterLabel`) reusable by any quiz with categorical data. Non-selected elements render in muted 'context' state.
+**Note:** Ordered recall now supports sorting by any numeric column via `orderedRecallSortColumns` on `QuizDefinition` (generic mechanism). Configured for periodic table with 8 numeric columns. Includes tie groups (elements with same value highlighted simultaneously, answerable in any order), missing value handling (exclude/first/last), and a "Highlight next" toggle. Other quizzes can opt in by adding `orderedRecallSortColumns`.
+**Note:** Cost-per-kg data added for all 118 elements (`cost_usd_per_kg`, `cost_date` CSV columns). Three tiers: market prices (USGS/LME), ORNL production costs, and estimated accelerator costs for synthetic elements. Available as both a data display field and color scale option. Methodology page at `/about/element-costs`. See `docs/element-cost-data.md` for sources.
 
 
 ### 28. Largest Cities by Population Quiz — DONE
@@ -50,3 +52,26 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - River stroke width uses fixed viewBox units (0.15 visible, 2.0 hit area), matching how country borders work.
 - `renderShapeElements` renders shapes in state layers (default, incorrect, missed, context, correct, highlighted) so state-colored shapes aren't obscured by neighbours.
 **Notes for other features:** The `pathRenderStyle` pattern could be reused for other line-based geographic features (e.g. mountain ranges, coastlines).
+
+### 31. Mountain Ranges Quiz — DONE
+**Branch:** `worktree-angusj-mountain-ranges`
+**Scope:** Mountain ranges quiz with topographic elevation tile layer. Global DEM-based topography rendered as PNG tiles at 4 zoom levels (z0-z3), loaded/unloaded based on viewport. ~63 mountain range polygons extracted from DEM + OSM data, invisible by default with low-opacity fills on quiz interactions. All map quizzes get an auto-injected "Topography" toggle (default off; mountain ranges default on). Four quiz modes: free recall, identify, locate (polygon-boundary), prompted recall. Ordered recall by peak elevation and area deferred to future rebase. Dark mode via CSS brightness filter on tiles.
+**Key design decisions:**
+- Topographic tiles use SVG `<image>` with bilinear interpolation for smooth zoom
+- Hypsometric color scale with 17 stops, dense at low elevations for Australian-range visibility
+- Mountain range polygons are invisible-by-default with `elementStateColorOverrides: { default: 'transparent', context: 'transparent' }`
+- `elementFillOpacityOverrides` provides per-state opacity control (0.1 for answered states)
+- Visible viewport bounds exposed via ZoomPanContext for tile loading
+- Tile coordinate system: level N has 2^N columns × max(1, 2^(N-1)) rows
+**Notes for other features:** The topographic tile layer is available to all map quizzes. Future map projections will need tile system adaptation. Tile system supports arbitrary zoom levels — add z4+ by running the generation script with higher MAX_LEVEL.
+
+### 32. Closest-Path Click/Hover for Stroke Elements — DONE
+**Scope:** Replace SVG hit-area strokes with a custom closest-path detection system for river-style (stroke) elements. Currently rivers use invisible wide strokes (2.0 viewBox units) for hover/click detection, but overlapping hit areas make nearby rivers unclickable.
+**Approach:**
+- **Pre-parse paths**: When map elements are built, pre-parse SVG path `d` strings into point arrays (not on every interaction). Store on the element or in a side map.
+- **Closest-path on mousemove**: On each mousemove, compute distance from cursor to all stroke-style element paths using point-to-segment projection. Select the closest element within a max pixel-space distance. Update hover state.
+- **Closest-path on click**: Same computation on click. Replaces SVG native pointer events for stroke elements.
+- **Max distance threshold in pixel space**: Convert viewBox distance to screen pixels using the current zoom scale. Reject matches beyond the threshold (clicking far from any river shouldn't select the closest one).
+- **Remove invisible hit-area strokes**: Once custom detection works, the wide invisible strokes can be removed, simplifying the SVG.
+**Key files:** `src/visualizations/map/closestPointOnPath.ts` (existing utility, needs pre-parsed variant), `src/visualizations/map/renderShapeElements.tsx` (renders stroke hit areas), `src/visualizations/map/MapRenderer.tsx` (pointer event handling).
+**Performance note:** ~343 rivers × ~20 segments = ~7000 distance calculations per mousemove — well under 1ms with pre-parsed paths. The bottleneck is string parsing, which pre-parsing eliminates.

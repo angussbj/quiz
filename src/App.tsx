@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route, useParams } from 'react-router';
 import { Layout } from './layout/Layout';
 import { QuizActiveProvider } from '@/quiz-modes/QuizActiveContext';
 import { getQuizById } from '@/quiz-definitions/getQuizById';
+import { aboutPageComponents } from './routes/aboutPageRegistry';
 
 const HomePage = lazy(() => import('./routes/HomePage.tsx'));
 const QuizPage = lazy(() => import('./routes/QuizPage.tsx'));
+const AboutPage = lazy(() => import('./routes/AboutPage.tsx'));
 
 function QuizOrCategoryPage() {
   const { '*': slug } = useParams();
@@ -23,6 +25,10 @@ export function App() {
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            {aboutPageComponents.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
             <Route path="/*" element={<QuizOrCategoryPage />} />
           </Routes>
         </Suspense>

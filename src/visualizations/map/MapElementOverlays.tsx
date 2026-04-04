@@ -101,7 +101,6 @@ function splitSubpaths(d: string): ReadonlyArray<string> {
 }
 
 const RIVER_STROKE_WIDTH = 0.15;
-const RIVER_HIT_STROKE_WIDTH = 2.0;
 
 interface MapElementShapesProps {
   readonly elements: VisualizationRendererProps['elements'];
@@ -202,45 +201,22 @@ const ElementShape = memo(function ElementShape({
     const strokeD = subpaths.filter((p) => !p.endsWith('Z')).join(' ');
     if (!strokeD) return null;
     const effectiveRiverStrokeWidth = state === 'highlighted' ? RIVER_STROKE_WIDTH * 2.5 : RIVER_STROKE_WIDTH;
-    const isHoverable = !onElementClick && !!onElementHoverStart;
 
+    // Stroke elements use closest-path detection (in MapRenderer) for hover/click,
+    // so no per-element pointer event handlers or invisible hit-area strokes are needed.
     return (
-      <g className={onElementClick ? styles.interactiveGroup : isHoverable ? styles.hoverableGroup : undefined}>
-        {(onElementClick || isHoverable) && (
-          <path
-            d={strokeD}
-            style={{
-              fill: 'none',
-              stroke: 'transparent',
-              strokeWidth: RIVER_HIT_STROKE_WIDTH,
-              strokeLinecap: 'round',
-              strokeLinejoin: 'round',
-              pointerEvents: 'auto',
-            }}
-            className={onElementClick ? styles.interactivePath : styles.hoverablePath}
-            onClick={onElementClick ? (e) => {
-              if (isDrag(e)) return;
-              e.stopPropagation();
-              onElementClick(element.id);
-            } : undefined}
-            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverEnd}
-          />
-        )}
-        <path
-          d={strokeD}
-          style={{
-            fill: 'none',
-            stroke: color,
-            strokeWidth: effectiveRiverStrokeWidth,
-            strokeOpacity: strokeOpacity(state),
-            strokeLinecap: 'round',
-            strokeLinejoin: 'round',
-          }}
-          pointerEvents={(onElementClick || isHoverable) ? 'none' : undefined}
-          className={onElementClick ? styles.interactivePath : undefined}
-        />
-      </g>
+      <path
+        d={strokeD}
+        style={{
+          fill: 'none',
+          stroke: color,
+          strokeWidth: effectiveRiverStrokeWidth,
+          strokeOpacity: strokeOpacity(state),
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          pointerEvents: 'none',
+        }}
+      />
     );
   }
 

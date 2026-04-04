@@ -68,6 +68,16 @@ export interface QuizDefinition<K extends string = string> {
   }>>;
   /** When true, elements excluded by range/group filters are hidden entirely instead of shown as context. */
   readonly hideFilteredElements?: boolean;
+  /**
+   * A data filter that is only applied when a toggle is OFF.
+   * When the toggle is ON, the filter is bypassed and all rows pass.
+   * Use this for "include more data" toggles (e.g. "Include smaller rivers").
+   */
+  readonly toggleControlledFilter?: {
+    readonly toggleKey: string;
+    readonly column: string;
+    readonly values: ReadonlyArray<string>;
+  };
   /** Column in the data CSV that stores the parent river name for tributary rivers.
    *  When the 'mergeTributaries' toggle is true, tributary paths are merged into the parent
    *  element's svgPathData and a subtitle "(and tributaries)" appears in the prompt. */
@@ -144,8 +154,30 @@ export interface QuizDefinition<K extends string = string> {
    * When present, the setup panel shows "Order by", "Sort order", and "Missing values"
    * controls for `free-recall-ordered` mode. The first column is the default sort.
    */
-  readonly orderedRecallSortColumns?: ReadonlyArray<{
-    readonly column: string;
-    readonly label: string;
-  }>;
+  readonly orderedRecallSortColumns?: ReadonlyArray<SortColumnDefinition>;
+}
+
+/**
+ * Definition for a numeric column available for sorting/range filtering.
+ * Used by both ordered recall mode and the range filter dropdown.
+ */
+export interface SortColumnDefinition {
+  readonly column: string;
+  readonly label: string;
+  /** URL for a methodology/source page explaining this metric. Rendered as a "?" link next to the dropdown. */
+  readonly infoUrl?: string;
+  /** Category for grouping in dropdown optgroups (e.g. 'Demographics', 'Economy'). Omit for flat dropdowns. */
+  readonly category?: string;
+  /**
+   * How to aggregate values when elements are merged (e.g. tributaries into parent river).
+   * - 'parent' (default): use the parent element's value, ignore merged children.
+   * - 'sum': sum the parent + all merged children's values.
+   */
+  readonly mergeAggregation?: 'parent' | 'sum';
+  /**
+   * When true, rank 1 = highest value ("top N by X" semantics).
+   * When false (default), rank 1 = lowest value (sequential index semantics).
+   * Most columns want true; atomic_number is a notable exception.
+   */
+  readonly rankDescending?: boolean;
 }

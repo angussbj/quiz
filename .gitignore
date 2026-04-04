@@ -16,7 +16,9 @@ coverage
 screenshots/
 
 # Large source data files (download URLs in script headers)
-scripts/source-data/
+scripts/source-data/*
+# Small curated CSVs for country statistics are tracked
+!scripts/source-data/country-stats/
 
 # Editor directories and files
 .vscode/*

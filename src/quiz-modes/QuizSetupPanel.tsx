@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
+import type { QuizModeType, SortColumnDefinition } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
-import { TogglePanel, SelectToggleControl, togglePanelStyles } from './TogglePanel';
+import { TogglePanel, SelectToggleControl, togglePanelStyles, renderGroupedOptions } from './TogglePanel';
 import { Tooltip } from '@/layout/Tooltip';
 import { formatGroupLabel } from './formatGroupLabel';
 import styles from './QuizSetupPanel.module.css';
@@ -40,6 +40,9 @@ export interface QuizSetupPanelProps {
   readonly rangeMaxValue?: number;
   readonly onRangeMinChange?: (value: number | undefined) => void;
   readonly onRangeMaxChange?: (value: number | undefined) => void;
+  readonly sortColumns?: ReadonlyArray<SortColumnDefinition>;
+  readonly rangeSortColumnKey?: string;
+  readonly onRangeSortColumnChange?: (column: string) => void;
   readonly groupFilterLabel?: string;
   readonly availableGroups?: ReadonlyArray<string>;
   readonly selectedGroups?: ReadonlySet<string>;
@@ -75,6 +78,9 @@ export function QuizSetupPanel({
   rangeMaxValue,
   onRangeMinChange,
   onRangeMaxChange,
+  sortColumns,
+  rangeSortColumnKey,
+  onRangeSortColumnChange,
   groupFilterLabel,
   availableGroups,
   selectedGroups,
@@ -99,6 +105,16 @@ export function QuizSetupPanel({
     () => resolveToggleConstraints(activeConstraints, toggleValues, selectValues),
     [activeConstraints, toggleValues, selectValues],
   );
+
+  // Sync forced values into the actual toggle state so that when constraints
+  // relax, the toggle retains the value the user saw (not the stale underlying state).
+  useEffect(() => {
+    for (const [key, value] of Object.entries(constraintResult.forcedValues)) {
+      if (toggleValues[key] !== value) {
+        onToggleChange(key, value);
+      }
+    }
+  }, [constraintResult.forcedValues, toggleValues, onToggleChange]);
 
   // Merge forced values into the displayed toggle values
   const effectiveToggleValues = useMemo(() => ({
@@ -130,23 +146,37 @@ export function QuizSetupPanel({
     return filtered.length > 0 ? filtered : undefined;
   }, [selectToggles]);
 
-  // Compute which orderBy columns have no missing numeric values.
-  // Used to disable the "Missing values" toggle when it's irrelevant.
-  const completeColumns = useMemo(() => {
-    if (!dataRows?.length || orderingToggles.length === 0) return new Set<string>();
+  // Compute which orderBy columns have no missing numeric values, and coverage per column.
+  // Used to disable the "Missing values" toggle when it's irrelevant,
+  // and to show coverage indicators in the ordering section.
+  const { completeColumns, coverageMap } = useMemo(() => {
+    const empty = { completeColumns: new Set<string>(), coverageMap: new Map<string, { readonly valid: number; readonly total: number }>() };
+    if (!dataRows?.length || orderingToggles.length === 0) return empty;
     const orderByToggle = orderingToggles.find((t) => t.key === 'orderBy');
-    if (!orderByToggle) return new Set<string>();
+    if (!orderByToggle) return empty;
     const complete = new Set<string>();
+    const coverage = new Map<string, { readonly valid: number; readonly total: number }>();
+    // Count only rows that have at least one stat column populated (excludes territories)
+    const quizRows = dataRows.filter((row) =>
+      orderByToggle.options.some((opt) => {
+        const val = row[opt.value];
+        return val !== undefined && val !== '' && val !== '-' && !Number.isNaN(Number(val));
+      }),
+    );
+    const total = quizRows.length;
     for (const option of orderByToggle.options) {
       const col = option.value;
-      const allPresent = dataRows.every((row) => {
+      let valid = 0;
+      for (const row of quizRows) {
         const val = row[col];
-        if (val === undefined || val === '' || val === '-') return false;
-        return !Number.isNaN(Number(val));
-      });
-      if (allPresent) complete.add(col);
+        if (val !== undefined && val !== '' && val !== '-' && !Number.isNaN(Number(val))) {
+          valid++;
+        }
+      }
+      if (valid === total) complete.add(col);
+      coverage.set(col, { valid, total });
     }
-    return complete;
+    return { completeColumns: complete, coverageMap: coverage };
   }, [dataRows, orderingToggles]);
 
   const selectedOrderByColumn = selectValues?.['orderBy']
@@ -157,6 +187,9 @@ export function QuizSetupPanel({
   const orderByHasNoMissing = selectedOrderByColumn
     ? completeColumns.has(selectedOrderByColumn)
     : false;
+  const selectedCoverage = selectedOrderByColumn
+    ? coverageMap.get(selectedOrderByColumn)
+    : undefined;
 
   const allGroupsSelected = availableGroups && selectedGroups
     && selectedGroups.size === availableGroups.length;
@@ -226,6 +259,11 @@ export function QuizSetupPanel({
                 return row;
               })}
             </div>
+            {selectedCoverage && selectedCoverage.valid < selectedCoverage.total && (
+              <p className={styles.coverageNote}>
+                Data present for {selectedCoverage.valid} out of {selectedCoverage.total}
+              </p>
+            )}
           </section>
         )}
 
@@ -285,7 +323,7 @@ export function QuizSetupPanel({
         {rangeLabel && onRangeMinChange && onRangeMaxChange && (
           <section className={styles.section}>
             <span className={styles.sectionTitle}>
-              {rangeLabel} range
+              {rangeLabel}
             </span>
             <div className={styles.rangeRow}>
               <input
@@ -325,6 +363,29 @@ export function QuizSetupPanel({
                   }
                 }}
               />
+              {sortColumns && sortColumns.length > 1 && onRangeSortColumnChange && (
+                <>
+                  <span className={styles.rangeSeparator}>by</span>
+                  <select
+                    className={styles.rangeSortSelect}
+                    value={rangeSortColumnKey ?? sortColumns[0].column}
+                    onChange={(event) => onRangeSortColumnChange(event.target.value)}
+                  >
+                    {sortColumns.some((col) => col.category)
+                      ? renderGroupedOptions(sortColumns.map((col) => ({
+                        value: col.column,
+                        label: col.label,
+                        category: col.category,
+                      })))
+                      : sortColumns.map((col) => (
+                        <option key={col.column} value={col.column}>
+                          {col.label}
+                        </option>
+                      ))
+                    }
+                  </select>
+                </>
+              )}
             </div>
           </section>
         )}

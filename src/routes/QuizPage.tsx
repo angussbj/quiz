@@ -101,9 +101,25 @@ interface QuizPageLoadedProps {
 }
 
 function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPageLoadedProps) {
+  // Collect CSV column keys referenced by selectToggle options (for data display).
+  // Only these columns are carried on elements as dataColumns.
+  const dataColumnKeys = useMemo(() => {
+    const toggles = definition.selectToggles;
+    if (!toggles?.length) return undefined;
+    const keys = new Set<string>();
+    for (const toggle of toggles) {
+      for (const option of toggle.options) {
+        if (option.value !== 'none') {
+          keys.add(option.value);
+        }
+      }
+    }
+    return keys.size > 0 ? Array.from(keys) : undefined;
+  }, [definition.selectToggles]);
+
   const elements = useMemo(
-    () => buildElements(definition.visualizationType, rows, definition.columnMappings, definition.timeScale),
-    [definition.visualizationType, rows, definition.columnMappings, definition.timeScale],
+    () => buildElements(definition.visualizationType, rows, definition.columnMappings, definition.timeScale, dataColumnKeys),
+    [definition.visualizationType, rows, definition.columnMappings, definition.timeScale, dataColumnKeys],
   );
 
   const embeddedLakePaths = useMemo(() => {
@@ -159,7 +175,13 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         modeConstraints={definition.modeConstraints}
         rangeColumn={definition.rangeColumn}
         rangeLabel={definition.rangeLabel}
-        rangeMax={definition.rangeColumn ? rows.length : undefined}
+        rangeMax={(definition.rangeColumn || definition.orderedRecallSortColumns?.length) ? elements.length : undefined}
+        sortColumns={definition.orderedRecallSortColumns}
+        elements={elements}
+        tributaryColumn={definition.tributaryColumn}
+        distributaryColumn={definition.distributaryColumn}
+        segmentColumn={definition.segmentColumn}
+        toggleControlledFilter={definition.toggleControlledFilter}
         groupFilterColumn={definition.groupFilterColumn}
         groupFilterLabel={definition.groupFilterLabel}
         availableGroups={availableGroups}
@@ -179,7 +201,9 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             lakePaths={allLakePaths}
             backgroundLabels={backgroundLabels}
             rangeColumn={definition.rangeColumn}
+            sortColumns={definition.orderedRecallSortColumns}
             groupFilterColumn={definition.groupFilterColumn}
+            toggleControlledFilter={definition.toggleControlledFilter}
             hideFilteredElements={definition.hideFilteredElements}
             hideUnfocusedElements={definition.hideUnfocusedElements}
             tributaryColumn={definition.tributaryColumn}

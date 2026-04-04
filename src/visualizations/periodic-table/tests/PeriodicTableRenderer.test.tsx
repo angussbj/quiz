@@ -29,7 +29,8 @@ afterEach(() => {
   mockScale = 1;
 });
 
-function makeElement(overrides: Partial<GridElement> = {}): GridElement {
+function makeElement(overrides: Partial<GridElement> & { dataColumns?: Readonly<Record<string, string>> } = {}): GridElement {
+  const { dataColumns, ...gridOverrides } = overrides;
   return {
     id: 'H',
     label: 'Hydrogen',
@@ -43,14 +44,17 @@ function makeElement(overrides: Partial<GridElement> = {}): GridElement {
     trueRow: 0,
     trueColumn: 0,
     atomicWeight: '1.008',
-    halfLifeSeconds: undefined,
-    density: 0.00008988,
-    electronegativity: 2.2,
-    standardState: 'gas',
-    yearDiscovered: 1766,
-    meltingPoint: 14.01,
-    boilingPoint: 20.28,
-    ...overrides,
+    dataColumns: dataColumns ?? {
+      half_life: '',
+      density: '0.00008988',
+      electronegativity: '2.2',
+      standard_state: 'gas',
+      year_discovered: '1766',
+      melting_point: '14.01',
+      boiling_point: '20.28',
+      cost_usd_per_kg: '1.39',
+    },
+    ...gridOverrides,
   };
 }
 
@@ -288,21 +292,21 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents).toContain('1.008');
   });
 
-  it('shows "Stable" for half-life when element data is set to half-life', () => {
+  it('shows dash for half-life when element has no half_life data', () => {
     mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
+          elements: [makeElement({ id: 'H', dataColumns: {} })],
           elementStates: { H: 'context' },
           toggles: { showSymbols: false },
-          selectValues: { elementData: 'half-life' },
+          selectValues: { elementData: 'half_life' },
         })}
       />,
     );
     const texts = container.querySelectorAll('text');
     const textContents = Array.from(texts).map((t) => t.textContent);
-    expect(textContents).toContain('Stable');
+    expect(textContents).toContain('—');
   });
 
   it('shows formatted half-life for radioactive element', () => {
@@ -310,10 +314,10 @@ describe('PeriodicTableRenderer', () => {
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elements: [makeElement({ id: 'Tc', halfLifeSeconds: 1.325e14 })],
+          elements: [makeElement({ id: 'Tc', dataColumns: { half_life: '1.325e14' } })],
           elementStates: { Tc: 'context' },
           toggles: { showSymbols: false },
-          selectValues: { elementData: 'half-life' },
+          selectValues: { elementData: 'half_life' },
         })}
       />,
     );
@@ -328,7 +332,7 @@ describe('PeriodicTableRenderer', () => {
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elements: [makeElement({ id: 'H', halfLifeSeconds: undefined })],
+          elements: [makeElement({ id: 'H', dataColumns: {} })],
           elementStates: { H: 'context' },
           toggles: { showSymbols: false },
           selectValues: { elementData: 'none' },
@@ -337,7 +341,7 @@ describe('PeriodicTableRenderer', () => {
     );
     const texts = container.querySelectorAll('text');
     const textContents = Array.from(texts).map((t) => t.textContent);
-    expect(textContents).not.toContain('Stable');
+    expect(textContents).not.toContain('—');
   });
 
   it('shows density when element data is set to density', () => {
@@ -345,7 +349,7 @@ describe('PeriodicTableRenderer', () => {
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elements: [makeElement({ id: 'Fe', density: 7.874 })],
+          elements: [makeElement({ id: 'Fe', dataColumns: { density: '7.874' } })],
           elementStates: { Fe: 'context' },
           toggles: { showSymbols: false },
           selectValues: { elementData: 'density' },
@@ -357,15 +361,15 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents.some((t) => t !== null && t.includes('g/cm³'))).toBe(true);
   });
 
-  it('shows state when element data is set to state', () => {
+  it('shows state when element data is set to standard_state', () => {
     mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elements: [makeElement({ id: 'H', standardState: 'gas' })],
+          elements: [makeElement({ id: 'H', dataColumns: { standard_state: 'gas' } })],
           elementStates: { H: 'context' },
           toggles: { showSymbols: false },
-          selectValues: { elementData: 'state' },
+          selectValues: { elementData: 'standard_state' },
         })}
       />,
     );
@@ -374,15 +378,15 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents).toContain('Gas');
   });
 
-  it('shows melting point when element data is set to melting-point', () => {
+  it('shows melting point when element data is set to melting_point', () => {
     mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elements: [makeElement({ id: 'H', meltingPoint: 14.01 })],
+          elements: [makeElement({ id: 'H', dataColumns: { melting_point: '14.01' } })],
           elementStates: { H: 'context' },
           toggles: { showSymbols: false },
-          selectValues: { elementData: 'melting-point' },
+          selectValues: { elementData: 'melting_point' },
         })}
       />,
     );
@@ -391,15 +395,15 @@ describe('PeriodicTableRenderer', () => {
     expect(textContents.some((t) => t !== null && t.includes('K'))).toBe(true);
   });
 
-  it('shows boiling point when element data is set to boiling-point', () => {
+  it('shows boiling point when element data is set to boiling_point', () => {
     mockScale = ZOOM_DETAIL_THRESHOLD + 0.5;
     const { container } = render(
       <PeriodicTableRenderer
         {...makeProps({
-          elements: [makeElement({ id: 'H', boilingPoint: 20.28 })],
+          elements: [makeElement({ id: 'H', dataColumns: { boiling_point: '20.28' } })],
           elementStates: { H: 'context' },
           toggles: { showSymbols: false },
-          selectValues: { elementData: 'boiling-point' },
+          selectValues: { elementData: 'boiling_point' },
         })}
       />,
     );

@@ -1,33 +1,32 @@
-import type { GridElement } from './GridElement';
 import { isGridElement } from './GridElement';
 import type { VisualizationElement } from '../VisualizationElement';
+import { computeAdaptiveScale } from '../../utilities/adaptiveScale';
 
-export type ElementColorField =
-  | 'category' | 'density' | 'electronegativity' | 'melting-point'
-  | 'boiling-point' | 'year-discovered' | 'half-life';
-
-const ELEMENT_COLOR_FIELDS: ReadonlyArray<ElementColorField> = [
-  'category', 'density', 'electronegativity', 'melting-point', 'boiling-point',
-  'year-discovered', 'half-life',
+/** Valid color field values — CSV column names or 'category'. */
+const ELEMENT_COLOR_FIELDS: ReadonlyArray<string> = [
+  'category', 'density', 'electronegativity', 'melting_point', 'boiling_point',
+  'year_discovered', 'half_life', 'cost_usd_per_kg',
 ];
 
-export function toElementColorField(value: string): ElementColorField | undefined {
+export function toElementColorField(value: string): string | undefined {
   return ELEMENT_COLOR_FIELDS.find((f) => f === value);
 }
 
-function getNumericValue(element: GridElement, field: Exclude<ElementColorField, 'category'>): number | undefined {
-  switch (field) {
-    case 'density': return element.density;
-    case 'electronegativity': return element.electronegativity;
-    case 'melting-point': return element.meltingPoint;
-    case 'boiling-point': return element.boilingPoint;
-    case 'year-discovered': return element.yearDiscovered;
-    case 'half-life': {
-      if (element.halfLifeSeconds === undefined) return undefined;
-      if (element.halfLifeSeconds <= 0) return 0;
-      return Math.log10(element.halfLifeSeconds);
-    }
+/** Get the numeric value for a color scale field from an element's dataColumns. */
+function getNumericValue(element: VisualizationElement, column: string): number | undefined {
+  const raw = element.dataColumns?.[column];
+  if (raw === undefined || raw === '') return undefined;
+
+  // Strip approximate/estimate markers for numeric parsing
+  const stripped = raw.replace(/^~/, '').replace(/\?$/, '');
+  const value = parseFloat(stripped);
+  if (isNaN(value)) return undefined;
+
+  // Use log scale for half-life and cost (huge range of values)
+  if (column === 'half_life' || column === 'cost_usd_per_kg') {
+    return value <= 0 ? 0 : Math.log10(value);
   }
+  return value;
 }
 
 /** HSL color string. */
@@ -40,10 +39,28 @@ const LIGHT_LIGHTNESS = 82;
 /** Dark-mode lightness for deep fills (light text on dark bg). */
 const DARK_LIGHTNESS = 28;
 
-/** Gradient color: blue (240°) → red (0°) via green. */
+/**
+ * Gradient color mapping across three ranges:
+ *   [-1, 0] → deep purple (270°) to blue-purple (255°) for low outliers
+ *   [0,  1] → blue (240°) → red (0°) via green for normal values
+ *   [1,  2] → red-pink (345°) to magenta (320°) for high outliers
+ */
 function gradientColor(t: number, darkMode: boolean): string {
+  const lightness = darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS;
+  if (t > 1) {
+    // High outlier: red-pink (345°) → magenta (320°)
+    const outlierT = Math.min(t - 1, 1);
+    const hue = 345 - 25 * outlierT;
+    return hslColor(hue, 50, lightness);
+  }
+  if (t < 0) {
+    // Low outlier: blue-purple (255°) → deep purple (270°)
+    const outlierT = Math.min(-t, 1);
+    const hue = 255 + 15 * outlierT;
+    return hslColor(hue, 50, lightness);
+  }
   const hue = 240 * (1 - t);
-  return hslColor(hue, 50, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
+  return hslColor(hue, 50, lightness);
 }
 
 /** Fixed category colors — 8 distinguishable hues. */
@@ -91,34 +108,29 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, da
   return { get: (id) => colorMap.get(id) };
 }
 
-/** Compute numeric-gradient-based color map. */
+/** Compute numeric-gradient-based color map using dataColumns and adaptive scaling. */
 function computeGradientColors(
-  elements: ReadonlyArray<GridElement>,
-  field: Exclude<ElementColorField, 'category'>,
+  elements: ReadonlyArray<VisualizationElement>,
+  column: string,
   darkMode: boolean,
 ): ElementColorMap {
-  const values = new Map<string, number>();
-  let min = Infinity;
-  let max = -Infinity;
+  const valuesByElement = new Map<string, number>();
 
   for (const element of elements) {
-    const value = getNumericValue(element, field);
+    const value = getNumericValue(element, column);
     if (value !== undefined) {
-      values.set(element.id, value);
-      if (value < min) min = value;
-      if (value > max) max = value;
+      valuesByElement.set(element.id, value);
     }
   }
 
-  const range = max - min;
+  const numericValues = [...valuesByElement.values()];
+  const scale = computeAdaptiveScale(numericValues);
 
   return {
     get(elementId: string): string | undefined {
-      const value = values.get(elementId);
+      const value = valuesByElement.get(elementId);
       if (value === undefined) return undefined;
-      if (range <= 0) return gradientColor(0.5, darkMode);
-      const t = (value - min) / range;
-      return gradientColor(t, darkMode);
+      return gradientColor(scale.transform(value), darkMode);
     },
   };
 }
@@ -130,12 +142,11 @@ function computeGradientColors(
  */
 export function computeElementColors(
   elements: ReadonlyArray<VisualizationElement>,
-  field: ElementColorField,
+  field: string,
   darkMode: boolean,
 ): ElementColorMap {
   if (field === 'category') {
     return computeCategoryColors(elements, darkMode);
   }
-  const gridElements = elements.filter(isGridElement);
-  return computeGradientColors(gridElements, field, darkMode);
+  return computeGradientColors(elements, field, darkMode);
 }

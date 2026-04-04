@@ -28,7 +28,7 @@ function buildCategoryBreadcrumbs(pathname: string): ReadonlyArray<BreadcrumbSeg
   let urlPath = '';
   for (const part of parts) {
     urlPath += `/${part}`;
-    const label = decodeURIComponent(part);
+    const label = decodeURIComponent(part).replace(/-/g, ' ');
     const capitalized = label.charAt(0).toUpperCase() + label.slice(1);
     segments.push({ label: capitalized, path: urlPath });
   }

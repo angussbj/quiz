@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { assetPath } from '../../utilities/assetPath';
 import type { VisualizationRendererProps, ClusteringConfig } from '../VisualizationRendererProps';
 import type { ElementVisualState, ViewBoxPosition, VisualizationElement } from '../VisualizationElement';
@@ -13,7 +13,11 @@ import { MapCountryLabels } from './MapCountryLabels';
 import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
 import { MapElementShapes } from './MapElementOverlays';
+import { MapHoverOverlay } from './MapHoverOverlay';
 import { useDragDetector } from './useDragDetector';
+import { useStrokePathCache } from './useStrokePathCache';
+import { findClosestStrokeElement } from './findClosestStrokeElement';
+import { formatDataValue } from '../formatDataValue';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -26,6 +30,9 @@ const DEFAULT_MAP_CLUSTERING: ClusteringConfig = {
 
 /** City dot radius in screen pixels. Converted to viewBox units at render time. */
 const DOT_SCREEN_RADIUS = 5;
+
+/** Select toggle keys used for ordering, not data display. */
+const ORDERING_KEYS = new Set(['orderBy', 'sortOrder', 'missingValues', 'rangeSortColumn']);
 export function MapRenderer({
   elements,
   elementStates,
@@ -43,6 +50,8 @@ export function MapRenderer({
   svgOverlay,
   initialCameraPosition,
   putInView,
+  selectValues,
+  selectValueLabels,
   elementStateColorOverrides,
   autoRevealElementIds,
 }: VisualizationRendererProps) {
@@ -84,6 +93,8 @@ export function MapRenderer({
         uniqueGroups={uniqueGroups}
         showRegionColors={showRegionColors}
         elementStateColorOverrides={elementStateColorOverrides}
+        selectValues={selectValues}
+        selectValueLabels={selectValueLabels}
       />
       {svgOverlay}
       <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
@@ -135,6 +146,8 @@ interface MapContentProps {
   readonly uniqueGroups: ReadonlyArray<string>;
   readonly showRegionColors: boolean;
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
+  readonly selectValues?: Readonly<Record<string, string>>;
+  readonly selectValueLabels?: Readonly<Record<string, string>>;
 }
 
 const MapContent = memo(function MapContent({
@@ -153,9 +166,87 @@ const MapContent = memo(function MapContent({
   uniqueGroups,
   showRegionColors,
   elementStateColorOverrides,
+  selectValues,
+  selectValueLabels,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { onPointerDown, isDrag } = useDragDetector();
+  const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
+
+  // Only show the hover overlay for clickable elements (identify mode etc.),
+  // not for hover-only elements (Wikipedia preview in free recall mode).
+  const handleElementHoverStart = useCallback((elementId: string) => {
+    if (onElementClick) setHoveredElementId(elementId);
+    onElementHoverStart?.(elementId);
+  }, [onElementHoverStart, onElementClick]);
+
+  const handleElementHoverEnd = useCallback(() => {
+    setHoveredElementId(null);
+    onElementHoverEnd?.();
+  }, [onElementHoverEnd]);
+
+  // ── Closest-path detection for stroke elements (rivers) ──────────────
+  const strokePathCache = useStrokePathCache(elements);
+
+  // Candidate set: stroke elements that are interactive and not hidden/clustered
+  const strokeCandidateIds = useMemo(() => {
+    if (!onElementClick && !onElementHoverStart) return new Set<string>();
+    const ids = new Set<string>();
+    for (const el of elements) {
+      if (!isMapElement(el) || el.pathRenderStyle !== 'stroke') continue;
+      if (clusteredElementIds.has(el.id)) continue;
+      const state = elementStates[el.id];
+      if (state === 'hidden') continue;
+      ids.add(el.id);
+    }
+    return ids;
+  }, [elements, elementStates, clusteredElementIds, onElementClick, onElementHoverStart]);
+
+  // Max detection distance: 20 screen pixels converted to viewBox units (squared)
+  const STROKE_HIT_THRESHOLD_PX = 20;
+  const pixelsPerViewBoxUnit = scale * basePixelsPerViewBoxUnit;
+  const maxDistanceVB = pixelsPerViewBoxUnit > 0 ? STROKE_HIT_THRESHOLD_PX / pixelsPerViewBoxUnit : 2;
+  const maxDistanceSq = maxDistanceVB * maxDistanceVB;
+
+  /** Convert a mouse event to viewBox coordinates using the SVG CTM. */
+  const toViewBox = useCallback((event: React.MouseEvent): ViewBoxPosition | undefined => {
+    const svg = (event.currentTarget as SVGElement).ownerSVGElement ?? (event.currentTarget as unknown as SVGSVGElement);
+    if (!svg.createSVGPoint) return undefined;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return undefined;
+    const svgPoint = point.matrixTransform(ctm.inverse());
+    return { x: svgPoint.x, y: svgPoint.y };
+  }, []);
+
+  // Track which stroke element is currently hovered via closest-path detection
+  const strokeHoveredRef = useRef<string | null>(null);
+
+  const handleStrokeMouseMove = useCallback((event: React.MouseEvent<SVGGElement>) => {
+    if (strokeCandidateIds.size === 0) return;
+    const vbPoint = toViewBox(event);
+    if (!vbPoint) return;
+
+    const closestId = findClosestStrokeElement(vbPoint, strokePathCache, strokeCandidateIds, maxDistanceSq);
+    const prevId = strokeHoveredRef.current;
+
+    if (closestId === prevId) return; // no change
+
+    // End hover on previous element
+    if (prevId !== null) {
+      strokeHoveredRef.current = null;
+      handleElementHoverEnd();
+    }
+
+    // Start hover on new element
+    if (closestId !== undefined) {
+      strokeHoveredRef.current = closestId;
+      handleElementHoverStart(closestId);
+    }
+  }, [strokeCandidateIds, strokePathCache, maxDistanceSq, toViewBox, handleElementHoverStart, handleElementHoverEnd]);
+
 
   const dotRadius = DOT_SCREEN_RADIUS / (scale * basePixelsPerViewBoxUnit);
 
@@ -196,6 +287,22 @@ const MapContent = memo(function MapContent({
     return [...filteredBg, ...elementPolygonLabels];
   }, [backgroundLabels, elementPolygonLabels]);
 
+  // Sort city elements so highlighted render on top of interactive, which render on
+  // top of non-interactive. SVG paint order = z-order, so last painted = on top.
+  const sortedCityElements = useMemo(() => {
+    const cityElements = elements.filter((el) => {
+      if (isMapElement(el) && el.pathRenderStyle === 'stroke') return false;
+      return true;
+    });
+    return cityElements.toSorted((a, b) => {
+      const stateA = elementStates[a.id];
+      const stateB = elementStates[b.id];
+      const priorityA = stateA === 'highlighted' ? 2 : a.interactive ? 1 : 0;
+      const priorityB = stateB === 'highlighted' ? 2 : b.interactive ? 1 : 0;
+      return priorityA - priorityB;
+    });
+  }, [elements, elementStates]);
+
   const hasShowCityDotsToggle = 'showCityDots' in toggles;
   const visibleDotPositions = useMemo(
     () => {
@@ -215,29 +322,74 @@ const MapContent = memo(function MapContent({
     [elements, elementToggles, toggles, elementStates, hasShowCityDotsToggle],
   );
 
+  // ── Data display: find active data column and build element→value map ──
+  // Select toggles like 'countryData' or 'riverData' have values that are CSV column names.
+  // Find the first one that's set to something other than 'none'.
+  const activeDataColumnName = useMemo(() => {
+    if (!selectValues || !selectValueLabels) return undefined;
+    for (const [key, value] of Object.entries(selectValues)) {
+      if (ORDERING_KEYS.has(key)) continue;
+      if (value && value !== 'none' && selectValueLabels[value]) return value;
+    }
+    return undefined;
+  }, [selectValues, selectValueLabels]);
+  const activeDataColumnLabel = activeDataColumnName ? selectValueLabels?.[activeDataColumnName] : undefined;
+
+  // Build maps of element id → formatted data value and element name → formatted data value
+  const { elementDataValues, elementNameDataValues } = useMemo(() => {
+    if (!activeDataColumnName || !activeDataColumnLabel) {
+      return { elementDataValues: undefined, elementNameDataValues: undefined };
+    }
+    const idMap: Record<string, string> = {};
+    const nameMap: Record<string, string> = {};
+    for (const el of elements) {
+      const raw = el.dataColumns?.[activeDataColumnName];
+      const formatted = formatDataValue(raw, activeDataColumnLabel);
+      if (formatted !== '—') {
+        idMap[el.id] = formatted;
+        nameMap[el.label] = formatted;
+      }
+    }
+    const hasValues = Object.keys(idMap).length > 0;
+    return {
+      elementDataValues: hasValues ? idMap : undefined,
+      elementNameDataValues: hasValues ? nameMap : undefined,
+    };
+  }, [elements, activeDataColumnName, activeDataColumnLabel]);
+
   const handleBackgroundClick = useCallback(
     (event: React.MouseEvent<SVGGElement>) => {
-      if (!onPositionClick) return;
       if (isDrag(event)) return;
-      const svg = (event.currentTarget as SVGElement).ownerSVGElement;
-      if (!svg) return;
-      const point = svg.createSVGPoint();
-      point.x = event.clientX;
-      point.y = event.clientY;
-      const ctm = svg.getScreenCTM();
-      if (!ctm) return;
-      const svgPoint = point.matrixTransform(ctm.inverse());
-      onPositionClick({ x: svgPoint.x, y: svgPoint.y });
+
+      // Check for stroke element click first (rivers)
+      if (onElementClick && strokeCandidateIds.size > 0) {
+        const vbPoint = toViewBox(event);
+        if (vbPoint) {
+          const closestId = findClosestStrokeElement(vbPoint, strokePathCache, strokeCandidateIds, maxDistanceSq);
+          if (closestId !== undefined) {
+            event.stopPropagation();
+            onElementClick(closestId);
+            return;
+          }
+        }
+      }
+
+      if (!onPositionClick) return;
+      const vbPoint = toViewBox(event);
+      if (vbPoint) {
+        onPositionClick(vbPoint);
+      }
     },
-    [onPositionClick, isDrag],
+    [onPositionClick, onElementClick, isDrag, strokeCandidateIds, strokePathCache, maxDistanceSq, toViewBox],
   );
 
   return (
-    <g onPointerDown={onPointerDown} onClick={handleBackgroundClick}>
-      {/* Invisible rect to catch clicks on empty SVG space.
-          Without this, clicks on areas with no visible children
-          don't trigger the <g>'s onClick handler. */}
-      {onPositionClick && (
+    <g onPointerDown={onPointerDown} onClick={handleBackgroundClick} onMouseMove={handleStrokeMouseMove}>
+      {/* Invisible rect to catch clicks and mousemove on empty SVG space.
+          Without this, events on areas with no visible children
+          don't trigger the <g>'s handlers. Also needed for stroke
+          closest-path detection (mousemove + click). */}
+      {(onPositionClick || strokeCandidateIds.size > 0) && (
         <rect
           x={-1e4} y={-1e4} width={2e4} height={2e4}
           fill="transparent"
@@ -278,13 +430,17 @@ const MapContent = memo(function MapContent({
         elementStates={elementStates}
         uniqueGroups={uniqueGroups}
         onElementClick={onElementClick}
-        onElementHoverStart={onElementHoverStart}
-        onElementHoverEnd={onElementHoverEnd}
+        onElementHoverStart={onElementHoverStart ? handleElementHoverStart : undefined}
+        onElementHoverEnd={onElementHoverStart ? handleElementHoverEnd : undefined}
         showRegionColors={showRegionColors}
         elementStateColorOverrides={elementStateColorOverrides}
         isDrag={isDrag}
         clusteredElementIds={clusteredElementIds}
       />
+
+      {/* Semi-transparent overlay on the hovered element — avoids modifying
+          original element styles which would trigger SVG-wide repaint. */}
+      <MapHoverOverlay elements={elements} hoveredElementId={hoveredElementId} />
 
       {/* Country/region name labels and flags — background context labels merged with polygon
           quiz element labels, run through unified placement (polylabel, collision detection). */}
@@ -296,17 +452,20 @@ const MapContent = memo(function MapContent({
           avoidPoints={visibleDotPositions}
           elementNameToState={elementNameToState}
           nameToElementId={nameToElementId}
-          onElementHoverStart={onElementHoverStart}
-          onElementHoverEnd={onElementHoverEnd}
+          onElementHoverStart={onElementHoverStart ? handleElementHoverStart : undefined}
+          onElementHoverEnd={onElementHoverStart ? handleElementHoverEnd : undefined}
+          dataValues={elementNameDataValues}
         />
       )}
 
-      {/* River name labels (for stroke-style path elements like rivers) */}
+      {/* River name labels and data values (for stroke-style path elements like rivers) */}
       {elements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!isMapElement(element) || element.pathRenderStyle !== 'stroke') return null;
         const state = elementStates[element.id];
-        if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showRiverNames'))) return null;
+        const showName = shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showRiverNames'));
+        const dataValue = elementDataValues?.[element.id];
+        if (!showName && !dataValue) return null;
         const color = (state !== undefined && state !== 'hidden')
           ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
           : 'var(--color-text-primary)';
@@ -315,32 +474,53 @@ const MapContent = memo(function MapContent({
         const labelOffset = 0.8; // viewBox units
         const labelProps = computeLabelProps(anchor, pos, labelOffset);
         return (
-          <text
-            key={`river-label-${element.id}`}
-            {...labelProps}
-            className={onElementHoverStart ? styles.riverLabelHoverable : styles.riverLabel}
-            style={{
-              fill: color,
-              strokeOpacity: 0.75,
-              paintOrder: 'stroke',
-              stroke: 'var(--color-label-halo)',
-              strokeWidth: 0.5,
-              strokeLinejoin: 'round',
-            }}
-            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverEnd}
-          >
-            {element.label}
-          </text>
+          <g key={`river-label-${element.id}`}>
+            {showName && (
+              <text
+                {...labelProps}
+                className={onElementHoverStart ? styles.riverLabelHoverable : styles.riverLabel}
+                style={{
+                  fill: color,
+                  strokeOpacity: 0.75,
+                  paintOrder: 'stroke',
+                  stroke: 'var(--color-label-halo)',
+                  strokeWidth: 0.5,
+                  strokeLinejoin: 'round',
+                }}
+                onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
+                onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
+              >
+                {element.label}
+              </text>
+            )}
+            {dataValue !== undefined && (
+              <text
+                {...labelProps}
+                y={labelProps.y + (showName ? 1.0 : 0)}
+                className={styles.riverLabel}
+                style={{
+                  fill: color,
+                  fontSize: '75%',
+                  strokeOpacity: 0.75,
+                  paintOrder: 'stroke',
+                  stroke: 'var(--color-label-halo)',
+                  strokeWidth: 0.4,
+                  strokeLinejoin: 'round',
+                  opacity: 0.7,
+                }}
+              >
+                {dataValue}
+              </text>
+            )}
+          </g>
         );
       })}
 
       {/* Flag images near city dots (capitals quizzes — not for stroke-style paths like rivers) */}
-      {elements.map((element) => {
+      {sortedCityElements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
         if (!elementToggle(elementToggles, toggles, element.id, 'showMapFlags')) return null;
         if (!isMapElement(element) || !element.code) return null;
-        if (element.pathRenderStyle === 'stroke') return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
         const flagHeight = dotRadius * 4;
@@ -359,11 +539,10 @@ const MapContent = memo(function MapContent({
       })}
 
       {/* City dot markers (rendered last = on top of flags — not for stroke-style paths like rivers or large fill polygons) */}
-      {elements.map((element) => {
+      {sortedCityElements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
-        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         // Skip dots for fill-style polygon elements unless the polygon is tiny
-        if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') {
+        if (isMapElement(element) && element.svgPathData) {
           const { minX, minY, maxX, maxY } = element.viewBoxBounds;
           const dx = maxX - minX;
           const dy = maxY - minY;
@@ -392,18 +571,17 @@ const MapContent = memo(function MapContent({
                   }
                 : undefined
             }
-            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverEnd}
+            onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
           />
         );
       })}
 
       {/* City name labels (rendered on top of dots — not for stroke-style paths like rivers or fill shapes like countries) */}
-      {elements.map((element) => {
+      {sortedCityElements.map((element) => {
         if (clusteredElementIds.has(element.id)) return null;
-        if (isMapElement(element) && element.pathRenderStyle === 'stroke') return null;
         // Shape elements (countries/states) use the "Region polygon labels" section above
-        if (isMapElement(element) && element.svgPathData && element.pathRenderStyle !== 'stroke') return null;
+        if (isMapElement(element) && element.svgPathData) return null;
         const state = elementStates[element.id];
         if (!shouldShowLabel(state, elementToggle(elementToggles, toggles, element.id, 'showCityNames'))) return null;
         const offset = dotRadius * 1.5;
@@ -415,8 +593,8 @@ const MapContent = memo(function MapContent({
             {...labelProps}
             className={onElementHoverStart ? styles.cityLabelHoverable : styles.cityLabel}
             style={{ fontSize: `${fontSize}px` }}
-            onMouseEnter={onElementHoverStart ? () => onElementHoverStart(element.id) : undefined}
-            onMouseLeave={onElementHoverEnd}
+            onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
+            onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
           >
             {element.label}
           </text>
