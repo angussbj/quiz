@@ -42,7 +42,7 @@ export interface TogglePreset {
 export interface SelectToggleDefinition {
   readonly key: string;
   readonly label: string;
-  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string; readonly infoUrl?: string }>;
+  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string; readonly infoUrl?: string; readonly category?: string }>;
   readonly defaultValue: string;
   readonly group: string;
   /** How to render: 'segmented' (default) or 'dropdown'. */

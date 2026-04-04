@@ -166,6 +166,8 @@ export interface SortColumnDefinition {
   readonly label: string;
   /** URL for a methodology/source page explaining this metric. Rendered as a "?" link next to the dropdown. */
   readonly infoUrl?: string;
+  /** Category for grouping in dropdown optgroups (e.g. 'Demographics', 'Economy'). Omit for flat dropdowns. */
+  readonly category?: string;
   /**
    * How to aggregate values when elements are merged (e.g. tributaries into parent river).
    * - 'parent' (default): use the parent element's value, ignore merged children.
