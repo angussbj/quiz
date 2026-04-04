@@ -130,23 +130,37 @@ export function QuizSetupPanel({
     return filtered.length > 0 ? filtered : undefined;
   }, [selectToggles]);
 
-  // Compute which orderBy columns have no missing numeric values.
-  // Used to disable the "Missing values" toggle when it's irrelevant.
-  const completeColumns = useMemo(() => {
-    if (!dataRows?.length || orderingToggles.length === 0) return new Set<string>();
+  // Compute which orderBy columns have no missing numeric values, and coverage per column.
+  // Used to disable the "Missing values" toggle when it's irrelevant,
+  // and to show coverage indicators in the ordering section.
+  const { completeColumns, coverageMap } = useMemo(() => {
+    const empty = { completeColumns: new Set<string>(), coverageMap: new Map<string, { readonly valid: number; readonly total: number }>() };
+    if (!dataRows?.length || orderingToggles.length === 0) return empty;
     const orderByToggle = orderingToggles.find((t) => t.key === 'orderBy');
-    if (!orderByToggle) return new Set<string>();
+    if (!orderByToggle) return empty;
     const complete = new Set<string>();
+    const coverage = new Map<string, { readonly valid: number; readonly total: number }>();
+    // Count only rows that have at least one stat column populated (excludes territories)
+    const quizRows = dataRows.filter((row) =>
+      orderByToggle.options.some((opt) => {
+        const val = row[opt.value];
+        return val !== undefined && val !== '' && val !== '-' && !Number.isNaN(Number(val));
+      }),
+    );
+    const total = quizRows.length;
     for (const option of orderByToggle.options) {
       const col = option.value;
-      const allPresent = dataRows.every((row) => {
+      let valid = 0;
+      for (const row of quizRows) {
         const val = row[col];
-        if (val === undefined || val === '' || val === '-') return false;
-        return !Number.isNaN(Number(val));
-      });
-      if (allPresent) complete.add(col);
+        if (val !== undefined && val !== '' && val !== '-' && !Number.isNaN(Number(val))) {
+          valid++;
+        }
+      }
+      if (valid === total) complete.add(col);
+      coverage.set(col, { valid, total });
     }
-    return complete;
+    return { completeColumns: complete, coverageMap: coverage };
   }, [dataRows, orderingToggles]);
 
   const selectedOrderByColumn = selectValues?.['orderBy']
@@ -157,6 +171,9 @@ export function QuizSetupPanel({
   const orderByHasNoMissing = selectedOrderByColumn
     ? completeColumns.has(selectedOrderByColumn)
     : false;
+  const selectedCoverage = selectedOrderByColumn
+    ? coverageMap.get(selectedOrderByColumn)
+    : undefined;
 
   const allGroupsSelected = availableGroups && selectedGroups
     && selectedGroups.size === availableGroups.length;
@@ -226,6 +243,11 @@ export function QuizSetupPanel({
                 return row;
               })}
             </div>
+            {selectedCoverage && selectedCoverage.valid < selectedCoverage.total && (
+              <p className={styles.coverageNote}>
+                {selectedCoverage.valid} of {selectedCoverage.total} countries have data
+              </p>
+            )}
           </section>
         )}
 
