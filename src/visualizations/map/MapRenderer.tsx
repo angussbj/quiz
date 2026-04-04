@@ -217,14 +217,13 @@ const MapContent = memo(function MapContent({
       if (isMapElement(el) && el.pathRenderStyle === 'stroke') return false;
       return true;
     });
-    cityElements.sort((a, b) => {
+    return cityElements.toSorted((a, b) => {
       const stateA = elementStates[a.id];
       const stateB = elementStates[b.id];
       const priorityA = stateA === 'highlighted' ? 2 : a.interactive ? 1 : 0;
       const priorityB = stateB === 'highlighted' ? 2 : b.interactive ? 1 : 0;
       return priorityA - priorityB;
     });
-    return cityElements;
   }, [elements, elementStates]);
 
   const visibleDotPositions = useMemo(
