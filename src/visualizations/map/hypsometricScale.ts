@@ -4,31 +4,30 @@ export interface RgbColor {
   readonly b: number;
 }
 
-/** Maximum elevation for color mapping. */
+/** Minimum land elevation (Dead Sea shore). */
+const MIN_ELEVATION = -500;
+/** Maximum elevation (Everest). */
 const MAX_ELEVATION = 8849;
+
+export type ElevationScaling = 'sqrt' | 'linear';
 
 /**
  * Hue rotation color scale matching the periodic table's continuous gradient.
- * Maps elevation 0–8849m through:
+ * Maps elevation from MIN_ELEVATION to MAX_ELEVATION through:
  *   deep purple (280°) → blue (240°) → cyan (180°) → green (120°)
  *   → yellow (60°) → orange (30°) → red (0°) → pink/magenta (320°)
  *
- * Uses sqrt scaling so low elevations (Australian 1000m ranges) are
- * clearly differentiated from lowlands, while high elevations (Himalayas)
- * still have distinct colors.
+ * Supports negative elevations (below-sea-level land like Dead Sea, Death Valley).
  *
- * Saturation: 55%, Lightness: 48% — vivid enough to read as topography
- * while not clashing with UI elements.
+ * @param scaling - 'sqrt' compresses high elevations for better low-elevation
+ *   differentiation. 'linear' distributes colors evenly across the range.
  */
-export function elevationToRgb(elevation: number): RgbColor {
-  const clamped = Math.max(0, Math.min(elevation, MAX_ELEVATION));
-  // sqrt scaling: more color range at low elevations
-  const t = Math.sqrt(clamped / MAX_ELEVATION);
+export function elevationToRgb(elevation: number, scaling: ElevationScaling = 'sqrt'): RgbColor {
+  const clamped = Math.max(MIN_ELEVATION, Math.min(elevation, MAX_ELEVATION));
+  const normalized = (clamped - MIN_ELEVATION) / (MAX_ELEVATION - MIN_ELEVATION);
 
-  // Hue path: 280 → 240 → 180 → 120 → 60 → 0 → 320
-  // This wraps around the color wheel from purple through warm colors to magenta.
-  // t=0 → 280° (purple), t=1 → 320° (magenta)
-  // Linear interpolation through the stops:
+  const t = scaling === 'sqrt' ? Math.sqrt(normalized) : normalized;
+
   const hue = hueForT(t);
   const saturation = 55;
   const lightness = 48;
@@ -61,9 +60,8 @@ function hueForT(t: number): number {
       const [t1, h1] = stops[i];
       const frac = (t - t0) / (t1 - t0);
 
-      // For the red→magenta segment, we go through 360 (0→320 the short way around)
+      // For the red→magenta segment, go through 360 (0→320 the short way)
       if (h0 === 0 && h1 === 320) {
-        // Go 0 → 360 → 320 (i.e., through 360)
         return (360 + frac * (320 - 360)) % 360;
       }
 
