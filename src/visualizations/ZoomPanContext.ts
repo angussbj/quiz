@@ -12,6 +12,13 @@ export interface ZoomPanState {
   readonly basePixelsPerViewBoxUnit: number;
   /** The SVG viewBox string, for creating additional SVGs with matching coordinates. */
   readonly viewBoxString: string;
+  /** Visible portion of the SVG viewBox in viewBox coordinates. Updates on zoom/pan. */
+  readonly visibleViewport: {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  };
 }
 
 const ZoomPanContext = createContext<ZoomPanState>({
@@ -20,6 +27,7 @@ const ZoomPanContext = createContext<ZoomPanState>({
   clusters: [],
   basePixelsPerViewBoxUnit: 1,
   viewBoxString: '0 0 1 1',
+  visibleViewport: { x: 0, y: 0, width: 1, height: 1 },
 });
 
 export function useZoomPan(): ZoomPanState {

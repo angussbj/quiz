@@ -519,6 +519,24 @@ function ZoomPanInner({
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
 
+  const visibleViewport = useMemo(() => {
+    if (containerSize.width === 0 || basePixelsPerViewBoxUnit === 0) {
+      return { x: viewBox.x, y: viewBox.y, width: viewBox.width, height: viewBox.height };
+    }
+    const { posX, posY, scale } = currentTransform;
+    const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
+    const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
+    const offsetX = (containerSize.width - svgPixelWidth) / 2;
+    const offsetY = (containerSize.height - svgPixelHeight) / 2;
+
+    const visMinX = ((0 - posX) / scale - offsetX) / basePixelsPerViewBoxUnit + viewBox.x;
+    const visMinY = ((0 - posY) / scale - offsetY) / basePixelsPerViewBoxUnit + viewBox.y;
+    const visWidth = containerSize.width / (scale * basePixelsPerViewBoxUnit);
+    const visHeight = containerSize.height / (scale * basePixelsPerViewBoxUnit);
+
+    return { x: visMinX, y: visMinY, width: visWidth, height: visHeight };
+  }, [containerSize, currentTransform, basePixelsPerViewBoxUnit, viewBox]);
+
   const contextValue = useMemo(
     () => ({
       scale: quantisedScale,
@@ -526,8 +544,9 @@ function ZoomPanInner({
       clusters,
       basePixelsPerViewBoxUnit,
       viewBoxString,
+      visibleViewport,
     }),
-    [quantisedScale, clusteredElementIds, clusters, basePixelsPerViewBoxUnit, viewBoxString],
+    [quantisedScale, clusteredElementIds, clusters, basePixelsPerViewBoxUnit, viewBoxString, visibleViewport],
   );
 
   return (
