@@ -51,3 +51,16 @@ Polish, bug fixes, and new quiz content. Features 1–16 are done (docs for thei
 - River stroke width uses fixed viewBox units (0.15 visible, 2.0 hit area), matching how country borders work.
 - `renderShapeElements` renders shapes in state layers (default, incorrect, missed, context, correct, highlighted) so state-colored shapes aren't obscured by neighbours.
 **Notes for other features:** The `pathRenderStyle` pattern could be reused for other line-based geographic features (e.g. mountain ranges, coastlines).
+
+### 31. Mountain Ranges Quiz — DONE
+**Branch:** `worktree-angusj-mountain-ranges`
+**Scope:** Mountain ranges quiz with topographic elevation tile layer. Global DEM-based topography (ETOPO 2022, 60 arc-second) rendered as PNG tiles at 4 zoom levels (z0-z3, 43 tiles, ~4.4MB), loaded/unloaded based on viewport. ~63 mountain range polygons with DEM-verified centroids, invisible by default with low-opacity fills on quiz interactions. All map quizzes get an auto-injected "Topography" toggle (default off; mountain ranges default on). Four quiz modes: free recall, identify, locate (polygon-boundary), prompted recall. Ordered recall by peak elevation and area deferred to future rebase. Dark mode via CSS brightness filter on tiles.
+**Key design decisions:**
+- Topographic tiles use SVG `<image>` with bilinear interpolation for smooth zoom
+- Hypsometric color scale with 17 stops, dense at low elevations for good differentiation of low mountain ranges
+- Mountain range polygons are invisible-by-default with `elementStateColorOverrides: { default: 'transparent', context: 'transparent' }`
+- `elementFillOpacityOverrides` provides per-state opacity control (0.1 for answered states)
+- Visible viewport bounds exposed via ZoomPanContext for tile loading
+- Tile coordinate system: level N has 2^N columns × max(1, 2^(N-1)) rows
+- `showTopography` toggle auto-injected in `QuizPage.tsx` for all map quizzes; `topographyDefault` on `QuizDefinition` controls default
+**Notes for other features:** The topographic tile layer is available to all map quizzes via the Topography toggle. Future map projections will need tile system adaptation. Tile system supports arbitrary zoom levels — add z4+ by increasing MAX_LEVEL in `scripts/generateTopographyTiles.ts`.
