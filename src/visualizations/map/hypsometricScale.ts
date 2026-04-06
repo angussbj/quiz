@@ -11,13 +11,44 @@ const MAX_ELEVATION = 8849;
 
 export type ElevationScaling = 'sqrt' | 'linear';
 
+interface HslStop {
+  readonly t: number;
+  readonly h: number;
+  readonly s: number;
+  readonly l: number;
+}
+
 /**
- * Hue rotation color scale matching the periodic table's continuous gradient.
- * Maps elevation from MIN_ELEVATION to MAX_ELEVATION through:
- *   deep purple (280°) → blue (240°) → cyan (180°) → green (120°)
- *   → yellow (60°) → orange (30°) → red (0°) → pink/magenta (320°)
+ * Color stops defining the full HSL path from low to high elevation.
+ * t is the normalized+scaled position (0–1).
  *
- * Supports negative elevations (below-sea-level land like Dead Sea, Death Valley).
+ * Low–mid elevations: hue rotation at fixed S=55%, L=48%
+ *   purple → blue → cyan → green → yellow → orange → red
+ * High elevations: red darkens, then transitions through pink to white
+ *   dark red → dark pink → pink → light pink → near-white
+ */
+const HSL_STOPS: ReadonlyArray<HslStop> = [
+  { t: 0.00, h: 280, s: 55, l: 48 },  // deep purple
+  { t: 0.15, h: 240, s: 55, l: 48 },  // blue
+  { t: 0.30, h: 180, s: 55, l: 48 },  // cyan
+  { t: 0.45, h: 120, s: 55, l: 48 },  // green
+  { t: 0.60, h: 60,  s: 55, l: 48 },  // yellow
+  { t: 0.72, h: 30,  s: 55, l: 48 },  // orange
+  { t: 0.80, h: 5,   s: 55, l: 48 },  // red
+  { t: 0.86, h: 0,   s: 55, l: 30 },  // dark red
+  { t: 0.91, h: 340, s: 40, l: 50 },  // dark pink
+  { t: 0.95, h: 330, s: 35, l: 65 },  // pink
+  { t: 0.98, h: 320, s: 20, l: 80 },  // light pink
+  { t: 1.00, h: 320, s: 5,  l: 95 },  // near-white
+];
+
+/**
+ * Map elevation to RGB using an HSL hue rotation with varying
+ * saturation and lightness at high elevations.
+ *
+ * Low elevations use a purple→blue→green→yellow→orange→red hue path.
+ * High elevations (>5000m) darken through deep red, then transition
+ * through pink to near-white for the highest Himalayan peaks.
  *
  * @param scaling - 'sqrt' compresses high elevations for better low-elevation
  *   differentiation. 'linear' distributes colors evenly across the range.
@@ -25,50 +56,40 @@ export type ElevationScaling = 'sqrt' | 'linear';
 export function elevationToRgb(elevation: number, scaling: ElevationScaling = 'sqrt'): RgbColor {
   const clamped = Math.max(MIN_ELEVATION, Math.min(elevation, MAX_ELEVATION));
   const normalized = (clamped - MIN_ELEVATION) / (MAX_ELEVATION - MIN_ELEVATION);
-
   const t = scaling === 'sqrt' ? Math.sqrt(normalized) : normalized;
 
-  const hue = hueForT(t);
-  const saturation = 55;
-  const lightness = 48;
-
-  return hslToRgb(hue, saturation, lightness);
+  const { h, s, l } = interpolateHsl(t);
+  return hslToRgb(h, s, l);
 }
 
 /**
- * Map normalized t (0–1) to a hue value along the color path.
- * Piecewise linear through defined hue stops.
+ * Interpolate through HSL stops at position t (0–1).
+ * Hue interpolation takes the shortest path around the wheel.
  */
-function hueForT(t: number): number {
-  const stops: ReadonlyArray<readonly [number, number]> = [
-    [0.0, 280],   // deep purple
-    [0.15, 240],  // blue
-    [0.3, 180],   // cyan
-    [0.45, 120],  // green
-    [0.6, 60],    // yellow
-    [0.72, 30],   // orange
-    [0.85, 0],    // red
-    [1.0, 320],   // pink/magenta (wrap around)
-  ];
+function interpolateHsl(t: number): { readonly h: number; readonly s: number; readonly l: number } {
+  if (t <= HSL_STOPS[0].t) return HSL_STOPS[0];
+  if (t >= HSL_STOPS[HSL_STOPS.length - 1].t) return HSL_STOPS[HSL_STOPS.length - 1];
 
-  if (t <= stops[0][0]) return stops[0][1];
-  if (t >= stops[stops.length - 1][0]) return stops[stops.length - 1][1];
+  for (let i = 1; i < HSL_STOPS.length; i++) {
+    if (t <= HSL_STOPS[i].t) {
+      const a = HSL_STOPS[i - 1];
+      const b = HSL_STOPS[i];
+      const frac = (t - a.t) / (b.t - a.t);
 
-  for (let i = 1; i < stops.length; i++) {
-    if (t <= stops[i][0]) {
-      const [t0, h0] = stops[i - 1];
-      const [t1, h1] = stops[i];
-      const frac = (t - t0) / (t1 - t0);
+      // Interpolate hue via shortest path around the wheel
+      let dh = b.h - a.h;
+      if (dh > 180) dh -= 360;
+      if (dh < -180) dh += 360;
+      const h = ((a.h + frac * dh) % 360 + 360) % 360;
 
-      // For the red→magenta segment, go through 360 (0→320 the short way)
-      if (h0 === 0 && h1 === 320) {
-        return (360 + frac * (320 - 360)) % 360;
-      }
-
-      return h0 + frac * (h1 - h0);
+      return {
+        h,
+        s: a.s + frac * (b.s - a.s),
+        l: a.l + frac * (b.l - a.l),
+      };
     }
   }
-  return stops[stops.length - 1][1];
+  return HSL_STOPS[HSL_STOPS.length - 1];
 }
 
 /** Convert HSL (h: 0-360, s: 0-100, l: 0-100) to RGB. */
@@ -80,7 +101,7 @@ function hslToRgb(h: number, s: number, l: number): RgbColor {
   const m = lNorm - c / 2;
 
   let r1: number, g1: number, b1: number;
-  if (h < 60)      { r1 = c; g1 = x; b1 = 0; }
+  if (h < 60)       { r1 = c; g1 = x; b1 = 0; }
   else if (h < 120) { r1 = x; g1 = c; b1 = 0; }
   else if (h < 180) { r1 = 0; g1 = c; b1 = x; }
   else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
