@@ -44,6 +44,10 @@ interface RangeDefinition {
    *  After flood-fill, the result is dilated by this radius for smoother edges.
    *  Default: 0 (standard 4-connected flood-fill). */
   readonly radius?: number;
+  /** Maximum distance (degrees) a pixel can be from the nearest seed and still
+   *  be included in the flood fill. Prevents over-expansion into adjacent lowlands.
+   *  Default: auto-calculated from range lengthKm. */
+  readonly maxSeedDistDeg?: number;
   readonly latitude: number;
   readonly longitude: number;
   readonly peakElevationM: number;
@@ -59,6 +63,10 @@ interface RangeDefinition {
 /**
  * Map WikiData range labels (and known sub-range labels) to our range IDs.
  * Sub-ranges are mapped to the parent range so their peaks contribute seeds.
+ *
+ * Only map sub-ranges that are genuinely part of the parent range.
+ * Do NOT map geographically distant ranges just because they're nearby —
+ * each peak is validated against the target range's coordinates anyway.
  */
 const WIKIDATA_RANGE_MAP: Readonly<Record<string, string>> = {
   // ---- Asia ----
@@ -75,12 +83,13 @@ const WIKIDATA_RANGE_MAP: Readonly<Record<string, string>> = {
   'Ural Mountains': 'ural-mountains',
   'Caucasus Mountains': 'caucasus',
   'Zagros Mountains': 'zagros-mountains',
+  'Taurus mountains': 'zagros-mountains',
   'Western Ghats': 'western-ghats',
   'Nilgiri Mountains': 'western-ghats',
   'Hengduan Mountains': 'hengduan-mountains',
   'Sikhote-Alin': 'sikhote-alin',
   'Stanovoy Highlands': 'stanovoy-range',
-  'Huangshan': 'hengduan-mountains',
+  'Kuznetsk Alatau': 'altai-mountains',
 
   // ---- Europe ----
   'Alps': 'alps',
@@ -109,30 +118,29 @@ const WIKIDATA_RANGE_MAP: Readonly<Record<string, string>> = {
   'Mount Pilatus': 'alps',
   'Pyrenees': 'pyrenees',
   'Carpathians': 'carpathians',
+  'Sudetes': 'carpathians',
   'Scandinavian Mountains': 'scandinavian-mountains',
   'Apennines': 'apennines',
+  'Serre Calabresi': 'apennines',
   'Dinaric Alps': 'dinaric-alps',
   'Balkan Mountains': 'balkan-mountains',
   'Scottish Highlands': 'scottish-highlands',
   'Rhodope Mountains': 'rhodope-mountains',
-  'Pennines': 'scottish-highlands',
-  'Jura Mountains': 'alps',
   'Sierra de Guadarrama': 'cantabrian-mountains',
   'Sistema Central': 'cantabrian-mountains',
+  'Massif Central': 'pyrenees',
 
   // ---- North America ----
   'Rocky Mountains': 'rocky-mountains',
   'Appalachian Mountains': 'appalachian-mountains',
   'Blue Ridge Mountains': 'appalachian-mountains',
   'Green Mountains': 'appalachian-mountains',
+  'Laurentian Mountains': 'appalachian-mountains',
   'Cascade Range': 'cascade-range',
   'Alaska Range': 'alaska-range',
   'Saint Elias Mountains': 'coast-mountains',
   'Sierra Madre Oriental': 'sierra-madre-oriental',
   'Sierra Madre de Chiapas': 'sierra-madre-del-sur',
-  'Laurentian Mountains': 'appalachian-mountains',
-  'Santa Catalina Mountains': 'rocky-mountains',
-  'Abajo Mountains': 'rocky-mountains',
 
   // ---- South America ----
   'Andes': 'andes',
@@ -144,6 +152,7 @@ const WIKIDATA_RANGE_MAP: Readonly<Record<string, string>> = {
 
   // ---- Africa ----
   'Atlas Mountains': 'atlas-mountains',
+  'Aurès Mountains': 'atlas-mountains',
   'Rwenzori Mountains': 'rwenzori-mountains',
   'Drakensberg': 'drakensberg',
   'Hoggar Mountains': 'hoggar-mountains',
@@ -152,14 +161,10 @@ const WIKIDATA_RANGE_MAP: Readonly<Record<string, string>> = {
   'Mount Kenya': 'east-african-rift-mountains',
   'Mount Kilimanjaro': 'east-african-rift-mountains',
 
-  // ---- Other European ranges mapped to nearby parents ----
-  'Bavarian Forest': 'carpathians',
-  'Bohemian Forest': 'carpathians',
-  'Ore Mountains': 'carpathians',
-  'Sudetes': 'carpathians',
-  'Fichtel Mountains': 'carpathians',
-  'Harz': 'scandinavian-mountains',
-  'Black Forest': 'alps',
+  // ---- Oceania ----
+  'Spenser Mountains': 'southern-alps-nz',
+  'Finisterre Range': 'owen-stanley-range',
+  'North Island Volcanic Plateau': 'southern-alps-nz',
 };
 
 /**
@@ -172,6 +177,26 @@ function resolveSierraNevada(lng: number): string | undefined {
   return undefined;
 }
 
+/**
+ * Maximum distance (degrees) a peak can be from the range's reference
+ * coordinates before it's rejected. This catches bad WikiData mappings
+ * where a sub-range name matches but the peaks are geographically distant.
+ * Scaled by range size — larger ranges tolerate more distance.
+ */
+function maxPeakDistanceDeg(range: RangeDefinition): number {
+  // Use range length as a proxy for size; longer ranges need wider radius
+  const baseDeg = Math.max(5, range.lengthKm / 80);
+  // Cap at 40° for the largest ranges (Andes at 7000km)
+  return Math.min(40, baseDeg);
+}
+
+/** Haversine-like distance in degrees (good enough for filtering). */
+function degDistance(lng1: number, lat1: number, lng2: number, lat2: number): number {
+  const dlng = lng1 - lng2;
+  const dlat = lat1 - lat2;
+  return Math.sqrt(dlng * dlng + dlat * dlat);
+}
+
 interface WikidataPeak {
   readonly lng: number;
   readonly lat: number;
@@ -180,35 +205,56 @@ interface WikidataPeak {
 
 /**
  * Load WikiData mountain peaks JSON and match to our range IDs.
+ * Validates each peak's coordinates against the target range's reference
+ * point — peaks too far away are rejected (catches bad sub-range mappings).
  * Returns a map from range ID to an array of peak coordinates.
  * Peaks are spatially subsampled (one per 0.5° grid cell, highest wins)
  * and capped at MAX_PEAKS_PER_RANGE.
  */
-function loadWikidataPeaks(filePath: string): ReadonlyMap<string, ReadonlyArray<readonly [number, number]>> {
-  if (!existsSync(filePath)) {
-    console.log('WikiData peaks file not found, using manual seeds only.');
+interface WikidataJson {
+  readonly results: {
+    readonly bindings: ReadonlyArray<{
+      readonly rangeLabel?: { readonly value: string };
+      readonly peakLabel?: { readonly value: string };
+      readonly lat?: { readonly value: string };
+      readonly lon?: { readonly value: string };
+      readonly elev?: { readonly value: string };
+    }>;
+  };
+}
+
+function loadWikidataPeaks(
+  filePaths: ReadonlyArray<string>,
+  ranges: ReadonlyArray<RangeDefinition>,
+): ReadonlyMap<string, ReadonlyArray<readonly [number, number]>> {
+  const existingFiles = filePaths.filter(f => existsSync(f));
+  if (existingFiles.length === 0) {
+    console.log('No WikiData peaks files found, using manual seeds only.');
     return new Map();
   }
 
-  console.log(`Loading WikiData peaks from ${filePath}...`);
-  const raw = JSON.parse(readFileSync(filePath, 'utf-8')) as {
-    readonly results: {
-      readonly bindings: ReadonlyArray<{
-        readonly rangeLabel?: { readonly value: string };
-        readonly peakLabel?: { readonly value: string };
-        readonly lat?: { readonly value: string };
-        readonly lon?: { readonly value: string };
-        readonly elev?: { readonly value: string };
-      }>;
-    };
-  };
+  // Build lookup from range ID to definition for distance validation
+  const rangeById = new Map<string, RangeDefinition>();
+  for (const r of ranges) {
+    rangeById.set(r.id, r);
+  }
+
+  // Load and merge all WikiData files
+  const allBindings: Array<WikidataJson['results']['bindings'][number]> = [];
+  for (const fp of existingFiles) {
+    console.log(`Loading WikiData peaks from ${fp}...`);
+    const raw = JSON.parse(readFileSync(fp, 'utf-8')) as WikidataJson;
+    allBindings.push(...raw.results.bindings);
+  }
+  console.log(`  Total bindings loaded: ${allBindings.length}`);
 
   // Group peaks by our range ID
   const peaksByRange = new Map<string, Array<WikidataPeak>>();
   let matchedCount = 0;
   let unmatchedCount = 0;
+  let distanceRejected = 0;
 
-  for (const binding of raw.results.bindings) {
+  for (const binding of allBindings) {
     const rangeLabel = binding.rangeLabel?.value;
     if (!rangeLabel || !binding.lon?.value || !binding.lat?.value) continue;
     const lng = parseFloat(binding.lon.value);
@@ -229,6 +275,17 @@ function loadWikidataPeaks(filePath: string): ReadonlyMap<string, ReadonlyArray<
       continue;
     }
 
+    // Validate distance: reject peaks too far from the range's reference point
+    const rangeDef = rangeById.get(rangeId);
+    if (rangeDef) {
+      const dist = degDistance(lng, lat, rangeDef.longitude, rangeDef.latitude);
+      const maxDist = maxPeakDistanceDeg(rangeDef);
+      if (dist > maxDist) {
+        distanceRejected++;
+        continue;
+      }
+    }
+
     matchedCount++;
     let arr = peaksByRange.get(rangeId);
     if (!arr) {
@@ -238,7 +295,7 @@ function loadWikidataPeaks(filePath: string): ReadonlyMap<string, ReadonlyArray<
     arr.push({ lng, lat, elevation });
   }
 
-  console.log(`  Matched ${matchedCount} peaks to our ranges, ${unmatchedCount} unmatched.`);
+  console.log(`  Matched ${matchedCount} peaks, ${unmatchedCount} unmatched, ${distanceRejected} rejected (too far).`);
 
   // Spatially subsample: one peak per 0.5° grid cell (highest elevation wins),
   // then prioritize outermost (convex hull) peaks to define the range boundary,
@@ -447,11 +504,33 @@ function computeVoronoi(
 // ------------------------------------------------------------------
 
 /**
- * BFS flood-fill from a seed pixel with Voronoi partitioning and optional bridge radius.
+ * Compute the minimum squared distance from a pixel to any seed point.
+ * Used to enforce the maxSeedDistance constraint during flood fill.
+ */
+function minSeedDistanceSq(
+  px: number,
+  py: number,
+  seedPixels: ReadonlyArray<readonly [number, number]>,
+): number {
+  let minDist = Infinity;
+  for (const [sx, sy] of seedPixels) {
+    const dx = px - sx;
+    const dy = py - sy;
+    const d = dx * dx + dy * dy;
+    if (d < minDist) minDist = d;
+  }
+  return minDist;
+}
+
+/**
+ * BFS flood-fill from a seed pixel with Voronoi partitioning, optional bridge
+ * radius, and maximum distance from seed points.
  *
- * Pixels can only join the flood if they're in the same Voronoi cell as
- * the range (i.e., closer to this range's seed than any other range's seed).
- * This naturally partitions connected elevated regions between adjacent ranges.
+ * Pixels can only join the flood if they're:
+ * 1. In the same Voronoi cell as the range
+ * 2. Above the elevation threshold
+ * 3. Within maxSeedDistPx of at least one seed point (creates a natural
+ *    envelope around the seed distribution, preventing over-expansion)
  *
  * When radius>0: each filled pixel reaches out to all pixels within
  * `radius` distance (bridging gaps between peaks). After flood-fill,
@@ -465,9 +544,12 @@ function floodFill(
   seedPy: number,
   threshold: number,
   radius: number,
+  allSeeds: ReadonlyArray<readonly [number, number]>,
+  maxSeedDistPx: number,
 ): Set<number> {
   const filled = new Set<number>();
   const seedIdx = seedPy * DS_WIDTH + seedPx;
+  const maxDistSq = maxSeedDistPx * maxSeedDistPx;
 
   // Verify seed is above threshold
   if (dem[seedIdx] < threshold) {
@@ -499,7 +581,7 @@ function floodFill(
   // Pre-compute the neighbor offset list for the given radius
   const offsets = buildOffsets(radius);
 
-  // BFS — constrained to Voronoi cell
+  // BFS — constrained to Voronoi cell AND max distance from seeds
   const queue = Array.from(filled);
   let head = 0;
   while (head < queue.length) {
@@ -515,6 +597,7 @@ function floodFill(
       if (filled.has(nIdx)) continue;
       if (voronoi[nIdx] !== rangeIndex) continue; // Voronoi constraint
       if (dem[nIdx] < threshold) continue;
+      if (minSeedDistanceSq(nx, ny, allSeeds) > maxDistSq) continue; // Distance constraint
       filled.add(nIdx);
       queue.push(nIdx);
     }
@@ -1847,8 +1930,10 @@ async function main(): Promise<void> {
   console.log('  Done.');
 
   // Load WikiData peaks to use as seeds (falls back to manual seeds when unavailable)
-  const wikidataPeaksPath = resolve('scripts/source-data/wikidata-mountain-peaks.json');
-  const wikidataPeaks = loadWikidataPeaks(wikidataPeaksPath);
+  const wikidataPeaks = loadWikidataPeaks([
+    resolve('scripts/source-data/wikidata-mountain-peaks.json'),
+    resolve('scripts/source-data/wikidata-mountain-peaks-extra.json'),
+  ], RANGES);
 
   // Build seed groups: use WikiData peaks when available, otherwise manual seeds.
   // When WikiData peaks exist, they replace the manual seeds entirely — the manual
@@ -1898,10 +1983,16 @@ async function main(): Promise<void> {
     }
     console.log(`  Seed pixel: (${bestSeedPx}, ${bestSeedPy}), elevation at seed: ${bestSeedElev.toFixed(0)}m (${seeds.length} seed(s))`);
     const radius = range.radius ?? 0;
-    console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px`);
 
-    // Flood fill constrained by Voronoi partition
-    const filled = floodFill(dem, voronoi, i, bestSeedPx, bestSeedPy, range.threshold, radius);
+    // Max distance from seeds: use explicit value or auto-calculate from range length.
+    // 1° ≈ 111km at equator; convert lengthKm to degrees and add generous padding.
+    // The idea: the flood shouldn't extend much beyond where the peaks/seeds are.
+    const maxSeedDistDeg = range.maxSeedDistDeg ?? Math.max(2, range.lengthKm / 111 * 0.4);
+    const maxSeedDistPx = Math.round(maxSeedDistDeg / 360 * DS_WIDTH);
+    console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px, maxSeedDist: ${maxSeedDistDeg.toFixed(1)}° (${maxSeedDistPx}px)`);
+
+    // Flood fill constrained by Voronoi partition and max distance from seeds
+    const filled = floodFill(dem, voronoi, i, bestSeedPx, bestSeedPy, range.threshold, radius, seeds, maxSeedDistPx);
     console.log(`  Flood fill: ${filled.size} pixels`);
 
     if (filled.size === 0) {
