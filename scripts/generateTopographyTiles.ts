@@ -165,55 +165,32 @@ function extractCsvField(line: string, fieldIndex: number): string {
 // DEM reading
 // ------------------------------------------------------------------
 
-async function readElevationWindow(
-  image: GeoTIFFImage,
+/**
+ * Read the full DEM raster into memory via a single windowed read
+ * covering the entire image. This is slow (~10-20s) but only done once;
+ * all tiles then sample directly from this array.
+ */
+async function readFullDem(image: GeoTIFFImage): Promise<{ raster: Float32Array; width: number; height: number }> {
+  const width = image.getWidth();
+  const height = image.getHeight();
+  console.log(`  Reading full DEM (${width}×${height})...`);
+  const rasterData = await image.readRasters({ window: [0, 0, width, height] });
+  const raster = rasterData[0] as Float32Array;
+  console.log(`  DEM loaded (${(raster.byteLength / 1024 / 1024).toFixed(0)} MB)`);
+  return { raster, width, height };
+}
+
+/** Sample elevation at a geographic coordinate from the pre-loaded DEM. */
+function sampleElevation(
+  raster: Float32Array,
   demWidth: number,
   demHeight: number,
-  lngStart: number,
-  latStart: number,
-  lngWidth: number,
-  latHeight: number,
-  outWidth: number,
-  outHeight: number,
-): Promise<Float32Array> {
-  const pixelLeft = Math.floor((lngStart + 180) / 360 * demWidth);
-  const pixelTop = Math.floor((90 - latStart) / 180 * demHeight);
-  const pixelRight = Math.ceil((lngStart + lngWidth + 180) / 360 * demWidth);
-  const pixelBottom = Math.ceil((90 - (latStart - latHeight)) / 180 * demHeight);
-
-  const clampedLeft = Math.max(0, pixelLeft);
-  const clampedTop = Math.max(0, pixelTop);
-  const clampedRight = Math.min(demWidth, pixelRight);
-  const clampedBottom = Math.min(demHeight, pixelBottom);
-
-  const windowWidth = clampedRight - clampedLeft;
-  const windowHeight = clampedBottom - clampedTop;
-
-  if (windowWidth <= 0 || windowHeight <= 0) {
-    return new Float32Array(outWidth * outHeight);
-  }
-
-  const rasterData = await image.readRasters({
-    window: [clampedLeft, clampedTop, clampedRight, clampedBottom],
-  });
-  const raster = rasterData[0] as Float32Array;
-
-  const result = new Float32Array(outWidth * outHeight);
-  for (let py = 0; py < outHeight; py++) {
-    for (let px = 0; px < outWidth; px++) {
-      const lng = lngStart + (px + 0.5) / outWidth * lngWidth;
-      const lat = latStart - (py + 0.5) / outHeight * latHeight;
-
-      const demX = (lng + 180) / 360 * demWidth - clampedLeft;
-      const demY = (90 - lat) / 180 * demHeight - clampedTop;
-
-      const ix = Math.min(windowWidth - 1, Math.max(0, Math.round(demX)));
-      const iy = Math.min(windowHeight - 1, Math.max(0, Math.round(demY)));
-
-      result[py * outWidth + px] = raster[iy * windowWidth + ix];
-    }
-  }
-  return result;
+  lng: number,
+  lat: number,
+): number {
+  const col = Math.min(demWidth - 1, Math.max(0, Math.round((lng + 180) / 360 * (demWidth - 1))));
+  const row = Math.min(demHeight - 1, Math.max(0, Math.round((90 - lat) / 180 * (demHeight - 1))));
+  return raster[row * demWidth + col];
 }
 
 // ------------------------------------------------------------------
@@ -232,13 +209,12 @@ async function main(): Promise<void> {
   // Build land mask from border polygons
   const landMask = await buildLandMask();
 
+  // Read the full DEM into memory once — all tiles sample from this array
   console.log(`Reading ${SOURCE_PATH}...`);
   const tiff = await fromFile(SOURCE_PATH);
   const image = await tiff.getImage();
-  const demWidth = image.getWidth();
-  const demHeight = image.getHeight();
+  const { raster: demRaster, width: demWidth, height: demHeight } = await readFullDem(image);
 
-  console.log(`DEM size: ${demWidth} × ${demHeight}`);
   console.log('Generating tiles...\n');
 
   let tileCount = 0;
@@ -263,12 +239,6 @@ async function main(): Promise<void> {
         const tileLngStart = -180 + tileCol * tileLngWidth;
         const tileLatStart = 90 - tileRow * tileLatHeight;
 
-        const elevations = await readElevationWindow(
-          image, demWidth, demHeight,
-          tileLngStart, tileLatStart, tileLngWidth, tileLatHeight,
-          TILE_SIZE, TILE_SIZE,
-        );
-
         const rgba = new Uint8Array(TILE_SIZE * TILE_SIZE * 4);
         let hasLand = false;
         for (let i = 0; i < TILE_SIZE * TILE_SIZE; i++) {
@@ -285,7 +255,8 @@ async function main(): Promise<void> {
             rgba[offset + 3] = 0;
           } else {
             hasLand = true;
-            const { r, g, b } = elevationToRgb(elevations[i], scaling);
+            const elevation = sampleElevation(demRaster, demWidth, demHeight, lng, lat);
+            const { r, g, b } = elevationToRgb(elevation, scaling);
             rgba[offset] = r;
             rgba[offset + 1] = g;
             rgba[offset + 2] = b;
