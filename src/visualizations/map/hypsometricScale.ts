@@ -28,18 +28,18 @@ interface HslStop {
  *   dark red → dark pink → pink → light pink → near-white
  */
 const HSL_STOPS: ReadonlyArray<HslStop> = [
-  { t: 0.00, h: 280, s: 55, l: 48 },  // deep purple
+  { t: 0.00, h: 280, s: 55, l: 48 },  // deep purple  (-430m)
   { t: 0.15, h: 240, s: 55, l: 48 },  // blue
   { t: 0.30, h: 180, s: 55, l: 48 },  // cyan
   { t: 0.45, h: 120, s: 55, l: 48 },  // green
-  { t: 0.60, h: 60,  s: 55, l: 48 },  // yellow
-  { t: 0.72, h: 30,  s: 55, l: 48 },  // orange
-  { t: 0.80, h: 5,   s: 55, l: 48 },  // red
-  { t: 0.86, h: 0,   s: 55, l: 30 },  // dark red
-  { t: 0.91, h: 340, s: 40, l: 50 },  // dark pink
-  { t: 0.95, h: 330, s: 35, l: 65 },  // pink
-  { t: 0.98, h: 320, s: 20, l: 80 },  // light pink
-  { t: 1.00, h: 320, s: 5,  l: 95 },  // near-white
+  { t: 0.58, h: 60,  s: 55, l: 48 },  // yellow
+  { t: 0.67, h: 30,  s: 55, l: 48 },  // orange        (~3500m)
+  { t: 0.73, h: 5,   s: 55, l: 48 },  // red           (~4500m, Tibetan Plateau edge)
+  { t: 0.79, h: 0,   s: 55, l: 30 },  // dark red      (~5200m, high plateau)
+  { t: 0.86, h: 340, s: 40, l: 50 },  // dark pink     (~6200m)
+  { t: 0.92, h: 330, s: 35, l: 65 },  // pink          (~7200m)
+  { t: 0.96, h: 320, s: 20, l: 80 },  // light pink    (~7900m)
+  { t: 1.00, h: 320, s: 5,  l: 95 },  // near-white    (8849m, Everest)
 ];
 
 /**
