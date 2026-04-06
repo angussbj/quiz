@@ -31,6 +31,8 @@ function renderPanel(overrides: Partial<QuizSetupPanelProps> = {}) {
     onToggleChange: jest.fn(),
     onPreset: jest.fn(),
     onStart: jest.fn(),
+    panelLevel: 'full',
+    onPanelLevelChange: jest.fn(),
     ...overrides,
   };
   render(<QuizSetupPanel {...props} />);
