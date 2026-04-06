@@ -3,6 +3,7 @@ import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from '@/q
 import type { ToggleConstraint } from '@/quiz-modes/ToggleConstraint';
 import type { TimeScale } from '@/visualizations/timeline/buildTimelineElements';
 import type { ElementVisualState } from '@/visualizations/VisualizationElement';
+import type { DifficultyPresets, AdvancedPanelConfig } from '@/quiz-modes/DifficultyPreset';
 
 export type QuizModeType =
   | 'free-recall-unordered'
@@ -155,6 +156,10 @@ export interface QuizDefinition<K extends string = string> {
    * controls for `free-recall-ordered` mode. The first column is the default sort.
    */
   readonly orderedRecallSortColumns?: ReadonlyArray<SortColumnDefinition>;
+  /** Three-slot difficulty presets (Easy/Medium/Hard or custom labels). */
+  readonly difficultyPresets?: DifficultyPresets;
+  /** Controls which settings appear at the Advanced panel level. */
+  readonly advancedPanel?: AdvancedPanelConfig;
 }
 
 /**
@@ -186,4 +191,11 @@ export interface SortColumnDefinition {
    * elements with no half-life, "Landlocked" for countries with no coastline).
    */
   readonly missingLabel?: string;
+  /**
+   * Default behavior for missing values in ordered recall when this column is selected.
+   * - 'exclude' (default): skip elements with missing data.
+   * - 'first': put missing values at the start.
+   * - 'last': put missing values at the end.
+   */
+  readonly defaultMissingValues?: 'exclude' | 'first' | 'last';
 }
