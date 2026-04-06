@@ -2089,6 +2089,19 @@ async function main(): Promise<void> {
   if (failCount > 0) {
     console.warn(`${failCount} range(s) failed to generate polygons`);
   }
+
+  // Write seed points JSON for debug visualization.
+  // Each seed is stored as [lng, lat] in geographic coordinates.
+  const seedPointsData: Record<string, ReadonlyArray<readonly [number, number]>> = {};
+  for (let i = 0; i < RANGES.length; i++) {
+    const range = RANGES[i];
+    const pixels = seedGroups[i];
+    // Convert pixel coordinates back to geographic
+    seedPointsData[range.id] = pixels.map(([px, py]) => pixelToGeo(px, py));
+  }
+  const seedOutPath = resolve('public/data/mountains/mountain-range-seeds.json');
+  writeFileSync(seedOutPath, JSON.stringify(seedPointsData), 'utf-8');
+  console.log(`Wrote seed points to ${seedOutPath}`);
 }
 
 main().catch((err: unknown) => {

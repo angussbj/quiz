@@ -205,6 +205,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
             timeScale={definition.timeScale}
             elementStateColorOverrides={definition.elementStateColorOverrides}
             elementFillOpacityOverrides={definition.elementFillOpacityOverrides}
+            seedPointsDataPath={definition.seedPointsDataPath}
             normalizeOptions={definition.whitespaceMatters || definition.punctuationMatters ? {
               whitespaceMatters: definition.whitespaceMatters,
               punctuationMatters: definition.punctuationMatters,

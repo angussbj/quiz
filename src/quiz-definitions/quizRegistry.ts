@@ -201,6 +201,10 @@ const mountainRangesQuizBase = {
   toggles: [
     { key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never' } as const,
     { key: 'showCountryNames', label: 'Mountain range names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
+    // DEBUG: Seed point visualization — shows coloured dots at seed coordinates used for polygon generation.
+    // To remove: delete this toggle, SeedPointOverlay.tsx, the seedPointsDataPath field below,
+    // and the SeedPointOverlay usage in MapRenderer.tsx.
+    { key: 'showSeedPoints', label: 'Seed points (debug)', defaultValue: false, group: 'debug' } as const,
   ],
   presets: [],
   columnMappings: {
@@ -211,6 +215,8 @@ const mountainRangesQuizBase = {
     group: 'continent',
   },
   dataPath: '/data/mountains/world-mountain-ranges.csv',
+  // DEBUG: Seed point data for debug visualization. See SeedPointOverlay.tsx.
+  seedPointsDataPath: '/data/mountains/mountain-range-seeds.json',
   supportingDataPaths: ['/data/borders/world-borders.csv'],
   topographyDefault: true,
   locateDistanceMode: 'polygon-boundary' as const,

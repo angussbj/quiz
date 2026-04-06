@@ -159,4 +159,13 @@ export interface QuizDefinition<K extends string = string> {
    * All map quizzes get this toggle automatically; this field controls the default.
    */
   readonly topographyDefault?: boolean;
+  /**
+   * DEBUG: Path to a JSON file mapping element IDs to seed point coordinates.
+   * When present and the 'showSeedPoints' toggle is on, coloured dots are
+   * rendered at each seed location. Used for debugging polygon generation.
+   *
+   * To remove: delete this field, the toggle in quizRegistry.ts,
+   * SeedPointOverlay.tsx, and its usage in MapRenderer.tsx.
+   */
+  readonly seedPointsDataPath?: string;
 }

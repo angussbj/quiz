@@ -16,6 +16,7 @@ import { MapElementShapes } from './MapElementOverlays';
 import { MapHoverOverlay } from './MapHoverOverlay';
 import { useDragDetector } from './useDragDetector';
 import { TopographyTileLayer } from './TopographyTileLayer';
+import { SeedPointOverlay } from './SeedPointOverlay';
 import styles from './MapRenderer.module.css';
 
 /** Default clustering for map quizzes: cluster overlapping city dots. */
@@ -48,6 +49,7 @@ export function MapRenderer({
   elementStateColorOverrides,
   elementFillOpacityOverrides,
   autoRevealElementIds,
+  seedPointsDataPath,
 }: VisualizationRendererProps) {
   const uniqueGroups = useMemo(
     () => Array.from(new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined))),
@@ -90,6 +92,10 @@ export function MapRenderer({
         elementFillOpacityOverrides={elementFillOpacityOverrides}
       />
       {svgOverlay}
+      {/* DEBUG: Seed point dots for mountain range polygon debugging */}
+      {seedPointsDataPath && toggles['showSeedPoints'] === true && (
+        <SeedPointOverlay dataPath={seedPointsDataPath} elements={elements} />
+      )}
       <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
     </ZoomPanContainer>
   );

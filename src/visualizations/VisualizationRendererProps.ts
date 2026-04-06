@@ -127,6 +127,12 @@ export interface VisualizationRendererProps {
    * If an element is inside a cluster badge, the pulse appears on the badge instead.
    */
   readonly autoRevealElementIds?: ReadonlyArray<string>;
+  /**
+   * DEBUG: Path to a JSON file mapping element IDs to seed point coordinates.
+   * When present and the 'showSeedPoints' toggle is on, coloured dots are rendered.
+   * To remove: see SeedPointOverlay.tsx header comment for full cleanup list.
+   */
+  readonly seedPointsDataPath?: string;
 }
 
 export type VisualizationType = 'map' | 'timeline' | 'grid' | 'flag-grid' | 'anatomy' | 'anatomy-3d';
