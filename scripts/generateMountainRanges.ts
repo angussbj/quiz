@@ -1603,7 +1603,7 @@ async function main(): Promise<void> {
     }
 
     // Simplify polygons and convert to SVG paths
-    const epsilon = 0.15; // degrees
+    const epsilon = 0.05; // degrees (~5.5km at equator)
     const svgPaths: Array<string> = [];
 
     for (const poly of polygons) {
