@@ -307,6 +307,17 @@ export function QuizSetupPanel({
           </section>
         )}
 
+        {/* ADVANCED ONLY: Linked dropdown (sort order / display data) — right below mode */}
+        {panelLevel === 'advanced' && linkedDropdownLabel && linkedDropdownOptions && linkedDropdownValue !== undefined && onLinkedDropdownChange && (
+          <LinkedDataDropdown
+            label={linkedDropdownLabel}
+            options={linkedDropdownOptions}
+            value={linkedDropdownValue}
+            onChange={onLinkedDropdownChange}
+            maxOptions={linkedDropdownMaxOptions}
+          />
+        )}
+
         {/* Ordering section: Full only when linked dropdown handles it in Advanced; otherwise Advanced+ */}
         {panelLevel !== 'simple' && orderingToggles.length > 0 && (panelLevel === 'full' || !advancedPanel?.linkedSortToggleKey) && (
           <section className={styles.section}>
@@ -464,17 +475,6 @@ export function QuizSetupPanel({
               })}
             </div>
           </section>
-        )}
-
-        {/* ADVANCED ONLY: Linked dropdown */}
-        {panelLevel === 'advanced' && linkedDropdownLabel && linkedDropdownOptions && linkedDropdownValue !== undefined && onLinkedDropdownChange && (
-          <LinkedDataDropdown
-            label={linkedDropdownLabel}
-            options={linkedDropdownOptions}
-            value={linkedDropdownValue}
-            onChange={onLinkedDropdownChange}
-            maxOptions={linkedDropdownMaxOptions}
-          />
         )}
 
         {/* ADVANCED: Filtered toggles; FULL: All toggles */}
