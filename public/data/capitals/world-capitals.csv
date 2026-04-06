@@ -9,7 +9,7 @@ yaounde,Yaoundé,Cameroon,3.8667,11.5167,Africa,Middle Africa,,,cm,,Yaoundé
 praia,Praia,Cape Verde,14.9315,-23.5125,Africa,Western Africa,,Cabo Verde,cv,,Praia
 bangui,Bangui,Central African Republic,4.3612,18.555,Africa,Middle Africa,,CAR,cf,,Bangui
 n-djamena,N'Djamena,Chad,12.11,15.05,Africa,Middle Africa,,,td,,N'Djamena
-moroni,Moroni,Comoros,-11.7022,43.2551,Africa,Eastern Africa,,,km,,Moroni
+moroni,Moroni,Comoros,-11.7022,43.2551,Africa,Eastern Africa,,,km,,Moroni,_Comoros
 brazzaville,Brazzaville,Republic of the Congo,-4.2661,15.2832,Africa,Middle Africa,,Congo,cg,above,Brazzaville
 djibouti,Djibouti,Djibouti,11.589,43.145,Africa,Eastern Africa,,,dj,,Djibouti
 kinshasa,Kinshasa,Democratic Republic of the Congo,-4.3276,15.3136,Africa,Middle Africa,,DR Congo|DRC,cd,below,Kinshasa
@@ -27,7 +27,7 @@ yamoussoukro,Yamoussoukro,Ivory Coast,6.8206,-5.2767,Africa,Western Africa,,Cote
 nairobi,Nairobi,Kenya,-1.2833,36.8167,Africa,Eastern Africa,,,ke,,Nairobi
 maseru,Maseru,Lesotho,-29.3167,27.4833,Africa,Southern Africa,,,ls,below,Maseru
 monrovia,Monrovia,Liberia,6.3005,-10.7969,Africa,Western Africa,,,lr,left,Monrovia
-tripoli,Tripoli,Libya,32.8874,13.1873,Africa,Northern Africa,,,ly,,Tripoli
+tripoli,Tripoli,Libya,32.8874,13.1873,Africa,Northern Africa,,,ly,,Tripoli,_Libya
 antananarivo,Antananarivo,Madagascar,-18.8792,47.5079,Africa,Eastern Africa,,,mg,above,Antananarivo
 lilongwe,Lilongwe,Malawi,-13.9669,33.7873,Africa,Eastern Africa,,,mw,,Lilongwe
 bamako,Bamako,Mali,12.65,-8,Africa,Western Africa,,,ml,,Bamako
@@ -41,7 +41,7 @@ abuja,Abuja,Nigeria,9.0579,7.4951,Africa,Western Africa,,,ng,,Abuja
 kigali,Kigali,Rwanda,-1.9499,30.0589,Africa,Eastern Africa,,,rw,left,Kigali
 sao-tome,São Tomé,São Tomé and Príncipe,0.3365,6.7273,Africa,Middle Africa,,Sao Tome and Principe|Sao Tome,st,left,São_Tomé
 dakar,Dakar,Senegal,14.6937,-17.4441,Africa,Western Africa,,,sn,,Dakar
-victoria,Victoria,Seychelles,-4.62,55.455,Africa,Eastern Africa,,,sc,,Victoria
+victoria,Victoria,Seychelles,-4.62,55.455,Africa,Eastern Africa,,,sc,,Victoria,_Seychelles
 freetown,Freetown,Sierra Leone,8.4871,-13.2356,Africa,Western Africa,,,sl,left,Freetown
 mogadishu,Mogadishu,Somalia,2.0371,45.3438,Africa,Eastern Africa,,,so,,Mogadishu
 pretoria,Pretoria,South Africa,-25.7449,28.1878,Africa,Southern Africa,,,za,left,Pretoria
@@ -53,9 +53,9 @@ tunis,Tunis,Tunisia,36.819,10.1658,Africa,Northern Africa,,,tn,,Tunis
 kampala,Kampala,Uganda,0.3163,32.5822,Africa,Eastern Africa,,,ug,,Kampala
 lusaka,Lusaka,Zambia,-15.4067,28.2871,Africa,Eastern Africa,,,zm,,Lusaka
 harare,Harare,Zimbabwe,-17.8277,31.0534,Africa,Eastern Africa,,,zw,,Harare
-saint-john-s,Saint John's,Antigua and Barbuda,17.1175,-61.8456,North America,Caribbean,,Antigua,ag,,Saint_John's
+saint-john-s,Saint John's,Antigua and Barbuda,17.1175,-61.8456,North America,Caribbean,,Antigua,ag,,St._John's,_Antigua_and_Barbuda
 buenos-aires,Buenos Aires,Argentina,-34.6037,-58.3816,South America,South America,,,ar,left,Buenos_Aires
-nassau,Nassau,Bahamas,25.0667,-77.3333,North America,Caribbean,,The Bahamas,bs,,Nassau
+nassau,Nassau,Bahamas,25.0667,-77.3333,North America,Caribbean,,The Bahamas,bs,,Nassau,_The_Bahamas
 bridgetown,Bridgetown,Barbados,13.1073,-59.6202,North America,Caribbean,,,bb,,Bridgetown
 belmopan,Belmopan,Belize,17.25,-88.7667,North America,Central America,,,bz,,Belmopan
 sucre,Sucre,Bolivia,-19.0333,-65.2627,South America,South America,,,bo,,Sucre
@@ -63,18 +63,18 @@ brasilia,Brasília,Brazil,-15.7797,-47.9297,South America,South America,Brasíli
 ottawa,Ottawa,Canada,45.4112,-75.6981,North America,North America,,,ca,,Ottawa
 santiago,Santiago,Chile,-33.4569,-70.6483,South America,South America,,,cl,,Santiago
 bogota,Bogotá,Colombia,4.711,-74.0721,South America,South America,Bogotá,,co,,Bogotá
-san-jose,San José,Costa Rica,10.9517,-85.1361,North America,Central America,,,cr,,San_José
+san-jose,San José,Costa Rica,10.9517,-85.1361,North America,Central America,,,cr,,San_José,_Costa_Rica
 havana,Havana,Cuba,23.133,-82.383,North America,Caribbean,,,cu,,Havana
 roseau,Roseau,Dominica,15.3017,-61.3881,North America,Caribbean,,,dm,,Roseau
 santo-domingo,Santo Domingo,Dominican Republic,18.4719,-69.8923,North America,Caribbean,,,do,,Santo_Domingo
 quito,Quito,Ecuador,-0.2298,-78.5249,South America,South America,,,ec,,Quito
 san-salvador,San Salvador,El Salvador,13.6894,-89.1872,North America,Central America,,,sv,left,San_Salvador
-st-george-s,St. George's,Grenada,12.0564,-61.7485,North America,Caribbean,,,gd,left,St._George's
+st-george-s,St. George's,Grenada,12.0564,-61.7485,North America,Caribbean,,,gd,left,"St._George's,_Grenada"
 guatemala-city,Guatemala City,Guatemala,14.6407,-90.5133,North America,Central America,,,gt,left,Guatemala_City
-georgetown,Georgetown,Guyana,6.8045,-58.1553,South America,South America,,,gy,left,Georgetown
+georgetown,Georgetown,Guyana,6.8045,-58.1553,South America,South America,,,gy,left,Georgetown,_Guyana
 port-au-prince,Port-au-Prince,Haiti,18.5435,-72.3388,North America,Caribbean,,,ht,above,Port-au-Prince
 tegucigalpa,Tegucigalpa,Honduras,14.0818,-87.2068,North America,Central America,,,hn,,Tegucigalpa
-kingston,Kingston,Jamaica,17.997,-76.7936,North America,Caribbean,,,jm,left,Kingston
+kingston,Kingston,Jamaica,17.997,-76.7936,North America,Caribbean,,,jm,left,"Kingston,_Jamaica"
 mexico-city,Mexico City,Mexico,19.4285,-99.1277,North America,North America,Ciudad de Mexico|Ciudad de México,,mx,,Mexico_City
 managua,Managua,Nicaragua,12.1328,-86.2504,North America,Central America,,,ni,left,Managua
 panama-city,Panama City,Panama,8.9936,-79.5197,North America,Central America,,,pa,,Panama_City

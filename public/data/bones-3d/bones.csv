@@ -50,7 +50,7 @@ lower-first-molar-left,Lower first molar (left),Lower first molar tooth.r,2.26,1
 lower-second-molar-right,Lower second molar (right),Lower second molar tooth.r,-2.62,153.49,4.57,right,true,skull,teeth,lower-second-molar-left,,,Molar_(tooth),
 lower-second-molar-left,Lower second molar (left),Lower second molar tooth.r,2.62,153.49,4.57,left,false,skull,teeth,lower-second-molar-right,,,Molar_(tooth),
 atlas-c1,Atlas (C1),Atlas (C1),-0.00,154.28,-2.11,midline,true,torso,bone,,atlas-c1,First cervical vertebra|C1 vertebra,Atlas,back
-axis-c2,Axis (C2),Axis (C2),0.00,153.02,-2.56,midline,true,torso,bone,,atlas-c1,Second cervical vertebra|C2 vertebra,Axis,back
+axis-c2,Axis (C2),Axis (C2),0.00,153.02,-2.56,midline,true,torso,bone,,atlas-c1,Second cervical vertebra|C2 vertebra,Axis_(anatomy),back
 cervical-vertebra-c3,Cervical vertebra (C3),Cervical vertebrae (C3),-0.00,150.60,-2.54,midline,true,torso,bone,,atlas-c1,,Cervical_vertebra,back
 cervical-vertebra-c4,Cervical vertebra (C4),Cervical vertebrae (C4),0.00,149.27,-2.67,midline,true,torso,bone,,atlas-c1,,Cervical_vertebra,back
 cervical-vertebra-c5,Cervical vertebra (C5),Cervical vertebrae (C5),0.00,147.95,-2.99,midline,true,torso,bone,,atlas-c1,,Cervical_vertebra,back
@@ -145,8 +145,8 @@ scaphoid-right,Scaphoid (right),Scaphoid.r,-27.09,85.48,1.35,right,true,hands,bo
 scaphoid-left,Scaphoid (left),Scaphoid.r,27.09,85.48,1.35,left,false,hands,bone,scaphoid-right,,,Scaphoid,hand
 lunate-right,Lunate (right),Lunate bone.r,-25.35,85.47,1.34,right,true,hands,bone,lunate-left,,,Lunate,hand
 lunate-left,Lunate (left),Lunate bone.r,25.35,85.47,1.34,left,false,hands,bone,lunate-right,,,Lunate,hand
-triquetrum-right,Triquetrum (right),Triquetrum.r,-24.65,84.66,1.73,right,true,hands,bone,triquetrum-left,,,Triquetrum,hand
-triquetrum-left,Triquetrum (left),Triquetrum.r,24.65,84.66,1.73,left,false,hands,bone,triquetrum-right,,,Triquetrum,hand
+triquetrum-right,Triquetrum (right),Triquetrum.r,-24.65,84.66,1.73,right,true,hands,bone,triquetrum-left,,,Triquetrum,Triquetral_bone
+triquetrum-left,Triquetrum (left),Triquetrum.r,24.65,84.66,1.73,left,false,hands,bone,triquetrum-right,,,Triquetrum,Triquetral_bone
 pisiform-right,Pisiform (right),Pisiform.r,-24.58,85.15,2.53,right,true,hands,bone,pisiform-left,,,Pisiform,hand
 pisiform-left,Pisiform (left),Pisiform.r,24.58,85.15,2.53,left,false,hands,bone,pisiform-right,,,Pisiform,hand
 trapezium-right,Trapezium (right),Trapezium.r,-28.34,84.65,2.24,right,true,hands,bone,trapezium-left,,,Trapezium_(bone),hand

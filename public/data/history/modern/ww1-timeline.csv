@@ -18,7 +18,7 @@ battle-of-the-falkland-islands,Battle of the Falkland Islands,1914,12,8,,,,Naval
 christmas-truce,Christmas Truce,1914,12,24,1914,12,26,Western Front,Christmas Ceasefire 1914,Christmas_Truce
 second-battle-of-masurian-lakes,Second Battle of the Masurian Lakes,1915,2,7,1915,2,22,Eastern Front,Winter Battle in Masuria,Second_Battle_of_the_Masurian_Lakes
 gallipoli-campaign,Gallipoli Campaign,1915,2,19,1916,1,9,Middle East & Africa,Dardanelles Campaign|ANZAC Campaign,Gallipoli_Campaign
-sinking-of-the-lusitania,Sinking of the Lusitania,1915,5,7,,,,Naval & Air,RMS Lusitania,Sinking_of_the_Lusitania
+sinking-of-the-lusitania,Sinking of the Lusitania,1915,5,7,,,,Naval & Air,RMS Lusitania,Sinking_of_the_RMS_Lusitania
 italy-enters-the-war,Italy Enters the War,1915,5,23,,,,Diplomatic & Political,Italian Declaration of War|Italy Joins the Entente,Italy_in_World_War_I
 second-battle-of-ypres,Second Battle of Ypres,1915,4,22,1915,5,25,Western Front,Second Ypres|First Use of Poison Gas,Second_Battle_of_Ypres
 great-german-offensive-in-the-east,Gorlice-Tarnow Offensive,1915,5,2,1915,9,19,Eastern Front,Great Retreat of the Russian Army,Gorlice-Tarnow_Offensive
@@ -30,7 +30,7 @@ arab-revolt,Arab Revolt,1916,6,5,1918,10,25,Middle East & Africa,Great Arab Revo
 brusilov-offensive,Brusilov Offensive,1916,6,4,1916,9,20,Eastern Front,Brusilov's Offensive|Russian Summer Offensive 1916,Brusilov_Offensive
 battle-of-the-somme,Battle of the Somme,1916,7,1,1916,11,18,Western Front,Somme|First Battle of the Somme,Battle_of_the_Somme
 romania-enters-the-war,Romania Enters the War,1916,8,27,,,,Diplomatic & Political,Romanian Declaration of War,Romania_in_World_War_I
-battle-of-arras,Battle of Arras,1917,4,9,1917,5,16,Western Front,Arras Offensive,Battle_of_Arras
+battle-of-arras,Battle of Arras,1917,4,9,1917,5,16,Western Front,Arras Offensive,Battle_of_Arras_(1917)
 nivelle-offensive,Nivelle Offensive,1917,4,16,1917,5,9,Western Front,Second Battle of the Aisne|Chemin des Dames Offensive,Nivelle_Offensive
 french-army-mutinies,French Army Mutinies,1917,4,29,1917,6,10,Home Front & Society,French Mutinies 1917|Collective Indiscipline in the French Army,French_Army_Mutinies
 zimmermann-telegram,Zimmermann Telegram,1917,1,16,,,,Diplomatic & Political,Zimmermann Note,Zimmermann_Telegram
@@ -40,14 +40,14 @@ february-revolution-russia,Russian February Revolution,1917,3,8,1917,3,12,Home F
 third-battle-of-ypres,Third Battle of Ypres,1917,7,31,1917,11,10,Western Front,Passchendaele|Battle of Passchendaele,Third_Battle_of_Ypres
 battle-of-caporetto,Battle of Caporetto,1917,10,24,1917,11,19,Italian Front,Battle of Karfreit|Twelfth Battle of the Isonzo,Battle_of_Caporetto
 october-revolution-russia,Russian October Revolution,1917,11,7,1917,11,8,Home Front & Society,Bolshevik Revolution|Red October,Russian_October_Revolution
-tank-battle-of-cambrai,Battle of Cambrai,1917,11,20,1917,12,7,Western Front,First Mass Tank Battle,Battle_of_Cambrai
+tank-battle-of-cambrai,Battle of Cambrai,1917,11,20,1917,12,7,Western Front,First Mass Tank Battle,Battle_of_Cambrai_(1917)
 balfour-declaration,Balfour Declaration,1917,11,2,,,,Diplomatic & Political,Balfour Letter|British Support for Jewish Homeland,Balfour_Declaration
 capture-of-jerusalem,Capture of Jerusalem,1917,12,9,,,,Middle East & Africa,Fall of Jerusalem|Allenby Enters Jerusalem,Capture_of_Jerusalem
 treaty-of-brest-litovsk,Treaty of Brest-Litovsk,1918,3,3,,,,Diplomatic & Political,Russo-German Peace Treaty|Eastern Armistice,Treaty_of_Brest-Litovsk
 german-spring-offensive,German Spring Offensive,1918,3,21,1918,7,18,Western Front,Operation Michael|Kaiserschlacht|Ludendorff Offensive,German_Spring_Offensive
 second-battle-of-the-marne,Second Battle of the Marne,1918,7,15,1918,8,6,Western Front,Battle of the Marne 1918,Second_Battle_of_the_Marne
 hundred-days-offensive,Hundred Days Offensive,1918,8,8,1918,11,11,Western Front,Allied Hundred Days Offensive|Final Allied Offensive,Hundred_Days_Offensive
-battle-of-amiens,Battle of Amiens,1918,8,8,1918,8,12,Western Front,Black Day of the German Army,Battle_of_Amiens
+battle-of-amiens,Battle of Amiens,1918,8,8,1918,8,12,Western Front,Black Day of the German Army,Battle_of_Amiens_(1918)
 bulgarian-armistice,Armistice with Bulgaria,1918,9,29,,,,Diplomatic & Political,Bulgarian Armistice|Salonika Armistice,Armistice_with_Bulgaria
 ottoman-armistice,Armistice with the Ottoman Empire,1918,10,30,,,,Diplomatic & Political,Armistice of Mudros|Ottoman Armistice,Armistice_of_Mudros
 austro-hungarian-armistice,Armistice with Austria-Hungary,1918,11,3,,,,Diplomatic & Political,Villa Giusti Armistice,Armistice_of_Villa_Giusti

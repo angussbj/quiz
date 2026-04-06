@@ -19,11 +19,11 @@ vedic-period,Vedic Period,-1500,-500,Asia,Vedic India|Vedic Civilization|Vedic A
 chavin-culture,Chavin Culture,-900,-200,South America,Chavin Civilization|Chavin de Huantar,Chavín_culture
 celtic-civilization,Celtic Civilization,-800,400,Europe,Celts|La Tène Culture|Hallstatt Culture|Gauls,Celtic_Civilization
 achaemenid-persia,Achaemenid Empire,-550,-330,Middle East,Persian Empire|First Persian Empire|Hakhamanishiya,Achaemenid_Empire
-moche,Moche,-100,700,South America,Moche Civilization|Mochica,Moche
+moche,Moche,-100,700,South America,Moche Civilization|Mochica,Moche_culture
 maurya-empire,Maurya Empire,-322,-185,Asia,Mauryan Empire|Mauryas,Maurya_Empire
 carthage,Carthage,-814,-146,Africa,Carthaginian Empire|Qart-Hadasht|New City,Carthage
 etruscan-civilization,Etruscan Civilization,-900,-264,Europe,Etruscans|Tyrsenoi|Rasenna,Etruscan_Civilization
-maya,Maya,-2000,1524,North America,Maya Civilization|Classic Maya|Mayan Civilization,Maya
+maya,Maya,-2000,1524,North America,Maya Civilization|Classic Maya|Mayan Civilization,Maya_civilization
 roman-republic,Roman Republic,-509,-27,Europe,Republic of Rome|SPQR|Senatus Populusque Romanus,Roman_Republic
 parthian-empire,Parthian Empire,-247,224,Middle East,Parthia|Arsacid Empire|Ashkanian,Parthian_Empire
 roman-empire,Roman Empire,-27,476,Europe,Rome|Imperial Rome|Western Roman Empire,Roman_Empire
@@ -42,6 +42,6 @@ majapahit,Majapahit,1293,1527,Asia,Majapahit Empire|Wilwatikta,Majapahit
 aztec,Aztec,1300,1521,North America,Aztec Empire|Triple Alliance|Mexica|Tenochtitlan,Aztec
 inca,Inca,1438,1533,South America,Inca Empire|Tawantinsuyu|Incan Empire,Inca
 great-zimbabwe,Great Zimbabwe,1100,1450,Africa,Zimbabwe Kingdom|Kingdom of Zimbabwe,Great_Zimbabwe
-songhai,Songhai,1464,1591,Africa,Songhai Empire|Songhay Empire,Songhai
+songhai,Songhai,1464,1591,Africa,Songhai Empire|Songhay Empire,Songhai_Empire
 benin-kingdom,Benin Kingdom,1180,1897,Africa,Kingdom of Benin|Benin Empire|Edo Kingdom,Benin_Kingdom
 cahokia,Cahokia,600,1400,North America,Cahokian Civilization|Mississippian Culture|Monks Mound Culture,Cahokia
