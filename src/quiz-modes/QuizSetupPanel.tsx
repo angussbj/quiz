@@ -307,8 +307,8 @@ export function QuizSetupPanel({
           </section>
         )}
 
-        {/* ADVANCED+: Ordering section (only in ordered-recall mode) */}
-        {panelLevel !== 'simple' && orderingToggles.length > 0 && (
+        {/* Ordering section: Full only when linked dropdown handles it in Advanced; otherwise Advanced+ */}
+        {panelLevel !== 'simple' && orderingToggles.length > 0 && (panelLevel === 'full' || !advancedPanel?.linkedSortToggleKey) && (
           <section className={styles.section}>
             <span className={styles.sectionTitle}>Ordering</span>
             <div className={togglePanelStyles.toggleList}>

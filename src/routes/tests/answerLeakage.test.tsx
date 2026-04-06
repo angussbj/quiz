@@ -34,12 +34,12 @@ const TEXT_INPUT_MODES: ReadonlyArray<QuizModeType> = [
 ];
 
 const MODE_LABELS: Readonly<Record<QuizModeType, string>> = {
-  'free-recall-unordered': 'Free Recall',
-  'free-recall-ordered': 'Ordered Recall',
-  'identify': 'Identify',
-  'locate': 'Locate',
-  'prompted-recall': 'Prompted Recall',
-  'multiple-choice': 'Multiple Choice',
+  'free-recall-unordered': 'Name from memory',
+  'free-recall-ordered': 'Name in order',
+  'identify': 'Point and click',
+  'locate': 'Place it',
+  'prompted-recall': 'Name on sight',
+  'multiple-choice': 'Multiple choice',
 };
 
 /**
@@ -182,6 +182,8 @@ describe('No answers leaked in active quiz DOM', () => {
 
   beforeEach(() => {
     lastRendererProps = undefined;
+    // Set panel level to 'full' so mode selector and all toggles are visible
+    localStorage.setItem('quizzical:panelLevel', '"full"');
   });
 
   afterEach(() => {
@@ -207,9 +209,11 @@ describe('No answers leaked in active quiz DOM', () => {
       expect(screen.getByRole('button', { name: 'Start Quiz' })).toBeInTheDocument();
     });
 
-    // Select mode if different from default
-    if (mode !== quiz.defaultMode) {
-      const modeSelect = screen.getByLabelText('Mode');
+    // Select mode if different from default (or preset default)
+    const presetMode = quiz.difficultyPresets?.slots[0]?.mode ?? quiz.defaultMode;
+    if (mode !== presetMode) {
+      // Wait for mode selector to appear (panel level loads async from localStorage)
+      const modeSelect = await waitFor(() => screen.getByLabelText('Mode'));
       await user.selectOptions(modeSelect, mode);
     }
 
