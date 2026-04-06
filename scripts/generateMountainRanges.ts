@@ -1,11 +1,16 @@
 /**
- * Generate world-mountain-ranges.csv with ~65 major mountain ranges.
+ * Generate world-mountain-ranges.csv with ~63 major mountain ranges.
  *
  * Each range includes metadata (elevation, length, area, highest peak) and
  * an SVG polygon path in equirectangular projection (x = longitude, y = −latitude).
  *
- * The script reads the ETOPO 2022 DEM to verify that centroid coordinates
- * fall on land at reasonable elevation, nudging them if necessary.
+ * Polygons are derived from DEM elevation data using flood-fill from a seed
+ * point within each range. The algorithm:
+ * 1. Load the ETOPO 2022 DEM and downsample to ~0.1° resolution (3600×1800)
+ * 2. For each range, BFS flood-fill from the seed pixel where elevation >= threshold
+ * 3. Extract the boundary using marching squares
+ * 4. Simplify with Douglas-Peucker
+ * 5. Convert to SVG path (x=lng, y=-lat, closed with Z)
  *
  * Usage:
  *   npx tsx scripts/generateMountainRanges.ts
@@ -26,12 +31,19 @@ import { resolve, dirname } from 'path';
 // Types
 // ------------------------------------------------------------------
 
-interface MountainRange {
+interface RangeDefinition {
   readonly id: string;
   readonly name: string;
   readonly nameAlternates: string;
   readonly continent: string;
-  readonly polygon: ReadonlyArray<readonly [number, number]>; // [lng, lat] pairs
+  readonly seed: readonly [number, number]; // [lng, lat]
+  readonly threshold: number; // minimum elevation in meters
+  readonly bounds: {
+    readonly minLng: number;
+    readonly maxLng: number;
+    readonly minLat: number;
+    readonly maxLat: number;
+  };
   readonly latitude: number;
   readonly longitude: number;
   readonly peakElevationM: number;
@@ -41,59 +53,418 @@ interface MountainRange {
 }
 
 // ------------------------------------------------------------------
-// DEM helpers
+// Downsampled DEM
 // ------------------------------------------------------------------
 
-async function readElevationAtPoint(
-  image: GeoTIFFImage,
-  demWidth: number,
-  demHeight: number,
-  lng: number,
-  lat: number,
-): Promise<number> {
-  const pixelX = Math.floor((lng + 180) / 360 * demWidth);
-  const pixelY = Math.floor((90 - lat) / 180 * demHeight);
+const DS_WIDTH = 3600;
+const DS_HEIGHT = 1800;
 
-  const clampedX = Math.max(0, Math.min(demWidth - 1, pixelX));
-  const clampedY = Math.max(0, Math.min(demHeight - 1, pixelY));
+/** Downsample full DEM to DS_WIDTH × DS_HEIGHT using max-pooling. */
+function downsampleDem(
+  raster: Float32Array,
+  fullWidth: number,
+  fullHeight: number,
+): Float32Array {
+  const ds = new Float32Array(DS_WIDTH * DS_HEIGHT);
+  const scaleX = fullWidth / DS_WIDTH;
+  const scaleY = fullHeight / DS_HEIGHT;
 
-  const rasterData = await image.readRasters({
-    window: [clampedX, clampedY, clampedX + 1, clampedY + 1],
-  });
-  const raster = rasterData[0] as Float32Array;
-  return raster[0];
+  for (let dy = 0; dy < DS_HEIGHT; dy++) {
+    for (let dx = 0; dx < DS_WIDTH; dx++) {
+      // Average the pixels in this block
+      const srcX0 = Math.floor(dx * scaleX);
+      const srcX1 = Math.min(fullWidth, Math.floor((dx + 1) * scaleX));
+      const srcY0 = Math.floor(dy * scaleY);
+      const srcY1 = Math.min(fullHeight, Math.floor((dy + 1) * scaleY));
+
+      let sum = 0;
+      let count = 0;
+      for (let sy = srcY0; sy < srcY1; sy++) {
+        for (let sx = srcX0; sx < srcX1; sx++) {
+          sum += raster[sy * fullWidth + sx];
+          count++;
+        }
+      }
+      ds[dy * DS_WIDTH + dx] = count > 0 ? sum / count : 0;
+    }
+  }
+  return ds;
 }
 
-/**
- * Search in a small grid around the centroid to find a point with higher
- * elevation, nudging the centroid onto land / higher terrain.
- */
-async function refineCentroid(
-  image: GeoTIFFImage,
-  demWidth: number,
-  demHeight: number,
-  lng: number,
-  lat: number,
-): Promise<{ readonly lng: number; readonly lat: number; readonly elevation: number }> {
-  let bestLng = lng;
-  let bestLat = lat;
-  let bestElev = -Infinity;
+/** Convert geographic coordinates to downsampled pixel coordinates. */
+function geoToPixel(lng: number, lat: number): readonly [number, number] {
+  const px = Math.round((lng + 180) / 360 * DS_WIDTH);
+  const py = Math.round((90 - lat) / 180 * DS_HEIGHT);
+  return [
+    Math.max(0, Math.min(DS_WIDTH - 1, px)),
+    Math.max(0, Math.min(DS_HEIGHT - 1, py)),
+  ];
+}
 
-  // Search a 5x5 grid with 0.5° spacing around the centroid
-  for (let dLat = -1.0; dLat <= 1.0; dLat += 0.5) {
-    for (let dLng = -1.0; dLng <= 1.0; dLng += 0.5) {
-      const testLng = lng + dLng;
-      const testLat = lat + dLat;
-      const elev = await readElevationAtPoint(image, demWidth, demHeight, testLng, testLat);
-      if (elev > bestElev) {
-        bestElev = elev;
-        bestLng = testLng;
-        bestLat = testLat;
+/** Convert downsampled pixel coordinates to geographic coordinates. */
+function pixelToGeo(px: number, py: number): readonly [number, number] {
+  const lng = (px / DS_WIDTH) * 360 - 180;
+  const lat = 90 - (py / DS_HEIGHT) * 180;
+  return [lng, lat];
+}
+
+// ------------------------------------------------------------------
+// Flood fill
+// ------------------------------------------------------------------
+
+/**
+ * BFS flood-fill from a seed pixel. Returns a Set of pixel indices
+ * where elevation >= threshold and within the bounding box.
+ */
+function floodFill(
+  dem: Float32Array,
+  seedPx: number,
+  seedPy: number,
+  threshold: number,
+  boundsMinPx: number,
+  boundsMaxPx: number,
+  boundsMinPy: number,
+  boundsMaxPy: number,
+): Set<number> {
+  const filled = new Set<number>();
+  const seedIdx = seedPy * DS_WIDTH + seedPx;
+
+  // Verify seed is above threshold
+  if (dem[seedIdx] < threshold) {
+    // Try to find a nearby pixel above threshold
+    let bestIdx = seedIdx;
+    let bestElev = dem[seedIdx];
+    const searchRadius = 5;
+    for (let dy = -searchRadius; dy <= searchRadius; dy++) {
+      for (let dx = -searchRadius; dx <= searchRadius; dx++) {
+        const nx = seedPx + dx;
+        const ny = seedPy + dy;
+        if (nx < boundsMinPx || nx > boundsMaxPx || ny < boundsMinPy || ny > boundsMaxPy) continue;
+        const idx = ny * DS_WIDTH + nx;
+        if (dem[idx] > bestElev) {
+          bestElev = dem[idx];
+          bestIdx = idx;
+        }
+      }
+    }
+    if (bestElev < threshold) {
+      return filled; // No pixel above threshold nearby
+    }
+    filled.add(bestIdx);
+    const queue = [bestIdx];
+    return bfs(dem, queue, filled, threshold, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+  }
+
+  filled.add(seedIdx);
+  const queue = [seedIdx];
+  return bfs(dem, queue, filled, threshold, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+}
+
+function bfs(
+  dem: Float32Array,
+  queue: Array<number>,
+  filled: Set<number>,
+  threshold: number,
+  boundsMinPx: number,
+  boundsMaxPx: number,
+  boundsMinPy: number,
+  boundsMaxPy: number,
+): Set<number> {
+  const dx4 = [1, -1, 0, 0];
+  const dy4 = [0, 0, 1, -1];
+
+  let head = 0;
+  while (head < queue.length) {
+    const idx = queue[head++];
+    const py = Math.floor(idx / DS_WIDTH);
+    const px = idx % DS_WIDTH;
+
+    for (let d = 0; d < 4; d++) {
+      const nx = px + dx4[d];
+      const ny = py + dy4[d];
+
+      if (nx < boundsMinPx || nx > boundsMaxPx || ny < boundsMinPy || ny > boundsMaxPy) continue;
+
+      const nIdx = ny * DS_WIDTH + nx;
+      if (filled.has(nIdx)) continue;
+      if (dem[nIdx] < threshold) continue;
+
+      filled.add(nIdx);
+      queue.push(nIdx);
+    }
+  }
+
+  return filled;
+}
+
+// ------------------------------------------------------------------
+// Keep only the largest connected component
+// ------------------------------------------------------------------
+
+function largestComponent(filled: Set<number>): Set<number> {
+  if (filled.size === 0) return filled;
+
+  const visited = new Set<number>();
+  let largestSet = new Set<number>();
+
+  for (const idx of filled) {
+    if (visited.has(idx)) continue;
+
+    // BFS to find this component
+    const component = new Set<number>();
+    const queue = [idx];
+    component.add(idx);
+    visited.add(idx);
+
+    let head = 0;
+    while (head < queue.length) {
+      const cur = queue[head++];
+      const py = Math.floor(cur / DS_WIDTH);
+      const px = cur % DS_WIDTH;
+
+      const dx4 = [1, -1, 0, 0];
+      const dy4 = [0, 0, 1, -1];
+
+      for (let d = 0; d < 4; d++) {
+        const nx = px + dx4[d];
+        const ny = py + dy4[d];
+        const nIdx = ny * DS_WIDTH + nx;
+
+        if (!filled.has(nIdx) || visited.has(nIdx)) continue;
+
+        visited.add(nIdx);
+        component.add(nIdx);
+        queue.push(nIdx);
+      }
+    }
+
+    if (component.size > largestSet.size) {
+      largestSet = component;
+    }
+  }
+
+  return largestSet;
+}
+
+// ------------------------------------------------------------------
+// Boundary extraction via marching squares
+// ------------------------------------------------------------------
+
+/**
+ * Extract boundary polygons from a filled pixel set using marching squares.
+ * Returns arrays of [lng, lat] coordinates for each closed contour.
+ */
+function extractBoundary(
+  filled: Set<number>,
+  boundsMinPx: number,
+  boundsMaxPx: number,
+  boundsMinPy: number,
+  boundsMaxPy: number,
+): Array<Array<readonly [number, number]>> {
+  // Build a grid representation for marching squares
+  // The grid has +1 width/height to capture all boundary edges
+  const gridW = boundsMaxPx - boundsMinPx + 2;
+  const gridH = boundsMaxPy - boundsMinPy + 2;
+  const grid = new Uint8Array(gridW * gridH);
+
+  for (const idx of filled) {
+    const py = Math.floor(idx / DS_WIDTH) - boundsMinPy;
+    const px = (idx % DS_WIDTH) - boundsMinPx;
+    if (px >= 0 && px < gridW && py >= 0 && py < gridH) {
+      grid[py * gridW + px] = 1;
+    }
+  }
+
+  // Marching squares: for each 2x2 cell, compute the case and emit edges
+  // Edge vertices are placed at cell corners (between grid cells)
+  type Edge = readonly [number, number, number, number]; // x1, y1, x2, y2
+  const edges: Array<Edge> = [];
+
+  for (let cy = 0; cy < gridH - 1; cy++) {
+    for (let cx = 0; cx < gridW - 1; cx++) {
+      const tl = grid[cy * gridW + cx];
+      const tr = grid[cy * gridW + cx + 1];
+      const bl = grid[(cy + 1) * gridW + cx];
+      const br = grid[(cy + 1) * gridW + cx + 1];
+      const caseIndex = (tl << 3) | (tr << 2) | (br << 1) | bl;
+
+      // Cell corners in local coordinates
+      const top = cy;
+      const bottom = cy + 1;
+      const left = cx;
+      const right = cx + 1;
+      const midX = cx + 0.5;
+      const midY = cy + 0.5;
+
+      switch (caseIndex) {
+        case 0: case 15: break; // all same
+        case 1: edges.push([left, midY, midX, bottom]); break;
+        case 2: edges.push([midX, bottom, right, midY]); break;
+        case 3: edges.push([left, midY, right, midY]); break;
+        case 4: edges.push([midX, top, right, midY]); break;
+        case 5:
+          edges.push([left, midY, midX, top]);
+          edges.push([midX, bottom, right, midY]);
+          break;
+        case 6: edges.push([midX, top, midX, bottom]); break;
+        case 7: edges.push([left, midY, midX, top]); break;
+        case 8: edges.push([midX, top, left, midY]); break;
+        case 9: edges.push([midX, top, midX, bottom]); break;
+        case 10:
+          edges.push([midX, top, right, midY]);
+          edges.push([left, midY, midX, bottom]);
+          break;
+        case 11: edges.push([midX, top, right, midY]); break;
+        case 12: edges.push([left, midY, right, midY]); break;
+        case 13: edges.push([right, midY, midX, bottom]); break;
+        case 14: edges.push([midX, bottom, left, midY]); break;
       }
     }
   }
 
-  return { lng: bestLng, lat: bestLat, elevation: bestElev };
+  // Chain edges into closed polygons
+  return chainEdges(edges, boundsMinPx, boundsMinPy);
+}
+
+/**
+ * Chain edge segments into closed polygons by matching endpoints.
+ * Converts from grid coordinates to geographic coordinates.
+ */
+function chainEdges(
+  edges: ReadonlyArray<readonly [number, number, number, number]>,
+  offsetPx: number,
+  offsetPy: number,
+): Array<Array<readonly [number, number]>> {
+  if (edges.length === 0) return [];
+
+  // Build adjacency map keyed by vertex position (quantized to avoid float issues)
+  const key = (x: number, y: number): string => `${Math.round(x * 2)},${Math.round(y * 2)}`;
+
+  const adjacency = new Map<string, Array<{ readonly edge: number; readonly otherKey: string; readonly otherX: number; readonly otherY: number }>>();
+  const used = new Array<boolean>(edges.length).fill(false);
+
+  for (let i = 0; i < edges.length; i++) {
+    const [x1, y1, x2, y2] = edges[i];
+    const k1 = key(x1, y1);
+    const k2 = key(x2, y2);
+
+    if (!adjacency.has(k1)) adjacency.set(k1, []);
+    if (!adjacency.has(k2)) adjacency.set(k2, []);
+
+    adjacency.get(k1)!.push({ edge: i, otherKey: k2, otherX: x2, otherY: y2 });
+    adjacency.get(k2)!.push({ edge: i, otherKey: k1, otherX: x1, otherY: y1 });
+  }
+
+  const polygons: Array<Array<readonly [number, number]>> = [];
+
+  for (let i = 0; i < edges.length; i++) {
+    if (used[i]) continue;
+
+    const polygon: Array<readonly [number, number]> = [];
+    const [startX, startY] = [edges[i][0], edges[i][1]];
+
+    // Walk the chain
+    let currentKey = key(startX, startY);
+    used[i] = true;
+
+    // Add start point
+    const [sLng, sLat] = pixelToGeo(startX + offsetPx, startY + offsetPy);
+    polygon.push([sLng, sLat]);
+
+    // Follow to the other end of first edge
+    const nextKey = key(edges[i][2], edges[i][3]);
+    const [nLng, nLat] = pixelToGeo(edges[i][2] + offsetPx, edges[i][3] + offsetPy);
+    polygon.push([nLng, nLat]);
+
+    currentKey = nextKey;
+
+    // Keep walking until we return to start or get stuck
+    const startKey = key(startX, startY);
+    let steps = 0;
+    const maxSteps = edges.length + 1;
+
+    while (currentKey !== startKey && steps < maxSteps) {
+      steps++;
+      const neighbors = adjacency.get(currentKey);
+      if (!neighbors) break;
+
+      let found = false;
+      for (const neighbor of neighbors) {
+        if (!used[neighbor.edge]) {
+          used[neighbor.edge] = true;
+          const [gLng, gLat] = pixelToGeo(neighbor.otherX + offsetPx, neighbor.otherY + offsetPy);
+          polygon.push([gLng, gLat]);
+          currentKey = neighbor.otherKey;
+          found = true;
+          break;
+        }
+      }
+      if (!found) break;
+    }
+
+    if (polygon.length >= 3) {
+      polygons.push(polygon);
+    }
+  }
+
+  return polygons;
+}
+
+// ------------------------------------------------------------------
+// Douglas-Peucker simplification
+// ------------------------------------------------------------------
+
+function douglasPeucker(
+  points: ReadonlyArray<readonly [number, number]>,
+  epsilon: number,
+): Array<readonly [number, number]> {
+  if (points.length <= 2) return [...points];
+
+  // Find the point with the maximum distance from the line between first and last
+  let maxDist = 0;
+  let maxIdx = 0;
+
+  const [x1, y1] = points[0];
+  const [x2, y2] = points[points.length - 1];
+
+  for (let i = 1; i < points.length - 1; i++) {
+    const d = perpendicularDistance(points[i], [x1, y1], [x2, y2]);
+    if (d > maxDist) {
+      maxDist = d;
+      maxIdx = i;
+    }
+  }
+
+  if (maxDist > epsilon) {
+    const left = douglasPeucker(points.slice(0, maxIdx + 1), epsilon);
+    const right = douglasPeucker(points.slice(maxIdx), epsilon);
+    return [...left.slice(0, -1), ...right];
+  }
+
+  return [points[0], points[points.length - 1]];
+}
+
+function perpendicularDistance(
+  point: readonly [number, number],
+  lineStart: readonly [number, number],
+  lineEnd: readonly [number, number],
+): number {
+  const [px, py] = point;
+  const [x1, y1] = lineStart;
+  const [x2, y2] = lineEnd;
+
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const lengthSq = dx * dx + dy * dy;
+
+  if (lengthSq === 0) {
+    const ddx = px - x1;
+    const ddy = py - y1;
+    return Math.sqrt(ddx * ddx + ddy * ddy);
+  }
+
+  const num = Math.abs(dy * px - dx * py + x2 * y1 - y2 * x1);
+  return num / Math.sqrt(lengthSq);
 }
 
 // ------------------------------------------------------------------
@@ -115,17 +486,30 @@ function polygonToSvgPath(polygon: ReadonlyArray<readonly [number, number]>): st
 }
 
 // ------------------------------------------------------------------
-// Mountain range data
+// CSV helpers
 // ------------------------------------------------------------------
 
-const RANGES: ReadonlyArray<MountainRange> = [
+function escapeCSVField(value: string): string {
+  if (value.includes(',') || value.includes('|') || value.includes('"') || value.includes('\n')) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  return value;
+}
+
+// ------------------------------------------------------------------
+// Mountain range definitions
+// ------------------------------------------------------------------
+
+const RANGES: ReadonlyArray<RangeDefinition> = [
   // ======================== ASIA (20) ========================
   {
     id: 'himalayas',
     name: 'Himalayas',
     nameAlternates: 'Himalaya|The Himalayas',
     continent: 'Asia',
-    polygon: [[73.5, 35.5], [77.0, 36.5], [80.0, 35.0], [83.0, 33.0], [86.0, 29.5], [88.5, 28.0], [90.5, 27.5], [93.0, 27.5], [95.5, 28.0], [97.0, 28.5], [95.0, 29.5], [92.0, 28.5], [88.0, 29.0], [85.0, 30.5], [82.0, 32.0], [79.0, 34.0], [76.0, 35.5]],
+    seed: [84.0, 28.5],
+    threshold: 2500,
+    bounds: { minLng: 72, maxLng: 98, minLat: 26, maxLat: 37 },
     latitude: 28.5,
     longitude: 84.0,
     peakElevationM: 8849,
@@ -138,7 +522,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Karakoram',
     nameAlternates: 'Karakorum',
     continent: 'Asia',
-    polygon: [[74.5, 37.5], [76.0, 37.0], [77.5, 36.5], [79.0, 36.0], [79.5, 35.5], [78.5, 35.0], [77.0, 35.0], [75.5, 35.5], [74.0, 36.5]],
+    seed: [76.5, 36.0],
+    threshold: 3500,
+    bounds: { minLng: 74, maxLng: 80, minLat: 34.5, maxLat: 37.5 },
     latitude: 36.0,
     longitude: 76.5,
     peakElevationM: 8611,
@@ -151,7 +537,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Hindu Kush',
     nameAlternates: 'Hindukush',
     continent: 'Asia',
-    polygon: [[66.5, 34.5], [68.0, 35.5], [70.0, 36.5], [72.0, 37.0], [73.5, 36.5], [74.5, 36.0], [73.0, 35.0], [71.0, 34.5], [69.0, 33.5], [67.0, 33.5]],
+    seed: [70.5, 35.5],
+    threshold: 2000,
+    bounds: { minLng: 66, maxLng: 75, minLat: 33, maxLat: 37.5 },
     latitude: 35.5,
     longitude: 70.5,
     peakElevationM: 7708,
@@ -164,7 +552,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Pamir Mountains',
     nameAlternates: 'Pamirs|Roof of the World',
     continent: 'Asia',
-    polygon: [[70.5, 39.5], [72.0, 40.0], [74.0, 39.5], [75.5, 39.0], [75.0, 38.0], [73.5, 37.5], [72.0, 37.5], [70.5, 38.0]],
+    seed: [73.0, 38.5],
+    threshold: 3000,
+    bounds: { minLng: 70, maxLng: 76, minLat: 37, maxLat: 40 },
     latitude: 38.5,
     longitude: 73.0,
     peakElevationM: 7495,
@@ -177,7 +567,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Tian Shan',
     nameAlternates: 'Tien Shan|Celestial Mountains',
     continent: 'Asia',
-    polygon: [[69.0, 43.5], [72.0, 43.0], [75.0, 42.5], [78.0, 42.0], [80.5, 42.5], [83.0, 43.0], [86.0, 43.5], [88.0, 43.0], [90.0, 42.0], [88.5, 41.0], [86.0, 41.5], [83.0, 41.0], [80.0, 40.5], [77.0, 40.5], [74.0, 40.5], [71.0, 41.0], [69.0, 42.0]],
+    seed: [80.0, 42.0],
+    threshold: 2000,
+    bounds: { minLng: 69, maxLng: 91, minLat: 40, maxLat: 44 },
     latitude: 42.0,
     longitude: 80.0,
     peakElevationM: 7439,
@@ -190,7 +582,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Kunlun Mountains',
     nameAlternates: 'Kunlun Shan|Kunlun Range',
     continent: 'Asia',
-    polygon: [[74.0, 37.5], [77.0, 37.0], [80.0, 36.5], [83.0, 36.0], [86.0, 36.5], [89.0, 36.5], [92.0, 36.0], [95.0, 36.0], [97.0, 35.5], [96.0, 34.5], [93.0, 34.5], [90.0, 35.0], [87.0, 35.0], [84.0, 35.0], [81.0, 35.5], [78.0, 35.5], [75.0, 36.0]],
+    seed: [85.0, 35.5],
+    threshold: 4000,
+    bounds: { minLng: 74, maxLng: 98, minLat: 34, maxLat: 38 },
     latitude: 35.5,
     longitude: 85.0,
     peakElevationM: 7167,
@@ -203,7 +597,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Altai Mountains',
     nameAlternates: 'Altay Mountains',
     continent: 'Asia',
-    polygon: [[83.0, 51.5], [85.0, 51.0], [87.0, 50.5], [89.0, 49.5], [90.5, 48.5], [91.0, 47.5], [90.0, 47.0], [88.0, 47.5], [86.0, 48.5], [84.0, 49.5], [82.5, 50.5]],
+    seed: [87.0, 49.0],
+    threshold: 1000,
+    bounds: { minLng: 82, maxLng: 92, minLat: 46, maxLat: 52 },
     latitude: 49.0,
     longitude: 87.0,
     peakElevationM: 4506,
@@ -216,7 +612,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Ural Mountains',
     nameAlternates: 'Urals|Ural Range',
     continent: 'Asia',
-    polygon: [[57.0, 68.0], [60.0, 68.5], [62.0, 66.0], [63.0, 63.0], [61.0, 60.0], [60.5, 57.0], [59.5, 54.0], [58.0, 51.5], [56.0, 51.0], [55.0, 53.0], [56.0, 56.0], [57.0, 59.0], [58.0, 62.0], [57.5, 65.0]],
+    seed: [59.0, 60.0],
+    threshold: 300,
+    bounds: { minLng: 54, maxLng: 64, minLat: 50, maxLat: 69 },
     latitude: 60.0,
     longitude: 59.0,
     peakElevationM: 1895,
@@ -229,7 +627,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Caucasus',
     nameAlternates: 'Caucasus Mountains|Greater Caucasus',
     continent: 'Asia',
-    polygon: [[36.5, 44.5], [38.5, 44.0], [40.5, 43.5], [42.5, 42.5], [44.5, 42.0], [46.5, 41.5], [48.5, 41.5], [50.0, 41.0], [49.5, 40.5], [47.5, 41.0], [45.0, 41.5], [43.0, 42.0], [41.0, 43.0], [39.0, 43.5], [37.0, 43.5]],
+    seed: [43.5, 42.5],
+    threshold: 1000,
+    bounds: { minLng: 36, maxLng: 51, minLat: 40, maxLat: 44.5 },
     latitude: 42.5,
     longitude: 43.5,
     peakElevationM: 5642,
@@ -242,7 +642,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Zagros Mountains',
     nameAlternates: 'Zagros Range',
     continent: 'Asia',
-    polygon: [[44.5, 37.0], [46.0, 36.5], [47.5, 35.5], [48.5, 34.0], [49.5, 33.0], [50.5, 32.0], [51.5, 30.5], [53.0, 29.0], [54.5, 28.0], [55.0, 27.0], [54.0, 27.0], [52.0, 28.5], [50.0, 30.0], [48.5, 31.5], [47.0, 33.0], [46.0, 34.5], [44.5, 36.0]],
+    seed: [49.0, 32.0],
+    threshold: 1200,
+    bounds: { minLng: 44, maxLng: 56, minLat: 26, maxLat: 37.5 },
     latitude: 32.0,
     longitude: 49.0,
     peakElevationM: 4409,
@@ -255,7 +657,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Elburz Mountains',
     nameAlternates: 'Alborz|Alborz Mountains',
     continent: 'Asia',
-    polygon: [[48.5, 37.0], [50.0, 37.0], [51.5, 36.5], [53.0, 36.5], [54.5, 36.0], [56.0, 35.5], [55.5, 35.0], [53.5, 35.5], [51.5, 35.5], [49.5, 36.0], [48.0, 36.5]],
+    seed: [52.0, 36.0],
+    threshold: 1500,
+    bounds: { minLng: 48, maxLng: 57, minLat: 34.5, maxLat: 37.5 },
     latitude: 36.0,
     longitude: 52.0,
     peakElevationM: 5610,
@@ -268,7 +672,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Western Ghats',
     nameAlternates: 'Sahyadri|Western Ghat Mountains',
     continent: 'Asia',
-    polygon: [[73.0, 21.0], [74.0, 20.0], [74.5, 18.0], [75.0, 16.0], [76.0, 14.0], [76.5, 12.0], [77.0, 10.0], [77.5, 8.5], [76.5, 8.5], [76.0, 10.0], [75.5, 12.0], [75.0, 14.0], [74.0, 16.0], [73.5, 18.0], [73.0, 20.0], [72.5, 21.0]],
+    seed: [75.0, 14.0],
+    threshold: 400,
+    bounds: { minLng: 72, maxLng: 78, minLat: 8, maxLat: 21.5 },
     latitude: 14.0,
     longitude: 75.0,
     peakElevationM: 2695,
@@ -281,7 +687,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Eastern Ghats',
     nameAlternates: 'Eastern Ghat Mountains',
     continent: 'Asia',
-    polygon: [[80.0, 20.0], [81.0, 19.0], [81.5, 17.5], [82.0, 16.0], [80.5, 14.5], [79.5, 13.0], [78.5, 12.0], [78.0, 11.5], [77.5, 12.0], [78.0, 13.5], [79.0, 15.0], [79.5, 17.0], [80.0, 18.5]],
+    seed: [79.5, 15.5],
+    threshold: 300,
+    bounds: { minLng: 77, maxLng: 83, minLat: 11, maxLat: 21 },
     latitude: 15.5,
     longitude: 79.5,
     peakElevationM: 1680,
@@ -294,7 +702,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Japanese Alps',
     nameAlternates: 'Nihon Alps',
     continent: 'Asia',
-    polygon: [[137.0, 37.0], [137.5, 36.8], [138.0, 36.5], [138.2, 36.0], [138.0, 35.5], [137.5, 35.5], [137.0, 35.8], [136.8, 36.2], [136.8, 36.7]],
+    seed: [137.5, 36.2],
+    threshold: 800,
+    bounds: { minLng: 136, maxLng: 139, minLat: 35, maxLat: 37.5 },
     latitude: 36.2,
     longitude: 137.5,
     peakElevationM: 3190,
@@ -307,7 +717,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Altun Mountains',
     nameAlternates: 'Altun Shan|Astin Tagh',
     continent: 'Asia',
-    polygon: [[85.0, 39.5], [87.0, 39.0], [89.0, 38.5], [91.0, 38.0], [92.5, 37.5], [91.5, 37.0], [89.5, 37.5], [87.5, 38.0], [85.5, 38.5]],
+    seed: [88.5, 38.0],
+    threshold: 3500,
+    bounds: { minLng: 84, maxLng: 93, minLat: 36.5, maxLat: 40 },
     latitude: 38.0,
     longitude: 88.5,
     peakElevationM: 6161,
@@ -320,7 +732,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Hengduan Mountains',
     nameAlternates: 'Hengduan Shan',
     continent: 'Asia',
-    polygon: [[97.0, 32.0], [98.5, 31.5], [100.0, 30.5], [101.0, 29.0], [101.5, 27.5], [101.0, 26.0], [100.0, 25.5], [99.0, 26.5], [98.0, 28.0], [97.0, 29.5], [96.5, 31.0]],
+    seed: [99.0, 28.5],
+    threshold: 2500,
+    bounds: { minLng: 96, maxLng: 102, minLat: 25, maxLat: 33 },
     latitude: 28.5,
     longitude: 99.0,
     peakElevationM: 7556,
@@ -333,7 +747,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Stanovoy Range',
     nameAlternates: 'Stanovoi Range|Stanovoy Mountains',
     continent: 'Asia',
-    polygon: [[121.0, 57.0], [124.0, 57.5], [127.0, 57.0], [130.0, 56.5], [133.0, 56.0], [132.0, 55.0], [129.0, 55.5], [126.0, 55.5], [123.0, 56.0], [120.5, 56.0]],
+    seed: [127.0, 56.0],
+    threshold: 600,
+    bounds: { minLng: 120, maxLng: 134, minLat: 54.5, maxLat: 58 },
     latitude: 56.0,
     longitude: 127.0,
     peakElevationM: 2412,
@@ -346,7 +762,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Verkhoyansk Range',
     nameAlternates: 'Verkhoyansk Mountains',
     continent: 'Asia',
-    polygon: [[127.0, 68.0], [129.0, 67.5], [131.0, 66.0], [133.0, 64.0], [134.0, 62.0], [133.5, 60.0], [132.0, 60.5], [130.0, 62.0], [128.5, 64.0], [127.0, 66.0], [126.0, 67.5]],
+    seed: [130.0, 64.0],
+    threshold: 600,
+    bounds: { minLng: 125, maxLng: 135, minLat: 59, maxLat: 69 },
     latitude: 64.0,
     longitude: 130.0,
     peakElevationM: 2389,
@@ -359,7 +777,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Chersky Range',
     nameAlternates: 'Chersky Mountains|Cherskiy Range',
     continent: 'Asia',
-    polygon: [[137.0, 66.0], [139.5, 65.5], [142.0, 65.0], [144.5, 64.0], [147.0, 63.5], [149.0, 63.0], [148.0, 62.0], [145.5, 62.5], [143.0, 63.5], [140.5, 64.5], [138.0, 65.0], [136.0, 65.5]],
+    seed: [143.0, 64.0],
+    threshold: 600,
+    bounds: { minLng: 136, maxLng: 150, minLat: 61, maxLat: 67 },
     latitude: 64.0,
     longitude: 143.0,
     peakElevationM: 3003,
@@ -372,7 +792,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Sikhote-Alin',
     nameAlternates: 'Sikhote Alin Mountains',
     continent: 'Asia',
-    polygon: [[134.0, 48.5], [135.5, 48.0], [136.5, 47.0], [137.0, 46.0], [137.5, 45.0], [137.0, 44.0], [136.0, 43.5], [135.0, 44.0], [134.0, 45.0], [133.5, 46.5], [133.5, 47.5]],
+    seed: [135.5, 46.0],
+    threshold: 400,
+    bounds: { minLng: 133, maxLng: 138, minLat: 43, maxLat: 49 },
     latitude: 46.0,
     longitude: 135.5,
     peakElevationM: 2090,
@@ -387,7 +809,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Alps',
     nameAlternates: 'European Alps|The Alps',
     continent: 'Europe',
-    polygon: [[5.5, 48.0], [7.0, 47.5], [9.0, 47.5], [10.5, 47.5], [12.0, 47.5], [13.5, 47.0], [15.0, 46.5], [16.0, 46.0], [15.5, 45.5], [13.5, 46.0], [11.5, 46.5], [9.5, 46.0], [8.0, 45.5], [6.5, 44.0], [5.5, 44.5], [5.0, 46.0], [5.0, 47.5]],
+    seed: [10.0, 46.5],
+    threshold: 800,
+    bounds: { minLng: 5, maxLng: 16.5, minLat: 43.5, maxLat: 48.5 },
     latitude: 46.5,
     longitude: 10.0,
     peakElevationM: 4809,
@@ -400,7 +824,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Pyrenees',
     nameAlternates: 'Pirineos|Pyrenees Mountains',
     continent: 'Europe',
-    polygon: [[-1.8, 43.5], [-0.5, 43.2], [0.5, 43.0], [1.5, 42.8], [2.5, 42.5], [3.2, 42.5], [3.2, 42.2], [2.0, 42.2], [0.5, 42.3], [-0.5, 42.5], [-1.5, 42.8], [-1.8, 43.0]],
+    seed: [0.7, 42.7],
+    threshold: 700,
+    bounds: { minLng: -2, maxLng: 3.5, minLat: 42, maxLat: 43.5 },
     latitude: 42.7,
     longitude: 0.7,
     peakElevationM: 3404,
@@ -413,7 +839,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Carpathians',
     nameAlternates: 'Carpathian Mountains',
     continent: 'Europe',
-    polygon: [[17.0, 49.5], [19.0, 49.5], [21.0, 49.0], [23.0, 48.5], [24.5, 47.5], [26.0, 46.5], [26.5, 45.5], [25.5, 45.0], [24.5, 45.5], [23.5, 46.0], [22.0, 47.0], [20.0, 47.5], [18.5, 48.5], [17.0, 49.0]],
+    seed: [24.6, 45.6],
+    threshold: 400,
+    bounds: { minLng: 17, maxLng: 27, minLat: 44.5, maxLat: 50 },
     latitude: 47.5,
     longitude: 22.0,
     peakElevationM: 2655,
@@ -426,7 +854,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Scandinavian Mountains',
     nameAlternates: 'Scandes|Scandinavian Range',
     continent: 'Europe',
-    polygon: [[5.0, 62.5], [7.0, 63.0], [10.0, 64.0], [13.0, 66.0], [15.0, 67.5], [17.0, 69.0], [19.0, 69.5], [20.0, 69.0], [18.0, 68.0], [16.0, 66.5], [14.0, 64.5], [12.0, 63.0], [9.0, 62.0], [7.5, 61.0], [6.0, 60.5], [5.0, 61.0]],
+    seed: [13.0, 64.5],
+    threshold: 500,
+    bounds: { minLng: 4, maxLng: 21, minLat: 59, maxLat: 71 },
     latitude: 64.5,
     longitude: 13.0,
     peakElevationM: 2469,
@@ -439,7 +869,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Apennines',
     nameAlternates: 'Apennine Mountains|Appennini',
     continent: 'Europe',
-    polygon: [[8.0, 44.5], [9.5, 44.5], [11.0, 43.5], [12.5, 42.5], [13.5, 42.0], [14.5, 41.5], [15.5, 40.5], [16.0, 39.5], [16.5, 39.0], [16.0, 38.5], [15.5, 39.0], [15.0, 40.0], [14.0, 41.0], [13.0, 42.0], [11.5, 43.0], [10.0, 44.0], [8.5, 44.5]],
+    seed: [13.0, 42.0],
+    threshold: 400,
+    bounds: { minLng: 8, maxLng: 17, minLat: 38, maxLat: 45 },
     latitude: 42.0,
     longitude: 13.0,
     peakElevationM: 2912,
@@ -452,7 +884,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Dinaric Alps',
     nameAlternates: 'Dinarides|Dinaric Mountains',
     continent: 'Europe',
-    polygon: [[13.5, 46.5], [14.5, 46.0], [16.0, 45.0], [17.0, 44.0], [18.0, 43.5], [19.0, 43.0], [19.5, 42.5], [20.0, 42.0], [19.5, 41.5], [18.5, 42.0], [17.5, 43.0], [16.5, 43.5], [15.5, 44.0], [14.0, 45.5], [13.0, 46.0]],
+    seed: [17.0, 43.5],
+    threshold: 500,
+    bounds: { minLng: 13, maxLng: 21, minLat: 41, maxLat: 47 },
     latitude: 43.5,
     longitude: 17.0,
     peakElevationM: 2694,
@@ -465,7 +899,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Balkan Mountains',
     nameAlternates: 'Stara Planina|Balkans',
     continent: 'Europe',
-    polygon: [[22.0, 43.8], [23.0, 43.5], [24.0, 43.2], [25.0, 43.0], [26.0, 42.8], [27.5, 42.8], [28.5, 42.8], [28.5, 42.3], [27.0, 42.3], [25.5, 42.5], [24.0, 42.5], [22.5, 42.8], [21.5, 43.2]],
+    seed: [25.0, 42.8],
+    threshold: 500,
+    bounds: { minLng: 21, maxLng: 29, minLat: 42, maxLat: 44 },
     latitude: 42.8,
     longitude: 25.0,
     peakElevationM: 2376,
@@ -478,7 +914,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Pindus Mountains',
     nameAlternates: 'Pindos|Pindus Range',
     continent: 'Europe',
-    polygon: [[20.5, 40.5], [21.0, 40.0], [21.5, 39.5], [21.5, 39.0], [21.0, 38.5], [20.5, 38.0], [20.0, 38.5], [20.0, 39.0], [20.0, 39.5], [20.0, 40.0]],
+    seed: [20.8, 39.5],
+    threshold: 500,
+    bounds: { minLng: 19.5, maxLng: 22, minLat: 37.5, maxLat: 41 },
     latitude: 39.5,
     longitude: 20.8,
     peakElevationM: 2637,
@@ -491,7 +929,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Scottish Highlands',
     nameAlternates: 'Highlands|Scottish Highland Mountains',
     continent: 'Europe',
-    polygon: [[-6.5, 58.5], [-5.0, 58.5], [-4.0, 58.0], [-3.5, 57.5], [-4.0, 57.0], [-4.5, 56.5], [-5.5, 56.5], [-6.0, 57.0], [-6.5, 57.5]],
+    seed: [-5.0, 57.5],
+    threshold: 200,
+    bounds: { minLng: -7, maxLng: -3, minLat: 56, maxLat: 59 },
     latitude: 57.5,
     longitude: -5.0,
     peakElevationM: 1345,
@@ -504,7 +944,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Sierra Nevada',
     nameAlternates: 'Sierra Nevada Spain',
     continent: 'Europe',
-    polygon: [[-3.8, 37.2], [-3.3, 37.2], [-2.8, 37.1], [-2.5, 37.0], [-2.8, 36.8], [-3.3, 36.8], [-3.8, 36.9]],
+    seed: [-3.2, 37.0],
+    threshold: 1200,
+    bounds: { minLng: -4, maxLng: -2.3, minLat: 36.7, maxLat: 37.3 },
     latitude: 37.0,
     longitude: -3.2,
     peakElevationM: 3479,
@@ -517,7 +959,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Cantabrian Mountains',
     nameAlternates: 'Cordillera Cantabrica',
     continent: 'Europe',
-    polygon: [[-7.0, 43.5], [-5.5, 43.2], [-4.0, 43.2], [-2.5, 43.0], [-2.5, 42.7], [-4.0, 42.5], [-5.5, 42.5], [-7.0, 42.8]],
+    seed: [-5.0, 43.0],
+    threshold: 600,
+    bounds: { minLng: -7.5, maxLng: -2, minLat: 42.3, maxLat: 43.5 },
     latitude: 43.0,
     longitude: -5.0,
     peakElevationM: 2650,
@@ -530,7 +974,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Rhodope Mountains',
     nameAlternates: 'Rhodopes|Rodopi',
     continent: 'Europe',
-    polygon: [[23.5, 42.0], [24.5, 42.0], [25.5, 41.8], [26.0, 41.5], [25.5, 41.0], [24.5, 41.2], [23.5, 41.5]],
+    seed: [24.5, 41.5],
+    threshold: 600,
+    bounds: { minLng: 23, maxLng: 26.5, minLat: 40.8, maxLat: 42.3 },
     latitude: 41.5,
     longitude: 24.5,
     peakElevationM: 2191,
@@ -545,7 +991,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Rocky Mountains',
     nameAlternates: 'Rockies|The Rockies',
     continent: 'North America',
-    polygon: [[-120.0, 60.0], [-117.0, 58.0], [-115.0, 55.0], [-114.0, 52.0], [-112.0, 49.0], [-110.0, 46.0], [-108.0, 43.0], [-107.0, 40.0], [-106.0, 37.0], [-105.5, 35.0], [-107.0, 35.5], [-108.5, 38.0], [-110.0, 41.0], [-112.0, 44.0], [-114.0, 47.0], [-116.0, 50.0], [-118.0, 53.0], [-119.5, 56.0], [-121.0, 59.0]],
+    seed: [-114.0, 47.0],
+    threshold: 1500,
+    bounds: { minLng: -122, maxLng: -104, minLat: 34, maxLat: 61 },
     latitude: 47.0,
     longitude: -114.0,
     peakElevationM: 4401,
@@ -558,7 +1006,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Appalachian Mountains',
     nameAlternates: 'Appalachians|The Appalachians',
     continent: 'North America',
-    polygon: [[-69.0, 48.0], [-68.0, 47.0], [-70.0, 45.0], [-72.0, 43.0], [-74.0, 41.0], [-76.0, 39.5], [-78.0, 38.0], [-80.0, 37.0], [-82.0, 36.0], [-84.0, 35.0], [-85.0, 34.5], [-84.0, 34.0], [-82.0, 35.0], [-80.0, 36.0], [-78.0, 37.0], [-76.0, 38.5], [-74.0, 40.0], [-72.0, 42.0], [-70.0, 44.0], [-69.0, 46.5]],
+    seed: [-82.3, 35.7],
+    threshold: 200,
+    bounds: { minLng: -86, maxLng: -68, minLat: 33, maxLat: 49 },
     latitude: 40.0,
     longitude: -77.0,
     peakElevationM: 2037,
@@ -571,7 +1021,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Sierra Nevada',
     nameAlternates: 'Sierra Nevada USA|Sierras',
     continent: 'North America',
-    polygon: [[-121.5, 40.0], [-120.0, 39.5], [-119.0, 38.5], [-118.0, 37.5], [-117.5, 36.5], [-118.0, 35.5], [-119.0, 35.5], [-120.0, 36.5], [-121.0, 37.5], [-121.5, 38.5]],
+    seed: [-119.5, 37.5],
+    threshold: 1500,
+    bounds: { minLng: -122, maxLng: -117, minLat: 35, maxLat: 40.5 },
     latitude: 37.5,
     longitude: -119.5,
     peakElevationM: 4421,
@@ -584,7 +1036,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Cascade Range',
     nameAlternates: 'Cascades|Cascade Mountains',
     continent: 'North America',
-    polygon: [[-122.5, 49.0], [-121.5, 48.5], [-121.0, 47.5], [-121.0, 46.5], [-121.5, 45.5], [-122.0, 44.5], [-122.0, 43.5], [-122.5, 42.5], [-122.0, 41.5], [-123.0, 41.5], [-123.0, 42.5], [-123.0, 44.0], [-122.5, 45.5], [-122.5, 47.0], [-123.0, 48.5]],
+    seed: [-121.8, 45.5],
+    threshold: 800,
+    bounds: { minLng: -124, maxLng: -120, minLat: 41, maxLat: 49.5 },
     latitude: 45.5,
     longitude: -121.8,
     peakElevationM: 4392,
@@ -597,7 +1051,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Alaska Range',
     nameAlternates: 'Alaska Range Mountains',
     continent: 'North America',
-    polygon: [[-154.0, 63.5], [-152.0, 63.5], [-150.0, 63.0], [-148.0, 62.5], [-146.0, 62.0], [-144.0, 61.5], [-144.5, 61.0], [-146.5, 61.5], [-148.5, 62.0], [-150.5, 62.5], [-152.5, 63.0], [-154.5, 63.0]],
+    seed: [-149.0, 62.5],
+    threshold: 800,
+    bounds: { minLng: -155, maxLng: -143, minLat: 60.5, maxLat: 64 },
     latitude: 62.5,
     longitude: -149.0,
     peakElevationM: 6190,
@@ -610,7 +1066,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Brooks Range',
     nameAlternates: 'Brooks Range Mountains',
     continent: 'North America',
-    polygon: [[-163.0, 69.0], [-160.0, 68.5], [-157.0, 68.5], [-154.0, 68.5], [-151.0, 68.0], [-148.0, 68.0], [-145.0, 68.5], [-143.0, 69.0], [-145.0, 69.5], [-148.0, 69.0], [-151.0, 69.0], [-154.0, 69.0], [-157.0, 69.5], [-160.0, 69.5]],
+    seed: [-153.0, 68.5],
+    threshold: 500,
+    bounds: { minLng: -164, maxLng: -142, minLat: 67, maxLat: 70 },
     latitude: 68.5,
     longitude: -153.0,
     peakElevationM: 2736,
@@ -623,7 +1081,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Coast Mountains',
     nameAlternates: 'Coast Range BC',
     continent: 'North America',
-    polygon: [[-130.0, 59.0], [-128.5, 58.0], [-127.0, 56.5], [-125.5, 55.0], [-124.5, 53.5], [-123.5, 52.0], [-123.0, 51.0], [-124.0, 51.0], [-125.0, 52.5], [-126.5, 54.0], [-128.0, 55.5], [-129.5, 57.0], [-131.0, 58.5]],
+    seed: [-126.5, 55.0],
+    threshold: 600,
+    bounds: { minLng: -132, maxLng: -122, minLat: 50, maxLat: 60 },
     latitude: 55.0,
     longitude: -126.5,
     peakElevationM: 4042,
@@ -636,7 +1096,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Sierra Madre Occidental',
     nameAlternates: 'Western Sierra Madre',
     continent: 'North America',
-    polygon: [[-109.0, 31.0], [-107.5, 29.5], [-106.5, 27.5], [-106.0, 25.5], [-105.5, 23.5], [-105.0, 22.0], [-106.0, 22.0], [-106.5, 24.0], [-107.5, 26.0], [-108.5, 28.0], [-109.5, 30.0], [-110.0, 31.0]],
+    seed: [-107.0, 26.0],
+    threshold: 1500,
+    bounds: { minLng: -111, maxLng: -104, minLat: 21, maxLat: 32 },
     latitude: 26.0,
     longitude: -107.0,
     peakElevationM: 3250,
@@ -649,7 +1111,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Sierra Madre Oriental',
     nameAlternates: 'Eastern Sierra Madre',
     continent: 'North America',
-    polygon: [[-100.5, 28.0], [-99.5, 27.0], [-99.0, 25.5], [-99.0, 24.0], [-99.5, 22.5], [-100.0, 21.0], [-101.0, 21.0], [-100.5, 23.0], [-100.0, 25.0], [-100.5, 26.5], [-101.5, 28.0]],
+    seed: [-100.0, 24.5],
+    threshold: 1200,
+    bounds: { minLng: -102, maxLng: -98, minLat: 20, maxLat: 29 },
     latitude: 24.5,
     longitude: -100.0,
     peakElevationM: 3700,
@@ -662,7 +1126,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Sierra Madre del Sur',
     nameAlternates: 'Southern Sierra Madre',
     continent: 'North America',
-    polygon: [[-101.0, 18.5], [-100.0, 18.0], [-98.5, 17.5], [-97.0, 16.5], [-96.0, 16.0], [-96.5, 15.5], [-98.0, 16.5], [-99.5, 17.0], [-101.0, 17.5], [-101.5, 18.0]],
+    seed: [-98.5, 17.0],
+    threshold: 1000,
+    bounds: { minLng: -102, maxLng: -95, minLat: 15, maxLat: 19 },
     latitude: 17.0,
     longitude: -98.5,
     peakElevationM: 3703,
@@ -677,7 +1143,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Andes',
     nameAlternates: 'Andes Mountains|Cordillera de los Andes',
     continent: 'South America',
-    polygon: [[-75.5, 11.0], [-73.0, 8.0], [-72.0, 5.0], [-76.0, 2.0], [-79.0, -1.0], [-79.5, -4.0], [-78.0, -8.0], [-76.0, -11.0], [-72.0, -15.0], [-69.0, -18.0], [-68.0, -22.0], [-67.0, -27.0], [-69.0, -32.0], [-70.0, -37.0], [-71.5, -42.0], [-73.0, -46.0], [-74.0, -50.0], [-73.0, -54.0], [-71.0, -53.0], [-72.0, -48.0], [-71.5, -44.0], [-70.5, -39.0], [-68.0, -34.0], [-66.0, -28.0], [-66.0, -23.0], [-67.5, -18.0], [-69.5, -14.0], [-74.0, -10.0], [-76.5, -6.0], [-78.0, -2.0], [-77.5, 1.0], [-75.0, 4.0], [-74.0, 7.0], [-76.5, 10.0]],
+    seed: [-70.0, -18.0],
+    threshold: 2000,
+    bounds: { minLng: -80, maxLng: -64, minLat: -55, maxLat: 12 },
     latitude: -18.0,
     longitude: -70.0,
     peakElevationM: 6961,
@@ -690,7 +1158,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Serra do Mar',
     nameAlternates: 'Sea Mountain Range',
     continent: 'South America',
-    polygon: [[-43.5, -22.5], [-44.0, -23.0], [-45.0, -23.5], [-46.5, -24.0], [-48.0, -25.0], [-49.0, -26.0], [-49.5, -27.5], [-49.0, -28.0], [-48.0, -27.0], [-47.0, -25.5], [-45.5, -24.0], [-44.5, -23.0], [-43.5, -22.0]],
+    seed: [-49.0, -26.0],
+    threshold: 300,
+    bounds: { minLng: -50, maxLng: -43, minLat: -29, maxLat: -22 },
     latitude: -25.0,
     longitude: -47.0,
     peakElevationM: 2316,
@@ -703,7 +1173,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Serra da Mantiqueira',
     nameAlternates: 'Mantiqueira Mountains',
     continent: 'South America',
-    polygon: [[-42.5, -21.5], [-43.5, -22.0], [-44.5, -22.5], [-45.5, -22.5], [-46.5, -23.0], [-46.5, -23.5], [-45.5, -23.0], [-44.5, -22.8], [-43.5, -22.5], [-42.5, -22.0]],
+    seed: [-44.5, -22.5],
+    threshold: 600,
+    bounds: { minLng: -47, maxLng: -42, minLat: -24, maxLat: -21 },
     latitude: -22.5,
     longitude: -44.5,
     peakElevationM: 2798,
@@ -716,7 +1188,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Guiana Highlands',
     nameAlternates: 'Guiana Shield|Guyana Highlands',
     continent: 'South America',
-    polygon: [[-66.0, 7.0], [-63.0, 6.5], [-60.0, 5.5], [-58.0, 5.0], [-60.0, 3.0], [-62.0, 2.0], [-65.0, 2.5], [-67.0, 4.0], [-67.0, 6.0]],
+    seed: [-63.0, 4.5],
+    threshold: 500,
+    bounds: { minLng: -68, maxLng: -57, minLat: 1, maxLat: 8 },
     latitude: 4.5,
     longitude: -63.0,
     peakElevationM: 2810,
@@ -729,7 +1203,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Cordillera Blanca',
     nameAlternates: 'White Range',
     continent: 'South America',
-    polygon: [[-77.8, -8.5], [-77.3, -8.8], [-77.0, -9.2], [-77.0, -9.8], [-77.3, -10.0], [-77.8, -9.8], [-78.0, -9.3], [-78.0, -8.8]],
+    seed: [-77.5, -9.2],
+    threshold: 3500,
+    bounds: { minLng: -78.5, maxLng: -76.5, minLat: -10.5, maxLat: -8 },
     latitude: -9.2,
     longitude: -77.5,
     peakElevationM: 6768,
@@ -742,7 +1218,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Cordillera Real',
     nameAlternates: 'Royal Range|Cordillera Real Bolivia',
     continent: 'South America',
-    polygon: [[-68.5, -15.0], [-68.0, -15.5], [-67.5, -16.0], [-67.0, -16.5], [-67.0, -17.0], [-67.5, -17.5], [-68.0, -17.0], [-68.5, -16.5], [-69.0, -16.0], [-69.0, -15.5]],
+    seed: [-68.0, -16.0],
+    threshold: 3800,
+    bounds: { minLng: -69.5, maxLng: -66.5, minLat: -18, maxLat: -14.5 },
     latitude: -16.0,
     longitude: -68.0,
     peakElevationM: 6438,
@@ -755,7 +1233,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Sierra Nevada de Santa Marta',
     nameAlternates: 'Sierra Nevada Santa Marta',
     continent: 'South America',
-    polygon: [[-74.5, 11.5], [-73.5, 11.2], [-73.0, 10.8], [-73.0, 10.3], [-73.5, 10.0], [-74.2, 10.3], [-74.5, 10.8]],
+    seed: [-73.7, 10.7],
+    threshold: 1000,
+    bounds: { minLng: -74.5, maxLng: -72.5, minLat: 10, maxLat: 11.5 },
     latitude: 10.7,
     longitude: -73.7,
     peakElevationM: 5775,
@@ -768,7 +1248,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Patagonian Andes',
     nameAlternates: 'Andes Patagonicos',
     continent: 'South America',
-    polygon: [[-73.0, -40.5], [-72.0, -41.5], [-71.5, -43.0], [-72.0, -44.5], [-72.5, -46.0], [-73.5, -47.5], [-74.0, -49.0], [-74.5, -50.5], [-74.0, -51.5], [-73.0, -50.5], [-72.5, -48.5], [-72.0, -46.5], [-71.5, -44.5], [-71.5, -43.0], [-72.0, -41.5], [-72.5, -40.5]],
+    seed: [-72.5, -45.5],
+    threshold: 800,
+    bounds: { minLng: -75, maxLng: -70, minLat: -52, maxLat: -40 },
     latitude: -45.5,
     longitude: -72.5,
     peakElevationM: 3405,
@@ -783,7 +1265,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Atlas Mountains',
     nameAlternates: 'Atlas Range|The Atlas',
     continent: 'Africa',
-    polygon: [[-9.0, 35.0], [-7.0, 34.5], [-5.0, 34.0], [-3.0, 34.5], [-1.0, 35.0], [1.0, 35.5], [3.0, 35.5], [5.0, 36.0], [7.0, 36.5], [9.0, 35.5], [8.5, 34.5], [6.5, 34.0], [4.5, 34.0], [2.5, 34.0], [0.5, 33.5], [-1.5, 32.5], [-3.5, 31.5], [-5.5, 31.0], [-7.5, 31.0], [-9.5, 31.5], [-10.0, 33.0]],
+    seed: [-1.0, 33.5],
+    threshold: 800,
+    bounds: { minLng: -10, maxLng: 10, minLat: 30, maxLat: 37 },
     latitude: 33.5,
     longitude: -1.0,
     peakElevationM: 4167,
@@ -796,7 +1280,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Ethiopian Highlands',
     nameAlternates: 'Ethiopian Plateau|Abyssinian Highlands',
     continent: 'Africa',
-    polygon: [[35.0, 15.0], [37.0, 14.5], [39.0, 13.5], [40.5, 12.0], [42.0, 10.0], [42.0, 8.0], [40.0, 6.5], [38.0, 7.0], [36.0, 8.0], [34.5, 9.5], [34.0, 11.0], [34.0, 13.0]],
+    seed: [38.0, 10.5],
+    threshold: 1500,
+    bounds: { minLng: 33, maxLng: 43, minLat: 6, maxLat: 16 },
     latitude: 10.5,
     longitude: 38.0,
     peakElevationM: 4550,
@@ -809,7 +1295,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Rwenzori Mountains',
     nameAlternates: 'Ruwenzori|Mountains of the Moon',
     continent: 'Africa',
-    polygon: [[29.5, 0.8], [30.0, 0.5], [30.2, 0.1], [30.2, -0.3], [30.0, -0.5], [29.5, -0.3], [29.3, 0.1], [29.3, 0.5]],
+    seed: [29.8, 0.2],
+    threshold: 1500,
+    bounds: { minLng: 29, maxLng: 30.5, minLat: -1, maxLat: 1.5 },
     latitude: 0.2,
     longitude: 29.8,
     peakElevationM: 5109,
@@ -822,7 +1310,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Drakensberg',
     nameAlternates: 'Drakensberg Mountains|uKhahlamba',
     continent: 'Africa',
-    polygon: [[27.0, -28.5], [28.0, -29.0], [29.0, -29.5], [29.5, -30.0], [30.0, -30.5], [29.5, -31.0], [29.0, -31.5], [28.5, -31.0], [28.0, -30.5], [27.5, -30.0], [27.0, -29.5]],
+    seed: [28.5, -29.5],
+    threshold: 1200,
+    bounds: { minLng: 26, maxLng: 31, minLat: -32, maxLat: -28 },
     latitude: -29.5,
     longitude: 28.5,
     peakElevationM: 3482,
@@ -835,7 +1325,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Hoggar Mountains',
     nameAlternates: 'Ahaggar|Ahaggar Mountains',
     continent: 'Africa',
-    polygon: [[4.0, 24.5], [5.5, 24.0], [7.0, 23.5], [7.0, 22.5], [6.0, 22.0], [4.5, 22.0], [3.5, 22.5], [3.5, 23.5]],
+    seed: [5.5, 23.0],
+    threshold: 800,
+    bounds: { minLng: 3, maxLng: 8, minLat: 21, maxLat: 25 },
     latitude: 23.0,
     longitude: 5.5,
     peakElevationM: 2918,
@@ -848,7 +1340,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Tibesti Mountains',
     nameAlternates: 'Tibesti Massif',
     continent: 'Africa',
-    polygon: [[15.5, 22.0], [17.0, 22.0], [18.5, 21.5], [19.0, 20.5], [18.5, 19.5], [17.0, 19.5], [15.5, 20.0], [15.0, 21.0]],
+    seed: [17.0, 21.0],
+    threshold: 800,
+    bounds: { minLng: 15, maxLng: 19.5, minLat: 19, maxLat: 22.5 },
     latitude: 21.0,
     longitude: 17.0,
     peakElevationM: 3445,
@@ -861,7 +1355,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Cameroon Highlands',
     nameAlternates: 'Cameroon Line|Cameroon Volcanic Line',
     continent: 'Africa',
-    polygon: [[8.5, 7.5], [9.5, 7.0], [10.5, 6.5], [11.0, 6.0], [10.5, 5.5], [9.5, 5.0], [9.0, 4.0], [8.5, 4.5], [9.0, 5.5], [9.5, 6.0], [8.5, 6.5]],
+    seed: [9.5, 6.0],
+    threshold: 600,
+    bounds: { minLng: 8, maxLng: 11.5, minLat: 4, maxLat: 8 },
     latitude: 6.0,
     longitude: 9.5,
     peakElevationM: 4095,
@@ -874,7 +1370,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'East African Rift Mountains',
     nameAlternates: 'East African Mountains|Rift Valley Mountains',
     continent: 'Africa',
-    polygon: [[34.0, 2.0], [35.5, 1.0], [37.0, 0.0], [38.0, -1.5], [37.5, -3.0], [36.5, -4.5], [35.5, -5.0], [34.5, -4.0], [35.0, -2.5], [35.5, -1.0], [34.5, 0.5], [33.5, 1.5]],
+    seed: [36.0, -1.5],
+    threshold: 1500,
+    bounds: { minLng: 33, maxLng: 39, minLat: -6, maxLat: 3 },
     latitude: -1.5,
     longitude: 36.0,
     peakElevationM: 5895,
@@ -889,7 +1387,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Great Dividing Range',
     nameAlternates: 'Great Divide|Eastern Highlands Australia',
     continent: 'Oceania',
-    polygon: [[142.5, -14.0], [144.0, -16.0], [146.0, -18.0], [147.5, -20.0], [149.0, -23.0], [150.0, -25.5], [151.0, -28.0], [151.5, -30.0], [150.5, -32.0], [149.5, -34.0], [148.5, -36.0], [147.5, -37.5], [146.5, -37.5], [147.0, -36.0], [148.5, -33.5], [149.5, -31.0], [149.5, -28.5], [149.0, -26.0], [148.0, -23.5], [146.5, -21.0], [145.0, -18.5], [143.0, -16.5], [141.5, -14.5]],
+    seed: [148.0, -26.0],
+    threshold: 300,
+    bounds: { minLng: 141, maxLng: 153, minLat: -38, maxLat: -13 },
     latitude: -26.0,
     longitude: 148.0,
     peakElevationM: 2228,
@@ -902,7 +1402,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Southern Alps',
     nameAlternates: 'Ka Tiritiri o te Moana|New Zealand Alps',
     continent: 'Oceania',
-    polygon: [[168.5, -42.5], [169.5, -43.0], [170.5, -43.5], [171.5, -44.0], [172.0, -44.5], [171.0, -45.0], [170.0, -44.5], [169.0, -44.0], [168.0, -43.5], [167.5, -43.0]],
+    seed: [170.0, -43.5],
+    threshold: 500,
+    bounds: { minLng: 167, maxLng: 173, minLat: -46, maxLat: -42 },
     latitude: -43.5,
     longitude: 170.0,
     peakElevationM: 3724,
@@ -915,7 +1417,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Maoke Mountains',
     nameAlternates: 'Sudirman Range|Snow Mountains',
     continent: 'Oceania',
-    polygon: [[136.0, -3.5], [137.0, -3.8], [138.0, -4.0], [139.0, -4.2], [140.0, -4.5], [140.5, -5.0], [139.5, -5.2], [138.0, -5.0], [136.5, -4.5], [135.5, -4.0]],
+    seed: [138.0, -4.2],
+    threshold: 1000,
+    bounds: { minLng: 135, maxLng: 141, minLat: -5.5, maxLat: -3 },
     latitude: -4.2,
     longitude: 138.0,
     peakElevationM: 4884,
@@ -928,7 +1432,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Owen Stanley Range',
     nameAlternates: 'Owen Stanley Mountains',
     continent: 'Oceania',
-    polygon: [[147.0, -7.0], [147.8, -7.5], [148.5, -8.0], [149.0, -8.5], [149.5, -9.0], [149.0, -9.5], [148.0, -9.0], [147.0, -8.5], [146.5, -8.0], [146.5, -7.5]],
+    seed: [148.0, -8.0],
+    threshold: 800,
+    bounds: { minLng: 146, maxLng: 150, minLat: -10, maxLat: -6.5 },
     latitude: -8.0,
     longitude: 148.0,
     peakElevationM: 4072,
@@ -941,7 +1447,9 @@ const RANGES: ReadonlyArray<MountainRange> = [
     name: 'Central Range',
     nameAlternates: 'Central Mountain Range|Taiwan Central Range',
     continent: 'Oceania',
-    polygon: [[120.5, 25.0], [121.2, 24.5], [121.5, 24.0], [121.5, 23.5], [121.3, 23.0], [121.0, 22.5], [120.5, 23.0], [120.3, 23.5], [120.3, 24.0], [120.3, 24.5]],
+    seed: [121.0, 23.5],
+    threshold: 1000,
+    bounds: { minLng: 120, maxLng: 122, minLat: 22, maxLat: 25.5 },
     latitude: 23.5,
     longitude: 121.0,
     peakElevationM: 3952,
@@ -952,32 +1460,17 @@ const RANGES: ReadonlyArray<MountainRange> = [
 ];
 
 // ------------------------------------------------------------------
-// CSV generation
+// DEM reading
 // ------------------------------------------------------------------
 
-function escapeCSVField(value: string): string {
-  if (value.includes(',') || value.includes('|') || value.includes('"') || value.includes('\n')) {
-    return `"${value.replace(/"/g, '""')}"`;
-  }
-  return value;
-}
-
-function rangeToCSVRow(range: MountainRange, refinedLat: number, refinedLng: number): string {
-  const path = polygonToSvgPath(range.polygon);
-  const fields = [
-    range.id,
-    escapeCSVField(range.name),
-    escapeCSVField(range.nameAlternates),
-    range.continent,
-    escapeCSVField(path),
-    refinedLat.toFixed(1),
-    refinedLng.toFixed(1),
-    String(range.peakElevationM),
-    String(range.lengthKm),
-    String(range.areaKm2),
-    escapeCSVField(range.highestPeak),
-  ];
-  return fields.join(',');
+async function readFullDem(image: GeoTIFFImage): Promise<{ readonly raster: Float32Array; readonly width: number; readonly height: number }> {
+  const width = image.getWidth();
+  const height = image.getHeight();
+  console.log(`  Reading full DEM (${width}×${height})...`);
+  const rasterData = await image.readRasters({ window: [0, 0, width, height] });
+  const raster = rasterData[0] as Float32Array;
+  console.log(`  DEM loaded (${(raster.byteLength / 1024 / 1024).toFixed(0)} MB)`);
+  return { raster, width, height };
 }
 
 // ------------------------------------------------------------------
@@ -990,30 +1483,104 @@ async function main(): Promise<void> {
 
   const tiff = await fromFile(sourcePath);
   const image = await tiff.getImage();
-  const demWidth = image.getWidth();
-  const demHeight = image.getHeight();
-  console.log(`DEM size: ${demWidth} x ${demHeight}`);
+  const { raster, width, height } = await readFullDem(image);
+
+  console.log(`\nDownsampling DEM from ${width}×${height} to ${DS_WIDTH}×${DS_HEIGHT}...`);
+  const dem = downsampleDem(raster, width, height);
+  console.log('  Done.');
 
   const header = 'id,name,name_alternates,continent,paths,latitude,longitude,peak_elevation_m,length_km,area_km2,highest_peak';
   const rows: Array<string> = [header];
 
-  let lowElevationWarnings = 0;
+  let successCount = 0;
+  let failCount = 0;
 
-  for (const range of RANGES) {
-    const refined = await refineCentroid(image, demWidth, demHeight, range.longitude, range.latitude);
+  for (let i = 0; i < RANGES.length; i++) {
+    const range = RANGES[i];
+    console.log(`\n[${i + 1}/${RANGES.length}] ${range.name}...`);
 
-    // Use refined centroid if it found meaningfully higher elevation
-    const useLat = refined.elevation > 100 ? refined.lat : range.latitude;
-    const useLng = refined.elevation > 100 ? refined.lng : range.longitude;
+    // Convert seed and bounds to pixel coordinates
+    const [seedPx, seedPy] = geoToPixel(range.seed[0], range.seed[1]);
+    const [boundsMinPx] = geoToPixel(range.bounds.minLng, 0);
+    const [boundsMaxPx] = geoToPixel(range.bounds.maxLng, 0);
+    const [, boundsMinPy] = geoToPixel(0, range.bounds.maxLat); // maxLat -> minPy (north is up)
+    const [, boundsMaxPy] = geoToPixel(0, range.bounds.minLat); // minLat -> maxPy
 
-    if (refined.elevation <= 0) {
-      console.warn(`  WARNING: ${range.name} centroid appears to be at sea level or underwater (${refined.elevation.toFixed(0)}m)`);
-      lowElevationWarnings++;
-    } else {
-      console.log(`  ${range.name}: centroid elevation ${refined.elevation.toFixed(0)}m at (${useLat.toFixed(1)}, ${useLng.toFixed(1)})`);
+    console.log(`  Seed pixel: (${seedPx}, ${seedPy}), elevation at seed: ${dem[seedPy * DS_WIDTH + seedPx].toFixed(0)}m`);
+    console.log(`  Threshold: ${range.threshold}m, bounds: px(${boundsMinPx}-${boundsMaxPx}, ${boundsMinPy}-${boundsMaxPy})`);
+
+    // Flood fill
+    const filled = floodFill(dem, seedPx, seedPy, range.threshold, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+    console.log(`  Flood fill: ${filled.size} pixels`);
+
+    if (filled.size === 0) {
+      console.warn(`  WARNING: No pixels filled for ${range.name}! Skipping.`);
+      failCount++;
+      continue;
     }
 
-    rows.push(rangeToCSVRow(range, useLat, useLng));
+    // Keep largest connected component
+    const largest = largestComponent(filled);
+    if (largest.size < filled.size) {
+      console.log(`  Largest component: ${largest.size} pixels (dropped ${filled.size - largest.size} disconnected)`);
+    }
+
+    // Extract boundary
+    const polygons = extractBoundary(largest, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+    console.log(`  Extracted ${polygons.length} boundary polygon(s)`);
+
+    if (polygons.length === 0) {
+      console.warn(`  WARNING: No boundary extracted for ${range.name}! Skipping.`);
+      failCount++;
+      continue;
+    }
+
+    // Simplify polygons and convert to SVG paths
+    const epsilon = 0.15; // degrees
+    const svgPaths: Array<string> = [];
+
+    for (const poly of polygons) {
+      const simplified = douglasPeucker(poly, epsilon);
+      if (simplified.length >= 3) {
+        svgPaths.push(polygonToSvgPath(simplified));
+      }
+    }
+
+    if (svgPaths.length === 0) {
+      console.warn(`  WARNING: All polygons simplified to nothing for ${range.name}!`);
+      failCount++;
+      continue;
+    }
+
+    // Take the longest path (most vertices = most detail = main outline)
+    // Plus any secondary paths that are significant (>20% of main)
+    svgPaths.sort((a, b) => b.length - a.length);
+    const mainPath = svgPaths[0];
+    const significantPaths = [mainPath];
+    for (let j = 1; j < svgPaths.length; j++) {
+      if (svgPaths[j].length > mainPath.length * 0.2) {
+        significantPaths.push(svgPaths[j]);
+      }
+    }
+
+    const pathStr = significantPaths.join('|');
+    console.log(`  SVG path: ${pathStr.length} chars, ${significantPaths.length} path(s)`);
+
+    const fields = [
+      range.id,
+      escapeCSVField(range.name),
+      escapeCSVField(range.nameAlternates),
+      range.continent,
+      escapeCSVField(pathStr),
+      range.latitude.toFixed(1),
+      range.longitude.toFixed(1),
+      String(range.peakElevationM),
+      String(range.lengthKm),
+      String(range.areaKm2),
+      escapeCSVField(range.highestPeak),
+    ];
+    rows.push(fields.join(','));
+    successCount++;
   }
 
   const csv = rows.join('\n') + '\n';
@@ -1022,10 +1589,10 @@ async function main(): Promise<void> {
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, csv, 'utf-8');
 
-  console.log(`\nWrote ${RANGES.length} mountain ranges to ${outPath}`);
+  console.log(`\nWrote ${successCount} mountain ranges to ${outPath}`);
   console.log(`CSV size: ${csv.length} bytes`);
-  if (lowElevationWarnings > 0) {
-    console.warn(`${lowElevationWarnings} range(s) had low-elevation centroid warnings`);
+  if (failCount > 0) {
+    console.warn(`${failCount} range(s) failed to generate polygons`);
   }
 }
 
