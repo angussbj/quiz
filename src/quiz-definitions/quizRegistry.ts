@@ -546,7 +546,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       ],
     },
     advancedPanel: {
-      toggleKeys: ['showSymbols'],
+      toggleKeys: [],
       selectToggleKeys: [],
       forcedToggles: { showAtomicNumbers: true },
       linkedSelectToggleKeys: ['elementData', 'elementColors'],
