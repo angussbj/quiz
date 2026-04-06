@@ -7,18 +7,10 @@ import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { TogglePanel, SelectToggleControl, togglePanelStyles, renderGroupedOptions } from './TogglePanel';
 import { Tooltip } from '@/layout/Tooltip';
 import { formatGroupLabel } from './formatGroupLabel';
+import { MODE_DISPLAY_NAMES } from './modeDisplayNames';
 import styles from './QuizSetupPanel.module.css';
 
 const ORDERING_GROUP = 'ordering';
-
-const MODE_LABELS: Readonly<Record<QuizModeType, string>> = {
-  'free-recall-unordered': 'Free Recall',
-  'free-recall-ordered': 'Ordered Recall',
-  'identify': 'Identify',
-  'locate': 'Locate',
-  'prompted-recall': 'Prompted Recall',
-  'multiple-choice': 'Multiple Choice',
-};
 
 export interface QuizSetupPanelProps {
   readonly title: string;
@@ -218,7 +210,7 @@ export function QuizSetupPanel({
             >
               {availableModes.map((mode) => (
                 <option key={mode} value={mode}>
-                  {MODE_LABELS[mode]}
+                  {MODE_DISPLAY_NAMES[mode]}
                 </option>
               ))}
             </select>

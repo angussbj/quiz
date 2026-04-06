@@ -213,36 +213,12 @@ const countriesQuizBase = {
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
- * Shared configuration for all human bones quizzes.
- * Individual definitions spread this and add id, title, description, and dataFilter.
- */
-const humanBonesQuizBase = {
-  path: ['Science', 'Biology'],
-  visualizationType: 'anatomy' as const,
-  availableModes: ['free-recall-unordered', 'identify', 'prompted-recall'] as const,
-  defaultMode: 'identify' as const,
-  toggles: [
-    { key: 'showLabels', label: 'Bone names', defaultValue: false, group: 'display', hiddenBehavior: 'on-reveal', revealsAnswer: true } as const,
-    { key: 'showGroupColors', label: 'Region colors', defaultValue: false, group: 'display' } as const,
-  ],
-  presets: [],
-  columnMappings: {
-    answer: 'name',
-    label: 'name',
-    group: 'region',
-  },
-  dataPath: '/data/science/biology/human-bones.csv',
-  supportingDataPaths: [] as const,
-} satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
-
-
-/**
  * Shared configuration for all timeline quizzes.
  * Individual definitions spread this and add id, title, description, path, toggles, presets, columnMappings, and dataPath.
  */
 const timelineQuizBase = {
   visualizationType: 'timeline' as const,
-  availableModes: ['free-recall-unordered', 'identify', 'locate'] as const,
+  availableModes: ['free-recall-unordered', 'identify', 'locate', 'prompted-recall'] as const,
   defaultMode: 'identify' as const,
   supportingDataPaths: [] as const,
   hideFilteredElements: true,
@@ -492,15 +468,6 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
       { column: 'half_life', label: 'Half-life' },
       { column: 'cost_usd_per_kg', label: 'Cost USD/kg (1999\u20132025)' },
     ],
-  },
-  {
-    ...humanBonesQuizBase,
-    id: 'sci-human-bones-all',
-    title: 'Human Bones',
-    description: 'Name all bones of the human skeleton.',
-    groupFilterColumn: 'region',
-    groupFilterLabel: 'Body region',
-    hideFilteredElements: true,
   },
   {
     id: 'sci-human-bones-3d',
