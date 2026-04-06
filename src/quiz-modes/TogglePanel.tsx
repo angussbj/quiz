@@ -23,6 +23,10 @@ interface TogglePanelProps {
   readonly selectValues?: Readonly<Record<string, string>>;
   /** Callback for select toggle changes. */
   readonly onSelectChange?: (key: string, value: string) => void;
+  /** When provided, only show boolean toggles whose key is in this set. */
+  readonly visibleKeys?: ReadonlySet<string>;
+  /** When provided, only show select toggles whose key is in this set. */
+  readonly visibleSelectKeys?: ReadonlySet<string>;
 }
 
 function groupTogglesByCategory(
@@ -60,13 +64,16 @@ export function TogglePanel({
   selectToggles = [],
   selectValues = {},
   onSelectChange,
+  visibleKeys,
+  visibleSelectKeys,
 }: TogglePanelProps) {
   const filteredToggles = toggles
     .filter((t) => !t.revealsAnswer)
-    .filter((t) => !selectedMode || !t.modes || t.modes.includes(selectedMode));
-  const filteredSelectToggles = selectedMode
-    ? selectToggles.filter((t) => !t.modes || t.modes.includes(selectedMode))
-    : selectToggles;
+    .filter((t) => !selectedMode || !t.modes || t.modes.includes(selectedMode))
+    .filter((t) => !visibleKeys || visibleKeys.has(t.key));
+  const filteredSelectToggles = selectToggles
+    .filter((t) => !selectedMode || !t.modes || t.modes.includes(selectedMode))
+    .filter((t) => !visibleSelectKeys || visibleSelectKeys.has(t.key));
   const groups = groupTogglesByCategory(filteredToggles);
 
   return (

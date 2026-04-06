@@ -98,4 +98,52 @@ describe('TogglePanel', () => {
     renderPanel({ presets: [] });
     expect(screen.queryByText('Presets')).not.toBeInTheDocument();
   });
+
+  describe('visibleKeys filter', () => {
+    it('shows only toggles whose key is in visibleKeys', () => {
+      renderPanel({ visibleKeys: new Set(['show-labels']) });
+      expect(screen.getByText('Show labels')).toBeInTheDocument();
+      expect(screen.queryByText('Show borders')).not.toBeInTheDocument();
+      expect(screen.queryByText('Accept typos')).not.toBeInTheDocument();
+    });
+
+    it('shows all toggles when visibleKeys is undefined', () => {
+      renderPanel();
+      expect(screen.getByText('Show labels')).toBeInTheDocument();
+      expect(screen.getByText('Show borders')).toBeInTheDocument();
+      expect(screen.getByText('Accept typos')).toBeInTheDocument();
+    });
+
+    it('shows no toggles when visibleKeys is an empty set', () => {
+      renderPanel({ visibleKeys: new Set() });
+      expect(screen.queryByText('Show labels')).not.toBeInTheDocument();
+      expect(screen.queryByText('Show borders')).not.toBeInTheDocument();
+    });
+
+    it('filters select toggles when visibleSelectKeys is provided', () => {
+      const selectToggles = [
+        {
+          key: 'precision',
+          label: 'Precision',
+          options: [{ value: 'year', label: 'Year' }, { value: 'day', label: 'Day' }],
+          defaultValue: 'year',
+          group: 'display',
+        },
+        {
+          key: 'sort',
+          label: 'Sort order',
+          options: [{ value: 'asc', label: 'Asc' }, { value: 'desc', label: 'Desc' }],
+          defaultValue: 'asc',
+          group: 'display',
+        },
+      ];
+      renderPanel({
+        selectToggles,
+        selectValues: {},
+        visibleSelectKeys: new Set(['precision']),
+      });
+      expect(screen.getByText('Precision')).toBeInTheDocument();
+      expect(screen.queryByText('Sort order')).not.toBeInTheDocument();
+    });
+  });
 });
