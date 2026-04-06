@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
+import type { DifficultyPreset } from './DifficultyPreset';
 
 export interface ToggleState {
   readonly values: Readonly<Record<string, boolean>>;
@@ -8,6 +9,7 @@ export interface ToggleState {
   readonly set: (key: string, value: boolean) => void;
   readonly setSelect: (key: string, value: string) => void;
   readonly applyPreset: (preset: TogglePreset) => void;
+  readonly applyDifficulty: (preset: DifficultyPreset) => void;
   readonly reset: () => void;
 }
 
@@ -71,10 +73,19 @@ export function useToggleState(
     setValues((prev) => ({ ...prev, ...preset.values }));
   }, []);
 
+  const applyDifficulty = useCallback((preset: DifficultyPreset) => {
+    if (preset.toggleOverrides) {
+      setValues((prev) => ({ ...prev, ...preset.toggleOverrides }));
+    }
+    if (preset.selectToggleOverrides) {
+      setSelectValues((prev) => ({ ...prev, ...preset.selectToggleOverrides }));
+    }
+  }, []);
+
   const reset = useCallback(() => {
     setValues(defaults);
     setSelectValues(selectDefaults);
   }, [defaults, selectDefaults]);
 
-  return { values, selectValues, activePreset, set, setSelect, applyPreset, reset };
+  return { values, selectValues, activePreset, set, setSelect, applyPreset, applyDifficulty, reset };
 }
