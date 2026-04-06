@@ -4,13 +4,14 @@
  * Each range includes metadata (elevation, length, area, highest peak) and
  * an SVG polygon path in equirectangular projection (x = longitude, y = −latitude).
  *
- * Polygons are derived from DEM elevation data using flood-fill from a seed
- * point within each range. The algorithm:
+ * Polygons are derived from DEM elevation data using flood-fill from seed
+ * points within each range. The algorithm:
  * 1. Load the ETOPO 2022 DEM and downsample to ~0.1° resolution (3600×1800)
- * 2. For each range, BFS flood-fill from the seed pixel where elevation >= threshold
- * 3. Extract the boundary using marching squares
- * 4. Simplify with Douglas-Peucker
- * 5. Convert to SVG path (x=lng, y=-lat, closed with Z)
+ * 2. Compute Voronoi partition from seed groups (multiple seeds per range)
+ * 3. For each range, BFS flood-fill from the highest-elevation seed pixel
+ * 4. Extract the boundary using Moore boundary tracing
+ * 5. Simplify with Douglas-Peucker
+ * 6. Convert to SVG path (x=lng, y=-lat, closed with Z)
  *
  * Usage:
  *   npx tsx scripts/generateMountainRanges.ts
@@ -36,7 +37,7 @@ interface RangeDefinition {
   readonly name: string;
   readonly nameAlternates: string;
   readonly continent: string;
-  readonly seed: readonly [number, number]; // [lng, lat]
+  readonly seeds: ReadonlyArray<readonly [number, number]>; // [[lng, lat], ...]
   readonly threshold: number; // minimum elevation in meters
   /** Bridge radius in pixels (at 0.1° resolution). During flood-fill, pixels
    *  within this radius of already-flooded pixels are candidates (if above threshold).
@@ -112,32 +113,38 @@ function pixelToGeo(px: number, py: number): readonly [number, number] {
 // ------------------------------------------------------------------
 
 /**
- * Compute a Voronoi partition of the DEM grid from seed points.
- * Each pixel gets the index of its nearest seed (Euclidean distance).
- * Returns a Uint16Array where voronoi[y * DS_WIDTH + x] = seed index.
+ * Compute a Voronoi partition of the DEM grid from seed groups.
+ * Each seed group contains 1+ seed pixels that all map to the same range index.
+ * A pixel's nearest seed (by Euclidean distance) determines which range it belongs to.
+ * Returns a Uint16Array where voronoi[y * DS_WIDTH + x] = range index.
  */
 function computeVoronoi(
-  seedPixels: ReadonlyArray<readonly [number, number]>,
+  seedGroups: ReadonlyArray<ReadonlyArray<readonly [number, number]>>,
 ): Uint16Array {
+  // Flatten seed groups into a list of (px, py, rangeIndex) for fast iteration
+  const flatSeeds: Array<{ readonly px: number; readonly py: number; readonly rangeIndex: number }> = [];
+  for (let g = 0; g < seedGroups.length; g++) {
+    for (const [px, py] of seedGroups[g]) {
+      flatSeeds.push({ px, py, rangeIndex: g });
+    }
+  }
+
   const voronoi = new Uint16Array(DS_WIDTH * DS_HEIGHT);
-  // For efficiency, process in rows and compute distances to all seeds
   for (let y = 0; y < DS_HEIGHT; y++) {
     for (let x = 0; x < DS_WIDTH; x++) {
       let bestDist = Infinity;
       let bestIdx = 0;
-      for (let s = 0; s < seedPixels.length; s++) {
-        const [sx, sy] = seedPixels[s];
-        const dx = x - sx;
-        const dy = y - sy;
-        const dist = dx * dx + dy * dy; // squared distance is fine for comparison
+      for (let s = 0; s < flatSeeds.length; s++) {
+        const dx = x - flatSeeds[s].px;
+        const dy = y - flatSeeds[s].py;
+        const dist = dx * dx + dy * dy;
         if (dist < bestDist) {
           bestDist = dist;
-          bestIdx = s;
+          bestIdx = flatSeeds[s].rangeIndex;
         }
       }
       voronoi[y * DS_WIDTH + x] = bestIdx;
     }
-    // Progress every 200 rows
     if (y % 200 === 0) process.stdout.write(`  row ${y}/${DS_HEIGHT}\r`);
   }
   return voronoi;
@@ -331,12 +338,150 @@ function largestComponent(filled: Set<number>): Set<number> {
 }
 
 // ------------------------------------------------------------------
-// Boundary extraction via marching squares
+// Boundary extraction via Moore boundary tracing
 // ------------------------------------------------------------------
 
+// Moore neighborhood: 8 directions clockwise from up-left
+// Index 0=up-left, 1=up, 2=up-right, 3=right, 4=down-right, 5=down, 6=down-left, 7=left
+const MOORE_DX = [-1, 0, 1, 1, 1, 0, -1, -1] as const;
+const MOORE_DY = [-1, -1, -1, 0, 1, 1, 1, 0] as const;
+
 /**
- * Extract boundary polygons from a filled pixel set using marching squares.
+ * Find all connected components in a binary grid (4-connected).
+ * Returns components above the minimum pixel count.
+ */
+function findComponents(
+  grid: Uint8Array,
+  gridW: number,
+  gridH: number,
+  minSize: number,
+): Array<Set<number>> {
+  const visited = new Uint8Array(gridW * gridH);
+  const components: Array<Set<number>> = [];
+
+  for (let y = 0; y < gridH; y++) {
+    for (let x = 0; x < gridW; x++) {
+      const idx = y * gridW + x;
+      if (grid[idx] === 0 || visited[idx]) continue;
+
+      // BFS for this component
+      const component = new Set<number>();
+      const queue = [idx];
+      visited[idx] = 1;
+      component.add(idx);
+
+      let head = 0;
+      while (head < queue.length) {
+        const cur = queue[head++];
+        const cy = Math.floor(cur / gridW);
+        const cx = cur % gridW;
+
+        for (const [ddx, ddy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+          const nx = cx + ddx;
+          const ny = cy + ddy;
+          if (nx < 0 || nx >= gridW || ny < 0 || ny >= gridH) continue;
+          const nIdx = ny * gridW + nx;
+          if (grid[nIdx] === 0 || visited[nIdx]) continue;
+          visited[nIdx] = 1;
+          component.add(nIdx);
+          queue.push(nIdx);
+        }
+      }
+
+      if (component.size >= minSize) {
+        components.push(component);
+      }
+    }
+  }
+
+  return components;
+}
+
+/**
+ * Trace the boundary of a single connected component using Moore boundary tracing.
+ * Returns boundary pixel coordinates in grid-local space as [x, y] pairs.
+ */
+function mooreBoundaryTrace(
+  grid: Uint8Array,
+  gridW: number,
+  gridH: number,
+  component: Set<number>,
+): Array<readonly [number, number]> {
+  // Find topmost-leftmost filled pixel as start
+  let startX = gridW;
+  let startY = gridH;
+  for (const idx of component) {
+    const y = Math.floor(idx / gridW);
+    const x = idx % gridW;
+    if (y < startY || (y === startY && x < startX)) {
+      startY = y;
+      startX = x;
+    }
+  }
+
+  const isFilled = (x: number, y: number): boolean => {
+    if (x < 0 || x >= gridW || y < 0 || y >= gridH) return false;
+    return grid[y * gridW + x] === 1;
+  };
+
+  const boundary: Array<readonly [number, number]> = [[startX, startY]];
+
+  // We entered the start pixel from above (since it's topmost), so we were facing down.
+  // In Moore tracing, we start checking from the cell we came from.
+  // We came from (startX, startY-1) which is direction index 1 (up).
+  // We start scanning clockwise from the direction AFTER the backtrack direction.
+  // Backtrack = up (index 1), so start scanning from index 2 (up-right).
+  let curX = startX;
+  let curY = startY;
+  // The direction we came from. Start pixel was entered from above, so backtrack is "up" = index 1.
+  let backtrackDir = 1;
+
+  const maxSteps = component.size * 4 + 10;
+  let steps = 0;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    steps++;
+    if (steps > maxSteps) break;
+
+    // Scan clockwise starting from (backtrackDir + 1) % 8
+    let found = false;
+    for (let i = 0; i < 8; i++) {
+      const dir = (backtrackDir + 1 + i) % 8;
+      const nx = curX + MOORE_DX[dir];
+      const ny = curY + MOORE_DY[dir];
+
+      if (isFilled(nx, ny)) {
+        // Move to this cell
+        curX = nx;
+        curY = ny;
+        // Backtrack direction is the opposite of the direction we just moved
+        backtrackDir = (dir + 4) % 8;
+
+        if (curX === startX && curY === startY) {
+          // Returned to start — boundary complete
+          return boundary;
+        }
+
+        boundary.push([curX, curY]);
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      // Isolated pixel or stuck
+      break;
+    }
+  }
+
+  return boundary;
+}
+
+/**
+ * Extract boundary polygons from a filled pixel set using Moore boundary tracing.
  * Returns arrays of [lng, lat] coordinates for each closed contour.
+ * Traces all connected components above a minimum size (10 pixels).
  */
 function extractBoundary(
   filled: Set<number>,
@@ -345,150 +490,44 @@ function extractBoundary(
   boundsMinPy: number,
   boundsMaxPy: number,
 ): Array<Array<readonly [number, number]>> {
-  // Build a grid representation for marching squares
-  // The grid has +1 width/height to capture all boundary edges
-  const gridW = boundsMaxPx - boundsMinPx + 2;
-  const gridH = boundsMaxPy - boundsMinPy + 2;
+  // Build a grid representation with 1px padding on all sides
+  const gridW = boundsMaxPx - boundsMinPx + 3;
+  const gridH = boundsMaxPy - boundsMinPy + 3;
   const grid = new Uint8Array(gridW * gridH);
 
   for (const idx of filled) {
-    const py = Math.floor(idx / DS_WIDTH) - boundsMinPy;
-    const px = (idx % DS_WIDTH) - boundsMinPx;
+    const py = Math.floor(idx / DS_WIDTH) - boundsMinPy + 1; // +1 for padding
+    const px = (idx % DS_WIDTH) - boundsMinPx + 1;
     if (px >= 0 && px < gridW && py >= 0 && py < gridH) {
       grid[py * gridW + px] = 1;
     }
   }
 
-  // Marching squares: for each 2x2 cell, compute the case and emit edges
-  // Edge vertices are placed at cell corners (between grid cells)
-  type Edge = readonly [number, number, number, number]; // x1, y1, x2, y2
-  const edges: Array<Edge> = [];
-
-  for (let cy = 0; cy < gridH - 1; cy++) {
-    for (let cx = 0; cx < gridW - 1; cx++) {
-      const tl = grid[cy * gridW + cx];
-      const tr = grid[cy * gridW + cx + 1];
-      const bl = grid[(cy + 1) * gridW + cx];
-      const br = grid[(cy + 1) * gridW + cx + 1];
-      const caseIndex = (tl << 3) | (tr << 2) | (br << 1) | bl;
-
-      // Cell corners in local coordinates
-      const top = cy;
-      const bottom = cy + 1;
-      const left = cx;
-      const right = cx + 1;
-      const midX = cx + 0.5;
-      const midY = cy + 0.5;
-
-      switch (caseIndex) {
-        case 0: case 15: break; // all same
-        case 1: edges.push([left, midY, midX, bottom]); break;
-        case 2: edges.push([midX, bottom, right, midY]); break;
-        case 3: edges.push([left, midY, right, midY]); break;
-        case 4: edges.push([midX, top, right, midY]); break;
-        case 5:
-          edges.push([left, midY, midX, top]);
-          edges.push([midX, bottom, right, midY]);
-          break;
-        case 6: edges.push([midX, top, midX, bottom]); break;
-        case 7: edges.push([left, midY, midX, top]); break;
-        case 8: edges.push([midX, top, left, midY]); break;
-        case 9: edges.push([midX, top, midX, bottom]); break;
-        case 10:
-          edges.push([midX, top, right, midY]);
-          edges.push([left, midY, midX, bottom]);
-          break;
-        case 11: edges.push([midX, top, right, midY]); break;
-        case 12: edges.push([left, midY, right, midY]); break;
-        case 13: edges.push([right, midY, midX, bottom]); break;
-        case 14: edges.push([midX, bottom, left, midY]); break;
-      }
-    }
-  }
-
-  // Chain edges into closed polygons
-  return chainEdges(edges, boundsMinPx, boundsMinPy);
-}
-
-/**
- * Chain edge segments into closed polygons by matching endpoints.
- * Converts from grid coordinates to geographic coordinates.
- */
-function chainEdges(
-  edges: ReadonlyArray<readonly [number, number, number, number]>,
-  offsetPx: number,
-  offsetPy: number,
-): Array<Array<readonly [number, number]>> {
-  if (edges.length === 0) return [];
-
-  // Build adjacency map keyed by vertex position (quantized to avoid float issues)
-  const key = (x: number, y: number): string => `${Math.round(x * 2)},${Math.round(y * 2)}`;
-
-  const adjacency = new Map<string, Array<{ readonly edge: number; readonly otherKey: string; readonly otherX: number; readonly otherY: number }>>();
-  const used = new Array<boolean>(edges.length).fill(false);
-
-  for (let i = 0; i < edges.length; i++) {
-    const [x1, y1, x2, y2] = edges[i];
-    const k1 = key(x1, y1);
-    const k2 = key(x2, y2);
-
-    if (!adjacency.has(k1)) adjacency.set(k1, []);
-    if (!adjacency.has(k2)) adjacency.set(k2, []);
-
-    adjacency.get(k1)!.push({ edge: i, otherKey: k2, otherX: x2, otherY: y2 });
-    adjacency.get(k2)!.push({ edge: i, otherKey: k1, otherX: x1, otherY: y1 });
-  }
+  // Find all connected components above minimum size
+  const MIN_COMPONENT_SIZE = 10;
+  const components = findComponents(grid, gridW, gridH, MIN_COMPONENT_SIZE);
 
   const polygons: Array<Array<readonly [number, number]>> = [];
 
-  for (let i = 0; i < edges.length; i++) {
-    if (used[i]) continue;
-
-    const polygon: Array<readonly [number, number]> = [];
-    const [startX, startY] = [edges[i][0], edges[i][1]];
-
-    // Walk the chain
-    let currentKey = key(startX, startY);
-    used[i] = true;
-
-    // Add start point
-    const [sLng, sLat] = pixelToGeo(startX + offsetPx, startY + offsetPy);
-    polygon.push([sLng, sLat]);
-
-    // Follow to the other end of first edge
-    const nextKey = key(edges[i][2], edges[i][3]);
-    const [nLng, nLat] = pixelToGeo(edges[i][2] + offsetPx, edges[i][3] + offsetPy);
-    polygon.push([nLng, nLat]);
-
-    currentKey = nextKey;
-
-    // Keep walking until we return to start or get stuck
-    const startKey = key(startX, startY);
-    let steps = 0;
-    const maxSteps = edges.length + 1;
-
-    while (currentKey !== startKey && steps < maxSteps) {
-      steps++;
-      const neighbors = adjacency.get(currentKey);
-      if (!neighbors) break;
-
-      let found = false;
-      for (const neighbor of neighbors) {
-        if (!used[neighbor.edge]) {
-          used[neighbor.edge] = true;
-          const [gLng, gLat] = pixelToGeo(neighbor.otherX + offsetPx, neighbor.otherY + offsetPy);
-          polygon.push([gLng, gLat]);
-          currentKey = neighbor.otherKey;
-          found = true;
-          break;
-        }
-      }
-      if (!found) break;
+  for (const component of components) {
+    // Build a component-only grid for tracing
+    const compGrid = new Uint8Array(gridW * gridH);
+    for (const idx of component) {
+      compGrid[idx] = 1;
     }
 
-    if (polygon.length >= 3) {
-      polygons.push(polygon);
-    }
+    const boundaryPixels = mooreBoundaryTrace(compGrid, gridW, gridH, component);
+    if (boundaryPixels.length < 3) continue;
+
+    // Convert boundary pixel coordinates to geographic coordinates
+    // Undo the padding offset (+1) and add the global bounds offset
+    const geoPoints: Array<readonly [number, number]> = boundaryPixels.map(([bx, by]) => {
+      const globalPx = bx - 1 + boundsMinPx; // -1 for padding
+      const globalPy = by - 1 + boundsMinPy;
+      return pixelToGeo(globalPx, globalPy);
+    });
+
+    polygons.push(geoPoints);
   }
 
   return polygons;
@@ -591,7 +630,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Himalayas',
     nameAlternates: 'Himalaya|The Himalayas',
     continent: 'Asia',
-    seed: [84.0, 28.5],
+    seeds: [[76, 34], [80, 30], [84, 28.5], [88, 28], [92, 28]],
     threshold: 3000,
     radius: 3,
     latitude: 28.5,
@@ -606,7 +645,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Karakoram',
     nameAlternates: 'Karakorum',
     continent: 'Asia',
-    seed: [76.5, 36.0],
+    seeds: [[76.5, 36.0]],
     threshold: 3500,
     latitude: 36.0,
     longitude: 76.5,
@@ -620,7 +659,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Hindu Kush',
     nameAlternates: 'Hindukush',
     continent: 'Asia',
-    seed: [70.5, 35.5],
+    seeds: [[70.5, 35.5]],
     threshold: 2000,
     latitude: 35.5,
     longitude: 70.5,
@@ -634,7 +673,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Pamir Mountains',
     nameAlternates: 'Pamirs|Roof of the World',
     continent: 'Asia',
-    seed: [73.0, 38.5],
+    seeds: [[73.0, 38.5]],
     threshold: 3000,
     latitude: 38.5,
     longitude: 73.0,
@@ -648,7 +687,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Tian Shan',
     nameAlternates: 'Tien Shan|Celestial Mountains',
     continent: 'Asia',
-    seed: [80.0, 42.0],
+    seeds: [[80.0, 42.0]],
     threshold: 2000,
     latitude: 42.0,
     longitude: 80.0,
@@ -662,7 +701,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Kunlun Mountains',
     nameAlternates: 'Kunlun Shan|Kunlun Range',
     continent: 'Asia',
-    seed: [85.0, 36.5],
+    seeds: [[78, 36], [82, 36.5], [87, 36.5], [92, 37]],
     threshold: 5000,
     radius: 3,
     latitude: 35.5,
@@ -677,7 +716,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Altai Mountains',
     nameAlternates: 'Altay Mountains',
     continent: 'Asia',
-    seed: [87.0, 49.0],
+    seeds: [[87.0, 49.0]],
     threshold: 1000,
     latitude: 49.0,
     longitude: 87.0,
@@ -691,7 +730,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Ural Mountains',
     nameAlternates: 'Urals|Ural Range',
     continent: 'Asia',
-    seed: [59.0, 60.0],
+    seeds: [[59, 52], [59, 58], [60, 64]],
     threshold: 300,
     latitude: 60.0,
     longitude: 59.0,
@@ -705,7 +744,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Caucasus',
     nameAlternates: 'Caucasus Mountains|Greater Caucasus',
     continent: 'Asia',
-    seed: [43.5, 42.5],
+    seeds: [[43.5, 42.5]],
     threshold: 1000,
     latitude: 42.5,
     longitude: 43.5,
@@ -719,7 +758,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Zagros Mountains',
     nameAlternates: 'Zagros Range',
     continent: 'Asia',
-    seed: [49.0, 32.0],
+    seeds: [[49.0, 32.0]],
     threshold: 1200,
     latitude: 32.0,
     longitude: 49.0,
@@ -733,7 +772,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Elburz Mountains',
     nameAlternates: 'Alborz|Alborz Mountains',
     continent: 'Asia',
-    seed: [52.0, 36.0],
+    seeds: [[52.0, 36.0]],
     threshold: 1500,
     latitude: 36.0,
     longitude: 52.0,
@@ -747,7 +786,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Western Ghats',
     nameAlternates: 'Sahyadri|Western Ghat Mountains',
     continent: 'Asia',
-    seed: [75.0, 14.0],
+    seeds: [[75.0, 14.0]],
     threshold: 400,
     latitude: 14.0,
     longitude: 75.0,
@@ -761,7 +800,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Eastern Ghats',
     nameAlternates: 'Eastern Ghat Mountains',
     continent: 'Asia',
-    seed: [79.5, 15.5],
+    seeds: [[79.5, 15.5]],
     threshold: 300,
     latitude: 15.5,
     longitude: 79.5,
@@ -775,7 +814,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Japanese Alps',
     nameAlternates: 'Nihon Alps',
     continent: 'Asia',
-    seed: [137.5, 36.2],
+    seeds: [[137.5, 36.2]],
     threshold: 800,
     latitude: 36.2,
     longitude: 137.5,
@@ -789,7 +828,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Altun Mountains',
     nameAlternates: 'Altun Shan|Astin Tagh',
     continent: 'Asia',
-    seed: [88.5, 38.5],
+    seeds: [[88.5, 38.5]],
     threshold: 4500,
     radius: 2,
     latitude: 38.0,
@@ -804,7 +843,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Hengduan Mountains',
     nameAlternates: 'Hengduan Shan',
     continent: 'Asia',
-    seed: [99.0, 28.5],
+    seeds: [[99.0, 28.5]],
     threshold: 2500,
     latitude: 28.5,
     longitude: 99.0,
@@ -818,7 +857,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Stanovoy Range',
     nameAlternates: 'Stanovoi Range|Stanovoy Mountains',
     continent: 'Asia',
-    seed: [127.0, 56.0],
+    seeds: [[127.0, 56.0]],
     threshold: 600,
     latitude: 56.0,
     longitude: 127.0,
@@ -832,7 +871,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Verkhoyansk Range',
     nameAlternates: 'Verkhoyansk Mountains',
     continent: 'Asia',
-    seed: [130.0, 64.0],
+    seeds: [[130.0, 64.0]],
     threshold: 600,
     latitude: 64.0,
     longitude: 130.0,
@@ -846,7 +885,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Chersky Range',
     nameAlternates: 'Chersky Mountains|Cherskiy Range',
     continent: 'Asia',
-    seed: [143.0, 64.0],
+    seeds: [[143.0, 64.0]],
     threshold: 600,
     latitude: 64.0,
     longitude: 143.0,
@@ -860,7 +899,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Sikhote-Alin',
     nameAlternates: 'Sikhote Alin Mountains',
     continent: 'Asia',
-    seed: [135.5, 46.0],
+    seeds: [[135.5, 46.0]],
     threshold: 400,
     latitude: 46.0,
     longitude: 135.5,
@@ -876,7 +915,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Alps',
     nameAlternates: 'European Alps|The Alps',
     continent: 'Europe',
-    seed: [10.0, 46.5],
+    seeds: [[10.0, 46.5]],
     threshold: 800,
     radius: 2,
     latitude: 46.5,
@@ -891,7 +930,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Pyrenees',
     nameAlternates: 'Pirineos|Pyrenees Mountains',
     continent: 'Europe',
-    seed: [0.7, 42.7],
+    seeds: [[0.7, 42.7]],
     threshold: 700,
     latitude: 42.7,
     longitude: 0.7,
@@ -905,7 +944,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Carpathians',
     nameAlternates: 'Carpathian Mountains',
     continent: 'Europe',
-    seed: [24.6, 45.6],
+    seeds: [[24, 46], [22, 48], [26, 45]],
     threshold: 400,
     latitude: 47.5,
     longitude: 22.0,
@@ -919,7 +958,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Scandinavian Mountains',
     nameAlternates: 'Scandes|Scandinavian Range',
     continent: 'Europe',
-    seed: [13.0, 64.5],
+    seeds: [[14, 62], [16, 66], [18, 69]],
     threshold: 500,
     latitude: 64.5,
     longitude: 13.0,
@@ -933,7 +972,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Apennines',
     nameAlternates: 'Apennine Mountains|Appennini',
     continent: 'Europe',
-    seed: [13.0, 42.0],
+    seeds: [[13.0, 42.0]],
     threshold: 400,
     latitude: 42.0,
     longitude: 13.0,
@@ -947,7 +986,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Dinaric Alps',
     nameAlternates: 'Dinarides|Dinaric Mountains',
     continent: 'Europe',
-    seed: [17.0, 43.5],
+    seeds: [[17.0, 43.5]],
     threshold: 500,
     latitude: 43.5,
     longitude: 17.0,
@@ -961,7 +1000,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Balkan Mountains',
     nameAlternates: 'Stara Planina|Balkans',
     continent: 'Europe',
-    seed: [25.0, 42.8],
+    seeds: [[25.0, 42.8]],
     threshold: 500,
     latitude: 42.8,
     longitude: 25.0,
@@ -975,7 +1014,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Pindus Mountains',
     nameAlternates: 'Pindos|Pindus Range',
     continent: 'Europe',
-    seed: [20.8, 39.5],
+    seeds: [[20.8, 39.5]],
     threshold: 500,
     latitude: 39.5,
     longitude: 20.8,
@@ -989,7 +1028,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Scottish Highlands',
     nameAlternates: 'Highlands|Scottish Highland Mountains',
     continent: 'Europe',
-    seed: [-5.0, 57.5],
+    seeds: [[-5.0, 57.5]],
     threshold: 200,
     latitude: 57.5,
     longitude: -5.0,
@@ -1003,7 +1042,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Sierra Nevada',
     nameAlternates: 'Sierra Nevada Spain',
     continent: 'Europe',
-    seed: [-3.2, 37.0],
+    seeds: [[-3.2, 37.0]],
     threshold: 1200,
     latitude: 37.0,
     longitude: -3.2,
@@ -1017,7 +1056,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Cantabrian Mountains',
     nameAlternates: 'Cordillera Cantabrica',
     continent: 'Europe',
-    seed: [-5.0, 43.0],
+    seeds: [[-5.0, 43.0]],
     threshold: 600,
     latitude: 43.0,
     longitude: -5.0,
@@ -1031,7 +1070,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Rhodope Mountains',
     nameAlternates: 'Rhodopes|Rodopi',
     continent: 'Europe',
-    seed: [24.5, 41.5],
+    seeds: [[24.5, 41.5]],
     threshold: 600,
     latitude: 41.5,
     longitude: 24.5,
@@ -1047,7 +1086,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Rocky Mountains',
     nameAlternates: 'Rockies|The Rockies',
     continent: 'North America',
-    seed: [-114.0, 47.0],
+    seeds: [[-110, 40], [-114, 45], [-115, 50]],
     threshold: 1500,
     latitude: 47.0,
     longitude: -114.0,
@@ -1061,7 +1100,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Appalachian Mountains',
     nameAlternates: 'Appalachians|The Appalachians',
     continent: 'North America',
-    seed: [-82.3, 35.7],
+    seeds: [[-82, 36], [-79, 38], [-76, 41]],
     threshold: 200,
     latitude: 40.0,
     longitude: -77.0,
@@ -1075,7 +1114,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Sierra Nevada',
     nameAlternates: 'Sierra Nevada USA|Sierras',
     continent: 'North America',
-    seed: [-119.5, 37.5],
+    seeds: [[-119.5, 37.5]],
     threshold: 1500,
     latitude: 37.5,
     longitude: -119.5,
@@ -1089,7 +1128,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Cascade Range',
     nameAlternates: 'Cascades|Cascade Mountains',
     continent: 'North America',
-    seed: [-121.8, 45.5],
+    seeds: [[-121.8, 45.5]],
     threshold: 800,
     latitude: 45.5,
     longitude: -121.8,
@@ -1103,7 +1142,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Alaska Range',
     nameAlternates: 'Alaska Range Mountains',
     continent: 'North America',
-    seed: [-149.0, 62.5],
+    seeds: [[-149.0, 62.5]],
     threshold: 800,
     latitude: 62.5,
     longitude: -149.0,
@@ -1117,7 +1156,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Brooks Range',
     nameAlternates: 'Brooks Range Mountains',
     continent: 'North America',
-    seed: [-153.0, 68.5],
+    seeds: [[-153.0, 68.5]],
     threshold: 500,
     latitude: 68.5,
     longitude: -153.0,
@@ -1131,7 +1170,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Coast Mountains',
     nameAlternates: 'Coast Range BC',
     continent: 'North America',
-    seed: [-126.5, 55.0],
+    seeds: [[-126.5, 55.0]],
     threshold: 600,
     latitude: 55.0,
     longitude: -126.5,
@@ -1145,7 +1184,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Sierra Madre Occidental',
     nameAlternates: 'Western Sierra Madre',
     continent: 'North America',
-    seed: [-107.0, 26.0],
+    seeds: [[-107.0, 26.0]],
     threshold: 1500,
     latitude: 26.0,
     longitude: -107.0,
@@ -1159,7 +1198,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Sierra Madre Oriental',
     nameAlternates: 'Eastern Sierra Madre',
     continent: 'North America',
-    seed: [-100.0, 24.5],
+    seeds: [[-100.0, 24.5]],
     threshold: 1200,
     latitude: 24.5,
     longitude: -100.0,
@@ -1173,7 +1212,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Sierra Madre del Sur',
     nameAlternates: 'Southern Sierra Madre',
     continent: 'North America',
-    seed: [-98.5, 17.0],
+    seeds: [[-98.5, 17.0]],
     threshold: 1000,
     latitude: 17.0,
     longitude: -98.5,
@@ -1189,7 +1228,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Andes',
     nameAlternates: 'Andes Mountains|Cordillera de los Andes',
     continent: 'South America',
-    seed: [-70.0, -18.0],
+    seeds: [[-70, -15], [-70, -25], [-70, -35], [-72, -45]],
     threshold: 2000,
     latitude: -18.0,
     longitude: -70.0,
@@ -1203,7 +1242,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Serra do Mar',
     nameAlternates: 'Sea Mountain Range',
     continent: 'South America',
-    seed: [-49.0, -26.0],
+    seeds: [[-49.0, -26.0]],
     threshold: 300,
     latitude: -25.0,
     longitude: -47.0,
@@ -1217,7 +1256,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Serra da Mantiqueira',
     nameAlternates: 'Mantiqueira Mountains',
     continent: 'South America',
-    seed: [-44.5, -22.5],
+    seeds: [[-44.5, -22.5]],
     threshold: 600,
     latitude: -22.5,
     longitude: -44.5,
@@ -1231,7 +1270,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Guiana Highlands',
     nameAlternates: 'Guiana Shield|Guyana Highlands',
     continent: 'South America',
-    seed: [-63.0, 4.5],
+    seeds: [[-63.0, 4.5]],
     threshold: 500,
     latitude: 4.5,
     longitude: -63.0,
@@ -1245,7 +1284,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Cordillera Blanca',
     nameAlternates: 'White Range',
     continent: 'South America',
-    seed: [-77.5, -9.2],
+    seeds: [[-77.5, -9.2]],
     threshold: 3500,
     latitude: -9.2,
     longitude: -77.5,
@@ -1259,7 +1298,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Cordillera Real',
     nameAlternates: 'Royal Range|Cordillera Real Bolivia',
     continent: 'South America',
-    seed: [-68.0, -16.0],
+    seeds: [[-68.0, -16.0]],
     threshold: 3800,
     latitude: -16.0,
     longitude: -68.0,
@@ -1273,7 +1312,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Sierra Nevada de Santa Marta',
     nameAlternates: 'Sierra Nevada Santa Marta',
     continent: 'South America',
-    seed: [-73.7, 10.7],
+    seeds: [[-73.7, 10.7]],
     threshold: 1000,
     latitude: 10.7,
     longitude: -73.7,
@@ -1287,7 +1326,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Patagonian Andes',
     nameAlternates: 'Andes Patagonicos',
     continent: 'South America',
-    seed: [-72.5, -45.5],
+    seeds: [[-72.5, -45.5]],
     threshold: 800,
     latitude: -45.5,
     longitude: -72.5,
@@ -1303,7 +1342,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Atlas Mountains',
     nameAlternates: 'Atlas Range|The Atlas',
     continent: 'Africa',
-    seed: [-1.0, 33.5],
+    seeds: [[-1.0, 33.5]],
     threshold: 800,
     latitude: 33.5,
     longitude: -1.0,
@@ -1317,7 +1356,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Ethiopian Highlands',
     nameAlternates: 'Ethiopian Plateau|Abyssinian Highlands',
     continent: 'Africa',
-    seed: [38.0, 10.5],
+    seeds: [[38.0, 10.5]],
     threshold: 1500,
     latitude: 10.5,
     longitude: 38.0,
@@ -1331,7 +1370,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Rwenzori Mountains',
     nameAlternates: 'Ruwenzori|Mountains of the Moon',
     continent: 'Africa',
-    seed: [29.8, 0.2],
+    seeds: [[29.8, 0.2]],
     threshold: 1500,
     latitude: 0.2,
     longitude: 29.8,
@@ -1345,7 +1384,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Drakensberg',
     nameAlternates: 'Drakensberg Mountains|uKhahlamba',
     continent: 'Africa',
-    seed: [28.5, -29.5],
+    seeds: [[28.5, -29.5]],
     threshold: 1200,
     latitude: -29.5,
     longitude: 28.5,
@@ -1359,7 +1398,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Hoggar Mountains',
     nameAlternates: 'Ahaggar|Ahaggar Mountains',
     continent: 'Africa',
-    seed: [5.5, 23.0],
+    seeds: [[5.5, 23.0]],
     threshold: 800,
     latitude: 23.0,
     longitude: 5.5,
@@ -1373,7 +1412,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Tibesti Mountains',
     nameAlternates: 'Tibesti Massif',
     continent: 'Africa',
-    seed: [17.0, 21.0],
+    seeds: [[17.0, 21.0]],
     threshold: 800,
     latitude: 21.0,
     longitude: 17.0,
@@ -1387,7 +1426,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Cameroon Highlands',
     nameAlternates: 'Cameroon Line|Cameroon Volcanic Line',
     continent: 'Africa',
-    seed: [9.5, 6.0],
+    seeds: [[9.5, 6.0]],
     threshold: 600,
     latitude: 6.0,
     longitude: 9.5,
@@ -1401,7 +1440,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'East African Rift Mountains',
     nameAlternates: 'East African Mountains|Rift Valley Mountains',
     continent: 'Africa',
-    seed: [36.0, -1.5],
+    seeds: [[36.0, -1.5]],
     threshold: 1500,
     latitude: -1.5,
     longitude: 36.0,
@@ -1417,7 +1456,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Great Dividing Range',
     nameAlternates: 'Great Divide|Eastern Highlands Australia',
     continent: 'Oceania',
-    seed: [148.0, -26.0],
+    seeds: [[149, -33], [148, -37], [146, -41]],
     threshold: 300,
     latitude: -26.0,
     longitude: 148.0,
@@ -1431,7 +1470,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Southern Alps',
     nameAlternates: 'Ka Tiritiri o te Moana|New Zealand Alps',
     continent: 'Oceania',
-    seed: [170.0, -43.5],
+    seeds: [[170.0, -43.5]],
     threshold: 400,
     radius: 5,
     latitude: -43.5,
@@ -1446,7 +1485,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Maoke Mountains',
     nameAlternates: 'Sudirman Range|Snow Mountains',
     continent: 'Oceania',
-    seed: [138.0, -4.2],
+    seeds: [[138.0, -4.2]],
     threshold: 1000,
     latitude: -4.2,
     longitude: 138.0,
@@ -1460,7 +1499,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Owen Stanley Range',
     nameAlternates: 'Owen Stanley Mountains',
     continent: 'Oceania',
-    seed: [148.0, -8.0],
+    seeds: [[148.0, -8.0]],
     threshold: 800,
     latitude: -8.0,
     longitude: 148.0,
@@ -1474,7 +1513,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     name: 'Central Range',
     nameAlternates: 'Central Mountain Range|Taiwan Central Range',
     continent: 'Oceania',
-    seed: [121.0, 23.5],
+    seeds: [[121.0, 23.5]],
     threshold: 1000,
     latitude: 23.5,
     longitude: 121.0,
@@ -1516,10 +1555,10 @@ async function main(): Promise<void> {
   console.log('  Done.');
 
   // Compute Voronoi partition: each pixel is assigned to its nearest range seed.
-  // This replaces bounding boxes — ranges are naturally partitioned by proximity.
+  // Ranges with multiple seeds get a larger Voronoi cell (all seeds map to same index).
   console.log('\nComputing Voronoi partition from seed points...');
-  const seedPixels = RANGES.map(r => geoToPixel(r.seed[0], r.seed[1]));
-  const voronoi = computeVoronoi(seedPixels);
+  const seedGroups = RANGES.map(r => r.seeds.map(s => geoToPixel(s[0], s[1])));
+  const voronoi = computeVoronoi(seedGroups);
   console.log('  Done.');
 
   const header = 'id,name,name_alternates,continent,paths,latitude,longitude,peak_elevation_m,length_km,area_km2,highest_peak';
@@ -1532,13 +1571,25 @@ async function main(): Promise<void> {
     const range = RANGES[i];
     console.log(`\n[${i + 1}/${RANGES.length}] ${range.name}...`);
 
-    const [seedPx, seedPy] = geoToPixel(range.seed[0], range.seed[1]);
-    console.log(`  Seed pixel: (${seedPx}, ${seedPy}), elevation at seed: ${dem[seedPy * DS_WIDTH + seedPx].toFixed(0)}m`);
+    // Pick the seed with the highest elevation for flood-fill start
+    let bestSeedPx = 0;
+    let bestSeedPy = 0;
+    let bestSeedElev = -Infinity;
+    for (const [lng, lat] of range.seeds) {
+      const [px, py] = geoToPixel(lng, lat);
+      const elev = dem[py * DS_WIDTH + px];
+      if (elev > bestSeedElev) {
+        bestSeedElev = elev;
+        bestSeedPx = px;
+        bestSeedPy = py;
+      }
+    }
+    console.log(`  Seed pixel: (${bestSeedPx}, ${bestSeedPy}), elevation at seed: ${bestSeedElev.toFixed(0)}m (${range.seeds.length} seed(s))`);
     const radius = range.radius ?? 0;
     console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px`);
 
     // Flood fill constrained by Voronoi partition
-    const filled = floodFill(dem, voronoi, i, seedPx, seedPy, range.threshold, radius);
+    const filled = floodFill(dem, voronoi, i, bestSeedPx, bestSeedPy, range.threshold, radius);
     console.log(`  Flood fill: ${filled.size} pixels`);
 
     if (filled.size === 0) {
