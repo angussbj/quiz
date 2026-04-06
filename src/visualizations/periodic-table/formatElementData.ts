@@ -26,8 +26,8 @@ const COLUMN_LABELS: Readonly<Record<string, string>> = {
  * Format an element's data column value for compact display.
  * Reads from the element's dataColumns using the CSV column name.
  */
-export function formatElementData(element: VisualizationElement, column: string): string {
+export function formatElementData(element: VisualizationElement, column: string, missingLabel?: string): string {
   const rawValue = element.dataColumns?.[column];
   const label = COLUMN_LABELS[column] ?? column;
-  return formatDataValue(rawValue, label);
+  return formatDataValue(rawValue, label, missingLabel);
 }

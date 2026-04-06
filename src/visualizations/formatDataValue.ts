@@ -61,8 +61,8 @@ function isStateColumn(label: string): boolean {
  * @param label - The column label, used to infer units (e.g. "Population density (per km²)")
  * @returns Formatted string for display, or "—" if the value is missing
  */
-export function formatDataValue(rawValue: string | undefined, label: string): string {
-  if (rawValue === undefined || rawValue === '') return '—';
+export function formatDataValue(rawValue: string | undefined, label: string, missingLabel?: string): string {
+  if (rawValue === undefined || rawValue === '') return missingLabel ?? '—';
 
   // Non-numeric special cases
   if (isStateColumn(label)) {

@@ -19,6 +19,7 @@ function buildDataDisplayToggle(
         value: c.column,
         label: c.label,
         ...(c.category ? { category: c.category } : {}),
+        ...(c.missingLabel ? { missingLabel: c.missingLabel } : {}),
       })),
     ],
   };
@@ -165,8 +166,8 @@ const countrySortColumns: ReadonlyArray<SortColumnDefinition> = [
   { column: 'incarceration_rate', label: 'Incarceration rate (per 100,000)', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
   { column: 'global_peace_index', label: 'Global Peace Index', category: 'Governance & Security', rankDescending: true, infoUrl: '/about/country-statistics' },
   // Aid
-  { column: 'oda_given_per_capita', label: 'Foreign aid given per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
-  { column: 'oda_received_per_capita', label: 'Foreign aid received per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics' },
+  { column: 'oda_given_per_capita', label: 'Foreign aid given per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics', missingLabel: 'Non-donor' },
+  { column: 'oda_received_per_capita', label: 'Foreign aid received per capita (USD)', category: 'Aid', rankDescending: true, infoUrl: '/about/country-statistics', missingLabel: 'Non-recipient' },
   // Quality of Life
   { column: 'happiness_score', label: 'Happiness score', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
   { column: 'internet_penetration_pct', label: 'Internet users (%)', category: 'Quality of Life', rankDescending: true, infoUrl: '/about/country-statistics' },
@@ -438,13 +439,13 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         renderAs: 'dropdown',
         options: [
           { value: 'none', label: 'None' },
-          { value: 'half_life', label: 'Half-life' },
+          { value: 'half_life', label: 'Half-life', missingLabel: 'Stable' },
           { value: 'density', label: 'Density (g/cm\u00B3)' },
           { value: 'standard_state', label: 'State' },
           { value: 'electronegativity', label: 'Electronegativity' },
           { value: 'melting_point', label: 'Melting point (K)' },
           { value: 'boiling_point', label: 'Boiling point (K)' },
-          { value: 'year_discovered', label: 'Year discovered' },
+          { value: 'year_discovered', label: 'Year discovered', missingLabel: 'Ancient' },
           { value: 'cost_usd_per_kg', label: 'Cost USD/kg (1999\u20132025)', infoUrl: '/about/element-costs' },
         ],
       },

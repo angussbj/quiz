@@ -81,6 +81,8 @@ export interface VisualizationRendererProps {
   readonly selectValues?: Readonly<Record<string, string>>;
   /** Maps select toggle option values to their display labels (for data display formatting). */
   readonly selectValueLabels?: Readonly<Record<string, string>>;
+  /** Maps select toggle option values to their missing-data labels (e.g., "Stable", "Landlocked"). */
+  readonly selectValueMissingLabels?: Readonly<Record<string, string>>;
   readonly clustering?: ClusteringConfig;
   /** Non-interactive decorative paths rendered behind elements (e.g., country borders) */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;

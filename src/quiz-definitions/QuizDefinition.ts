@@ -180,4 +180,10 @@ export interface SortColumnDefinition {
    * Most columns want true; atomic_number is a notable exception.
    */
   readonly rankDescending?: boolean;
+  /**
+   * Label to display when the data value is missing/empty, instead of "—".
+   * Use when missing data has a clear meaning in context (e.g., "Stable" for
+   * elements with no half-life, "Landlocked" for countries with no coastline).
+   */
+  readonly missingLabel?: string;
 }

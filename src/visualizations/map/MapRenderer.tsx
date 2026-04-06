@@ -59,6 +59,7 @@ export function MapRenderer({
   putInView,
   selectValues,
   selectValueLabels,
+  selectValueMissingLabels,
   elementStateColorOverrides,
   autoRevealElementIds,
 }: VisualizationRendererProps) {
@@ -103,6 +104,7 @@ export function MapRenderer({
         elementStateColorOverrides={elementStateColorOverrides}
         selectValues={selectValues}
         selectValueLabels={selectValueLabels}
+        selectValueMissingLabels={selectValueMissingLabels}
       />
       {svgOverlay}
       <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
@@ -156,6 +158,7 @@ interface MapContentProps {
   readonly elementStateColorOverrides: VisualizationRendererProps['elementStateColorOverrides'];
   readonly selectValues?: Readonly<Record<string, string>>;
   readonly selectValueLabels?: Readonly<Record<string, string>>;
+  readonly selectValueMissingLabels?: Readonly<Record<string, string>>;
 }
 
 const MapContent = memo(function MapContent({
@@ -176,6 +179,7 @@ const MapContent = memo(function MapContent({
   elementStateColorOverrides,
   selectValues,
   selectValueLabels,
+  selectValueMissingLabels,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { resolved: theme } = useTheme();
@@ -342,6 +346,7 @@ const MapContent = memo(function MapContent({
     return undefined;
   }, [selectValues, selectValueLabels]);
   const activeDataColumnLabel = activeDataColumnName ? selectValueLabels?.[activeDataColumnName] : undefined;
+  const activeDataMissingLabel = activeDataColumnName ? selectValueMissingLabels?.[activeDataColumnName] : undefined;
 
   // Build maps of element id → formatted data value and element name → formatted data value
   const { elementDataValues, elementNameDataValues } = useMemo(() => {
@@ -352,7 +357,7 @@ const MapContent = memo(function MapContent({
     const nameMap: Record<string, string> = {};
     for (const el of elements) {
       const raw = el.dataColumns?.[activeDataColumnName];
-      const formatted = formatDataValue(raw, activeDataColumnLabel);
+      const formatted = formatDataValue(raw, activeDataColumnLabel, activeDataMissingLabel);
       if (formatted !== '—') {
         idMap[el.id] = formatted;
         nameMap[el.label] = formatted;
@@ -363,7 +368,7 @@ const MapContent = memo(function MapContent({
       elementDataValues: hasValues ? idMap : undefined,
       elementNameDataValues: hasValues ? nameMap : undefined,
     };
-  }, [elements, activeDataColumnName, activeDataColumnLabel]);
+  }, [elements, activeDataColumnName, activeDataColumnLabel, activeDataMissingLabel]);
 
   // ── Element color map: color-by-data for fill-style elements ──
   // Look for color toggle keys (countryColors, riverColors, elementColors) in selectValues.

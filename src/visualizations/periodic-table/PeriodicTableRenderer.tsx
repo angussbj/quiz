@@ -26,6 +26,7 @@ interface CellProps {
   readonly showName: boolean;
   readonly showAtomicWeight: boolean;
   readonly elementDataField: string | undefined;
+  readonly elementDataMissingLabel: string | undefined;
   readonly colorFill: string | undefined;
   readonly isClustered: boolean;
   readonly zoomedIn: boolean;
@@ -72,6 +73,7 @@ function GridCell({
   showName,
   showAtomicWeight,
   elementDataField,
+  elementDataMissingLabel,
   colorFill,
   isClustered,
   zoomedIn,
@@ -148,7 +150,7 @@ function GridCell({
   }
 
   const dataFieldText = elementDataField !== undefined
-    ? formatElementData(element, elementDataField)
+    ? formatElementData(element, elementDataField, elementDataMissingLabel)
     : undefined;
 
   return (
@@ -252,6 +254,7 @@ function PeriodicTableGrid({
   toggles,
   elementToggles,
   selectValues,
+  selectValueMissingLabels,
   distanceFeedbackLines,
 }: VisualizationRendererProps) {
   const { scale, clusteredElementIds } = useZoomPan();
@@ -261,6 +264,7 @@ function PeriodicTableGrid({
   const showAtomicWeight = elementToggle(elementToggles, toggles, '', 'showAtomicWeight');
   const elementDataValue = selectValues?.['elementData'] ?? 'none';
   const elementDataField = toElementDataColumn(elementDataValue);
+  const elementDataMissingLabel = elementDataValue !== 'none' ? selectValueMissingLabels?.[elementDataValue] : undefined;
   const elementColorValue = selectValues?.['elementColors'] ?? 'none';
   const elementColorField = elementColorValue !== 'none' ? elementColorValue : undefined;
 
@@ -284,6 +288,7 @@ function PeriodicTableGrid({
             showName={elementToggle(elementToggles, toggles, element.id, 'showNames')}
             showAtomicWeight={showAtomicWeight}
             elementDataField={elementDataField}
+            elementDataMissingLabel={elementDataMissingLabel}
             colorFill={elementColorMap?.get(element.id)}
             isClustered={clusteredElementIds.has(element.id)}
             zoomedIn={zoomedIn}

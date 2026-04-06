@@ -42,7 +42,14 @@ export interface TogglePreset {
 export interface SelectToggleDefinition {
   readonly key: string;
   readonly label: string;
-  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string; readonly infoUrl?: string; readonly category?: string }>;
+  readonly options: ReadonlyArray<{
+    readonly value: string;
+    readonly label: string;
+    readonly infoUrl?: string;
+    readonly category?: string;
+    /** Label to show when this column's data value is missing (e.g., "Stable", "Landlocked"). */
+    readonly missingLabel?: string;
+  }>;
   readonly defaultValue: string;
   readonly group: string;
   /** How to render: 'segmented' (default) or 'dropdown'. */

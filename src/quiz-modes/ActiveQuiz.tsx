@@ -113,18 +113,25 @@ export function ActiveQuiz({
   elementStateColorOverrides,
   normalizeOptions,
 }: ActiveQuizProps) {
-  // Build a value→label lookup from all selectToggle definitions for data display formatting
-  const selectValueLabels = useMemo(() => {
-    if (!selectToggleDefinitions?.length) return undefined;
-    const map: Record<string, string> = {};
+  // Build value→label and value→missingLabel lookups from all selectToggle definitions
+  const { selectValueLabels, selectValueMissingLabels } = useMemo(() => {
+    if (!selectToggleDefinitions?.length) return { selectValueLabels: undefined, selectValueMissingLabels: undefined };
+    const labels: Record<string, string> = {};
+    const missingLabels: Record<string, string> = {};
     for (const toggle of selectToggleDefinitions) {
       for (const option of toggle.options) {
         if (option.value !== 'none') {
-          map[option.value] = option.label;
+          labels[option.value] = option.label;
+          if (option.missingLabel) {
+            missingLabels[option.value] = option.missingLabel;
+          }
         }
       }
     }
-    return Object.keys(map).length > 0 ? map : undefined;
+    return {
+      selectValueLabels: Object.keys(labels).length > 0 ? labels : undefined,
+      selectValueMissingLabels: Object.keys(missingLabels).length > 0 ? missingLabels : undefined,
+    };
   }, [selectToggleDefinitions]);
 
   // Resolve the selected range sort column from config
@@ -670,6 +677,7 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           toggleValues={config.toggleValues}
           selectValues={config.selectValues}
           selectValueLabels={selectValueLabels}
+          selectValueMissingLabels={selectValueMissingLabels}
           Renderer={FilterAwareRenderer}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
