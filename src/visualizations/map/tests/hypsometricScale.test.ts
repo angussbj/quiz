@@ -14,10 +14,12 @@ describe('elevationToRgb', () => {
     expect(color.b).toBeGreaterThan(color.g);
   });
 
-  it('returns pink/magenta-ish for 8849m (Everest)', () => {
+  it('returns near-white for 8849m (Everest)', () => {
     const color = elevationToRgb(8849);
-    // t=1 → hue=320° (magenta): high red, low green
-    expect(color.r).toBeGreaterThan(color.g);
+    // t=1 → near-white (S=5%, L=100%)
+    expect(color.r).toBeGreaterThanOrEqual(250);
+    expect(color.g).toBeGreaterThanOrEqual(250);
+    expect(color.b).toBeGreaterThanOrEqual(250);
   });
 
   it('returns greenish for moderate elevations (~1000m)', () => {
