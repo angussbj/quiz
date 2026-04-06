@@ -25,7 +25,7 @@
 
 import { fromFile } from 'geotiff';
 import type { GeoTIFFImage } from 'geotiff';
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 
 // ------------------------------------------------------------------
@@ -50,6 +50,298 @@ interface RangeDefinition {
   readonly lengthKm: number;
   readonly areaKm2: number;
   readonly highestPeak: string;
+}
+
+// ------------------------------------------------------------------
+// WikiData peak integration
+// ------------------------------------------------------------------
+
+/**
+ * Map WikiData range labels (and known sub-range labels) to our range IDs.
+ * Sub-ranges are mapped to the parent range so their peaks contribute seeds.
+ */
+const WIKIDATA_RANGE_MAP: Readonly<Record<string, string>> = {
+  // ---- Asia ----
+  'Himalayas': 'himalayas',
+  'Annapurna': 'himalayas',
+  'Nanga Parbat': 'himalayas',
+  'Nun-Kun Massif': 'himalayas',
+  'Karakoram': 'karakoram',
+  'Hindu Kush': 'hindu-kush',
+  'Pamir Mountains': 'pamir-mountains',
+  'Tianshan Mountains': 'tian-shan',
+  'Kunlun Mountains': 'kunlun-mountains',
+  'Altai Mountains': 'altai-mountains',
+  'Ural Mountains': 'ural-mountains',
+  'Caucasus Mountains': 'caucasus',
+  'Zagros Mountains': 'zagros-mountains',
+  'Western Ghats': 'western-ghats',
+  'Nilgiri Mountains': 'western-ghats',
+  'Hengduan Mountains': 'hengduan-mountains',
+  'Sikhote-Alin': 'sikhote-alin',
+  'Stanovoy Highlands': 'stanovoy-range',
+  'Huangshan': 'hengduan-mountains',
+
+  // ---- Europe ----
+  'Alps': 'alps',
+  'Pennine Alps': 'alps',
+  'Lepontine Alps': 'alps',
+  'Silvretta Alps': 'alps',
+  'Graian Alps': 'alps',
+  'Cottian Alps': 'alps',
+  'Gailtal Alps': 'alps',
+  'Julian Alps': 'alps',
+  'Dolomites': 'alps',
+  'Alpi Biellesi': 'alps',
+  'Lechquellen Mountains': 'alps',
+  'Bregenz Forest Mountains': 'alps',
+  'Eastern Alps': 'alps',
+  'Monte Rosa Massif': 'alps',
+  'Schober group': 'alps',
+  'Odle Group': 'alps',
+  'Latemar': 'alps',
+  'Rax': 'alps',
+  'Schneeberg': 'alps',
+  'Watzmann': 'alps',
+  'Dents du Midi': 'alps',
+  'Diablerets': 'alps',
+  'Churfirsten': 'alps',
+  'Mount Pilatus': 'alps',
+  'Pyrenees': 'pyrenees',
+  'Carpathians': 'carpathians',
+  'Scandinavian Mountains': 'scandinavian-mountains',
+  'Apennines': 'apennines',
+  'Dinaric Alps': 'dinaric-alps',
+  'Balkan Mountains': 'balkan-mountains',
+  'Scottish Highlands': 'scottish-highlands',
+  'Rhodope Mountains': 'rhodope-mountains',
+  'Pennines': 'scottish-highlands',
+  'Jura Mountains': 'alps',
+  'Sierra de Guadarrama': 'cantabrian-mountains',
+  'Sistema Central': 'cantabrian-mountains',
+
+  // ---- North America ----
+  'Rocky Mountains': 'rocky-mountains',
+  'Appalachian Mountains': 'appalachian-mountains',
+  'Blue Ridge Mountains': 'appalachian-mountains',
+  'Green Mountains': 'appalachian-mountains',
+  'Cascade Range': 'cascade-range',
+  'Alaska Range': 'alaska-range',
+  'Saint Elias Mountains': 'coast-mountains',
+  'Sierra Madre Oriental': 'sierra-madre-oriental',
+  'Sierra Madre de Chiapas': 'sierra-madre-del-sur',
+  'Laurentian Mountains': 'appalachian-mountains',
+  'Santa Catalina Mountains': 'rocky-mountains',
+  'Abajo Mountains': 'rocky-mountains',
+
+  // ---- South America ----
+  'Andes': 'andes',
+  'Cordillera Central': 'andes',
+  'Cordillera Oriental': 'andes',
+  'Chilean Coast Range': 'andes',
+  'Sierra Nevada de Santa Marta': 'sierra-nevada-de-santa-marta',
+  'Brazilian Highlands': 'serra-da-mantiqueira',
+
+  // ---- Africa ----
+  'Atlas Mountains': 'atlas-mountains',
+  'Rwenzori Mountains': 'rwenzori-mountains',
+  'Drakensberg': 'drakensberg',
+  'Hoggar Mountains': 'hoggar-mountains',
+  'Aïr Mountains': 'hoggar-mountains',
+  'Mitumba Mountains': 'east-african-rift-mountains',
+  'Mount Kenya': 'east-african-rift-mountains',
+  'Mount Kilimanjaro': 'east-african-rift-mountains',
+
+  // ---- Other European ranges mapped to nearby parents ----
+  'Bavarian Forest': 'carpathians',
+  'Bohemian Forest': 'carpathians',
+  'Ore Mountains': 'carpathians',
+  'Sudetes': 'carpathians',
+  'Fichtel Mountains': 'carpathians',
+  'Harz': 'scandinavian-mountains',
+  'Black Forest': 'alps',
+};
+
+/**
+ * "Sierra Nevada" is ambiguous (exists in both USA and Spain).
+ * Disambiguate using peak longitude.
+ */
+function resolveSierraNevada(lng: number): string | undefined {
+  if (lng < -100) return 'sierra-nevada-usa';
+  if (lng > -10) return 'sierra-nevada-spain';
+  return undefined;
+}
+
+interface WikidataPeak {
+  readonly lng: number;
+  readonly lat: number;
+  readonly elevation: number;
+}
+
+/**
+ * Load WikiData mountain peaks JSON and match to our range IDs.
+ * Returns a map from range ID to an array of peak coordinates.
+ * Peaks are spatially subsampled (one per 0.5° grid cell, highest wins)
+ * and capped at MAX_PEAKS_PER_RANGE.
+ */
+function loadWikidataPeaks(filePath: string): ReadonlyMap<string, ReadonlyArray<readonly [number, number]>> {
+  if (!existsSync(filePath)) {
+    console.log('WikiData peaks file not found, using manual seeds only.');
+    return new Map();
+  }
+
+  console.log(`Loading WikiData peaks from ${filePath}...`);
+  const raw = JSON.parse(readFileSync(filePath, 'utf-8')) as {
+    readonly results: {
+      readonly bindings: ReadonlyArray<{
+        readonly rangeLabel?: { readonly value: string };
+        readonly peakLabel?: { readonly value: string };
+        readonly lat?: { readonly value: string };
+        readonly lon?: { readonly value: string };
+        readonly elev?: { readonly value: string };
+      }>;
+    };
+  };
+
+  // Group peaks by our range ID
+  const peaksByRange = new Map<string, Array<WikidataPeak>>();
+  let matchedCount = 0;
+  let unmatchedCount = 0;
+
+  for (const binding of raw.results.bindings) {
+    const rangeLabel = binding.rangeLabel?.value;
+    if (!rangeLabel || !binding.lon?.value || !binding.lat?.value) continue;
+    const lng = parseFloat(binding.lon.value);
+    const lat = parseFloat(binding.lat.value);
+    const elevation = binding.elev?.value ? parseFloat(binding.elev.value) : 0;
+
+    if (isNaN(lng) || isNaN(lat)) continue;
+
+    let rangeId = WIKIDATA_RANGE_MAP[rangeLabel];
+
+    // Handle "Sierra Nevada" ambiguity
+    if (!rangeId && rangeLabel === 'Sierra Nevada') {
+      rangeId = resolveSierraNevada(lng);
+    }
+
+    if (!rangeId) {
+      unmatchedCount++;
+      continue;
+    }
+
+    matchedCount++;
+    let arr = peaksByRange.get(rangeId);
+    if (!arr) {
+      arr = [];
+      peaksByRange.set(rangeId, arr);
+    }
+    arr.push({ lng, lat, elevation });
+  }
+
+  console.log(`  Matched ${matchedCount} peaks to our ranges, ${unmatchedCount} unmatched.`);
+
+  // Spatially subsample: one peak per 0.5° grid cell (highest elevation wins),
+  // then prioritize outermost (convex hull) peaks to define the range boundary,
+  // filling remaining slots with highest-elevation interior peaks.
+  const CELL_SIZE = 0.5; // degrees
+  const MAX_PEAKS_PER_RANGE = 50;
+
+  const result = new Map<string, ReadonlyArray<readonly [number, number]>>();
+
+  for (const [rangeId, peaks] of peaksByRange) {
+    // Grid cells: key = "gridX,gridY", value = best peak
+    const cells = new Map<string, WikidataPeak>();
+    for (const peak of peaks) {
+      const gx = Math.floor(peak.lng / CELL_SIZE);
+      const gy = Math.floor(peak.lat / CELL_SIZE);
+      const key = `${gx},${gy}`;
+      const existing = cells.get(key);
+      if (!existing || peak.elevation > existing.elevation) {
+        cells.set(key, peak);
+      }
+    }
+
+    const gridPeaks = Array.from(cells.values());
+
+    if (gridPeaks.length <= MAX_PEAKS_PER_RANGE) {
+      // Few enough peaks — use all of them
+      result.set(rangeId, gridPeaks.map(p => [p.lng, p.lat] as const));
+      continue;
+    }
+
+    // Compute convex hull to find outermost peaks (they define the boundary shape)
+    const hullIndices = convexHull(gridPeaks.map(p => [p.lng, p.lat]));
+    const hullSet = new Set(hullIndices);
+
+    // Always include hull peaks, then fill with highest-elevation interior peaks
+    const hullPeaks = gridPeaks.filter((_, i) => hullSet.has(i));
+    const interiorPeaks = gridPeaks
+      .filter((_, i) => !hullSet.has(i))
+      .sort((a, b) => b.elevation - a.elevation);
+
+    const selected = [...hullPeaks];
+    const remaining = MAX_PEAKS_PER_RANGE - selected.length;
+    if (remaining > 0) {
+      selected.push(...interiorPeaks.slice(0, remaining));
+    }
+
+    if (selected.length > 0) {
+      result.set(rangeId, selected.map(p => [p.lng, p.lat] as const));
+    }
+  }
+
+  console.log(`  Subsampled peaks for ${result.size} ranges (max ${MAX_PEAKS_PER_RANGE} per range, ${CELL_SIZE}° grid).`);
+  for (const [rangeId, peaks] of result) {
+    console.log(`    ${rangeId}: ${peaks.length} seed(s)`);
+  }
+
+  return result;
+}
+
+// ------------------------------------------------------------------
+// Convex hull (Andrew's monotone chain)
+// ------------------------------------------------------------------
+
+/** Returns indices of points on the convex hull in counter-clockwise order. */
+function convexHull(points: ReadonlyArray<readonly [number, number]>): ReadonlyArray<number> {
+  const n = points.length;
+  if (n <= 2) return points.map((_, i) => i);
+
+  // Sort indices by x, then by y
+  const indices = Array.from({ length: n }, (_, i) => i);
+  indices.sort((a, b) => {
+    const dx = points[a][0] - points[b][0];
+    return dx !== 0 ? dx : points[a][1] - points[b][1];
+  });
+
+  const cross = (o: number, a: number, b: number): number =>
+    (points[a][0] - points[o][0]) * (points[b][1] - points[o][1]) -
+    (points[a][1] - points[o][1]) * (points[b][0] - points[o][0]);
+
+  // Build lower hull
+  const lower: Array<number> = [];
+  for (const idx of indices) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], idx) <= 0) {
+      lower.pop();
+    }
+    lower.push(idx);
+  }
+
+  // Build upper hull
+  const upper: Array<number> = [];
+  for (let i = indices.length - 1; i >= 0; i--) {
+    const idx = indices[i];
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], idx) <= 0) {
+      upper.pop();
+    }
+    upper.push(idx);
+  }
+
+  // Remove last point of each half because it's repeated
+  lower.pop();
+  upper.pop();
+
+  return [...lower, ...upper];
 }
 
 // ------------------------------------------------------------------
@@ -1554,10 +1846,29 @@ async function main(): Promise<void> {
   const dem = downsampleDem(raster, width, height);
   console.log('  Done.');
 
+  // Load WikiData peaks to use as seeds (falls back to manual seeds when unavailable)
+  const wikidataPeaksPath = resolve('scripts/source-data/wikidata-mountain-peaks.json');
+  const wikidataPeaks = loadWikidataPeaks(wikidataPeaksPath);
+
+  // Build seed groups: use WikiData peaks when available, otherwise manual seeds.
+  // When WikiData peaks exist, they replace the manual seeds entirely — the manual
+  // seeds were approximations that the real peak data supersedes.
+  console.log('\nBuilding seed groups...');
+  const seedGroups: Array<ReadonlyArray<readonly [number, number]>> = [];
+  for (const range of RANGES) {
+    const wdSeeds = wikidataPeaks.get(range.id);
+    if (wdSeeds && wdSeeds.length > 0) {
+      seedGroups.push(wdSeeds.map(([lng, lat]) => geoToPixel(lng, lat)));
+      console.log(`  ${range.name}: ${wdSeeds.length} WikiData seed(s)`);
+    } else {
+      seedGroups.push(range.seeds.map(s => geoToPixel(s[0], s[1])));
+      console.log(`  ${range.name}: ${range.seeds.length} manual seed(s)`);
+    }
+  }
+
   // Compute Voronoi partition: each pixel is assigned to its nearest range seed.
   // Ranges with multiple seeds get a larger Voronoi cell (all seeds map to same index).
   console.log('\nComputing Voronoi partition from seed points...');
-  const seedGroups = RANGES.map(r => r.seeds.map(s => geoToPixel(s[0], s[1])));
   const voronoi = computeVoronoi(seedGroups);
   console.log('  Done.');
 
@@ -1572,11 +1883,12 @@ async function main(): Promise<void> {
     console.log(`\n[${i + 1}/${RANGES.length}] ${range.name}...`);
 
     // Pick the seed with the highest elevation for flood-fill start
+    // Use the actual seed group (which may be WikiData peaks or manual seeds)
+    const seeds = seedGroups[i];
     let bestSeedPx = 0;
     let bestSeedPy = 0;
     let bestSeedElev = -Infinity;
-    for (const [lng, lat] of range.seeds) {
-      const [px, py] = geoToPixel(lng, lat);
+    for (const [px, py] of seeds) {
       const elev = dem[py * DS_WIDTH + px];
       if (elev > bestSeedElev) {
         bestSeedElev = elev;
@@ -1584,7 +1896,7 @@ async function main(): Promise<void> {
         bestSeedPy = py;
       }
     }
-    console.log(`  Seed pixel: (${bestSeedPx}, ${bestSeedPy}), elevation at seed: ${bestSeedElev.toFixed(0)}m (${range.seeds.length} seed(s))`);
+    console.log(`  Seed pixel: (${bestSeedPx}, ${bestSeedPy}), elevation at seed: ${bestSeedElev.toFixed(0)}m (${seeds.length} seed(s))`);
     const radius = range.radius ?? 0;
     console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px`);
 
