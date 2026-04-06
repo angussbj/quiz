@@ -265,7 +265,7 @@ export function QuizSetupPanel({
         {description && <p className={styles.description}>{description}</p>}
 
         {/* ALWAYS: Difficulty presets */}
-        {difficultyPresets && activeDifficultySlot !== undefined && onDifficultySlotChange && (
+        {difficultyPresets && onDifficultySlotChange && (
           <DifficultySelector
             presets={difficultyPresets}
             activeSlot={activeDifficultySlot}
