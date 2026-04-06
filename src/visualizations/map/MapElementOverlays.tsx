@@ -277,8 +277,9 @@ const ElementShape = memo(function ElementShape({
   const fillOpacity = topographyFillOpacity
     ?? elementFillOpacityOverrides?.[state ?? 'default']
     ?? stateFillOpacity(state);
-  const effectiveStrokeWidth = (isTransparentDefault && state === 'highlighted') ? 0.3 : 0.075;
-  const effectiveStrokeOpacity = (isTransparentDefault && state === 'highlighted') ? 0.8 : undefined;
+  const effectiveStrokeWidth = (isTransparentDefault && state === 'highlighted') ? 0.4 : 0.075;
+  const effectiveStrokeOpacity = (isTransparentDefault && state === 'highlighted') ? 1 : undefined;
+  const effectiveStrokeColor = (isTransparentDefault && state === 'highlighted') ? 'white' : color;
 
   return (
     <path
@@ -287,7 +288,7 @@ const ElementShape = memo(function ElementShape({
       style={{
         fill: color,
         fillOpacity,
-        stroke: color,
+        stroke: effectiveStrokeColor,
         strokeWidth: effectiveStrokeWidth,
         strokeOpacity: effectiveStrokeOpacity,
         pointerEvents: 'auto',

@@ -43,12 +43,6 @@ interface RangeDefinition {
    *  After flood-fill, the result is dilated by this radius for smoother edges.
    *  Default: 0 (standard 4-connected flood-fill). */
   readonly radius?: number;
-  readonly bounds: {
-    readonly minLng: number;
-    readonly maxLng: number;
-    readonly minLat: number;
-    readonly maxLat: number;
-  };
   readonly latitude: number;
   readonly longitude: number;
   readonly peakElevationM: number;
@@ -114,40 +108,71 @@ function pixelToGeo(px: number, py: number): readonly [number, number] {
 }
 
 // ------------------------------------------------------------------
+// Voronoi partition
+// ------------------------------------------------------------------
+
+/**
+ * Compute a Voronoi partition of the DEM grid from seed points.
+ * Each pixel gets the index of its nearest seed (Euclidean distance).
+ * Returns a Uint16Array where voronoi[y * DS_WIDTH + x] = seed index.
+ */
+function computeVoronoi(
+  seedPixels: ReadonlyArray<readonly [number, number]>,
+): Uint16Array {
+  const voronoi = new Uint16Array(DS_WIDTH * DS_HEIGHT);
+  // For efficiency, process in rows and compute distances to all seeds
+  for (let y = 0; y < DS_HEIGHT; y++) {
+    for (let x = 0; x < DS_WIDTH; x++) {
+      let bestDist = Infinity;
+      let bestIdx = 0;
+      for (let s = 0; s < seedPixels.length; s++) {
+        const [sx, sy] = seedPixels[s];
+        const dx = x - sx;
+        const dy = y - sy;
+        const dist = dx * dx + dy * dy; // squared distance is fine for comparison
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIdx = s;
+        }
+      }
+      voronoi[y * DS_WIDTH + x] = bestIdx;
+    }
+    // Progress every 200 rows
+    if (y % 200 === 0) process.stdout.write(`  row ${y}/${DS_HEIGHT}\r`);
+  }
+  return voronoi;
+}
+
+// ------------------------------------------------------------------
 // Flood fill
 // ------------------------------------------------------------------
 
 /**
- * BFS flood-fill from a seed pixel with optional bridge radius.
+ * BFS flood-fill from a seed pixel with Voronoi partitioning and optional bridge radius.
  *
- * When radius=0: standard 4-connected flood-fill (pixel must be above
- * threshold and adjacent to an already-filled pixel).
+ * Pixels can only join the flood if they're in the same Voronoi cell as
+ * the range (i.e., closer to this range's seed than any other range's seed).
+ * This naturally partitions connected elevated regions between adjacent ranges.
  *
  * When radius>0: each filled pixel reaches out to all pixels within
- * `radius` distance. If any of those pixels are above threshold, they
- * join the flood — even if they're not directly connected. This bridges
- * gaps between peaks (e.g., valleys below threshold between ridges).
- *
- * After flood-fill, the filled region is dilated by `radius` pixels
- * to include surrounding foothills and produce smoother polygon edges.
+ * `radius` distance (bridging gaps between peaks). After flood-fill,
+ * the result is dilated by `radius` for smoother polygon edges.
  */
 function floodFill(
   dem: Float32Array,
+  voronoi: Uint16Array,
+  rangeIndex: number,
   seedPx: number,
   seedPy: number,
   threshold: number,
   radius: number,
-  boundsMinPx: number,
-  boundsMaxPx: number,
-  boundsMinPy: number,
-  boundsMaxPy: number,
 ): Set<number> {
   const filled = new Set<number>();
   const seedIdx = seedPy * DS_WIDTH + seedPx;
 
   // Verify seed is above threshold
   if (dem[seedIdx] < threshold) {
-    // Try to find a nearby pixel above threshold
+    // Try to find a nearby pixel above threshold within our Voronoi cell
     let bestIdx = seedIdx;
     let bestElev = dem[seedIdx];
     const searchRadius = Math.max(5, radius);
@@ -155,8 +180,9 @@ function floodFill(
       for (let dx = -searchRadius; dx <= searchRadius; dx++) {
         const nx = seedPx + dx;
         const ny = seedPy + dy;
-        if (nx < boundsMinPx || nx > boundsMaxPx || ny < boundsMinPy || ny > boundsMaxPy) continue;
+        if (nx < 0 || nx >= DS_WIDTH || ny < 0 || ny >= DS_HEIGHT) continue;
         const idx = ny * DS_WIDTH + nx;
+        if (voronoi[idx] !== rangeIndex) continue;
         if (dem[idx] > bestElev) {
           bestElev = dem[idx];
           bestIdx = idx;
@@ -174,7 +200,7 @@ function floodFill(
   // Pre-compute the neighbor offset list for the given radius
   const offsets = buildOffsets(radius);
 
-  // BFS
+  // BFS — constrained to Voronoi cell
   const queue = Array.from(filled);
   let head = 0;
   while (head < queue.length) {
@@ -185,18 +211,19 @@ function floodFill(
     for (const [dx, dy] of offsets) {
       const nx = px + dx;
       const ny = py + dy;
-      if (nx < boundsMinPx || nx > boundsMaxPx || ny < boundsMinPy || ny > boundsMaxPy) continue;
+      if (nx < 0 || nx >= DS_WIDTH || ny < 0 || ny >= DS_HEIGHT) continue;
       const nIdx = ny * DS_WIDTH + nx;
       if (filled.has(nIdx)) continue;
+      if (voronoi[nIdx] !== rangeIndex) continue; // Voronoi constraint
       if (dem[nIdx] < threshold) continue;
       filled.add(nIdx);
       queue.push(nIdx);
     }
   }
 
-  // Dilate the filled region by `radius` to include foothills and smooth edges
+  // Dilate the filled region by `radius` (dilation ignores Voronoi — expands into foothills)
   if (radius > 0) {
-    return dilate(filled, radius, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+    return dilate(filled, radius);
   }
 
   return filled;
@@ -231,10 +258,6 @@ function buildOffsets(radius: number): ReadonlyArray<readonly [number, number]> 
 function dilate(
   filled: Set<number>,
   radius: number,
-  boundsMinPx: number,
-  boundsMaxPx: number,
-  boundsMinPy: number,
-  boundsMaxPy: number,
 ): Set<number> {
   const dilated = new Set(filled);
   const r2 = radius * radius;
@@ -248,7 +271,7 @@ function dilate(
         if (dx * dx + dy * dy > r2) continue;
         const nx = px + dx;
         const ny = py + dy;
-        if (nx < boundsMinPx || nx > boundsMaxPx || ny < boundsMinPy || ny > boundsMaxPy) continue;
+        if (nx < 0 || nx >= DS_WIDTH || ny < 0 || ny >= DS_HEIGHT) continue;
         const nIdx = ny * DS_WIDTH + nx;
         dilated.add(nIdx);
       }
@@ -571,7 +594,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     seed: [84.0, 28.5],
     threshold: 3000,
     radius: 3,
-    bounds: { minLng: 72, maxLng: 98, minLat: 26, maxLat: 31.5 },
     latitude: 28.5,
     longitude: 84.0,
     peakElevationM: 8849,
@@ -586,7 +608,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [76.5, 36.0],
     threshold: 3500,
-    bounds: { minLng: 74, maxLng: 80, minLat: 34.5, maxLat: 37.5 },
     latitude: 36.0,
     longitude: 76.5,
     peakElevationM: 8611,
@@ -601,7 +622,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [70.5, 35.5],
     threshold: 2000,
-    bounds: { minLng: 66, maxLng: 75, minLat: 33, maxLat: 37.5 },
     latitude: 35.5,
     longitude: 70.5,
     peakElevationM: 7708,
@@ -616,7 +636,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [73.0, 38.5],
     threshold: 3000,
-    bounds: { minLng: 70, maxLng: 76, minLat: 37, maxLat: 40 },
     latitude: 38.5,
     longitude: 73.0,
     peakElevationM: 7495,
@@ -631,7 +650,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [80.0, 42.0],
     threshold: 2000,
-    bounds: { minLng: 69, maxLng: 91, minLat: 40, maxLat: 44 },
     latitude: 42.0,
     longitude: 80.0,
     peakElevationM: 7439,
@@ -647,7 +665,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     seed: [85.0, 36.5],
     threshold: 5000,
     radius: 3,
-    bounds: { minLng: 74, maxLng: 98, minLat: 35, maxLat: 38 },
     latitude: 35.5,
     longitude: 85.0,
     peakElevationM: 7167,
@@ -662,7 +679,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [87.0, 49.0],
     threshold: 1000,
-    bounds: { minLng: 82, maxLng: 92, minLat: 46, maxLat: 52 },
     latitude: 49.0,
     longitude: 87.0,
     peakElevationM: 4506,
@@ -677,7 +693,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [59.0, 60.0],
     threshold: 300,
-    bounds: { minLng: 54, maxLng: 64, minLat: 50, maxLat: 69 },
     latitude: 60.0,
     longitude: 59.0,
     peakElevationM: 1895,
@@ -692,7 +707,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [43.5, 42.5],
     threshold: 1000,
-    bounds: { minLng: 36, maxLng: 51, minLat: 40, maxLat: 44.5 },
     latitude: 42.5,
     longitude: 43.5,
     peakElevationM: 5642,
@@ -707,7 +721,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [49.0, 32.0],
     threshold: 1200,
-    bounds: { minLng: 44, maxLng: 56, minLat: 26, maxLat: 37.5 },
     latitude: 32.0,
     longitude: 49.0,
     peakElevationM: 4409,
@@ -722,7 +735,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [52.0, 36.0],
     threshold: 1500,
-    bounds: { minLng: 48, maxLng: 57, minLat: 34.5, maxLat: 37.5 },
     latitude: 36.0,
     longitude: 52.0,
     peakElevationM: 5610,
@@ -737,7 +749,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [75.0, 14.0],
     threshold: 400,
-    bounds: { minLng: 72, maxLng: 78, minLat: 8, maxLat: 21.5 },
     latitude: 14.0,
     longitude: 75.0,
     peakElevationM: 2695,
@@ -752,7 +763,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [79.5, 15.5],
     threshold: 300,
-    bounds: { minLng: 77, maxLng: 83, minLat: 11, maxLat: 21 },
     latitude: 15.5,
     longitude: 79.5,
     peakElevationM: 1680,
@@ -767,7 +777,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [137.5, 36.2],
     threshold: 800,
-    bounds: { minLng: 136, maxLng: 139, minLat: 35, maxLat: 37.5 },
     latitude: 36.2,
     longitude: 137.5,
     peakElevationM: 3190,
@@ -783,7 +792,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     seed: [88.5, 38.5],
     threshold: 4500,
     radius: 2,
-    bounds: { minLng: 84, maxLng: 93, minLat: 37.5, maxLat: 40 },
     latitude: 38.0,
     longitude: 88.5,
     peakElevationM: 6161,
@@ -798,7 +806,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [99.0, 28.5],
     threshold: 2500,
-    bounds: { minLng: 96, maxLng: 102, minLat: 25, maxLat: 33 },
     latitude: 28.5,
     longitude: 99.0,
     peakElevationM: 7556,
@@ -813,7 +820,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [127.0, 56.0],
     threshold: 600,
-    bounds: { minLng: 120, maxLng: 134, minLat: 54.5, maxLat: 58 },
     latitude: 56.0,
     longitude: 127.0,
     peakElevationM: 2412,
@@ -828,7 +834,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [130.0, 64.0],
     threshold: 600,
-    bounds: { minLng: 125, maxLng: 135, minLat: 59, maxLat: 69 },
     latitude: 64.0,
     longitude: 130.0,
     peakElevationM: 2389,
@@ -843,7 +848,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [143.0, 64.0],
     threshold: 600,
-    bounds: { minLng: 136, maxLng: 150, minLat: 61, maxLat: 67 },
     latitude: 64.0,
     longitude: 143.0,
     peakElevationM: 3003,
@@ -858,7 +862,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [135.5, 46.0],
     threshold: 400,
-    bounds: { minLng: 133, maxLng: 138, minLat: 43, maxLat: 49 },
     latitude: 46.0,
     longitude: 135.5,
     peakElevationM: 2090,
@@ -876,7 +879,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     seed: [10.0, 46.5],
     threshold: 800,
     radius: 2,
-    bounds: { minLng: 5, maxLng: 16.5, minLat: 43.5, maxLat: 48.5 },
     latitude: 46.5,
     longitude: 10.0,
     peakElevationM: 4809,
@@ -891,7 +893,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [0.7, 42.7],
     threshold: 700,
-    bounds: { minLng: -2, maxLng: 3.5, minLat: 42, maxLat: 43.5 },
     latitude: 42.7,
     longitude: 0.7,
     peakElevationM: 3404,
@@ -906,7 +907,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [24.6, 45.6],
     threshold: 400,
-    bounds: { minLng: 17, maxLng: 27, minLat: 44.5, maxLat: 50 },
     latitude: 47.5,
     longitude: 22.0,
     peakElevationM: 2655,
@@ -921,7 +921,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [13.0, 64.5],
     threshold: 500,
-    bounds: { minLng: 4, maxLng: 21, minLat: 59, maxLat: 71 },
     latitude: 64.5,
     longitude: 13.0,
     peakElevationM: 2469,
@@ -936,7 +935,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [13.0, 42.0],
     threshold: 400,
-    bounds: { minLng: 8, maxLng: 17, minLat: 38, maxLat: 45 },
     latitude: 42.0,
     longitude: 13.0,
     peakElevationM: 2912,
@@ -951,7 +949,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [17.0, 43.5],
     threshold: 500,
-    bounds: { minLng: 13, maxLng: 21, minLat: 41, maxLat: 47 },
     latitude: 43.5,
     longitude: 17.0,
     peakElevationM: 2694,
@@ -966,7 +963,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [25.0, 42.8],
     threshold: 500,
-    bounds: { minLng: 21, maxLng: 29, minLat: 42, maxLat: 44 },
     latitude: 42.8,
     longitude: 25.0,
     peakElevationM: 2376,
@@ -981,7 +977,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [20.8, 39.5],
     threshold: 500,
-    bounds: { minLng: 19.5, maxLng: 22, minLat: 37.5, maxLat: 41 },
     latitude: 39.5,
     longitude: 20.8,
     peakElevationM: 2637,
@@ -996,7 +991,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [-5.0, 57.5],
     threshold: 200,
-    bounds: { minLng: -7, maxLng: -3, minLat: 56, maxLat: 59 },
     latitude: 57.5,
     longitude: -5.0,
     peakElevationM: 1345,
@@ -1011,7 +1005,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [-3.2, 37.0],
     threshold: 1200,
-    bounds: { minLng: -4, maxLng: -2.3, minLat: 36.7, maxLat: 37.3 },
     latitude: 37.0,
     longitude: -3.2,
     peakElevationM: 3479,
@@ -1026,7 +1019,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [-5.0, 43.0],
     threshold: 600,
-    bounds: { minLng: -7.5, maxLng: -2, minLat: 42.3, maxLat: 43.5 },
     latitude: 43.0,
     longitude: -5.0,
     peakElevationM: 2650,
@@ -1041,7 +1033,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [24.5, 41.5],
     threshold: 600,
-    bounds: { minLng: 23, maxLng: 26.5, minLat: 40.8, maxLat: 42.3 },
     latitude: 41.5,
     longitude: 24.5,
     peakElevationM: 2191,
@@ -1058,7 +1049,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-114.0, 47.0],
     threshold: 1500,
-    bounds: { minLng: -122, maxLng: -104, minLat: 34, maxLat: 61 },
     latitude: 47.0,
     longitude: -114.0,
     peakElevationM: 4401,
@@ -1073,7 +1063,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-82.3, 35.7],
     threshold: 200,
-    bounds: { minLng: -86, maxLng: -68, minLat: 33, maxLat: 49 },
     latitude: 40.0,
     longitude: -77.0,
     peakElevationM: 2037,
@@ -1088,7 +1077,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-119.5, 37.5],
     threshold: 1500,
-    bounds: { minLng: -122, maxLng: -117, minLat: 35, maxLat: 40.5 },
     latitude: 37.5,
     longitude: -119.5,
     peakElevationM: 4421,
@@ -1103,7 +1091,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-121.8, 45.5],
     threshold: 800,
-    bounds: { minLng: -124, maxLng: -120, minLat: 41, maxLat: 49.5 },
     latitude: 45.5,
     longitude: -121.8,
     peakElevationM: 4392,
@@ -1118,7 +1105,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-149.0, 62.5],
     threshold: 800,
-    bounds: { minLng: -155, maxLng: -143, minLat: 60.5, maxLat: 64 },
     latitude: 62.5,
     longitude: -149.0,
     peakElevationM: 6190,
@@ -1133,7 +1119,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-153.0, 68.5],
     threshold: 500,
-    bounds: { minLng: -164, maxLng: -142, minLat: 67, maxLat: 70 },
     latitude: 68.5,
     longitude: -153.0,
     peakElevationM: 2736,
@@ -1148,7 +1133,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-126.5, 55.0],
     threshold: 600,
-    bounds: { minLng: -132, maxLng: -122, minLat: 50, maxLat: 60 },
     latitude: 55.0,
     longitude: -126.5,
     peakElevationM: 4042,
@@ -1163,7 +1147,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-107.0, 26.0],
     threshold: 1500,
-    bounds: { minLng: -111, maxLng: -104, minLat: 21, maxLat: 32 },
     latitude: 26.0,
     longitude: -107.0,
     peakElevationM: 3250,
@@ -1178,7 +1161,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-100.0, 24.5],
     threshold: 1200,
-    bounds: { minLng: -102, maxLng: -98, minLat: 20, maxLat: 29 },
     latitude: 24.5,
     longitude: -100.0,
     peakElevationM: 3700,
@@ -1193,7 +1175,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'North America',
     seed: [-98.5, 17.0],
     threshold: 1000,
-    bounds: { minLng: -102, maxLng: -95, minLat: 15, maxLat: 19 },
     latitude: 17.0,
     longitude: -98.5,
     peakElevationM: 3703,
@@ -1210,7 +1191,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-70.0, -18.0],
     threshold: 2000,
-    bounds: { minLng: -80, maxLng: -64, minLat: -55, maxLat: 12 },
     latitude: -18.0,
     longitude: -70.0,
     peakElevationM: 6961,
@@ -1225,7 +1205,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-49.0, -26.0],
     threshold: 300,
-    bounds: { minLng: -50, maxLng: -43, minLat: -29, maxLat: -22 },
     latitude: -25.0,
     longitude: -47.0,
     peakElevationM: 2316,
@@ -1240,7 +1219,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-44.5, -22.5],
     threshold: 600,
-    bounds: { minLng: -47, maxLng: -42, minLat: -24, maxLat: -21 },
     latitude: -22.5,
     longitude: -44.5,
     peakElevationM: 2798,
@@ -1255,7 +1233,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-63.0, 4.5],
     threshold: 500,
-    bounds: { minLng: -68, maxLng: -57, minLat: 1, maxLat: 8 },
     latitude: 4.5,
     longitude: -63.0,
     peakElevationM: 2810,
@@ -1270,7 +1247,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-77.5, -9.2],
     threshold: 3500,
-    bounds: { minLng: -78.5, maxLng: -76.5, minLat: -10.5, maxLat: -8 },
     latitude: -9.2,
     longitude: -77.5,
     peakElevationM: 6768,
@@ -1285,7 +1261,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-68.0, -16.0],
     threshold: 3800,
-    bounds: { minLng: -69.5, maxLng: -66.5, minLat: -18, maxLat: -14.5 },
     latitude: -16.0,
     longitude: -68.0,
     peakElevationM: 6438,
@@ -1300,7 +1275,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-73.7, 10.7],
     threshold: 1000,
-    bounds: { minLng: -74.5, maxLng: -72.5, minLat: 10, maxLat: 11.5 },
     latitude: 10.7,
     longitude: -73.7,
     peakElevationM: 5775,
@@ -1315,7 +1289,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'South America',
     seed: [-72.5, -45.5],
     threshold: 800,
-    bounds: { minLng: -75, maxLng: -70, minLat: -52, maxLat: -40 },
     latitude: -45.5,
     longitude: -72.5,
     peakElevationM: 3405,
@@ -1332,7 +1305,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [-1.0, 33.5],
     threshold: 800,
-    bounds: { minLng: -10, maxLng: 10, minLat: 30, maxLat: 37 },
     latitude: 33.5,
     longitude: -1.0,
     peakElevationM: 4167,
@@ -1347,7 +1319,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [38.0, 10.5],
     threshold: 1500,
-    bounds: { minLng: 33, maxLng: 43, minLat: 6, maxLat: 16 },
     latitude: 10.5,
     longitude: 38.0,
     peakElevationM: 4550,
@@ -1362,7 +1333,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [29.8, 0.2],
     threshold: 1500,
-    bounds: { minLng: 29, maxLng: 30.5, minLat: -1, maxLat: 1.5 },
     latitude: 0.2,
     longitude: 29.8,
     peakElevationM: 5109,
@@ -1377,7 +1347,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [28.5, -29.5],
     threshold: 1200,
-    bounds: { minLng: 26, maxLng: 31, minLat: -32, maxLat: -28 },
     latitude: -29.5,
     longitude: 28.5,
     peakElevationM: 3482,
@@ -1392,7 +1361,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [5.5, 23.0],
     threshold: 800,
-    bounds: { minLng: 3, maxLng: 8, minLat: 21, maxLat: 25 },
     latitude: 23.0,
     longitude: 5.5,
     peakElevationM: 2918,
@@ -1407,7 +1375,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [17.0, 21.0],
     threshold: 800,
-    bounds: { minLng: 15, maxLng: 19.5, minLat: 19, maxLat: 22.5 },
     latitude: 21.0,
     longitude: 17.0,
     peakElevationM: 3445,
@@ -1422,7 +1389,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [9.5, 6.0],
     threshold: 600,
-    bounds: { minLng: 8, maxLng: 11.5, minLat: 4, maxLat: 8 },
     latitude: 6.0,
     longitude: 9.5,
     peakElevationM: 4095,
@@ -1437,7 +1403,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Africa',
     seed: [36.0, -1.5],
     threshold: 1500,
-    bounds: { minLng: 33, maxLng: 39, minLat: -6, maxLat: 3 },
     latitude: -1.5,
     longitude: 36.0,
     peakElevationM: 5895,
@@ -1454,7 +1419,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Oceania',
     seed: [148.0, -26.0],
     threshold: 300,
-    bounds: { minLng: 141, maxLng: 153, minLat: -38, maxLat: -13 },
     latitude: -26.0,
     longitude: 148.0,
     peakElevationM: 2228,
@@ -1468,9 +1432,8 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     nameAlternates: 'Ka Tiritiri o te Moana|New Zealand Alps',
     continent: 'Oceania',
     seed: [170.0, -43.5],
-    threshold: 500,
-    radius: 3,
-    bounds: { minLng: 167, maxLng: 173, minLat: -46, maxLat: -42 },
+    threshold: 400,
+    radius: 5,
     latitude: -43.5,
     longitude: 170.0,
     peakElevationM: 3724,
@@ -1485,7 +1448,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Oceania',
     seed: [138.0, -4.2],
     threshold: 1000,
-    bounds: { minLng: 135, maxLng: 141, minLat: -5.5, maxLat: -3 },
     latitude: -4.2,
     longitude: 138.0,
     peakElevationM: 4884,
@@ -1500,7 +1462,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Oceania',
     seed: [148.0, -8.0],
     threshold: 800,
-    bounds: { minLng: 146, maxLng: 150, minLat: -10, maxLat: -6.5 },
     latitude: -8.0,
     longitude: 148.0,
     peakElevationM: 4072,
@@ -1515,7 +1476,6 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Oceania',
     seed: [121.0, 23.5],
     threshold: 1000,
-    bounds: { minLng: 120, maxLng: 122, minLat: 22, maxLat: 25.5 },
     latitude: 23.5,
     longitude: 121.0,
     peakElevationM: 3952,
@@ -1555,6 +1515,13 @@ async function main(): Promise<void> {
   const dem = downsampleDem(raster, width, height);
   console.log('  Done.');
 
+  // Compute Voronoi partition: each pixel is assigned to its nearest range seed.
+  // This replaces bounding boxes — ranges are naturally partitioned by proximity.
+  console.log('\nComputing Voronoi partition from seed points...');
+  const seedPixels = RANGES.map(r => geoToPixel(r.seed[0], r.seed[1]));
+  const voronoi = computeVoronoi(seedPixels);
+  console.log('  Done.');
+
   const header = 'id,name,name_alternates,continent,paths,latitude,longitude,peak_elevation_m,length_km,area_km2,highest_peak';
   const rows: Array<string> = [header];
 
@@ -1565,19 +1532,13 @@ async function main(): Promise<void> {
     const range = RANGES[i];
     console.log(`\n[${i + 1}/${RANGES.length}] ${range.name}...`);
 
-    // Convert seed and bounds to pixel coordinates
     const [seedPx, seedPy] = geoToPixel(range.seed[0], range.seed[1]);
-    const [boundsMinPx] = geoToPixel(range.bounds.minLng, 0);
-    const [boundsMaxPx] = geoToPixel(range.bounds.maxLng, 0);
-    const [, boundsMinPy] = geoToPixel(0, range.bounds.maxLat); // maxLat -> minPy (north is up)
-    const [, boundsMaxPy] = geoToPixel(0, range.bounds.minLat); // minLat -> maxPy
-
     console.log(`  Seed pixel: (${seedPx}, ${seedPy}), elevation at seed: ${dem[seedPy * DS_WIDTH + seedPx].toFixed(0)}m`);
     const radius = range.radius ?? 0;
-    console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px, bounds: px(${boundsMinPx}-${boundsMaxPx}, ${boundsMinPy}-${boundsMaxPy})`);
+    console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px`);
 
-    // Flood fill with optional bridge radius and dilation
-    const filled = floodFill(dem, seedPx, seedPy, range.threshold, radius, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+    // Flood fill constrained by Voronoi partition
+    const filled = floodFill(dem, voronoi, i, seedPx, seedPy, range.threshold, radius);
     console.log(`  Flood fill: ${filled.size} pixels`);
 
     if (filled.size === 0) {
@@ -1593,7 +1554,17 @@ async function main(): Promise<void> {
     }
 
     // Extract boundary
-    const polygons = extractBoundary(largest, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+    // Compute tight bounds from the filled pixels for boundary extraction
+    let fMinPx = DS_WIDTH, fMaxPx = 0, fMinPy = DS_HEIGHT, fMaxPy = 0;
+    for (const idx of largest) {
+      const py = Math.floor(idx / DS_WIDTH);
+      const px = idx % DS_WIDTH;
+      if (px < fMinPx) fMinPx = px;
+      if (px > fMaxPx) fMaxPx = px;
+      if (py < fMinPy) fMinPy = py;
+      if (py > fMaxPy) fMaxPy = py;
+    }
+    const polygons = extractBoundary(largest, fMinPx, fMaxPx, fMinPy, fMaxPy);
     console.log(`  Extracted ${polygons.length} boundary polygon(s)`);
 
     if (polygons.length === 0) {
