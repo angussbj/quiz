@@ -63,14 +63,7 @@ export function computeAdaptiveScale(values: ReadonlyArray<number>): AdaptiveSca
 
   for (const candidate of candidates) {
     const transformed = sorted.map(candidate.applyRaw);
-    const tMin = transformed[0];
-    const tMax = transformed[transformed.length - 1];
-    const tRange = tMax - tMin;
-
-    if (tRange <= 0) continue;
-
-    const normalized = transformed.map((t) => (t - tMin) / tRange);
-    const variance = gapVariance(normalized);
+    const variance = outlierAwareGapVariance(transformed);
 
     if (variance < bestVariance) {
       bestVariance = variance;
@@ -197,6 +190,79 @@ function tukeyFences(sorted: ReadonlyArray<number>): { readonly lower: number; r
   const iqr = q3 - q1;
   return { lower: q1 - 0.75 * iqr, upper: q3 + 0.75 * iqr };
 }
+
+/**
+ * Compute gap variance aware of outliers. Splits the transformed values into
+ * three groups (low outliers, normal, high outliers) via Tukey fences,
+ * normalizes each group independently, computes gap variance per group,
+ * then returns a weighted average by group size.
+ *
+ * Each group's contribution is scaled by its visual resolution weight —
+ * the proportion of hue-angle space it occupies in the output gradient.
+ * The default weights (25/240 for high outliers, 15/240 for low) match
+ * a blue→red gradient with pink and purple outlier extensions.
+ *
+ * This prevents a single huge gap between outliers and non-outliers from
+ * dominating the score, and down-weights outlier groups proportionally
+ * to how little visual resolution they get.
+ *
+ * @internal Exported for use by diagnostic scripts.
+ */
+export function outlierAwareGapVariance(
+  sortedTransformed: ReadonlyArray<number>,
+  visualWeights: { readonly low: number; readonly normal: number; readonly high: number } = VISUAL_WEIGHTS,
+): number {
+  const n = sortedTransformed.length;
+  if (n < 2) return 0;
+
+  const { lower, upper } = tukeyFences(sortedTransformed);
+
+  const lowOutliers: Array<number> = [];
+  const normal: Array<number> = [];
+  const highOutliers: Array<number> = [];
+
+  for (const t of sortedTransformed) {
+    if (t < lower) lowOutliers.push(t);
+    else if (t > upper) highOutliers.push(t);
+    else normal.push(t);
+  }
+
+  // Normalize each group to [0, 1] and compute gap variance
+  function groupVariance(group: ReadonlyArray<number>): number {
+    if (group.length < 2) return 0;
+    const gMin = group[0];
+    const gMax = group[group.length - 1];
+    const gRange = gMax - gMin;
+    if (gRange <= 0) return 0;
+    const normalized = group.map((v) => (v - gMin) / gRange);
+    return gapVariance(normalized);
+  }
+
+  const weightedCount =
+    lowOutliers.length * visualWeights.low +
+    normal.length * visualWeights.normal +
+    highOutliers.length * visualWeights.high;
+  if (weightedCount <= 0) return 0;
+
+  const weightedSum =
+    lowOutliers.length * visualWeights.low * groupVariance(lowOutliers) +
+    normal.length * visualWeights.normal * groupVariance(normal) +
+    highOutliers.length * visualWeights.high * groupVariance(highOutliers);
+
+  return weightedSum / weightedCount;
+}
+
+/**
+ * Default visual resolution weights based on hue-angle ranges:
+ *   Normal [0,1]:  blue→red = 240°
+ *   High [1,2]:    red-pink→magenta = 25°
+ *   Low [-1,0]:    blue-purple→deep purple = 15°
+ */
+const VISUAL_WEIGHTS = {
+  low: 15 / 240,
+  normal: 1,
+  high: 25 / 240,
+} as const;
 
 /**
  * Variance of gaps between consecutive values in a sorted [0, 1] array.

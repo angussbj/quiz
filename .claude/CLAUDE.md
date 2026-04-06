@@ -152,6 +152,7 @@ Source files are gitignored (too large). Download URLs are in each script's head
 - `docs/ordered-recall.md` — Ordered recall mode: sort columns, tie groups, highlight toggle, `'ordering'` group convention
 - `docs/topography-tiles.md` — Topographic tile system: tile coordinate math, generation pipeline, viewport tracking, dark mode
 - `docs/element-cost-data.md` — Element cost sources: three-tier pricing (market/ORNL/estimated), CSV format with `~`/`?` markers, per-element source table
+- `docs/adaptive-colour-scales.md` — Adaptive colour scale algorithm: curve selection, outlier detection, visual weighting, diagnostic scripts
 
 ## Worktree Development
 

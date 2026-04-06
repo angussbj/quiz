@@ -15,6 +15,11 @@ coverage
 .worktrees
 screenshots/
 
+# Python venv for diagnostic scripts
+scripts/.venv/
+# Generated diagnostic output
+scripts/distributions.png
+
 # Large source data files (download URLs in script headers)
 scripts/source-data/*
 # Small curated CSVs for country statistics are tracked
