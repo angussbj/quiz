@@ -106,9 +106,9 @@ const capitalsQuizBase = {
   },
   difficultyPresets: {
     slots: [
-      { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showMapFlags: true, showRegionColors: false, showCityDots: true } },
-      { label: 'Medium', mode: 'identify', toggleOverrides: { showMapFlags: true, showRegionColors: false, showCityDots: true } },
-      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true } },
+      { label: 'Easy', mode: 'free-recall-unordered', description: 'Type capital city names from memory', toggleOverrides: { showMapFlags: true, showRegionColors: false, showCityDots: true } },
+      { label: 'Medium', mode: 'identify', description: 'Click on each capital when prompted', toggleOverrides: { showMapFlags: true, showRegionColors: false, showCityDots: true } },
+      { label: 'Hard', mode: 'prompted-recall', description: 'See a dot on the map, name the capital', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true } },
     ],
   },
   advancedPanel: {
@@ -224,9 +224,9 @@ const countriesQuizBase = {
   orderedRecallSortColumns: countrySortColumns,
   difficultyPresets: {
     slots: [
-      { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showMapFlags: true } },
-      { label: 'Medium', mode: 'identify', toggleOverrides: { showMapFlags: true } },
-      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showMapFlags: false } },
+      { label: 'Easy', mode: 'free-recall-unordered', description: 'Type country names from memory', toggleOverrides: { showMapFlags: true } },
+      { label: 'Medium', mode: 'identify', description: 'Click on each country when prompted', toggleOverrides: { showMapFlags: true } },
+      { label: 'Hard', mode: 'prompted-recall', description: 'See a country highlighted, name it', toggleOverrides: { showMapFlags: false } },
     ],
   },
   advancedPanel: {
@@ -251,9 +251,9 @@ const timelineQuizBase = {
   hideFilteredElements: true,
   difficultyPresets: {
     slots: [
-      { label: 'Easy', mode: 'identify', toggleOverrides: { showColours: true, showDates: true } },
-      { label: 'Medium', mode: 'identify', toggleOverrides: { showColours: false, showDates: true } },
-      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showColours: false, showDates: true } },
+      { label: 'Easy', mode: 'identify', description: 'Click on each event when prompted', toggleOverrides: { showColours: true, showDates: true } },
+      { label: 'Medium', mode: 'identify', description: 'Click on each event without colour hints', toggleOverrides: { showColours: false, showDates: true } },
+      { label: 'Hard', mode: 'prompted-recall', description: 'See a bar on the timeline, name the event', toggleOverrides: { showColours: false, showDates: true } },
     ],
   },
   advancedPanel: {
@@ -284,9 +284,9 @@ const largestCitiesQuiz = {
   hideFilteredElements: true,
   difficultyPresets: {
     slots: [
-      { label: 'Easy', mode: 'identify', toggleOverrides: { showMapFlags: true, showRegionColors: true, showCityDots: true }, rangeMaxOverride: 20 },
-      { label: 'Medium', mode: 'free-recall-unordered', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true }, rangeMaxOverride: 40 },
-      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true }, rangeMaxOverride: 100 },
+      { label: 'Easy', mode: 'identify', description: 'Click on each city when prompted', toggleOverrides: { showMapFlags: true, showRegionColors: true, showCityDots: true }, rangeMaxOverride: 20 },
+      { label: 'Medium', mode: 'free-recall-unordered', description: 'Type the largest city names from memory', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true }, rangeMaxOverride: 40 },
+      { label: 'Hard', mode: 'prompted-recall', description: 'See a dot on the map, name the city', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true }, rangeMaxOverride: 100 },
     ],
   },
 } satisfies QuizDefinition;
@@ -342,9 +342,9 @@ const riversQuizBase = {
   orderedRecallSortColumns: riverSortColumns,
   difficultyPresets: {
     slots: [
-      { label: 'Easy', mode: 'identify', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: true, mergeSegmentNames: true, mergeDistributaries: true }, rangeMaxOverride: 20 },
-      { label: 'Medium', mode: 'free-recall-unordered', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: false, mergeSegmentNames: true, mergeDistributaries: true }, rangeMaxOverride: 40 },
-      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: false, mergeSegmentNames: false, mergeDistributaries: false }, rangeMaxOverride: 100 },
+      { label: 'Easy', mode: 'identify', description: 'Click on each river when prompted', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: true, mergeSegmentNames: true, mergeDistributaries: true }, rangeMaxOverride: 20 },
+      { label: 'Medium', mode: 'free-recall-unordered', description: 'Type river names from memory', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: false, mergeSegmentNames: true, mergeDistributaries: true }, rangeMaxOverride: 40 },
+      { label: 'Hard', mode: 'prompted-recall', description: 'See a river highlighted, name it', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: false, mergeSegmentNames: false, mergeDistributaries: false }, rangeMaxOverride: 100 },
     ],
   },
   advancedPanel: {
@@ -383,9 +383,9 @@ const subdivisionsQuizBase = {
   locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
   difficultyPresets: {
     slots: [
-      { label: 'Name from memory', mode: 'free-recall-unordered' },
-      { label: 'Point and click', mode: 'identify' },
-      { label: 'Hard', mode: 'prompted-recall' },
+      { label: 'Name from memory', mode: 'free-recall-unordered', description: 'Type names from memory' },
+      { label: 'Point and click', mode: 'identify', description: 'Click on each region when prompted' },
+      { label: 'Hard', mode: 'prompted-recall', description: 'See a region highlighted, name it' },
     ],
   },
   advancedPanel: {
@@ -463,9 +463,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     hideFilteredElements: true,
     difficultyPresets: {
       slots: [
-        { label: 'Easy', mode: 'multiple-choice' },
-        { label: 'Medium', mode: 'identify' },
-        { label: 'Hard', mode: 'prompted-recall' },
+        { label: 'Easy', mode: 'multiple-choice', description: 'Pick the matching country from options' },
+        { label: 'Medium', mode: 'identify', description: "Click on each country's flag" },
+        { label: 'Hard', mode: 'prompted-recall', description: 'See a flag, name the country' },
       ],
     },
     advancedPanel: {
@@ -540,9 +540,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     locateThresholds: { correct: 0, correctSecond: 1, correctThird: 2 },
     difficultyPresets: {
       slots: [
-        { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'half_life', elementColors: 'category' } },
-        { label: 'Medium', mode: 'free-recall-ordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { orderBy: 'atomic_number', sortOrder: 'ascending', elementData: 'half_life', elementColors: 'category' } },
-        { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'year_discovered', elementColors: 'year_discovered' } },
+        { label: 'Easy', mode: 'free-recall-unordered', description: 'Type element names from memory', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'half_life', elementColors: 'category' } },
+        { label: 'Medium', mode: 'free-recall-ordered', description: 'Name elements in order of atomic number', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { orderBy: 'atomic_number', sortOrder: 'ascending', elementData: 'half_life', elementColors: 'category' } },
+        { label: 'Hard', mode: 'prompted-recall', description: 'See an element highlighted, name it', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'year_discovered', elementColors: 'year_discovered' } },
       ],
     },
     advancedPanel: {
@@ -595,9 +595,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     hideUnfocusedElements: false,
     difficultyPresets: {
       slots: [
-        { label: 'Easy', mode: 'identify', toggleOverrides: { showHands: false, showFeet: false, showTeeth: false } },
-        { label: 'Medium', mode: 'locate', toggleOverrides: { showHands: true, showFeet: true, showTeeth: false } },
-        { label: 'Hard', mode: 'free-recall-unordered', toggleOverrides: { showHands: true, showFeet: true, showTeeth: false } },
+        { label: 'Easy', mode: 'identify', description: 'Click on each bone when prompted', toggleOverrides: { showHands: false, showFeet: false, showTeeth: false } },
+        { label: 'Medium', mode: 'locate', description: 'Click where each bone is on the skeleton', toggleOverrides: { showHands: true, showFeet: true, showTeeth: false } },
+        { label: 'Hard', mode: 'free-recall-unordered', description: 'Type bone names from memory', toggleOverrides: { showHands: true, showFeet: true, showTeeth: false } },
       ],
     },
     advancedPanel: {
@@ -1217,9 +1217,9 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     timeScale: 'log' as const,
     difficultyPresets: {
       slots: [
-        { label: 'Easy', mode: 'identify', toggleOverrides: { showFieldColours: true, showDates: true } },
-        { label: 'Medium', mode: 'identify', toggleOverrides: { showFieldColours: false, showDates: true } },
-        { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showFieldColours: false, showDates: true } },
+        { label: 'Easy', mode: 'identify', description: 'Click on each discovery when prompted', toggleOverrides: { showFieldColours: true, showDates: true } },
+        { label: 'Medium', mode: 'identify', description: 'Click on each discovery without colour hints', toggleOverrides: { showFieldColours: false, showDates: true } },
+        { label: 'Hard', mode: 'prompted-recall', description: 'See a bar on the timeline, name the discovery', toggleOverrides: { showFieldColours: false, showDates: true } },
       ],
     },
     advancedPanel: {

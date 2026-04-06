@@ -7,6 +7,8 @@ import type { QuizModeType } from '@/quiz-definitions/QuizDefinition';
  */
 export interface DifficultyPreset {
   readonly label: string;
+  /** Short description of how this difficulty plays, shown below the selector in Simple mode. */
+  readonly description?: string;
   readonly mode: QuizModeType;
   readonly toggleOverrides?: Readonly<Record<string, boolean>>;
   readonly selectToggleOverrides?: Readonly<Record<string, string>>;
