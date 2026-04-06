@@ -38,6 +38,11 @@ interface RangeDefinition {
   readonly continent: string;
   readonly seed: readonly [number, number]; // [lng, lat]
   readonly threshold: number; // minimum elevation in meters
+  /** Bridge radius in pixels (at 0.1° resolution). During flood-fill, pixels
+   *  within this radius of already-flooded pixels are candidates (if above threshold).
+   *  After flood-fill, the result is dilated by this radius for smoother edges.
+   *  Default: 0 (standard 4-connected flood-fill). */
+  readonly radius?: number;
   readonly bounds: {
     readonly minLng: number;
     readonly maxLng: number;
@@ -113,14 +118,25 @@ function pixelToGeo(px: number, py: number): readonly [number, number] {
 // ------------------------------------------------------------------
 
 /**
- * BFS flood-fill from a seed pixel. Returns a Set of pixel indices
- * where elevation >= threshold and within the bounding box.
+ * BFS flood-fill from a seed pixel with optional bridge radius.
+ *
+ * When radius=0: standard 4-connected flood-fill (pixel must be above
+ * threshold and adjacent to an already-filled pixel).
+ *
+ * When radius>0: each filled pixel reaches out to all pixels within
+ * `radius` distance. If any of those pixels are above threshold, they
+ * join the flood — even if they're not directly connected. This bridges
+ * gaps between peaks (e.g., valleys below threshold between ridges).
+ *
+ * After flood-fill, the filled region is dilated by `radius` pixels
+ * to include surrounding foothills and produce smoother polygon edges.
  */
 function floodFill(
   dem: Float32Array,
   seedPx: number,
   seedPy: number,
   threshold: number,
+  radius: number,
   boundsMinPx: number,
   boundsMaxPx: number,
   boundsMinPy: number,
@@ -134,7 +150,7 @@ function floodFill(
     // Try to find a nearby pixel above threshold
     let bestIdx = seedIdx;
     let bestElev = dem[seedIdx];
-    const searchRadius = 5;
+    const searchRadius = Math.max(5, radius);
     for (let dy = -searchRadius; dy <= searchRadius; dy++) {
       for (let dx = -searchRadius; dx <= searchRadius; dx++) {
         const nx = seedPx + dx;
@@ -148,53 +164,98 @@ function floodFill(
       }
     }
     if (bestElev < threshold) {
-      return filled; // No pixel above threshold nearby
+      return filled;
     }
     filled.add(bestIdx);
-    const queue = [bestIdx];
-    return bfs(dem, queue, filled, threshold, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+  } else {
+    filled.add(seedIdx);
   }
 
-  filled.add(seedIdx);
-  const queue = [seedIdx];
-  return bfs(dem, queue, filled, threshold, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
-}
+  // Pre-compute the neighbor offset list for the given radius
+  const offsets = buildOffsets(radius);
 
-function bfs(
-  dem: Float32Array,
-  queue: Array<number>,
-  filled: Set<number>,
-  threshold: number,
-  boundsMinPx: number,
-  boundsMaxPx: number,
-  boundsMinPy: number,
-  boundsMaxPy: number,
-): Set<number> {
-  const dx4 = [1, -1, 0, 0];
-  const dy4 = [0, 0, 1, -1];
-
+  // BFS
+  const queue = Array.from(filled);
   let head = 0;
   while (head < queue.length) {
     const idx = queue[head++];
     const py = Math.floor(idx / DS_WIDTH);
     const px = idx % DS_WIDTH;
 
-    for (let d = 0; d < 4; d++) {
-      const nx = px + dx4[d];
-      const ny = py + dy4[d];
-
+    for (const [dx, dy] of offsets) {
+      const nx = px + dx;
+      const ny = py + dy;
       if (nx < boundsMinPx || nx > boundsMaxPx || ny < boundsMinPy || ny > boundsMaxPy) continue;
-
       const nIdx = ny * DS_WIDTH + nx;
       if (filled.has(nIdx)) continue;
       if (dem[nIdx] < threshold) continue;
-
       filled.add(nIdx);
       queue.push(nIdx);
     }
   }
 
+  // Dilate the filled region by `radius` to include foothills and smooth edges
+  if (radius > 0) {
+    return dilate(filled, radius, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+  }
+
   return filled;
+}
+
+/**
+ * Build the list of (dx, dy) offsets for a given radius.
+ * radius=0 → 4-connected neighbors.
+ * radius>0 → all pixels within Euclidean distance `radius`.
+ */
+function buildOffsets(radius: number): ReadonlyArray<readonly [number, number]> {
+  if (radius <= 0) {
+    return [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  }
+  const offsets: Array<readonly [number, number]> = [];
+  const r2 = radius * radius;
+  for (let dy = -radius; dy <= radius; dy++) {
+    for (let dx = -radius; dx <= radius; dx++) {
+      if (dx === 0 && dy === 0) continue;
+      if (dx * dx + dy * dy <= r2) {
+        offsets.push([dx, dy]);
+      }
+    }
+  }
+  return offsets;
+}
+
+/**
+ * Morphological dilation: expand a filled region by `radius` pixels.
+ * Every pixel within `radius` of any filled pixel becomes filled.
+ */
+function dilate(
+  filled: Set<number>,
+  radius: number,
+  boundsMinPx: number,
+  boundsMaxPx: number,
+  boundsMinPy: number,
+  boundsMaxPy: number,
+): Set<number> {
+  const dilated = new Set(filled);
+  const r2 = radius * radius;
+
+  for (const idx of filled) {
+    const py = Math.floor(idx / DS_WIDTH);
+    const px = idx % DS_WIDTH;
+
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        if (dx * dx + dy * dy > r2) continue;
+        const nx = px + dx;
+        const ny = py + dy;
+        if (nx < boundsMinPx || nx > boundsMaxPx || ny < boundsMinPy || ny > boundsMaxPy) continue;
+        const nIdx = ny * DS_WIDTH + nx;
+        dilated.add(nIdx);
+      }
+    }
+  }
+
+  return dilated;
 }
 
 // ------------------------------------------------------------------
@@ -508,7 +569,8 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     nameAlternates: 'Himalaya|The Himalayas',
     continent: 'Asia',
     seed: [84.0, 28.5],
-    threshold: 2500,
+    threshold: 3000,
+    radius: 3,
     bounds: { minLng: 72, maxLng: 98, minLat: 26, maxLat: 31.5 },
     latitude: 28.5,
     longitude: 84.0,
@@ -584,6 +646,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [85.0, 36.5],
     threshold: 5000,
+    radius: 3,
     bounds: { minLng: 74, maxLng: 98, minLat: 35, maxLat: 38 },
     latitude: 35.5,
     longitude: 85.0,
@@ -719,6 +782,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Asia',
     seed: [88.5, 38.5],
     threshold: 4500,
+    radius: 2,
     bounds: { minLng: 84, maxLng: 93, minLat: 37.5, maxLat: 40 },
     latitude: 38.0,
     longitude: 88.5,
@@ -811,6 +875,7 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     continent: 'Europe',
     seed: [10.0, 46.5],
     threshold: 800,
+    radius: 2,
     bounds: { minLng: 5, maxLng: 16.5, minLat: 43.5, maxLat: 48.5 },
     latitude: 46.5,
     longitude: 10.0,
@@ -1403,7 +1468,8 @@ const RANGES: ReadonlyArray<RangeDefinition> = [
     nameAlternates: 'Ka Tiritiri o te Moana|New Zealand Alps',
     continent: 'Oceania',
     seed: [170.0, -43.5],
-    threshold: 300,
+    threshold: 500,
+    radius: 3,
     bounds: { minLng: 167, maxLng: 173, minLat: -46, maxLat: -42 },
     latitude: -43.5,
     longitude: 170.0,
@@ -1507,10 +1573,11 @@ async function main(): Promise<void> {
     const [, boundsMaxPy] = geoToPixel(0, range.bounds.minLat); // minLat -> maxPy
 
     console.log(`  Seed pixel: (${seedPx}, ${seedPy}), elevation at seed: ${dem[seedPy * DS_WIDTH + seedPx].toFixed(0)}m`);
-    console.log(`  Threshold: ${range.threshold}m, bounds: px(${boundsMinPx}-${boundsMaxPx}, ${boundsMinPy}-${boundsMaxPy})`);
+    const radius = range.radius ?? 0;
+    console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px, bounds: px(${boundsMinPx}-${boundsMaxPx}, ${boundsMinPy}-${boundsMaxPy})`);
 
-    // Flood fill
-    const filled = floodFill(dem, seedPx, seedPy, range.threshold, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
+    // Flood fill with optional bridge radius and dilation
+    const filled = floodFill(dem, seedPx, seedPy, range.threshold, radius, boundsMinPx, boundsMaxPx, boundsMinPy, boundsMaxPy);
     console.log(`  Flood fill: ${filled.size} pixels`);
 
     if (filled.size === 0) {
