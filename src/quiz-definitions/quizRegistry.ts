@@ -540,8 +540,8 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     locateThresholds: { correct: 0, correctSecond: 1, correctThird: 2 },
     difficultyPresets: {
       slots: [
-        { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'atomic_weight', elementColors: 'category' } },
-        { label: 'Medium', mode: 'free-recall-ordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { orderBy: 'atomic_number', sortOrder: 'ascending', elementData: 'atomic_weight', elementColors: 'category' } },
+        { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'half_life', elementColors: 'category' } },
+        { label: 'Medium', mode: 'free-recall-ordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { orderBy: 'atomic_number', sortOrder: 'ascending', elementData: 'half_life', elementColors: 'category' } },
         { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'year_discovered', elementColors: 'year_discovered' } },
       ],
     },
