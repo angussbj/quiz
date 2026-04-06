@@ -134,7 +134,7 @@ export function QuizShell({
   }), []); // eslint-disable-line react-hooks/exhaustive-deps -- only need initial defaults
   const { setupState: savedState, setSetupState: saveSetup } = useQuizSetupPersistence(quizId, defaultSetupState);
 
-  const [activeDifficultySlot, setActiveDifficultySlot] = useState<number>(0);
+  const [selectedDifficultySlot, setSelectedDifficultySlot] = useState<number>(0);
   const [simpleGroupFilter, setSimpleGroupFilter] = useState<string | undefined>(undefined);
 
   // When dynamic grouping changes the available groups, reset selected groups to include all
@@ -173,6 +173,33 @@ export function QuizShell({
   const handleGroupDeselectAll = useCallback(() => {
     setSelectedGroups(new Set<string>());
   }, []);
+
+  // Derive whether current state still matches the selected difficulty preset.
+  // Returns the slot index if it matches, undefined if settings have been manually changed.
+  const activeDifficultySlot = useMemo(() => {
+    if (!difficultyPresets) return undefined;
+    const preset = difficultyPresets.slots[selectedDifficultySlot];
+    if (!preset) return undefined;
+    // Mode must match
+    if (selectedMode !== preset.mode) return undefined;
+    // All toggle overrides must match
+    if (preset.toggleOverrides) {
+      for (const [key, value] of Object.entries(preset.toggleOverrides)) {
+        if (toggleState.values[key] !== value) return undefined;
+      }
+    }
+    // All select toggle overrides must match
+    if (preset.selectToggleOverrides) {
+      for (const [key, value] of Object.entries(preset.selectToggleOverrides)) {
+        if (toggleState.selectValues[key] !== value) return undefined;
+      }
+    }
+    // Range max must match (if specified)
+    if (preset.rangeMaxOverride !== undefined && rangeMaxValue !== preset.rangeMaxOverride) {
+      return undefined;
+    }
+    return selectedDifficultySlot;
+  }, [difficultyPresets, selectedDifficultySlot, selectedMode, toggleState.values, toggleState.selectValues, rangeMaxValue]);
 
   const handleSimpleGroupFilterChange = useCallback((group: string | undefined) => {
     setSimpleGroupFilter(group);
@@ -233,7 +260,7 @@ export function QuizShell({
   }, [modeConstraints, toggleState]);
 
   const handleDifficultySlotChange = useCallback((slot: number) => {
-    setActiveDifficultySlot(slot);
+    setSelectedDifficultySlot(slot);
     if (!difficultyPresets) return;
     const preset = difficultyPresets.slots[slot];
     setSelectedMode(preset.mode);
@@ -251,7 +278,7 @@ export function QuizShell({
     hasAppliedInitial.current = true;
 
     const initialSlot = savedState.difficultySlot ?? 0;
-    setActiveDifficultySlot(initialSlot);
+    setSelectedDifficultySlot(initialSlot);
 
     if (difficultyPresets) {
       const preset = difficultyPresets.slots[initialSlot];
@@ -303,7 +330,7 @@ export function QuizShell({
   // Push a history entry when starting so the browser back button returns to setup.
   const handleStart = useCallback(() => {
     saveSetup({
-      difficultySlot: activeDifficultySlot,
+      difficultySlot: selectedDifficultySlot,
       mode: selectedMode,
       toggleValues: toggleState.values,
       selectValues: toggleState.selectValues,
@@ -313,7 +340,7 @@ export function QuizShell({
     });
     history.pushState({}, '');
     setPhase('active');
-  }, [saveSetup, activeDifficultySlot, selectedMode, toggleState.values, toggleState.selectValues, rangeMaxValue, rangeMin, selectedGroups]);
+  }, [saveSetup, selectedDifficultySlot, selectedMode, toggleState.values, toggleState.selectValues, rangeMaxValue, rangeMin, selectedGroups]);
 
   // Reconfigure/Try Again pops the history entry pushed by handleStart.
   // The popstate listener below handles the actual state reset.
