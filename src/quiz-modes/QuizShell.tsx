@@ -298,34 +298,59 @@ export function QuizShell({
     applyModeConstraints(newMode);
   }, [applyModeConstraints]);
 
-  const linkedDropdownValue = useMemo(() => {
-    if (!advancedPanel?.linkedSelectToggleKeys?.length) return undefined;
-    const primaryKey = advancedPanel.linkedSelectToggleKeys[0];
-    return toggleState.selectValues[primaryKey] ?? 'none';
-  }, [advancedPanel, toggleState.selectValues]);
-
-  const handleLinkedDropdownChange = useCallback((value: string) => {
-    if (!advancedPanel?.linkedSelectToggleKeys) return;
-    for (const key of advancedPanel.linkedSelectToggleKeys) {
-      toggleState.setSelect(key, value);
-    }
-    if (selectedMode === 'free-recall-ordered' && advancedPanel.linkedSortToggleKey) {
-      toggleState.setSelect(advancedPanel.linkedSortToggleKey, value);
-    }
-  }, [advancedPanel, toggleState, selectedMode]);
+  const isSortMode = selectedMode === 'free-recall-ordered';
 
   const linkedDropdownLabel = useMemo(() => {
     if (!advancedPanel?.linkedSelectToggleKeys) return undefined;
-    return selectedMode === 'free-recall-ordered' ? 'Sort order' : 'Display data';
-  }, [advancedPanel, selectedMode]);
+    return isSortMode ? 'Sort order' : 'Display data';
+  }, [advancedPanel, isSortMode]);
 
+  // In "Sort order" mode, use the sort toggle's options (includes atomic_number etc.).
+  // In "Display data" mode, use the primary linked select toggle's options.
+  // Filter out values that only exist in secondary toggles (e.g., 'region' in countryColors).
   const linkedDropdownOptions = useMemo(() => {
     if (!advancedPanel?.linkedSelectToggleKeys?.length || !selectToggles) return undefined;
+
+    if (isSortMode && advancedPanel.linkedSortToggleKey) {
+      const sortToggle = selectToggles.find((t) => t.key === advancedPanel.linkedSortToggleKey);
+      if (sortToggle) return sortToggle.options;
+    }
+
     const primaryKey = advancedPanel.linkedSelectToggleKeys[0];
     const toggle = selectToggles.find((t) => t.key === primaryKey);
     if (!toggle) return undefined;
     return toggle.options;
-  }, [advancedPanel, selectToggles]);
+  }, [advancedPanel, selectToggles, isSortMode]);
+
+  // The linked dropdown value. In sort mode, read from the sort toggle;
+  // in display mode, read from the primary linked toggle.
+  const linkedDropdownValue = useMemo(() => {
+    if (!advancedPanel?.linkedSelectToggleKeys?.length) return undefined;
+
+    if (isSortMode && advancedPanel.linkedSortToggleKey) {
+      return toggleState.selectValues[advancedPanel.linkedSortToggleKey] ?? 'none';
+    }
+
+    const primaryKey = advancedPanel.linkedSelectToggleKeys[0];
+    return toggleState.selectValues[primaryKey] ?? 'none';
+  }, [advancedPanel, toggleState.selectValues, isSortMode]);
+
+  const handleLinkedDropdownChange = useCallback((value: string) => {
+    if (!advancedPanel?.linkedSelectToggleKeys) return;
+
+    // Check for per-value overrides (e.g., atomic_number → category colors, no data)
+    const overrides = advancedPanel.linkedValueOverrides?.[value];
+
+    for (const key of advancedPanel.linkedSelectToggleKeys) {
+      const overrideValue = overrides?.[key];
+      toggleState.setSelect(key, overrideValue ?? value);
+    }
+
+    if (isSortMode && advancedPanel.linkedSortToggleKey) {
+      const overrideValue = overrides?.[advancedPanel.linkedSortToggleKey];
+      toggleState.setSelect(advancedPanel.linkedSortToggleKey, overrideValue ?? value);
+    }
+  }, [advancedPanel, toggleState, isSortMode]);
 
   // Push a history entry when starting so the browser back button returns to setup.
   const handleStart = useCallback(() => {

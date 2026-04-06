@@ -51,4 +51,11 @@ export interface AdvancedPanelConfig {
   /** When in ordered-recall mode, the linked dropdown also controls the sort column.
    *  This is the key of the ordering select toggle to sync. */
   readonly linkedSortToggleKey?: string;
+  /**
+   * Per-value overrides for the linked dropdown. When a value is selected and has
+   * an entry here, the specified toggles are set to the override values instead of
+   * the selected value. Use for values that don't exist in all linked toggles
+   * (e.g., 'atomic_number' → elementData='none', elementColors='category').
+   */
+  readonly linkedValueOverrides?: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }
