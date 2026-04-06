@@ -12,8 +12,11 @@
  *   npx tsx scripts/generateRiverPaths.ts
  *
  * Input:
- *   scripts/source-data/rivers.geojson  (Natural Earth ne_10m_rivers_lake_centerlines)
- *   scripts/source-data/lakes.geojson   (Natural Earth ne_10m_lakes)
+ *   scripts/source-data/rivers.geojson            (Natural Earth ne_10m_rivers_lake_centerlines)
+ *   scripts/source-data/lakes.geojson              (Natural Earth ne_10m_lakes)
+ *   scripts/source-data/rivers-australia.geojson   (Natural Earth ne_10m_rivers_australia, optional)
+ *   scripts/source-data/rivers-europe.geojson      (Natural Earth ne_10m_rivers_europe, optional)
+ *   scripts/source-data/rivers-north-america.geojson (Natural Earth ne_10m_rivers_north_america, optional)
  *
  * Output:
  *   public/data/rivers/world-rivers.csv
@@ -21,6 +24,9 @@
  * Source files are gitignored (too large). Download before running:
  *   curl -L https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson -o scripts/source-data/rivers.geojson
  *   curl -L https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_lakes.geojson -o scripts/source-data/lakes.geojson
+ *   curl -L https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_australia.geojson -o scripts/source-data/rivers-australia.geojson
+ *   curl -L https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_europe.geojson -o scripts/source-data/rivers-europe.geojson
+ *   curl -L https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_north_america.geojson -o scripts/source-data/rivers-north-america.geojson
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
@@ -148,7 +154,8 @@ function polygonToPath(ring: ReadonlyArray<Coord>, epsilon: number): string {
 }
 
 /** Extract all line segments from a river feature's geometry. */
-function extractSegments(geometry: GeoJsonFeature['geometry']): ReadonlyArray<RiverSegment> {
+function extractSegments(geometry: GeoJsonFeature['geometry'] | null): ReadonlyArray<RiverSegment> {
+  if (!geometry) return [];
   const segments: Array<RiverSegment> = [];
 
   if (geometry.type === 'LineString') {
@@ -456,10 +463,11 @@ function chainSegments(
 }
 
 // ------------------------------------------------------------------
-// Continent assignment from centroid
+// Continent assignment
 // ------------------------------------------------------------------
 
-function assignContinent(lat: number, lng: number): string {
+/** Assign continent for a single point. */
+function pointContinent(lat: number, lng: number): string {
   if (lng > 110 && lat < -10) return 'Oceania';
   if (lng > 160 && lat < 0) return 'Oceania';
 
@@ -476,6 +484,22 @@ function assignContinent(lat: number, lng: number): string {
   return 'Asia';
 }
 
+/**
+ * Assign continent(s) for a river by sampling all segment coordinates.
+ * Returns pipe-separated continents if the river spans multiple (e.g. "Europe|Asia").
+ */
+function assignContinents(segments: ReadonlyArray<RiverSegment>): string {
+  const continents = new Set<string>();
+  for (const seg of segments) {
+    for (const coord of seg.coords) {
+      continents.add(pointContinent(coord[1], coord[0]));
+    }
+  }
+  // Stable ordering
+  const order = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
+  return order.filter(c => continents.has(c)).join('|');
+}
+
 // ------------------------------------------------------------------
 // CSV escaping
 // ------------------------------------------------------------------
@@ -485,6 +509,38 @@ function escapeCsvField(value: string): string {
     return `"${value.replace(/"/g, '""')}"`;
   }
   return value;
+}
+
+/** Parse a CSV row respecting quoted fields (needed because paths contain commas). */
+function parseCsvRow(line: string): ReadonlyArray<string> {
+  const fields: Array<string> = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++; // skip escaped quote
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      fields.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  fields.push(current);
+  return fields;
 }
 
 // ------------------------------------------------------------------
@@ -533,15 +589,39 @@ const lakes = loadLakes(lakesPath);
 
 console.log(`Loaded ${lakes.length} lake polygons`);
 
+// Load optional regional supplements (ne_10m_rivers_australia, _europe, _north_america).
+// These add rivers at scalerank >= 10 that the main dataset doesn't include.
+const supplementFiles = [
+  'rivers-australia.geojson',
+  'rivers-europe.geojson',
+  'rivers-north-america.geojson',
+];
+const supplementFeatures: Array<GeoJsonFeature> = [];
+for (const filename of supplementFiles) {
+  const supplementPath = resolve(sourceDir, filename);
+  if (existsSync(supplementPath)) {
+    const supplementGeoJson: GeoJsonCollection = JSON.parse(readFileSync(supplementPath, 'utf8'));
+    const named = supplementGeoJson.features.filter(f => f.properties['name']);
+    supplementFeatures.push(...named);
+    console.log(`Loaded ${named.length} named features from ${filename}`);
+  }
+}
+if (supplementFeatures.length > 0) {
+  console.log(`Total supplement features: ${supplementFeatures.length}`);
+}
+
 // Simplification epsilon — in degrees. 0.03° ≈ 3.3km at the equator.
 const RIVER_EPSILON = 0.03;
 // Lake polygons can use slightly more aggressive simplification
 const LAKE_EPSILON = 0.05;
 
 // Filter to rivers only (exclude lake centerlines), must have a name
-const riverFeatures = geojson.features.filter(
-  (f) => (f.properties['featurecla'] as string) === 'River' && f.properties['name'],
-);
+const riverFeatures: Array<GeoJsonFeature> = [
+  ...geojson.features.filter(
+    (f) => (f.properties['featurecla'] as string) === 'River' && f.properties['name'],
+  ),
+  ...supplementFeatures,
+];
 
 console.log(`Total river features with names: ${riverFeatures.length}`);
 
@@ -551,8 +631,17 @@ const byGroupKey = new Map<string, Array<GeoJsonFeature>>();
 let nextSyntheticNum = 100000;
 
 for (const feature of riverFeatures) {
-  const num = feature.properties['rivernum'] as number;
+  const num = feature.properties['rivernum'] as number | undefined;
   const name = (feature.properties['name'] as string) ?? '';
+
+  // Supplement features lack rivernum — assign synthetic numbers so each
+  // feature starts as its own group, then the name-merge pass below
+  // combines segments of the same river.
+  if (num === undefined || num === null) {
+    byGroupKey.set(`${nextSyntheticNum++}`, [feature]);
+    continue;
+  }
+
   const key = `${num}`;
   const existing = byGroupKey.get(key);
   if (existing) {
@@ -572,6 +661,12 @@ for (const feature of riverFeatures) {
 // multiple rivernums (e.g. Rhein/Rhine with rivernums 105, 140, 150).
 const MERGE_ENDPOINT_THRESHOLD = 2.0; // degrees — generous threshold for merging
 
+// Natural Earth data error: rivernum 208 (Mur) lists "Drava" as name_alt,
+// causing an incorrect merge with the actual Drava (rivernum 303).
+const BAD_ALT_NAMES: ReadonlyArray<readonly [string, string]> = [
+  ['mur', 'drava'],
+];
+
 /** Collect all name variants for a group of features (lowercased). */
 function getAllNames(features: ReadonlyArray<GeoJsonFeature>): Set<string> {
   const names = new Set<string>();
@@ -579,12 +674,17 @@ function getAllNames(features: ReadonlyArray<GeoJsonFeature>): Set<string> {
     const name = f.properties['name'] as string | null;
     const nameEn = f.properties['name_en'] as string | null;
     const nameAlt = f.properties['name_alt'] as string | null;
-    if (name) names.add(name.toLowerCase());
+    const primaryLower = (name ?? '').toLowerCase();
+    if (name) names.add(primaryLower);
     if (nameEn) names.add(nameEn.toLowerCase());
     if (nameAlt) {
       for (const alt of nameAlt.split(/[;,|]/)) {
         const trimmed = alt.trim();
-        if (trimmed) names.add(trimmed.toLowerCase());
+        if (!trimmed) continue;
+        const altLower = trimmed.toLowerCase();
+        // Skip known bad alternate names
+        const isBad = BAD_ALT_NAMES.some(([p, a]) => p === primaryLower && a === altLower);
+        if (!isBad) names.add(altLower);
       }
     }
   }
@@ -688,10 +788,15 @@ for (const [groupKey, features] of byGroupKey) {
   const primaryFeature = features.reduce((best, f) =>
     (f.properties['scalerank'] as number) < (best.properties['scalerank'] as number) ? f : best,
   );
-  const name = (primaryFeature.properties['name_en'] as string)
+  const rawName = (primaryFeature.properties['name_en'] as string)
     ?? (primaryFeature.properties['name'] as string)
     ?? '';
-  if (!name) continue;
+  if (!rawName) continue;
+
+  // Normalize names: the main dataset uses bare names ("Clarence") while
+  // supplements include the suffix ("Clarence River"). Strip common suffixes
+  // for consistency, keeping the full form as an alternate.
+  const name = rawName.replace(/\s+(River|Creek|Brook)$/i, '');
 
   const minScalerank = Math.min(...features.map((f) => f.properties['scalerank'] as number));
 
@@ -741,7 +846,7 @@ for (const [groupKey, features] of byGroupKey) {
   if (allPaths.length === 0) continue;
 
   const midpoint = pointAlongSegments(segments, 0.5);
-  const continent = assignContinent(midpoint.lat, midpoint.lng);
+  const continent = assignContinents(segments);
 
   const id = name
     .toLowerCase()
@@ -752,6 +857,10 @@ for (const [groupKey, features] of byGroupKey) {
 
   // Collect alternates from ALL features in the group (important for merged groups)
   const altSet = new Set<string>();
+  // If we stripped a suffix from the name, add the raw form as an alternate
+  if (rawName !== name) {
+    altSet.add(rawName);
+  }
   for (const feature of features) {
     const alts = buildAlternates(feature, name);
     if (alts) {
@@ -779,12 +888,39 @@ for (const [groupKey, features] of byGroupKey) {
 // Sort by scalerank (most important first), then by name
 rivers.sort((a, b) => a.scalerank - b.scalerank || a.name.localeCompare(b.name));
 
+// Deduplicate: supplement segments can duplicate main-dataset rivers when the
+// merge pass couldn't connect them (endpoints too far apart). Drop supplement
+// entries that share the same name+continent AND have a midpoint within 5° of
+// an existing lower-scalerank entry (i.e. the same physical river).
+const keptRivers: Array<RiverRow> = [];
+let dupCount = 0;
+for (const river of rivers) {
+  const riverContinents = new Set(river.continent.split('|'));
+  const isDuplicate = keptRivers.some(kept => {
+    if (kept.name !== river.name) return false;
+    // Check continent overlap (either may be pipe-separated)
+    const keptContinents = kept.continent.split('|');
+    if (!keptContinents.some(c => riverContinents.has(c))) return false;
+    return Math.abs(kept.latitude - river.latitude) < 5
+      && Math.abs(kept.longitude - river.longitude) < 5;
+  });
+  if (isDuplicate) {
+    dupCount++;
+    continue;
+  }
+  keptRivers.push(river);
+}
+if (dupCount > 0) {
+  console.log(`\nRemoved ${dupCount} supplement duplicates of main-dataset rivers`);
+}
+const finalRivers = keptRivers;
+
 console.log(`\nGap filling stats:`);
 console.log(`  Lake polygons included: ${totalLakePolygons}`);
 
 console.log(`\nRivers by continent:`);
 const byCont = new Map<string, number>();
-for (const r of rivers) {
+for (const r of finalRivers) {
   byCont.set(r.continent, (byCont.get(r.continent) ?? 0) + 1);
 }
 for (const [cont, count] of [...byCont.entries()].sort()) {
@@ -793,11 +929,92 @@ for (const [cont, count] of [...byCont.entries()].sort()) {
 
 console.log(`\nRivers by scalerank:`);
 const byRank = new Map<number, number>();
-for (const r of rivers) {
+for (const r of finalRivers) {
   byRank.set(r.scalerank, (byRank.get(r.scalerank) ?? 0) + 1);
 }
 for (const [rank, count] of [...byRank.entries()].sort((a, b) => a[0] - b[0])) {
   console.log(`  rank ${rank}: ${count}`);
+}
+
+// ------------------------------------------------------------------
+// Merge with existing CSV to preserve enrichment columns
+// ------------------------------------------------------------------
+
+const outputPath = resolve(outputDir, 'world-rivers.csv');
+const ENRICHMENT_COLUMNS = [
+  'discharge_m3s', 'discharge_rank', 'tributary_of',
+  'distributary_of', 'segment_of', 'length_km', 'total_length_km', 'wikipedia',
+] as const;
+
+// Parse existing CSV into a lookup by ID, preserving enrichment + label data
+interface ExistingRow {
+  readonly latitude: number;
+  readonly longitude: number;
+  readonly label_t: string;
+  readonly label_position: string;
+  readonly enrichment: Readonly<Record<string, string>>;
+}
+
+const existingById = new Map<string, ExistingRow>();
+const existingByNameContinent = new Map<string, Array<ExistingRow>>();
+
+if (existsSync(outputPath)) {
+  const existingContent = readFileSync(outputPath, 'utf8');
+  const existingLines = existingContent.split('\n').filter(l => l.trim());
+  if (existingLines.length > 1) {
+    const headerCols = parseCsvRow(existingLines[0]);
+    const colIndex = (col: string): number => headerCols.indexOf(col);
+
+    for (let i = 1; i < existingLines.length; i++) {
+      const cols = parseCsvRow(existingLines[i]);
+      const id = cols[colIndex('id')] ?? '';
+      if (!id) continue;
+
+      const enrichment: Record<string, string> = {};
+      for (const col of ENRICHMENT_COLUMNS) {
+        const idx = colIndex(col);
+        enrichment[col] = idx >= 0 ? (cols[idx] ?? '') : '';
+      }
+
+      const row: ExistingRow = {
+        latitude: parseFloat(cols[colIndex('latitude')] ?? '0'),
+        longitude: parseFloat(cols[colIndex('longitude')] ?? '0'),
+        label_t: cols[colIndex('label_t')] ?? '',
+        label_position: cols[colIndex('label_position')] ?? '',
+        enrichment,
+      };
+
+      existingById.set(id, row);
+
+      // Fallback lookup by name+continent for when IDs shift due to merge changes.
+      // Index under the name, its alternates, and diacritic-stripped forms so that
+      // encoding differences and name changes don't prevent matching.
+      // Index under each continent segment so pipe-separated values are findable.
+      const rowName = cols[colIndex('name')] ?? '';
+      const rowAlternates = cols[colIndex('name_alternates')] ?? '';
+      const rowContinent = cols[colIndex('continent')] ?? '';
+      if (rowName && rowContinent) {
+        const allNames = new Set<string>();
+        allNames.add(rowName);
+        allNames.add(rowName.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+        for (const alt of rowAlternates.split('|')) {
+          if (alt.trim()) {
+            allNames.add(alt.trim());
+            allNames.add(alt.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+          }
+        }
+        for (const n of allNames) {
+          for (const cont of rowContinent.split('|')) {
+            const key = `${n}|${cont.trim()}`;
+            const list = existingByNameContinent.get(key) ?? [];
+            list.push(row);
+            existingByNameContinent.set(key, list);
+          }
+        }
+      }
+    }
+    console.log(`\nLoaded ${existingById.size} existing rows for enrichment merge`);
+  }
 }
 
 // Write output
@@ -805,9 +1022,47 @@ if (!existsSync(outputDir)) {
   mkdirSync(outputDir, { recursive: true });
 }
 
-const header = 'id,name,name_alternates,continent,scalerank,paths,latitude,longitude,label_t,label_position';
-const csvRows = rivers.map((r) =>
-  [
+const fullHeader = [
+  'id', 'name', 'name_alternates', 'continent', 'scalerank', 'paths',
+  'latitude', 'longitude', 'label_t', 'label_position',
+  ...ENRICHMENT_COLUMNS,
+].join(',');
+
+let preservedCount = 0;
+let newCount = 0;
+
+const csvRows = finalRivers.map((r) => {
+  // Look up by ID first, then fall back to name+continent with proximity check.
+  // Continents may now be pipe-separated (e.g. "Asia|Europe"), so check each
+  // segment against the existing single-continent lookup. Also try the
+  // diacritic-stripped form of the name.
+  let nameMatch: ExistingRow | undefined;
+  const normalizedName = r.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const namesToTry = new Set([r.name, normalizedName]);
+  for (const alt of r.nameAlternates.split('|')) {
+    if (alt.trim()) {
+      namesToTry.add(alt.trim());
+      namesToTry.add(alt.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+    }
+  }
+  for (const n of namesToTry) {
+    for (const cont of r.continent.split('|')) {
+      const candidates = existingByNameContinent.get(`${n}|${cont}`) ?? [];
+      nameMatch = candidates.find(c =>
+        Math.abs(c.latitude - r.latitude) < 5 && Math.abs(c.longitude - r.longitude) < 10,
+      );
+      if (nameMatch) break;
+    }
+    if (nameMatch) break;
+  }
+  const existing = existingById.get(r.id) ?? nameMatch;
+  if (existing) {
+    preservedCount++;
+  } else {
+    newCount++;
+  }
+
+  return [
     r.id,
     r.name,
     r.nameAlternates,
@@ -816,16 +1071,18 @@ const csvRows = rivers.map((r) =>
     r.paths,
     String(r.latitude),
     String(r.longitude),
-    r.label_t,
-    r.label_position,
+    existing?.label_t ?? r.label_t,
+    existing?.label_position ?? r.label_position,
+    ...ENRICHMENT_COLUMNS.map(col => existing?.enrichment[col] ?? ''),
   ]
     .map(escapeCsvField)
-    .join(','),
-);
+    .join(',');
+});
 
-const output = header + '\n' + csvRows.join('\n') + '\n';
-const outputPath = resolve(outputDir, 'world-rivers.csv');
+const output = fullHeader + '\n' + csvRows.join('\n') + '\n';
 writeFileSync(outputPath, output);
 
-console.log(`\nWritten ${rivers.length} rivers to ${outputPath}`);
+console.log(`Preserved enrichment for ${preservedCount} existing rivers`);
+console.log(`Added ${newCount} new rivers (no enrichment data yet)`);
+console.log(`\nWritten ${finalRivers.length} rivers to ${outputPath}`);
 console.log(`File size: ${Math.round(output.length / 1024)}KB`);
