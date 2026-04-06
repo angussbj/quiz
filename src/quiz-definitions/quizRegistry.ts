@@ -104,6 +104,18 @@ const capitalsQuizBase = {
       { type: 'atLeastOne' as const, keys: ['showPromptCountryNames', 'showPromptFlags'], reason: 'At least one prompt hint is required' },
     ],
   },
+  difficultyPresets: {
+    slots: [
+      { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showMapFlags: true, showRegionColors: false, showCityDots: true } },
+      { label: 'Medium', mode: 'identify', toggleOverrides: { showMapFlags: true, showRegionColors: false, showCityDots: true } },
+      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true } },
+    ],
+  },
+  advancedPanel: {
+    toggleKeys: ['showMapFlags'],
+    selectToggleKeys: [],
+    forcedToggles: { showBorders: true, showLakes: true, showRegionColors: false, showCityDots: true },
+  },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
@@ -210,6 +222,21 @@ const countriesQuizBase = {
   locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
   rangeLabel: 'Top countries',
   orderedRecallSortColumns: countrySortColumns,
+  difficultyPresets: {
+    slots: [
+      { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showMapFlags: true } },
+      { label: 'Medium', mode: 'identify', toggleOverrides: { showMapFlags: true } },
+      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showMapFlags: false } },
+    ],
+  },
+  advancedPanel: {
+    toggleKeys: ['showMapFlags'],
+    selectToggleKeys: [],
+    forcedToggles: { showBorders: true, showLakes: true },
+    linkedSelectToggleKeys: ['countryData', 'countryColors'],
+    linkedDropdownMaxOptions: 10,
+    linkedSortToggleKey: 'orderBy',
+  },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 /**
@@ -222,6 +249,17 @@ const timelineQuizBase = {
   defaultMode: 'identify' as const,
   supportingDataPaths: [] as const,
   hideFilteredElements: true,
+  difficultyPresets: {
+    slots: [
+      { label: 'Easy', mode: 'identify', toggleOverrides: { showColours: true, showDates: true } },
+      { label: 'Medium', mode: 'identify', toggleOverrides: { showColours: false, showDates: true } },
+      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showColours: false, showDates: true } },
+    ],
+  },
+  advancedPanel: {
+    toggleKeys: ['showColours'],
+    selectToggleKeys: ['datePrecision'],
+  },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'path' | 'toggles' | 'presets' | 'columnMappings' | 'dataPath'>;
 
 /**
@@ -244,6 +282,13 @@ const largestCitiesQuiz = {
   groupFilterColumn: 'region',
   groupFilterLabel: 'Region',
   hideFilteredElements: true,
+  difficultyPresets: {
+    slots: [
+      { label: 'Easy', mode: 'identify', toggleOverrides: { showMapFlags: true, showRegionColors: true, showCityDots: true }, rangeMaxOverride: 20 },
+      { label: 'Medium', mode: 'free-recall-unordered', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true }, rangeMaxOverride: 40 },
+      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showMapFlags: false, showRegionColors: false, showCityDots: true }, rangeMaxOverride: 100 },
+    ],
+  },
 } satisfies QuizDefinition;
 
 /** Sort columns for rivers, shared between orderedRecallSortColumns and data display. */
@@ -295,6 +340,19 @@ const riversQuizBase = {
     context: 'var(--color-lake)',
   },
   orderedRecallSortColumns: riverSortColumns,
+  difficultyPresets: {
+    slots: [
+      { label: 'Easy', mode: 'identify', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: true, mergeSegmentNames: true, mergeDistributaries: true }, rangeMaxOverride: 20 },
+      { label: 'Medium', mode: 'free-recall-unordered', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: false, mergeSegmentNames: true, mergeDistributaries: true }, rangeMaxOverride: 40 },
+      { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { includeSmallerRivers: true, mergeTributaries: false, mergeSegmentNames: false, mergeDistributaries: false }, rangeMaxOverride: 100 },
+    ],
+  },
+  advancedPanel: {
+    toggleKeys: ['includeSmallerRivers', 'mergeTributaries'],
+    selectToggleKeys: [],
+    forcedToggles: { showBorders: true, showLakes: true, mergeDistributaries: true, mergeSegmentNames: true },
+    linkedSelectToggleKeys: ['riverData'],
+  },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
 
 
@@ -323,6 +381,18 @@ const subdivisionsQuizBase = {
   supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
   locateDistanceMode: 'polygon-boundary' as const,
   locateThresholds: { correct: 100, correctSecond: 200, correctThird: 300 },
+  difficultyPresets: {
+    slots: [
+      { label: 'Name from memory', mode: 'free-recall-unordered' },
+      { label: 'Point and click', mode: 'identify' },
+      { label: 'Hard', mode: 'prompted-recall' },
+    ],
+  },
+  advancedPanel: {
+    toggleKeys: [],
+    selectToggleKeys: [],
+    forcedToggles: { showBorders: true },
+  },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'dataPath'>;
 
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
@@ -391,6 +461,17 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     groupFilterColumn: 'region',
     groupFilterLabel: 'Region',
     hideFilteredElements: true,
+    difficultyPresets: {
+      slots: [
+        { label: 'Easy', mode: 'multiple-choice' },
+        { label: 'Medium', mode: 'identify' },
+        { label: 'Hard', mode: 'prompted-recall' },
+      ],
+    },
+    advancedPanel: {
+      toggleKeys: [],
+      selectToggleKeys: [],
+    },
   },
   {
     id: 'sci-periodic-table',
@@ -457,6 +538,20 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     groupFilterLabel: 'Element category',
     locateDistanceMode: 'grid-centroid' as const,
     locateThresholds: { correct: 0, correctSecond: 1, correctThird: 2 },
+    difficultyPresets: {
+      slots: [
+        { label: 'Easy', mode: 'free-recall-unordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'atomic_weight', elementColors: 'category' } },
+        { label: 'Medium', mode: 'free-recall-ordered', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { orderBy: 'atomic_number', sortOrder: 'ascending', elementData: 'atomic_weight', elementColors: 'category' } },
+        { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showSymbols: false, showAtomicNumbers: true }, selectToggleOverrides: { elementData: 'year_discovered', elementColors: 'year_discovered' } },
+      ],
+    },
+    advancedPanel: {
+      toggleKeys: ['showSymbols'],
+      selectToggleKeys: [],
+      forcedToggles: { showAtomicNumbers: true },
+      linkedSelectToggleKeys: ['elementData', 'elementColors'],
+      linkedSortToggleKey: 'orderBy',
+    },
     orderedRecallSortColumns: [
       { column: 'atomic_number', label: 'Atomic number' },
       { column: 'atomic_weight', label: 'Atomic weight' },
@@ -498,6 +593,17 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     dataPath: '/data/bones-3d/bones.csv',
     supportingDataPaths: [] as const,
     hideUnfocusedElements: false,
+    difficultyPresets: {
+      slots: [
+        { label: 'Easy', mode: 'identify', toggleOverrides: { showHands: false, showFeet: false, showTeeth: false } },
+        { label: 'Medium', mode: 'locate', toggleOverrides: { showHands: true, showFeet: true, showTeeth: false } },
+        { label: 'Hard', mode: 'free-recall-unordered', toggleOverrides: { showHands: true, showFeet: true, showTeeth: false } },
+      ],
+    },
+    advancedPanel: {
+      toggleKeys: ['showSkull', 'showTorso', 'showLimbs', 'showHands', 'showFeet', 'groupBilateral'],
+      selectToggleKeys: [],
+    },
   },
   {
     ...timelineQuizBase,
@@ -1109,6 +1215,17 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     groupFilterColumn: 'field',
     groupFilterLabel: 'Scientific field',
     timeScale: 'log' as const,
+    difficultyPresets: {
+      slots: [
+        { label: 'Easy', mode: 'identify', toggleOverrides: { showFieldColours: true, showDates: true } },
+        { label: 'Medium', mode: 'identify', toggleOverrides: { showFieldColours: false, showDates: true } },
+        { label: 'Hard', mode: 'prompted-recall', toggleOverrides: { showFieldColours: false, showDates: true } },
+      ],
+    },
+    advancedPanel: {
+      toggleKeys: ['showFieldColours'],
+      selectToggleKeys: ['datePrecision'],
+    },
   },
 
   // ===== Country Subdivisions =====
