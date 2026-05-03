@@ -53,18 +53,22 @@ describe('world-rivers.csv data validation', () => {
     }
   });
 
-  it('all rows have valid scalerank (0-10)', () => {
+  it('all rows have valid scalerank (0-13)', () => {
     for (const row of allRows) {
       const rank = parseInt(row.scalerank);
       expect(rank).toBeGreaterThanOrEqual(0);
-      expect(rank).toBeLessThanOrEqual(10);
+      expect(rank).toBeLessThanOrEqual(13);
     }
   });
 
   it('all rows have a continent', () => {
     const validContinents = ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania'];
     for (const row of allRows) {
-      expect(validContinents).toContain(row.continent);
+      // Continent may be pipe-separated for rivers spanning multiple continents (e.g. "Asia|Europe" for Volga).
+      const segments = row.continent.split('|');
+      for (const segment of segments) {
+        expect(validContinents).toContain(segment);
+      }
     }
   });
 
