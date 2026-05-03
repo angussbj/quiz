@@ -133,7 +133,11 @@ const capitalsQuizBase = {
       promptField: {type: 'flag', column: 'country_code'},
       options: [
         {value: 'off', label: 'Off'},
-        {value: 'hint', label: 'Hint'},
+        {
+          value: 'hint',
+          label: 'Hint',
+          tooltip: 'Shown only after a wrong attempt'
+        },
         {value: 'on', label: 'On'},
       ]
     },
@@ -163,7 +167,7 @@ const capitalsQuizBase = {
       {
         type: 'atLeastOne' as const,
         keys: ['showPromptCountryNames', 'showPromptFlags'],
-        reason: 'At least one prompt hint is required'
+        reason: 'At least one prompt is required'
       },
     ],
   },
@@ -172,7 +176,7 @@ const capitalsQuizBase = {
       {
         label: 'Easy',
         mode: 'free-recall-unordered',
-        description: 'Type capital city names from memory',
+        description: 'Type capital city names in any order',
         toggleOverrides: {showMapFlags: true, showRegionColors: false, showCityDots: true}
       },
       {
@@ -663,7 +667,7 @@ const countriesQuizBase = {
       {
         label: 'Easy',
         mode: 'free-recall-unordered',
-        description: 'Type country names from memory',
+        description: 'Type country names in any order',
         toggleOverrides: {showMapFlags: true}
       },
       {
@@ -757,13 +761,13 @@ const largestCitiesQuiz = {
         label: 'Easy',
         mode: 'identify',
         description: 'Click on each city when prompted',
-        toggleOverrides: {showMapFlags: true, showRegionColors: true, showCityDots: true},
+        toggleOverrides: {showMapFlags: false, showRegionColors: false, showCityDots: true},
         rangeMaxOverride: 20
       },
       {
         label: 'Medium',
         mode: 'free-recall-unordered',
-        description: 'Type the largest city names from memory',
+        description: 'Type the largest city names in any order',
         toggleOverrides: {showMapFlags: false, showRegionColors: false, showCityDots: true},
         rangeMaxOverride: 40
       },
@@ -881,7 +885,7 @@ const riversQuizBase = {
       {
         label: 'Medium',
         mode: 'free-recall-unordered',
-        description: 'Type river names from memory',
+        description: 'Type river names in any order',
         toggleOverrides: {
           includeSmallerRivers: true,
           mergeTributaries: false,
@@ -947,9 +951,9 @@ const subdivisionsQuizBase = {
   locateThresholds: {correct: 100, correctSecond: 200, correctThird: 300},
   difficultyPresets: {
     slots: [
-      {label: 'Name from memory', mode: 'free-recall-unordered', description: 'Type names from memory'},
+      {label: 'Name in any order', mode: 'free-recall-unordered', description: 'Type names in any order'},
       {label: 'Point and click', mode: 'identify', description: 'Click on each region when prompted'},
-      {label: 'Hard', mode: 'prompted-recall', description: 'See a region highlighted, name it'},
+      {label: 'Name on sight', mode: 'prompted-recall', description: 'See a region highlighted, name it'},
     ],
   },
   advancedPanel: {
@@ -1138,7 +1142,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
         {
           label: 'Easy',
           mode: 'free-recall-unordered',
-          description: 'Type element names from memory',
+          description: 'Type element names in any order',
           toggleOverrides: {showSymbols: false, showAtomicNumbers: true},
           selectToggleOverrides: {elementData: 'half_life', elementColors: 'category'}
         },
@@ -1193,7 +1197,7 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
     description: 'Locate bones on a 3D skeleton model.',
     path: ['Science', 'Biology'],
     visualizationType: 'anatomy-3d' as const,
-    availableModes: ['locate', 'free-recall-unordered', 'identify'] as const,
+    availableModes: ['locate', 'free-recall-unordered', 'identify', 'prompted-recall'] as const,
     defaultMode: 'locate' as const,
     toggles: [
       {key: 'showSkull', label: 'Skull', defaultValue: true, group: 'regions', hiddenBehavior: 'never'} as const,
@@ -1240,19 +1244,19 @@ export const quizRegistry: ReadonlyArray<QuizDefinition> = [
           label: 'Easy',
           mode: 'identify',
           description: 'Click on each bone when prompted',
-          toggleOverrides: {showHands: false, showFeet: false, showTeeth: false}
+          toggleOverrides: {showHands: false, showFeet: false, showTeeth: false, showSesamoids: false}
         },
         {
           label: 'Medium',
-          mode: 'locate',
-          description: 'Click where each bone is on the skeleton',
-          toggleOverrides: {showHands: true, showFeet: true, showTeeth: false}
+          mode: 'free-recall-unordered',
+          description: 'Type bone names in any order',
+          toggleOverrides: {showHands: true, showFeet: true, showTeeth: false, showSesamoids: true}
         },
         {
           label: 'Hard',
-          mode: 'free-recall-unordered',
-          description: 'Type bone names from memory',
-          toggleOverrides: {showHands: true, showFeet: true, showTeeth: false}
+          mode: 'prompted-recall',
+          description: 'See a bone highlighted, name it',
+          toggleOverrides: {showHands: true, showFeet: true, showTeeth: false, showSesamoids: true}
         },
       ],
     },

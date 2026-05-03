@@ -50,7 +50,7 @@ describe('QuizSetupPanel', () => {
     renderPanel();
     const select = screen.getByLabelText('Mode');
     expect(select).toBeInTheDocument();
-    expect(screen.getByRole('option', { name: 'Name from memory' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Name in any order' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Point and click' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Place it' })).toBeInTheDocument();
   });

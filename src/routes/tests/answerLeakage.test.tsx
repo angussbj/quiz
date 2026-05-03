@@ -34,7 +34,7 @@ const TEXT_INPUT_MODES: ReadonlyArray<QuizModeType> = [
 ];
 
 const MODE_LABELS: Readonly<Record<QuizModeType, string>> = {
-  'free-recall-unordered': 'Name from memory',
+  'free-recall-unordered': 'Name in any order',
   'free-recall-ordered': 'Name in order',
   'identify': 'Point and click',
   'locate': 'Place it',
