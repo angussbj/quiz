@@ -93,18 +93,11 @@ describe('buildFlagGridElements', () => {
     }
   });
 
-  it('shuffles the order (statistical test)', () => {
-    // Run multiple times — at least one should differ from input order
+  it('preserves input order (renderer shuffles at mount)', () => {
     const inputIds = sampleRows.map((r) => r.id);
-    let sawDifferentOrder = false;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const elements = buildFlagGridElements(sampleRows, columnMappings);
-      const outputIds = elements.map((e) => e.id);
-      if (outputIds.join(',') !== inputIds.join(',')) {
-        sawDifferentOrder = true;
-        break;
-      }
+      expect(elements.map((e) => e.id)).toEqual(inputIds);
     }
-    expect(sawDifferentOrder).toBe(true);
   });
 });

@@ -342,14 +342,20 @@ function ZoomPanInner({
   const clusters = useMemo(() => {
     if (!clustering) return [];
     if (clustering.disableAboveScale !== undefined && clusterScale >= clustering.disableAboveScale) return [];
+    // Hidden elements don't render, so they shouldn't contribute to cluster badges.
+    // MapRenderer marks dot elements as 'hidden' when showCityDots is off so the
+    // same "not visible → no badge" rule applies across all visibility reasons.
+    const clusterable = elementStates
+      ? elements.filter((el) => elementStates[el.id] !== 'hidden')
+      : elements;
     return computeClusters(
-      elements,
+      clusterable,
       clustering.minScreenPixelDistance,
       clusterScreenPixelsPerViewBoxUnit,
       clustering.clusterAbsorptionDistance,
       clustering.clusterMergeDistance,
     );
-  }, [elements, clustering, clusterScale, clusterScreenPixelsPerViewBoxUnit]);
+  }, [elements, elementStates, clustering, clusterScale, clusterScreenPixelsPerViewBoxUnit]);
 
   const clusteredElementIds = useMemo(() => {
     const ids = new Set<string>();

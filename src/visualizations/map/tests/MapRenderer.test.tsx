@@ -177,6 +177,21 @@ describe('MapRenderer', () => {
     fireEvent.click(circles[0]);
   });
 
+  it('does not render cluster badges when showCityDots is off', () => {
+    // Cities close together would normally cluster; with showCityDots off no
+    // dots render, so no cluster badge either.
+    const { container } = renderMap({
+      toggles: { showBorders: true, showCityDots: false, showCountryNames: false },
+      // Use real-sized clustering so dots would otherwise cluster at scale 1
+      clustering: { minScreenPixelDistance: 1000, countedState: 'correct' },
+    });
+    // Cluster badges are circles rendered by ClusterBadge with stroke=var(--color-bg-primary)
+    const clusterCircles = Array.from(container.querySelectorAll('circle')).filter(
+      (c) => c.getAttribute('stroke') === 'var(--color-bg-primary)',
+    );
+    expect(clusterCircles).toHaveLength(0);
+  });
+
   it('renders svgOverlay content within the SVG', () => {
     renderMap({
       svgOverlay: <text data-testid="overlay-text">Overlay Content</text>,

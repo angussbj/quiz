@@ -31,7 +31,7 @@ export interface QuizModeProps {
   readonly selectValues?: Readonly<Record<string, string>>;
   /** Maps select toggle option values to their display labels (for data display formatting). */
   readonly selectValueLabels?: Readonly<Record<string, string>>;
-  /** Maps select toggle option values to their missing-data labels (e.g., "Stable" for half-life). */
+  /** Maps select toggle option values to their missing-data labels (shown when a row has no value for that column). */
   readonly selectValueMissingLabels?: Readonly<Record<string, string>>;
   readonly Renderer: ComponentType<VisualizationRendererProps>;
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;

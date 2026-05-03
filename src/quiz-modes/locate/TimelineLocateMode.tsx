@@ -19,6 +19,7 @@ export function TimelineLocateMode({
   toggleDefinitions = [],
   selectValues,
   selectValueLabels,
+  selectValueMissingLabels,
   Renderer,
   backgroundPaths,
   lakePaths,
@@ -230,6 +231,7 @@ export function TimelineLocateMode({
           toggles={toggleValues}
           selectValues={selectValues}
           selectValueLabels={selectValueLabels}
+          selectValueMissingLabels={selectValueMissingLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

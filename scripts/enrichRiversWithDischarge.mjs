@@ -316,6 +316,11 @@ const TRIBUTARY_OF = {
 
   // ── Murray-Darling ──────────────────────────────────────────────────────
   'Darling':    'Murray',
+  'Murrumbidgee': 'Murray',
+  'Goulburn':   'Murray',
+  'Mitta Mitta': 'Murray',
+  'Great Darling Anabranch': 'Murray',
+  'Williams':   'Murray',
   'Barwon':     'Darling',
   'Weir':       'Barwon',
 
@@ -355,6 +360,7 @@ const TRIBUTARY_OF = {
   'Vakh':       'Ob',
   'Vasyugan':   'Ob',
   'Ishim':      'Ertis',
+  'Shagan':     'Ertis',
   'Naryn':      'Ertis',
 
   // ── Lena system ──────────────────────────────────────────────────────────
@@ -383,43 +389,154 @@ const TRIBUTARY_OF = {
   'Inn':        'Danube',
   'Mur':        'Danube',
   'Drava':      'Danube',
+  'Isar':       'Danube',
+  'Enns':       'Danube',
+  'Rába':       'Danube',
+  'Váh':        'Danube',
+  'Hron':       'Danube',
+  'Ipoly':      'Danube',
+  'Timok':      'Danube',
+  'Ogosta':     'Danube',
+  'Yantra':     'Danube',
+  'Iskar':      'Danube',
+  'Traun':      'Danube',
+  'Moson-Danube': 'Danube',
   'Mureș':      'Tisa',
   'Drina':      'Sava',
   'Una':        'Sava',
+  'Vrbas':      'Sava',
+  'Bosna':      'Sava',
+  'Salzach':    'Inn',
+  'Hornád':     'Sajó',
+
+  // ── Maritsa / Balkans ────────────────────────────────────────────────────
+  'Tundzha':    'Maritsa',
+  'Ergene':     'Maritsa',
+  'Arda':       'Maritsa',
+
+  // ── Adriatic Balkans ─────────────────────────────────────────────────────
+  'Buna':       'Neretva',
+  'Drin':       'Buna',
+  'White Drin': 'Drin',
 
   // ── European rivers ──────────────────────────────────────────────────────
   'Ariège':     'Garonne',
+  'Hers-Vif':   'Ariège',
   'Vychegda':   'Severnaya Dvina',
   'Pinega':     'Severnaya Dvina',
   'Donets':     'Don',       // Seversky Donets
   'Save':       'Garonne',   // French Save (not the Balkan Sava)
   'Tarn':       'Garonne',
+  'Lot':        'Garonne',
+  'Aveyron':    'Tarn',
   'Vienne':     'Loire',
+  'Allier':     'Loire',
+  'Cher':       'Loire',
+  'Creuse':     'Vienne',
   'Vorma':      'Glma',      // tributary of Glomma (Norway)
+  'Rena':       'Glma',
   'Vltava':     'Elbe',
+  'Sázava':     'Vltava',
+  'Úhlava':     'Vltava',
+  'Saale':      'Elbe',
+  'Ohře':       'Elbe',
+  'Spree':      'Elbe',     // Spree → Havel → Elbe
+  'Black Elster': 'Elbe',
+  'Zwickau Mulde': 'Elbe',
+  'Unstrut':    'Saale',
+  'Weisse Elster': 'Saale',
   'Warta':      'Oder',
+  'Noteć':      'Warta',
+  'Prosna':     'Warta',
+  'Gwda':       'Noteć',
+  'Nysa Kłodzka': 'Oder',
+  'Bóbr':       'Oder',
+  'Narew':      'Vistula',
+  'Bzura':      'Vistula',
+  'Pilica':     'Vistula',
+  'San':        'Vistula',
+  'Wieprz':     'Vistula',
+  'Drwęca':     'Vistula',
+  'Wkra':       'Narew',
   'Marne':      'Seine',
   'Yonne':      'Seine',
+  'Eure':       'Seine',
   'Durance':    'Rhône',
+  'Saône':      'Rhône',
+  'Doubs':      'Saône',
   'Segre':      'Ebro',
+  'Aragón':     'Ebro',
   'Main':       'Rhein',
+  'Aare':       'Rhine',
+  'Neckar':     'Rhine',
+  'Ruhr':       'Rhine',
+  'Lippe':      'Rhine',
+  'Thielle':    'Aare',
+  'Limmat':     'Aare',
+  'Reuss':      'Aare',
   'Mincio':     'Po',
   'Ticino':     'Po',
   'Dora Baltea': 'Po',
+  'Oglio':      'Po',
+  'Tanaro':     'Po',
+  'Adda':       'Po',
+  'Varaita':    'Po',
+  'Aller':      'Weser',
+  'Fulda':      'Weser',
+  'Berkel':     'IJssel',
   'Vilija':     'Nemunas',
+  'Merkys':     'Nemunas',
+  'Ščara':      'Nemunas',
+  'Mūša':       'Vilija',
+  'Šventoji':   'Vilija',
+  'Servač':     'Vilija',
+  'Nemunėlis':  'Mūša',
   'Desna':      'Dnieper',   // ambiguous but Dnieper is the main one
+  'Berezina':   'Dnieper',
+  'Sozh':       'Dnieper',
+  'Teteriv':    'Dnieper',
+  'Synyukha':   'Southern Bug',
+  'Snov':       'Desna',
+  'Ros':        'Desna',
+  'Iput':       'Sozh',
+  'Besed':      'Sozh',
+  'Genil':      'Guadalquivir',
+  'Guadalimar': 'Guadalquivir',
+  'Cabriel':    'Júcar-Xúquer',
+  'Gave de Pau': 'Adour',
+  'Auvézère':   'Dordogne',
+  'Blanche':    'Durance',
 
   // ── Volga system ─────────────────────────────────────────────────────────
   'Sura':       'Volga',
   'Sheksna':    'Volga',
   'Tvertsa':    'Volga',
+  'Samara':     'Volga',
+  'Vetluga':    'Volga',
+  'Vazuza':     'Volga',
+  'Shosha':     'Volga',
   'Vyatka':     'Kama',
   'Vishera':    'Kama',
   'Chusovaya':  'Kama',
+  'Klyazma':    'Oka',
+  'Pronia':     'Oka',
+
+  // ── Don system ────────────────────────────────────────────────────────────
+  'Chir':       'Don',
+  'Ilovlya':    'Don',
+  'Medveditsa': 'Don',
+  'Voronezh':   'Don',
+  'Khopyor':    'Don',
+  'Sredny Ergolyk': 'Don',
+  'Tikhaya Sosna': 'Don',
 
   // ── Pechora / Dvina / Northern Russia ────────────────────────────────────
   'Usa':        'Pechora',
   'Vym':        'Vychegda',
+  'Yug':        'Severnaya Dvina',
+  'Drysa':      'Zapadnaya Dvina',
+  'Kasplya':    'Zapadnaya Dvina',
+  'Vashka':     'Mezen',
   'Seym':       'Desna',
   'Tsna':       'Oka',
   'Unzha':      'Volga',
@@ -462,8 +579,65 @@ const TRIBUTARY_OF = {
   // ── Paraná system ────────────────────────────────────────────────────────
   'Salado':     'Paraná',
 
+  // ── Rio Grande system ──────────────────────────────────────────────────────
+  'Conchos':    'Rio Grande',
+
   // ── Klamath system ───────────────────────────────────────────────────────
   'Trinity':    'Klamath',
+
+  // ── Terek system (Caucasus) ────────────────────────────────────────────────
+  'Malka':      'Terek',
+  'Baksan':     'Malka',
+
+  // ── Finland ──────────────────────────────────────────────────────────────
+  'Kitinen':    'Kemijoki',
+  'Ounasjoki':  'Kemijoki',
+
+  // ── Norway ───────────────────────────────────────────────────────────────
+  'Karasjohka': 'Tana',
+
+  // ── Australian inland ────────────────────────────────────────────────────
+  'Eucumbene':  'Snowy',
+  'Mulwaree':   'Wollondilly',
+  'Nepean':     'Hawkesbury',
+  'Warragamba': 'Nepean',
+  'Wonnangatta': 'Mitchell',
+  'Wongungarra': 'Wonnangatta',
+  'Walsh':      'Mitchell',
+  'Palmer':     'Mitchell',
+  'Mann':       'Clarence',
+  'Nymboida':   'Mann',
+  'Boyd':       'Nymboida',
+  'Guy Fawkes': 'Boyd',
+  'Dawson':     'Manning',
+  'Oakover':    'De Grey',
+  'Frankland':  'Arthur',
+  'Gordon':     'Frankland',
+  'Adelaide':   'Loddon',
+  'Cloncurry':  'Flinders',
+  'Gilliat':    'Cloncurry',
+  'McKinlay':   'Gilliat',
+  'Gregory':    'Nicholson',
+
+  // ── Australian inland — Cooper/Eyre/Georgina/Diamantina ──────────────────
+  'Barcoo':     'Cooper',
+  'Thomson':    'Cooper',
+  'Balonne':    'Culgoa',
+  'Condamine':  'Balonne',
+  'Maranoa':    'Balonne',
+  'Diamantina': 'Warburton',
+  'Eyre':       'Warburton',
+  'Macumba':    'Warburton',
+  'Georgina':   'Eyre',
+  'Ranken':     'Georgina',
+  'Buckley':    'Georgina',
+  'Hamilton':   'Georgina',
+  'Sandover':   'Georgina',
+  'Hay':        'Eyre',
+  'Finke':      'Macumba',
+  'Hale':       'Finke',
+  'Todd':       'Hale',
+  'Margaret':   'Adelaide',
 
   // ── New Zealand / Oceania ────────────────────────────────────────────────
   'Kawarau':    'Clutha',
@@ -701,6 +875,19 @@ for (const row of rows) {
   }
 }
 
+// Save existing relationship values before stripping, so we can preserve
+// manually-set values for rivers not in the hardcoded maps.
+const existingRelations = new Map();
+for (const row of rows) {
+  if (row.tributary_of || row.distributary_of || row.segment_of) {
+    existingRelations.set(row.id, {
+      tributary_of: row.tributary_of ?? '',
+      distributary_of: row.distributary_of ?? '',
+      segment_of: row.segment_of ?? '',
+    });
+  }
+}
+
 // Strip any existing enrichment columns before re-adding
 const ENRICHED_COLS = ['discharge_m3s', 'discharge_rank', 'tributary_of', 'distributary_of', 'segment_of', 'length_km', 'total_length_km'];
 const baseCols = cols.filter((c) => !ENRICHED_COLS.includes(c));
@@ -740,9 +927,11 @@ for (const row of rows) {
 // ── Tributary / distributary / segment relationships ──────────────────────────
 
 for (const row of rows) {
-  row.tributary_of = TRIBUTARY_OF[row.name] ?? '';
-  row.distributary_of = DISTRIBUTARY_OF[row.name] ?? '';
-  row.segment_of = SEGMENT_OF[row.name] ?? '';
+  const existing = existingRelations.get(row.id);
+  // Hardcoded maps take precedence; otherwise preserve existing CSV values.
+  row.tributary_of = row.name in TRIBUTARY_OF ? TRIBUTARY_OF[row.name] : (existing?.tributary_of ?? '');
+  row.distributary_of = row.name in DISTRIBUTARY_OF ? DISTRIBUTARY_OF[row.name] : (existing?.distributary_of ?? '');
+  row.segment_of = row.name in SEGMENT_OF ? SEGMENT_OF[row.name] : (existing?.segment_of ?? '');
 }
 
 // ── Length ───────────────────────────────────────────────────────────────────

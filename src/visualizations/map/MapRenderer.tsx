@@ -40,6 +40,35 @@ const NON_DATA_DISPLAY_KEYS = new Set([
   'countryColors', 'riverColors', 'elementColors', // color toggles
   'showPromptFlags', // prompt display toggles
 ]);
+
+/**
+ * Build a state map where elements whose city dot would not render are treated
+ * as 'hidden' for clustering. Polygon/stroke elements are untouched because
+ * their visibility is not gated by showCityDots. Keeping this derived map
+ * separate from the renderer's elementStates means dot-suppression doesn't
+ * suppress labels on answered states (shouldShowLabel would otherwise drop
+ * labels on 'hidden').
+ */
+function buildClusterElementStates(
+  elements: VisualizationRendererProps['elements'],
+  elementStates: VisualizationRendererProps['elementStates'],
+  toggles: Readonly<Record<string, boolean>>,
+  elementToggles: VisualizationRendererProps['elementToggles'],
+): Readonly<Record<string, ElementVisualState>> {
+  // No showCityDots toggle → no change to states. Polygon/stroke quizzes don't
+  // have this toggle, so we preserve their states as-is.
+  if (!('showCityDots' in toggles)) return elementStates;
+  const derived: Record<string, ElementVisualState> = { ...elementStates };
+  for (const el of elements) {
+    // Polygon/stroke elements render via svgPathData, not city dots — leave them alone.
+    if (isMapElement(el) && el.svgPathData) continue;
+    if (derived[el.id] === 'hidden') continue;
+    if (!elementToggle(elementToggles, toggles, el.id, 'showCityDots')) {
+      derived[el.id] = 'hidden';
+    }
+  }
+  return derived;
+}
 export function MapRenderer({
   elements,
   elementStates,
@@ -73,13 +102,22 @@ export function MapRenderer({
   const hasStrokeElements = elements.some((e) => isMapElement(e) && e.pathRenderStyle === 'stroke');
   const effectiveClustering = clustering ?? (hasStrokeElements ? undefined : DEFAULT_MAP_CLUSTERING);
 
+  // Cities with dots toggled off should not contribute to cluster badges.
+  // We mark them as 'hidden' only in the state map we hand to ZoomPanContainer,
+  // keeping the renderer's elementStates unchanged so label/flag logic behaves
+  // normally for answered states.
+  const clusterElementStates = useMemo(
+    () => buildClusterElementStates(elements, elementStates, toggles, elementToggles),
+    [elements, elementStates, toggles, elementToggles],
+  );
+
   // Legacy boolean toggle (used by capitals and other quizzes that don't have the dropdown)
   const showRegionColors = toggles['showRegionColors'] === true;
 
   return (
     <ZoomPanContainer
       elements={elements}
-      elementStates={elementStates}
+      elementStates={clusterElementStates}
       clustering={effectiveClustering}
       onClusterClick={onClusterClick}
       initialCameraPosition={initialCameraPosition}

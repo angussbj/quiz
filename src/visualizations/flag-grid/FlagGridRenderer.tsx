@@ -12,6 +12,7 @@ import { STATUS_COLORS } from '../elementStateColors';
 import { layoutFlagElement } from './flagGridElementToVisualizationElement';
 import { FLAG_CELL_WIDTH, FLAG_CELL_HEIGHT, FLAG_CELL_STEP_X, FLAG_CELL_STEP_Y, computeFlagColumns, FLAG_DEFAULT_COLUMNS } from './flagGridLayout';
 import cellStyles from './FlagGridRenderer.module.css';
+import { shuffle } from '@/utilities/shuffle';
 
 const FLAG_IMAGE_PADDING = 6;
 const FLAG_IMAGE_WIDTH = FLAG_CELL_WIDTH - FLAG_IMAGE_PADDING * 2;
@@ -195,16 +196,38 @@ export function FlagGridRenderer(props: VisualizationRendererProps) {
     [props.elements],
   );
 
+  // Pick a shuffle permutation once per renderer mount. The renderer remounts
+  // on Reconfigure (QuizShell bumps a key on the quiz content wrapper), so
+  // each quiz run gets a fresh flag arrangement. The permutation is keyed on
+  // the set of element IDs so unrelated prop identity changes (e.g. toggle
+  // state) don't reshuffle mid-quiz; a genuine change to the element set
+  // (e.g. filter applied) does trigger a reshuffle. Applying the permutation
+  // separately means shuffledElements always references current element
+  // objects, even if they're rebuilt with the same IDs.
+  const idSetKey = useMemo(
+    () => flagElements.map((el) => el.id).sort().join('\x01'),
+    [flagElements],
+  );
+  const shufflePermutation = useMemo(
+    () => shuffle(Array.from({ length: flagElements.length }, (_, i) => i)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: idSetKey derived from flagElements, reshuffle only on set change
+    [idSetKey],
+  );
+  const shuffledElements = useMemo(
+    () => shufflePermutation.map((i) => flagElements[i]),
+    [shufflePermutation, flagElements],
+  );
+
   const columns = useMemo(
     () => containerSize.width > 0
-      ? computeFlagColumns(containerSize.width, containerSize.height, flagElements.length)
+      ? computeFlagColumns(containerSize.width, containerSize.height, shuffledElements.length)
       : FLAG_DEFAULT_COLUMNS,
-    [containerSize.width, containerSize.height, flagElements.length],
+    [containerSize.width, containerSize.height, shuffledElements.length],
   );
 
   const layoutElements = useMemo(
-    () => flagElements.map((el, i) => layoutFlagElement(el, i, columns)),
-    [flagElements, columns],
+    () => shuffledElements.map((el, i) => layoutFlagElement(el, i, columns)),
+    [shuffledElements, columns],
   );
 
   return (

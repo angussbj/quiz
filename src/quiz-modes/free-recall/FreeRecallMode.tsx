@@ -22,6 +22,7 @@ export function FreeRecallMode({
   toggleValues,
   selectValues,
   selectValueLabels,
+  selectValueMissingLabels,
   Renderer,
   backgroundPaths,
   lakePaths,
@@ -126,6 +127,7 @@ export function FreeRecallMode({
           toggles={toggleValues}
           selectValues={selectValues}
           selectValueLabels={selectValueLabels}
+          selectValueMissingLabels={selectValueMissingLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
