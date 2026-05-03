@@ -61,8 +61,7 @@ export interface QuizSetupPanelProps {
   readonly activeDifficultySlot?: number;
   readonly onDifficultySlotChange?: (slot: number) => void;
   readonly advancedPanel?: AdvancedPanelConfig;
-  // Simple panel single-select group filter
-  readonly simpleGroupFilter?: string | undefined;
+  // Simple panel single-select group filter (reads from selectedGroups)
   readonly onSimpleGroupFilterChange?: (group: string | undefined) => void;
   // Linked dropdown for Advanced panel
   readonly linkedDropdownLabel?: string;
@@ -114,7 +113,6 @@ export function QuizSetupPanel({
   activeDifficultySlot,
   onDifficultySlotChange,
   advancedPanel,
-  simpleGroupFilter,
   onSimpleGroupFilterChange,
   linkedDropdownLabel,
   linkedDropdownValue,
@@ -274,11 +272,11 @@ export function QuizSetupPanel({
         )}
 
         {/* SIMPLE ONLY: Group filter dropdown (single-select) */}
-        {panelLevel === 'simple' && groupFilterLabel && availableGroups && onSimpleGroupFilterChange && (
+        {panelLevel === 'simple' && groupFilterLabel && availableGroups && selectedGroups && onSimpleGroupFilterChange && (
           <GroupFilterDropdown
             label={groupFilterLabel}
             groups={availableGroups}
-            selectedGroup={simpleGroupFilter}
+            selectedGroups={selectedGroups}
             onGroupChange={onSimpleGroupFilterChange}
           />
         )}

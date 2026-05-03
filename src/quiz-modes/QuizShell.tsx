@@ -135,7 +135,6 @@ export function QuizShell({
   const { setupState: savedState, setSetupState: saveSetup } = useQuizSetupPersistence(quizId, defaultSetupState);
 
   const [selectedDifficultySlot, setSelectedDifficultySlot] = useState<number>(0);
-  const [simpleGroupFilter, setSimpleGroupFilter] = useState<string | undefined>(undefined);
 
   // When dynamic grouping changes the available groups, reset selected groups to include all
   const prevGroupsRef = useRef(availableGroups);
@@ -202,7 +201,6 @@ export function QuizShell({
   }, [difficultyPresets, selectedDifficultySlot, selectedMode, toggleState.values, toggleState.selectValues, rangeMaxValue]);
 
   const handleSimpleGroupFilterChange = useCallback((group: string | undefined) => {
-    setSimpleGroupFilter(group);
     if (group) {
       setSelectedGroups(new Set([group]));
     } else {
@@ -456,7 +454,6 @@ export function QuizShell({
         activeDifficultySlot={activeDifficultySlot}
         onDifficultySlotChange={handleDifficultySlotChange}
         advancedPanel={advancedPanel}
-        simpleGroupFilter={simpleGroupFilter}
         onSimpleGroupFilterChange={handleSimpleGroupFilterChange}
         linkedDropdownLabel={linkedDropdownLabel}
         linkedDropdownValue={linkedDropdownValue}

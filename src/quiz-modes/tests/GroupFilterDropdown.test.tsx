@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { GroupFilterDropdown } from '../GroupFilterDropdown';
 
 const groups = ['europe', 'asia', 'north-america'];
+const allGroups = new Set(groups);
 
 describe('GroupFilterDropdown', () => {
   it('renders a label', () => {
@@ -10,7 +11,7 @@ describe('GroupFilterDropdown', () => {
       <GroupFilterDropdown
         label="Region"
         groups={groups}
-        selectedGroup={undefined}
+        selectedGroups={allGroups}
         onGroupChange={() => {}}
       />,
     );
@@ -22,7 +23,7 @@ describe('GroupFilterDropdown', () => {
       <GroupFilterDropdown
         label="Region"
         groups={groups}
-        selectedGroup={undefined}
+        selectedGroups={allGroups}
         onGroupChange={() => {}}
       />,
     );
@@ -32,12 +33,12 @@ describe('GroupFilterDropdown', () => {
     expect(screen.getByRole('option', { name: 'North america' })).toBeInTheDocument();
   });
 
-  it('shows "All" as selected when selectedGroup is undefined', () => {
+  it('shows "All" as selected when all groups are selected', () => {
     render(
       <GroupFilterDropdown
         label="Region"
         groups={groups}
-        selectedGroup={undefined}
+        selectedGroups={allGroups}
         onGroupChange={() => {}}
       />,
     );
@@ -45,17 +46,54 @@ describe('GroupFilterDropdown', () => {
     expect(select).toHaveValue('');
   });
 
-  it('shows the selected group when provided', () => {
+  it('shows the single selected group when exactly one is selected', () => {
     render(
       <GroupFilterDropdown
         label="Region"
         groups={groups}
-        selectedGroup="asia"
+        selectedGroups={new Set(['asia'])}
         onGroupChange={() => {}}
       />,
     );
     const select = screen.getByRole('combobox');
     expect(select).toHaveValue('asia');
+  });
+
+  it('shows a disabled "Custom" option when the selection does not match All or a single group', () => {
+    render(
+      <GroupFilterDropdown
+        label="Region"
+        groups={groups}
+        selectedGroups={new Set(['europe', 'asia'])}
+        onGroupChange={() => {}}
+      />,
+    );
+    const customOption = screen.getByRole('option', { name: 'Custom' });
+    expect(customOption).toBeInTheDocument();
+    expect(customOption).toBeDisabled();
+    expect(screen.getByRole('combobox')).toHaveValue('__custom__');
+  });
+
+  it('does not render a "Custom" option when selection matches All or a single group', () => {
+    const { rerender } = render(
+      <GroupFilterDropdown
+        label="Region"
+        groups={groups}
+        selectedGroups={allGroups}
+        onGroupChange={() => {}}
+      />,
+    );
+    expect(screen.queryByRole('option', { name: 'Custom' })).not.toBeInTheDocument();
+
+    rerender(
+      <GroupFilterDropdown
+        label="Region"
+        groups={groups}
+        selectedGroups={new Set(['europe'])}
+        onGroupChange={() => {}}
+      />,
+    );
+    expect(screen.queryByRole('option', { name: 'Custom' })).not.toBeInTheDocument();
   });
 
   it('calls onGroupChange with undefined when "All" is selected', async () => {
@@ -65,7 +103,7 @@ describe('GroupFilterDropdown', () => {
       <GroupFilterDropdown
         label="Region"
         groups={groups}
-        selectedGroup="europe"
+        selectedGroups={new Set(['europe'])}
         onGroupChange={onGroupChange}
       />,
     );
@@ -80,7 +118,7 @@ describe('GroupFilterDropdown', () => {
       <GroupFilterDropdown
         label="Region"
         groups={groups}
-        selectedGroup={undefined}
+        selectedGroups={allGroups}
         onGroupChange={onGroupChange}
       />,
     );
@@ -93,7 +131,7 @@ describe('GroupFilterDropdown', () => {
       <GroupFilterDropdown
         label="Category"
         groups={['noble-gas', 'alkali-metal']}
-        selectedGroup={undefined}
+        selectedGroups={new Set(['noble-gas', 'alkali-metal'])}
         onGroupChange={() => {}}
       />,
     );
