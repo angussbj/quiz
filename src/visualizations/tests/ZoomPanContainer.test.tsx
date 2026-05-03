@@ -103,6 +103,38 @@ describe('ZoomPanContainer', () => {
     expect(screen.queryByText('Focus')).not.toBeInTheDocument();
   });
 
+  it('excludes hidden elements from clusters', () => {
+    // Three elements close enough to cluster at this scale; marking two hidden
+    // should drop the cluster entirely (since the remaining one is a singleton).
+    const elements = [element('a', 0, 0), element('b', 1, 0), element('c', 2, 0)];
+    render(
+      <ZoomPanContainer
+        elements={elements}
+        elementStates={{ a: 'hidden', b: 'hidden' }}
+        clustering={{ minScreenPixelDistance: 100, countedState: 'correct' }}
+      >
+        <ContextReader />
+      </ZoomPanContainer>,
+    );
+    const data = JSON.parse(screen.getByTestId('context').textContent ?? '{}');
+    expect(data.clusteredIds).toEqual([]);
+  });
+
+  it('clusters non-hidden elements while ignoring hidden ones', () => {
+    const elements = [element('a', 0, 0), element('b', 1, 0), element('c', 2, 0)];
+    render(
+      <ZoomPanContainer
+        elements={elements}
+        elementStates={{ a: 'hidden' }}
+        clustering={{ minScreenPixelDistance: 100, countedState: 'correct' }}
+      >
+        <ContextReader />
+      </ZoomPanContainer>,
+    );
+    const data = JSON.parse(screen.getByTestId('context').textContent ?? '{}');
+    expect(data.clusteredIds).toEqual(['b', 'c']);
+  });
+
   it('renders with empty elements', () => {
     const { container } = render(
       <ZoomPanContainer elements={[]}>
