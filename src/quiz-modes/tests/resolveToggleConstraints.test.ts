@@ -43,12 +43,20 @@ describe('resolveToggleConstraints', () => {
     expect(result.reasons).toEqual({ showCountryNames: 'Need at least one hint' });
   });
 
-  it('treats a non-off select value as enabled in atLeastOne', () => {
+  it('treats select value "on" as enabled in atLeastOne', () => {
+    const constraints: ReadonlyArray<ToggleConstraint> = [
+      { type: 'atLeastOne', keys: ['showCountryNames', 'showPromptFlags'], reason: 'Need one' },
+    ];
+    const result = resolveToggleConstraints(constraints, { showCountryNames: false }, { showPromptFlags: 'on' });
+    expect(result.preventDisable).toEqual(new Set(['showPromptFlags']));
+  });
+
+  it('treats select value "hint" as not enabled in atLeastOne (hint only shows after a wrong attempt)', () => {
     const constraints: ReadonlyArray<ToggleConstraint> = [
       { type: 'atLeastOne', keys: ['showCountryNames', 'showPromptFlags'], reason: 'Need one' },
     ];
     const result = resolveToggleConstraints(constraints, { showCountryNames: false }, { showPromptFlags: 'hint' });
-    expect(result.preventDisable).toEqual(new Set(['showPromptFlags']));
+    expect(result.forcedValues).toEqual({ showCountryNames: true });
   });
 
   it('treats off select value as disabled in atLeastOne', () => {

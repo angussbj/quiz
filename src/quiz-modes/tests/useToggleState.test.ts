@@ -125,4 +125,65 @@ describe('useToggleState', () => {
 
     expect(result.current.activePreset).toBe('first');
   });
+
+  describe('applyDifficulty', () => {
+    it('applies toggleOverrides from the difficulty preset', () => {
+      const { result } = renderHook(() => useToggleState(toggles, presets));
+      act(() => {
+        result.current.applyDifficulty({
+          label: 'Hard',
+          mode: 'identify',
+          toggleOverrides: { 'show-labels': false, 'show-flags': true },
+        });
+      });
+      expect(result.current.values['show-labels']).toBe(false);
+      expect(result.current.values['show-flags']).toBe(true);
+    });
+
+    it('applies selectToggleOverrides from the difficulty preset', () => {
+      const selectToggles = [
+        {
+          key: 'precision',
+          label: 'Precision',
+          options: [{ value: 'year', label: 'Year' }, { value: 'day', label: 'Day' }],
+          defaultValue: 'year',
+          group: 'display',
+        },
+      ];
+      const { result } = renderHook(() => useToggleState(toggles, presets, selectToggles));
+      act(() => {
+        result.current.applyDifficulty({
+          label: 'Hard',
+          mode: 'identify',
+          selectToggleOverrides: { precision: 'day' },
+        });
+      });
+      expect(result.current.selectValues['precision']).toBe('day');
+    });
+
+    it('does nothing when neither toggleOverrides nor selectToggleOverrides are provided', () => {
+      const { result } = renderHook(() => useToggleState(toggles, presets));
+      const before = result.current.values;
+      act(() => {
+        result.current.applyDifficulty({ label: 'Easy', mode: 'locate' });
+      });
+      expect(result.current.values).toEqual(before);
+    });
+
+    it('merges with existing values, not replacing unrelated keys', () => {
+      const { result } = renderHook(() => useToggleState(toggles, presets));
+      act(() => {
+        result.current.set('show-borders', false);
+      });
+      act(() => {
+        result.current.applyDifficulty({
+          label: 'Hard',
+          mode: 'identify',
+          toggleOverrides: { 'show-labels': false },
+        });
+      });
+      expect(result.current.values['show-borders']).toBe(false);
+      expect(result.current.values['show-labels']).toBe(false);
+    });
+  });
 });

@@ -253,7 +253,9 @@
 }
 
 .groupChipSelected:hover {
-  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  color: var(--color-accent);
 }
 
 .emptyWarning {

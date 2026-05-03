@@ -31,6 +31,8 @@ function renderPanel(overrides: Partial<QuizSetupPanelProps> = {}) {
     onToggleChange: jest.fn(),
     onPreset: jest.fn(),
     onStart: jest.fn(),
+    panelLevel: 'full',
+    onPanelLevelChange: jest.fn(),
     ...overrides,
   };
   render(<QuizSetupPanel {...props} />);
@@ -48,9 +50,9 @@ describe('QuizSetupPanel', () => {
     renderPanel();
     const select = screen.getByLabelText('Mode');
     expect(select).toBeInTheDocument();
-    expect(screen.getByRole('option', { name: 'Free Recall' })).toBeInTheDocument();
-    expect(screen.getByRole('option', { name: 'Identify' })).toBeInTheDocument();
-    expect(screen.getByRole('option', { name: 'Locate' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Name in any order' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Point and click' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Place it' })).toBeInTheDocument();
   });
 
   it('pre-selects the default mode', () => {

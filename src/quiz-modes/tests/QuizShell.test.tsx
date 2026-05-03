@@ -23,6 +23,7 @@ function renderShell() {
 
   render(
     <QuizShell
+      quizId="test-quiz"
       title="Test Quiz"
       description="A test quiz"
       availableModes={['free-recall-unordered', 'identify']}
@@ -38,6 +39,15 @@ function renderShell() {
 }
 
 describe('QuizShell', () => {
+  beforeEach(() => {
+    // Set panel level to 'full' so toggles and presets are visible in tests
+    localStorage.setItem('quizzical:panelLevel', JSON.stringify('full'));
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
   it('shows config screen initially', () => {
     renderShell();
     expect(screen.getByRole('heading', { name: 'Test Quiz' })).toBeInTheDocument();

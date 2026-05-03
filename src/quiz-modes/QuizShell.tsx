@@ -3,11 +3,14 @@ import type { QuizModeType, SortColumnDefinition } from '@/quiz-definitions/Quiz
 import type { VisualizationElement } from '@/visualizations/VisualizationElement';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
+import type { DifficultyPresets, AdvancedPanelConfig } from './DifficultyPreset';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { QuizSetupPanel } from './QuizSetupPanel';
 import { useToggleState } from './useToggleState';
 import { countFilteredElements, countFilteredElementsFromElements } from './countFilteredElements';
 import { useQuizActiveRegister } from './QuizActiveContext';
+import { usePanelLevel } from '@/persistence/usePanelLevel';
+import { useQuizSetupPersistence } from '@/persistence/useQuizSetupPersistence';
 import styles from './QuizShell.module.css';
 
 export interface ElementRange {
@@ -26,8 +29,11 @@ export interface QuizConfig {
 }
 
 interface QuizShellProps {
+  readonly quizId: string;
   readonly title: string;
   readonly description?: string;
+  readonly difficultyPresets?: DifficultyPresets;
+  readonly advancedPanel?: AdvancedPanelConfig;
   readonly availableModes: ReadonlyArray<QuizModeType>;
   readonly defaultMode: QuizModeType;
   readonly defaultCountdownSeconds?: number;
@@ -69,8 +75,11 @@ type ShellPhase = 'configuring' | 'active';
  * Provides a "Reconfigure" button that resets quiz state.
  */
 export function QuizShell({
+  quizId,
   title,
   description,
+  difficultyPresets,
+  advancedPanel,
   availableModes,
   defaultMode,
   defaultCountdownSeconds,
@@ -113,6 +122,20 @@ export function QuizShell({
   );
   const toggleState = useToggleState(toggles, presets, selectToggles);
 
+  const { panelLevel, setPanelLevel } = usePanelLevel();
+  const defaultSetupState = useMemo(() => ({
+    difficultySlot: 0,
+    mode: defaultMode,
+    toggleValues: toggleState.values,
+    selectValues: toggleState.selectValues,
+    rangeMin: undefined,
+    rangeMax: undefined,
+    selectedGroups: availableGroups ? Array.from(availableGroups) : [],
+  }), []); // eslint-disable-line react-hooks/exhaustive-deps -- only need initial defaults
+  const { setupState: savedState, setSetupState: saveSetup } = useQuizSetupPersistence(quizId, defaultSetupState);
+
+  const [selectedDifficultySlot, setSelectedDifficultySlot] = useState<number>(0);
+
   // When dynamic grouping changes the available groups, reset selected groups to include all
   const prevGroupsRef = useRef(availableGroups);
   useEffect(() => {
@@ -149,6 +172,41 @@ export function QuizShell({
   const handleGroupDeselectAll = useCallback(() => {
     setSelectedGroups(new Set<string>());
   }, []);
+
+  // Derive whether current state still matches the selected difficulty preset.
+  // Returns the slot index if it matches, undefined if settings have been manually changed.
+  const activeDifficultySlot = useMemo(() => {
+    if (!difficultyPresets) return undefined;
+    const preset = difficultyPresets.slots[selectedDifficultySlot];
+    if (!preset) return undefined;
+    // Mode must match
+    if (selectedMode !== preset.mode) return undefined;
+    // All toggle overrides must match
+    if (preset.toggleOverrides) {
+      for (const [key, value] of Object.entries(preset.toggleOverrides)) {
+        if (toggleState.values[key] !== value) return undefined;
+      }
+    }
+    // All select toggle overrides must match
+    if (preset.selectToggleOverrides) {
+      for (const [key, value] of Object.entries(preset.selectToggleOverrides)) {
+        if (toggleState.selectValues[key] !== value) return undefined;
+      }
+    }
+    // Range max must match (if specified)
+    if (preset.rangeMaxOverride !== undefined && rangeMaxValue !== preset.rangeMaxOverride) {
+      return undefined;
+    }
+    return selectedDifficultySlot;
+  }, [difficultyPresets, selectedDifficultySlot, selectedMode, toggleState.values, toggleState.selectValues, rangeMaxValue]);
+
+  const handleSimpleGroupFilterChange = useCallback((group: string | undefined) => {
+    if (group) {
+      setSelectedGroups(new Set([group]));
+    } else {
+      setSelectedGroups(new Set(availableGroups ?? []));
+    }
+  }, [availableGroups]);
 
   const activeSortColumn = useMemo(() => {
     if (!sortColumns?.length) return undefined;
@@ -199,25 +257,113 @@ export function QuizShell({
     }
   }, [modeConstraints, toggleState]);
 
-  // Apply constraints for the initial default mode on first render
+  const handleDifficultySlotChange = useCallback((slot: number) => {
+    setSelectedDifficultySlot(slot);
+    if (!difficultyPresets) return;
+    const preset = difficultyPresets.slots[slot];
+    setSelectedMode(preset.mode);
+    applyModeConstraints(preset.mode);
+    toggleState.applyDifficulty(preset);
+    if (preset.rangeMaxOverride !== undefined) {
+      setRangeMaxValue(preset.rangeMaxOverride);
+    }
+  }, [difficultyPresets, applyModeConstraints, toggleState]);
+
+  // Apply initial state on first render: restore saved difficulty slot or apply defaults
   const hasAppliedInitial = useRef(false);
   useEffect(() => {
-    if (!hasAppliedInitial.current) {
-      hasAppliedInitial.current = true;
+    if (hasAppliedInitial.current) return;
+    hasAppliedInitial.current = true;
+
+    const initialSlot = savedState.difficultySlot ?? 0;
+    setSelectedDifficultySlot(initialSlot);
+
+    if (difficultyPresets) {
+      const preset = difficultyPresets.slots[initialSlot];
+      setSelectedMode(preset.mode);
+      applyModeConstraints(preset.mode);
+      toggleState.applyDifficulty(preset);
+      if (preset.rangeMaxOverride !== undefined) {
+        setRangeMaxValue(preset.rangeMaxOverride);
+      }
+    } else {
       applyModeConstraints(defaultMode);
     }
-  }, [defaultMode, applyModeConstraints]);
+  }, [savedState, difficultyPresets, defaultMode, applyModeConstraints, toggleState]);
 
   const handleModeChange = useCallback((newMode: QuizModeType) => {
     setSelectedMode(newMode);
     applyModeConstraints(newMode);
   }, [applyModeConstraints]);
 
+  const isSortMode = selectedMode === 'free-recall-ordered';
+
+  const linkedDropdownLabel = useMemo(() => {
+    if (!advancedPanel?.linkedSelectToggleKeys) return undefined;
+    return isSortMode ? 'Sort order' : 'Display data';
+  }, [advancedPanel, isSortMode]);
+
+  // In "Sort order" mode, use the sort toggle's options (includes atomic_number etc.).
+  // In "Display data" mode, use the primary linked select toggle's options.
+  // Filter out values that only exist in secondary toggles (e.g., 'region' in countryColors).
+  const linkedDropdownOptions = useMemo(() => {
+    if (!advancedPanel?.linkedSelectToggleKeys?.length || !selectToggles) return undefined;
+
+    if (isSortMode && advancedPanel.linkedSortToggleKey) {
+      const sortToggle = selectToggles.find((t) => t.key === advancedPanel.linkedSortToggleKey);
+      if (sortToggle) return sortToggle.options;
+    }
+
+    const primaryKey = advancedPanel.linkedSelectToggleKeys[0];
+    const toggle = selectToggles.find((t) => t.key === primaryKey);
+    if (!toggle) return undefined;
+    return toggle.options;
+  }, [advancedPanel, selectToggles, isSortMode]);
+
+  // The linked dropdown value. In sort mode, read from the sort toggle;
+  // in display mode, read from the primary linked toggle.
+  const linkedDropdownValue = useMemo(() => {
+    if (!advancedPanel?.linkedSelectToggleKeys?.length) return undefined;
+
+    if (isSortMode && advancedPanel.linkedSortToggleKey) {
+      return toggleState.selectValues[advancedPanel.linkedSortToggleKey] ?? 'none';
+    }
+
+    const primaryKey = advancedPanel.linkedSelectToggleKeys[0];
+    return toggleState.selectValues[primaryKey] ?? 'none';
+  }, [advancedPanel, toggleState.selectValues, isSortMode]);
+
+  const handleLinkedDropdownChange = useCallback((value: string) => {
+    if (!advancedPanel?.linkedSelectToggleKeys) return;
+
+    // Check for per-value overrides (e.g., atomic_number → category colors, no data)
+    const overrides = advancedPanel.linkedValueOverrides?.[value];
+
+    for (const key of advancedPanel.linkedSelectToggleKeys) {
+      const overrideValue = overrides?.[key];
+      toggleState.setSelect(key, overrideValue ?? value);
+    }
+
+    if (isSortMode && advancedPanel.linkedSortToggleKey) {
+      const overrideValue = overrides?.[advancedPanel.linkedSortToggleKey];
+      toggleState.setSelect(advancedPanel.linkedSortToggleKey, overrideValue ?? value);
+    }
+  }, [advancedPanel, toggleState, isSortMode]);
+
   // Push a history entry when starting so the browser back button returns to setup.
   const handleStart = useCallback(() => {
+    saveSetup({
+      difficultySlot: selectedDifficultySlot,
+      mode: selectedMode,
+      toggleValues: toggleState.values,
+      selectValues: toggleState.selectValues,
+      rangeMax: rangeMaxValue,
+      rangeMin,
+      selectedGroups: selectedGroups ? Array.from(selectedGroups) : [],
+    });
     history.pushState({}, '');
     setPhase('active');
-  }, []);
+  }, [saveSetup, selectedDifficultySlot, selectedMode, toggleState.values, toggleState.selectValues, rangeMaxValue, rangeMin, selectedGroups]);
 
   // Reconfigure/Try Again pops the history entry pushed by handleStart.
   // The popstate listener below handles the actual state reset.
@@ -302,6 +448,18 @@ export function QuizShell({
         selectValues={toggleState.selectValues}
         onSelectChange={handleSelectChange}
         dataRows={dataRows}
+        panelLevel={panelLevel}
+        onPanelLevelChange={setPanelLevel}
+        difficultyPresets={difficultyPresets}
+        activeDifficultySlot={activeDifficultySlot}
+        onDifficultySlotChange={handleDifficultySlotChange}
+        advancedPanel={advancedPanel}
+        onSimpleGroupFilterChange={handleSimpleGroupFilterChange}
+        linkedDropdownLabel={linkedDropdownLabel}
+        linkedDropdownValue={linkedDropdownValue}
+        linkedDropdownOptions={linkedDropdownOptions}
+        onLinkedDropdownChange={handleLinkedDropdownChange}
+        linkedDropdownMaxOptions={advancedPanel?.linkedDropdownMaxOptions}
       />
     );
   }

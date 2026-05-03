@@ -200,13 +200,36 @@
   display: flex;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  overflow: hidden;
+}
+
+.segmentSlot {
+  display: flex;
+}
+
+.segmentSlot > button {
+  width: 100%;
+}
+
+.segmentedControl > *:not(:last-child),
+.segmentedControl > *:not(:last-child) > .segmentButton {
+  border-right: 1px solid var(--color-border);
+}
+
+.segmentedControl > *:first-child,
+.segmentedControl > *:first-child > .segmentButton {
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+}
+
+.segmentedControl > *:last-child,
+.segmentedControl > *:last-child > .segmentButton {
+  border-top-right-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
 }
 
 .segmentButton {
   padding: var(--spacing-xs) var(--spacing-sm);
   border: none;
-  border-right: 1px solid var(--color-border);
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
   font-family: var(--font-family);
@@ -216,11 +239,7 @@
   transition: all var(--transition-fast);
 }
 
-.segmentButton:last-child {
-  border-right: none;
-}
-
-.segmentButton:hover:not(:disabled) {
+.segmentButton:hover:not(:disabled):not([data-active]) {
   background: var(--color-bg-secondary);
 }
 
@@ -231,4 +250,8 @@
 .segmentButton[data-active] {
   background: var(--color-accent);
   color: var(--color-on-accent);
+}
+
+.segmentButton[data-active]:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-accent) 82%, black);
 }

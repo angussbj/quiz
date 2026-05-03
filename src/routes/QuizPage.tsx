@@ -164,8 +164,11 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
   return (
     <div className={styles.page}>
       <QuizShell
+        quizId={definition.id}
         title={definition.title}
         description={definition.description}
+        difficultyPresets={definition.difficultyPresets}
+        advancedPanel={definition.advancedPanel}
         availableModes={definition.availableModes}
         defaultMode={definition.defaultMode}
         defaultCountdownSeconds={definition.defaultCountdownSeconds}

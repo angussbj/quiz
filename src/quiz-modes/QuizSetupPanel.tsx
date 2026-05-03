@@ -3,22 +3,20 @@ import { motion } from 'framer-motion';
 import type { QuizModeType, SortColumnDefinition } from '@/quiz-definitions/QuizDefinition';
 import type { ToggleDefinition, TogglePreset, SelectToggleDefinition } from './ToggleDefinition';
 import type { ToggleConstraint } from './ToggleConstraint';
+import type { PanelLevel, DifficultyPresets, AdvancedPanelConfig } from './DifficultyPreset';
+import type { DropdownOption } from './TogglePanel';
 import { resolveToggleConstraints } from './resolveToggleConstraints';
 import { TogglePanel, SelectToggleControl, togglePanelStyles, renderGroupedOptions } from './TogglePanel';
 import { Tooltip } from '@/layout/Tooltip';
 import { formatGroupLabel } from './formatGroupLabel';
+import { MODE_DISPLAY_NAMES } from './modeDisplayNames';
+import { DifficultySelector } from './DifficultySelector';
+import { GroupFilterDropdown } from './GroupFilterDropdown';
+import { PanelLevelSwitcher } from './PanelLevelSwitcher';
+import { LinkedDataDropdown } from './LinkedDataDropdown';
 import styles from './QuizSetupPanel.module.css';
 
 const ORDERING_GROUP = 'ordering';
-
-const MODE_LABELS: Readonly<Record<QuizModeType, string>> = {
-  'free-recall-unordered': 'Free Recall',
-  'free-recall-ordered': 'Ordered Recall',
-  'identify': 'Identify',
-  'locate': 'Locate',
-  'prompted-recall': 'Prompted Recall',
-  'multiple-choice': 'Multiple Choice',
-};
 
 export interface QuizSetupPanelProps {
   readonly title: string;
@@ -56,6 +54,21 @@ export interface QuizSetupPanelProps {
   readonly selectValues?: Readonly<Record<string, string>>;
   readonly onSelectChange?: (key: string, value: string) => void;
   readonly dataRows?: ReadonlyArray<Readonly<Record<string, string>>>;
+  // Panel level props
+  readonly panelLevel: PanelLevel;
+  readonly onPanelLevelChange: (level: PanelLevel) => void;
+  readonly difficultyPresets?: DifficultyPresets;
+  readonly activeDifficultySlot?: number;
+  readonly onDifficultySlotChange?: (slot: number) => void;
+  readonly advancedPanel?: AdvancedPanelConfig;
+  // Simple panel single-select group filter (reads from selectedGroups)
+  readonly onSimpleGroupFilterChange?: (group: string | undefined) => void;
+  // Linked dropdown for Advanced panel
+  readonly linkedDropdownLabel?: string;
+  readonly linkedDropdownValue?: string;
+  readonly linkedDropdownOptions?: ReadonlyArray<DropdownOption>;
+  readonly onLinkedDropdownChange?: (value: string) => void;
+  readonly linkedDropdownMaxOptions?: number;
 }
 
 export function QuizSetupPanel({
@@ -94,6 +107,18 @@ export function QuizSetupPanel({
   selectValues,
   onSelectChange,
   dataRows,
+  panelLevel,
+  onPanelLevelChange,
+  difficultyPresets,
+  activeDifficultySlot,
+  onDifficultySlotChange,
+  advancedPanel,
+  onSimpleGroupFilterChange,
+  linkedDropdownLabel,
+  linkedDropdownValue,
+  linkedDropdownOptions,
+  onLinkedDropdownChange,
+  linkedDropdownMaxOptions,
 }: QuizSetupPanelProps) {
   const showModeSelector = availableModes.length > 1;
 
@@ -105,6 +130,24 @@ export function QuizSetupPanel({
     () => resolveToggleConstraints(activeConstraints, toggleValues, selectValues),
     [activeConstraints, toggleValues, selectValues],
   );
+
+  // Toggle key sets for Advanced filtering
+  const advancedToggleKeySet = useMemo(() => {
+    if (!advancedPanel) return undefined;
+    const forcedKeys = new Set(Object.keys(advancedPanel.forcedToggles ?? {}));
+    return new Set(advancedPanel.toggleKeys.filter((k) => !forcedKeys.has(k)));
+  }, [advancedPanel]);
+
+  const advancedSelectToggleKeySet = useMemo(() => {
+    if (!advancedPanel) return undefined;
+    return new Set(advancedPanel.selectToggleKeys);
+  }, [advancedPanel]);
+
+  // Advanced forced values: merge into effective toggles when in Advanced mode
+  const advancedForcedValues = useMemo(() => {
+    if (panelLevel !== 'advanced' || !advancedPanel?.forcedToggles) return {};
+    return advancedPanel.forcedToggles;
+  }, [panelLevel, advancedPanel]);
 
   // Sync forced values into the actual toggle state so that when constraints
   // relax, the toggle retains the value the user saw (not the stale underlying state).
@@ -120,7 +163,8 @@ export function QuizSetupPanel({
   const effectiveToggleValues = useMemo(() => ({
     ...toggleValues,
     ...constraintResult.forcedValues,
-  }), [toggleValues, constraintResult.forcedValues]);
+    ...advancedForcedValues,
+  }), [toggleValues, constraintResult.forcedValues, advancedForcedValues]);
 
   const disabledKeys = useMemo(() => {
     const keys = new Set<string>();
@@ -130,8 +174,13 @@ export function QuizSetupPanel({
     for (const key of constraintResult.preventDisable) {
       keys.add(key);
     }
+    // In Advanced mode, forced toggles are hidden (not just disabled),
+    // but we still mark them disabled for safety
+    for (const key of Object.keys(advancedForcedValues)) {
+      keys.add(key);
+    }
     return keys;
-  }, [constraintResult]);
+  }, [constraintResult, advancedForcedValues]);
 
   const orderingToggles = useMemo(() => {
     if (!selectToggles) return [];
@@ -145,6 +194,17 @@ export function QuizSetupPanel({
     const filtered = selectToggles.filter((t) => t.group !== ORDERING_GROUP);
     return filtered.length > 0 ? filtered : undefined;
   }, [selectToggles]);
+
+  // In Advanced, only show select toggles that are:
+  // 1. In the advancedPanel.selectToggleKeys list
+  // 2. NOT part of the linked dropdown (those are handled by LinkedDataDropdown)
+  const advancedSelectToggles = useMemo(() => {
+    if (!nonOrderingSelectToggles || !advancedSelectToggleKeySet) return undefined;
+    const linkedKeys = new Set(advancedPanel?.linkedSelectToggleKeys ?? []);
+    return nonOrderingSelectToggles.filter(
+      (t) => advancedSelectToggleKeySet.has(t.key) && !linkedKeys.has(t.key),
+    );
+  }, [nonOrderingSelectToggles, advancedSelectToggleKeySet, advancedPanel]);
 
   // Compute which orderBy columns have no missing numeric values, and coverage per column.
   // Used to disable the "Missing values" toggle when it's irrelevant,
@@ -202,7 +262,27 @@ export function QuizSetupPanel({
         <h1 className={styles.title}>{title}</h1>
         {description && <p className={styles.description}>{description}</p>}
 
-        {showModeSelector && (
+        {/* ALWAYS: Difficulty presets */}
+        {difficultyPresets && onDifficultySlotChange && (
+          <DifficultySelector
+            presets={difficultyPresets}
+            activeSlot={activeDifficultySlot}
+            onSlotChange={onDifficultySlotChange}
+          />
+        )}
+
+        {/* SIMPLE ONLY: Group filter dropdown (single-select) */}
+        {panelLevel === 'simple' && groupFilterLabel && availableGroups && selectedGroups && onSimpleGroupFilterChange && (
+          <GroupFilterDropdown
+            label={groupFilterLabel}
+            groups={availableGroups}
+            selectedGroups={selectedGroups}
+            onGroupChange={onSimpleGroupFilterChange}
+          />
+        )}
+
+        {/* ADVANCED+: Mode selector */}
+        {panelLevel !== 'simple' && showModeSelector && (
           <section className={styles.section}>
             <label className={styles.sectionTitle} htmlFor="mode-select">
               Mode
@@ -218,14 +298,26 @@ export function QuizSetupPanel({
             >
               {availableModes.map((mode) => (
                 <option key={mode} value={mode}>
-                  {MODE_LABELS[mode]}
+                  {MODE_DISPLAY_NAMES[mode]}
                 </option>
               ))}
             </select>
           </section>
         )}
 
-        {orderingToggles.length > 0 && (
+        {/* ADVANCED ONLY: Linked dropdown (sort order / display data) — right below mode */}
+        {panelLevel === 'advanced' && linkedDropdownLabel && linkedDropdownOptions && linkedDropdownValue !== undefined && onLinkedDropdownChange && (
+          <LinkedDataDropdown
+            label={linkedDropdownLabel}
+            options={linkedDropdownOptions}
+            value={linkedDropdownValue}
+            onChange={onLinkedDropdownChange}
+            maxOptions={linkedDropdownMaxOptions}
+          />
+        )}
+
+        {/* Ordering section: Full only when linked dropdown handles it in Advanced; otherwise Advanced+ */}
+        {panelLevel !== 'simple' && orderingToggles.length > 0 && (panelLevel === 'full' || !advancedPanel?.linkedSortToggleKey) && (
           <section className={styles.section}>
             <span className={styles.sectionTitle}>Ordering</span>
             <div className={togglePanelStyles.toggleList}>
@@ -267,60 +359,8 @@ export function QuizSetupPanel({
           </section>
         )}
 
-        <section className={styles.section}>
-          <span className={styles.sectionTitle} id="countdown-label">
-            Time limit
-          </span>
-          <div className={styles.timerRow}>
-            <button
-              type="button"
-              className={styles.stepperButton}
-              aria-label="Decrease time limit"
-              onClick={() => {
-                if (countdownMinutes === undefined || countdownMinutes <= 1) {
-                  onCountdownChange(undefined);
-                } else {
-                  onCountdownChange(countdownMinutes - 1);
-                }
-              }}
-            >
-              −
-            </button>
-            <input
-              id="countdown-input"
-              type="text"
-              inputMode="numeric"
-              className={styles.timerInput}
-              aria-labelledby="countdown-label"
-              placeholder="—"
-              value={countdownMinutes ?? ''}
-              onChange={(event) => {
-                const raw = event.target.value;
-                if (raw === '') {
-                  onCountdownChange(undefined);
-                  return;
-                }
-                const parsed = parseInt(raw, 10);
-                if (!Number.isNaN(parsed)) {
-                  onCountdownChange(Math.max(1, parsed));
-                }
-              }}
-            />
-            <button
-              type="button"
-              className={styles.stepperButton}
-              aria-label="Increase time limit"
-              onClick={() => {
-                onCountdownChange((countdownMinutes ?? 0) + 1);
-              }}
-            >
-              +
-            </button>
-            <span className={styles.timerLabel}>minutes</span>
-          </div>
-        </section>
-
-        {rangeLabel && onRangeMinChange && onRangeMaxChange && (
+        {/* ADVANCED+: Range filter */}
+        {panelLevel !== 'simple' && rangeLabel && onRangeMinChange && onRangeMaxChange && (
           <section className={styles.section}>
             <span className={styles.sectionTitle}>
               {rangeLabel}
@@ -390,7 +430,8 @@ export function QuizSetupPanel({
           </section>
         )}
 
-        {groupFilterLabel && availableGroups && onGroupToggle && (
+        {/* ADVANCED+: Group filter chips */}
+        {panelLevel !== 'simple' && groupFilterLabel && availableGroups && onGroupToggle && (
           <section className={styles.section}>
             <span className={styles.sectionTitle}>
               {groupFilterLabel}
@@ -434,7 +475,8 @@ export function QuizSetupPanel({
           </section>
         )}
 
-        {toggles.length > 0 && (
+        {/* ADVANCED: Filtered toggles; FULL: All toggles */}
+        {panelLevel !== 'simple' && toggles.length > 0 && (
           <TogglePanel
             toggles={toggles}
             presets={presets}
@@ -445,18 +487,81 @@ export function QuizSetupPanel({
             disabledKeys={disabledKeys}
             tooltips={constraintResult.reasons}
             selectedMode={selectedMode}
-            selectToggles={nonOrderingSelectToggles}
+            selectToggles={panelLevel === 'advanced' ? advancedSelectToggles : nonOrderingSelectToggles}
             selectValues={selectValues}
             onSelectChange={onSelectChange}
+            visibleKeys={panelLevel === 'advanced' ? advancedToggleKeySet : undefined}
+            visibleSelectKeys={panelLevel === 'advanced' ? advancedSelectToggleKeySet : undefined}
           />
         )}
 
+        {/* ADVANCED+: Timer */}
+        {panelLevel !== 'simple' && (
+          <section className={styles.section}>
+            <span className={styles.sectionTitle} id="countdown-label">
+              Time limit
+            </span>
+            <div className={styles.timerRow}>
+              <button
+                type="button"
+                className={styles.stepperButton}
+                aria-label="Decrease time limit"
+                onClick={() => {
+                  if (countdownMinutes === undefined || countdownMinutes <= 1) {
+                    onCountdownChange(undefined);
+                  } else {
+                    onCountdownChange(countdownMinutes - 1);
+                  }
+                }}
+              >
+                −
+              </button>
+              <input
+                id="countdown-input"
+                type="text"
+                inputMode="numeric"
+                className={styles.timerInput}
+                aria-labelledby="countdown-label"
+                placeholder="—"
+                value={countdownMinutes ?? ''}
+                onChange={(event) => {
+                  const raw = event.target.value;
+                  if (raw === '') {
+                    onCountdownChange(undefined);
+                    return;
+                  }
+                  const parsed = parseInt(raw, 10);
+                  if (!Number.isNaN(parsed)) {
+                    onCountdownChange(Math.max(1, parsed));
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className={styles.stepperButton}
+                aria-label="Increase time limit"
+                onClick={() => {
+                  onCountdownChange((countdownMinutes ?? 0) + 1);
+                }}
+              >
+                +
+              </button>
+              <span className={styles.timerLabel}>minutes</span>
+            </div>
+          </section>
+        )}
+
+        {/* ALWAYS: Panel level switcher */}
+        <PanelLevelSwitcher level={panelLevel} onLevelChange={onPanelLevelChange} />
+
+        {/* ALWAYS: Empty quiz warning */}
         {isEmptyQuiz && (
           <p className={styles.emptyWarning}>
             No items match the current filters. Adjust your selection above.
           </p>
         )}
 
+        {/* ALWAYS: Start button */}
         <div className={styles.startButtonWrapper}>
           <motion.button
             className={styles.startButton}

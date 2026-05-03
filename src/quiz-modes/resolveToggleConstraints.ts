@@ -15,7 +15,9 @@ export interface ConstraintResult {
  * @param constraints - Constraints for the current mode
  * @param currentValues - Current boolean toggle values
  * @param selectValues - Current select toggle values (optional). For atLeastOne
- *   constraints, a select toggle counts as enabled if its value is not 'off'.
+ *   constraints, a select toggle counts as enabled only when set to 'on'.
+ *   Values like 'hint' don't satisfy the constraint because they don't guarantee
+ *   a prompt will be shown.
  */
 export function resolveToggleConstraints(
   constraints: ReadonlyArray<ToggleConstraint>,
@@ -33,7 +35,7 @@ export function resolveToggleConstraints(
     } else if (constraint.type === 'atLeastOne') {
       const enabledKeys = constraint.keys.filter((k) => {
         if (k in currentValues) return currentValues[k];
-        if (selectValues && k in selectValues) return selectValues[k] !== 'off';
+        if (selectValues && k in selectValues) return selectValues[k] === 'on';
         return false;
       });
       if (enabledKeys.length === 0) {

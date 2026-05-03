@@ -23,6 +23,10 @@ interface TogglePanelProps {
   readonly selectValues?: Readonly<Record<string, string>>;
   /** Callback for select toggle changes. */
   readonly onSelectChange?: (key: string, value: string) => void;
+  /** When provided, only show boolean toggles whose key is in this set. */
+  readonly visibleKeys?: ReadonlySet<string>;
+  /** When provided, only show select toggles whose key is in this set. */
+  readonly visibleSelectKeys?: ReadonlySet<string>;
 }
 
 function groupTogglesByCategory(
@@ -60,13 +64,16 @@ export function TogglePanel({
   selectToggles = [],
   selectValues = {},
   onSelectChange,
+  visibleKeys,
+  visibleSelectKeys,
 }: TogglePanelProps) {
   const filteredToggles = toggles
     .filter((t) => !t.revealsAnswer)
-    .filter((t) => !selectedMode || !t.modes || t.modes.includes(selectedMode));
-  const filteredSelectToggles = selectedMode
-    ? selectToggles.filter((t) => !t.modes || t.modes.includes(selectedMode))
-    : selectToggles;
+    .filter((t) => !selectedMode || !t.modes || t.modes.includes(selectedMode))
+    .filter((t) => !visibleKeys || visibleKeys.has(t.key));
+  const filteredSelectToggles = selectToggles
+    .filter((t) => !selectedMode || !t.modes || t.modes.includes(selectedMode))
+    .filter((t) => !visibleSelectKeys || visibleSelectKeys.has(t.key));
   const groups = groupTogglesByCategory(filteredToggles);
 
   return (
@@ -307,6 +314,8 @@ export function renderGroupedOptions(options: ReadonlyArray<DropdownOption>): Re
   return result;
 }
 
+const SEGMENT_TOOLTIP_DELAY_MS = 200;
+
 function SegmentedControl({
   options,
   value,
@@ -314,7 +323,11 @@ function SegmentedControl({
   preventOff = false,
   disabled = false,
 }: {
-  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
+  readonly options: ReadonlyArray<{
+    readonly value: string;
+    readonly label: string;
+    readonly tooltip?: string;
+  }>;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly preventOff?: boolean;
@@ -325,17 +338,23 @@ function SegmentedControl({
       {options.map((option) => {
         const isDisabled = disabled || (preventOff && option.value === 'off');
         return (
-          <button
+          <Tooltip
             key={option.value}
-            className={styles.segmentButton}
-            data-active={option.value === value || undefined}
-            disabled={isDisabled}
-            onClick={() => {
-              if (!isDisabled) onChange(option.value);
-            }}
+            text={disabled ? undefined : option.tooltip}
+            delayMs={SEGMENT_TOOLTIP_DELAY_MS}
+            className={styles.segmentSlot}
           >
-            {option.label}
-          </button>
+            <button
+              className={styles.segmentButton}
+              data-active={option.value === value || undefined}
+              disabled={isDisabled}
+              onClick={() => {
+                if (!isDisabled) onChange(option.value);
+              }}
+            >
+              {option.label}
+            </button>
+          </Tooltip>
         );
       })}
     </div>
