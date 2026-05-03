@@ -49,6 +49,8 @@ export interface SelectToggleDefinition {
     readonly category?: string;
     /** Label to show when this column's data value is missing (e.g., "Stable", "Landlocked"). */
     readonly missingLabel?: string;
+    /** Tooltip text shown when hovering this option in a segmented control. */
+    readonly tooltip?: string;
   }>;
   readonly defaultValue: string;
   readonly group: string;

@@ -314,6 +314,8 @@ export function renderGroupedOptions(options: ReadonlyArray<DropdownOption>): Re
   return result;
 }
 
+const SEGMENT_TOOLTIP_DELAY_MS = 200;
+
 function SegmentedControl({
   options,
   value,
@@ -321,7 +323,11 @@ function SegmentedControl({
   preventOff = false,
   disabled = false,
 }: {
-  readonly options: ReadonlyArray<{ readonly value: string; readonly label: string }>;
+  readonly options: ReadonlyArray<{
+    readonly value: string;
+    readonly label: string;
+    readonly tooltip?: string;
+  }>;
   readonly value: string;
   readonly onChange: (value: string) => void;
   readonly preventOff?: boolean;
@@ -332,17 +338,23 @@ function SegmentedControl({
       {options.map((option) => {
         const isDisabled = disabled || (preventOff && option.value === 'off');
         return (
-          <button
+          <Tooltip
             key={option.value}
-            className={styles.segmentButton}
-            data-active={option.value === value || undefined}
-            disabled={isDisabled}
-            onClick={() => {
-              if (!isDisabled) onChange(option.value);
-            }}
+            text={disabled ? undefined : option.tooltip}
+            delayMs={SEGMENT_TOOLTIP_DELAY_MS}
+            className={styles.segmentSlot}
           >
-            {option.label}
-          </button>
+            <button
+              className={styles.segmentButton}
+              data-active={option.value === value || undefined}
+              disabled={isDisabled}
+              onClick={() => {
+                if (!isDisabled) onChange(option.value);
+              }}
+            >
+              {option.label}
+            </button>
+          </Tooltip>
         );
       })}
     </div>
