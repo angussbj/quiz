@@ -196,20 +196,26 @@ export function FlagGridRenderer(props: VisualizationRendererProps) {
     [props.elements],
   );
 
-  // Shuffle once per renderer mount. The renderer remounts on Reconfigure
-  // (QuizShell bumps a key on the quiz content wrapper), so each quiz run
-  // gets a fresh flag arrangement. Keyed on the set of element IDs so
-  // unrelated prop identity changes (e.g. toggle state) don't reshuffle
-  // mid-quiz; a genuine change to the element set (e.g. filter applied)
-  // does trigger a reshuffle.
+  // Pick a shuffle permutation once per renderer mount. The renderer remounts
+  // on Reconfigure (QuizShell bumps a key on the quiz content wrapper), so
+  // each quiz run gets a fresh flag arrangement. The permutation is keyed on
+  // the set of element IDs so unrelated prop identity changes (e.g. toggle
+  // state) don't reshuffle mid-quiz; a genuine change to the element set
+  // (e.g. filter applied) does trigger a reshuffle. Applying the permutation
+  // separately means shuffledElements always references current element
+  // objects, even if they're rebuilt with the same IDs.
   const idSetKey = useMemo(
     () => flagElements.map((el) => el.id).sort().join('\x01'),
     [flagElements],
   );
-  const shuffledElements = useMemo(
-    () => shuffle(flagElements),
+  const shufflePermutation = useMemo(
+    () => shuffle(Array.from({ length: flagElements.length }, (_, i) => i)),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: idSetKey derived from flagElements, reshuffle only on set change
     [idSetKey],
+  );
+  const shuffledElements = useMemo(
+    () => shufflePermutation.map((i) => flagElements[i]),
+    [shufflePermutation, flagElements],
   );
 
   const columns = useMemo(
