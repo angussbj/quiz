@@ -22,6 +22,7 @@ export function IdentifyMode({
   toggleValues = {},
   selectValues = {},
   selectValueLabels,
+  selectValueMissingLabels,
   Renderer,
   backgroundPaths,
   lakePaths,
@@ -197,6 +198,7 @@ export function IdentifyMode({
           toggles={toggleValues}
           selectValues={selectValues}
           selectValueLabels={selectValueLabels}
+          selectValueMissingLabels={selectValueMissingLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

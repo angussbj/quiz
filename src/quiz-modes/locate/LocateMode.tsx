@@ -19,6 +19,7 @@ export function LocateMode({
   toggleValues,
   selectValues,
   selectValueLabels,
+  selectValueMissingLabels,
   toggleDefinitions = [],
   Renderer,
   backgroundPaths,
@@ -180,6 +181,7 @@ export function LocateMode({
           toggles={toggleValues}
           selectValues={selectValues}
           selectValueLabels={selectValueLabels}
+          selectValueMissingLabels={selectValueMissingLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}

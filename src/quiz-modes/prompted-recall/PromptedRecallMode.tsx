@@ -22,6 +22,7 @@ export function PromptedRecallMode({
   toggleValues = {},
   selectValues = {},
   selectValueLabels,
+  selectValueMissingLabels,
   Renderer,
   backgroundPaths,
   backgroundLabels,
@@ -193,6 +194,7 @@ export function PromptedRecallMode({
           toggles={toggleValues}
           selectValues={selectValues}
           selectValueLabels={selectValueLabels}
+          selectValueMissingLabels={selectValueMissingLabels}
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
