@@ -164,4 +164,32 @@ describe('computeTextClearance', () => {
     const polylabelClearance = computeTextClearance(lShape, polylabel!, 'Massachusetts');
     expect(wideArmClearance).toBeGreaterThan(polylabelClearance);
   });
+
+  it('returns negative clearance when the point is outside the polygon', () => {
+    // Point well outside the square's bbox.
+    const clearance = computeTextClearance(square, { x: 50, y: 50 }, 'Ohio');
+    expect(clearance).toBeLessThan(0);
+  });
+
+  it('ranks outside points below any inside point', () => {
+    const outside = computeTextClearance(square, { x: 50, y: 50 }, 'Ohio');
+    // A point right on the corner is barely inside — the worst legal inside score.
+    const cornerInside = computeTextClearance(square, { x: 0.5, y: 0.5 }, 'Ohio');
+    expect(outside).toBeLessThan(cornerInside);
+  });
+
+  it('returns negative clearance for points further outside than nearby outside', () => {
+    const justOutside = computeTextClearance(square, { x: -1, y: 5 }, 'Ohio');
+    const farOutside = computeTextClearance(square, { x: -20, y: 5 }, 'Ohio');
+    expect(farOutside).toBeLessThan(justOutside);
+  });
+
+  it('returns negative clearance for points in a concave bay (C-shape)', () => {
+    // C-shape opening to the right: the "bay" point at (8, 5) is outside the polygon
+    // but enclosed on left/right by polygon walls — the case where horizontal raycasting
+    // could otherwise return a spuriously valid value.
+    const cShape = 'M 0 0 L 10 0 L 10 3 L 3 3 L 3 7 L 10 7 L 10 10 L 0 10 Z';
+    const bayClearance = computeTextClearance(cShape, { x: 8, y: 5 }, 'Ohio');
+    expect(bayClearance).toBeLessThan(0);
+  });
 });

@@ -277,6 +277,17 @@ export function computeTextClearance(d: string, point: ViewBoxPosition, name: st
 
   const ring = points.map((p) => [p.x, p.y] as const);
 
+  // Reject candidates that fall outside the polygon up front. Without this guard
+  // the raycast below can return 0 (no crossings found) or even a spurious
+  // positive value when the candidate sits in a concavity (e.g. a bay), which
+  // lets outside-the-polygon centers outrank tight-but-inside ones in the sort.
+  // Returning signed-distance minus the text half-extent gives a strongly
+  // negative score that scales with how far outside we are and with text size.
+  const signedDistToBoundary = pointToPolygonDistance(point.x, point.y, [ring]);
+  if (signedDistToBoundary <= 0) {
+    return signedDistToBoundary - Math.max(textHalfWidth, textHalfHeight);
+  }
+
   // Cast horizontal rays at the top, center, and bottom of the text rectangle.
   // A single center ray can be fooled by irregular coastlines (e.g. Massachusetts)
   // where the polygon is wide at the center y but very narrow at the text edges.
@@ -341,7 +352,7 @@ export function computeTextClearance(d: string, point: ViewBoxPosition, name: st
   );
 }
 
-/** Signed distance from point to polygon (negative = inside). */
+/** Signed distance from point to polygon (positive = inside, negative = outside). */
 function pointToPolygonDistance(
   x: number, y: number,
   polygon: ReadonlyArray<ReadonlyArray<readonly [number, number]>>,

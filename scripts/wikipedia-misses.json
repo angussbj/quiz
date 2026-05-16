@@ -1,205 +1,5 @@
 [
   {
-    "file": "cities/largest-cities.csv",
-    "name": "Ji nan Shandong",
-    "tried": "Ji_nan_Shandong, Ji_nan_Shandong,_China, Ji_nan_Shandong_(city), Ji_nan_Shandong_(China), Ji_nan, Ji_nan,_China, Ji_nan_(city)"
-  },
-  {
-    "file": "cities/largest-cities.csv",
-    "name": "Grande Vitoria",
-    "tried": "Grande_Vitoria, Grande_Vitoria,_Brazil, Grande_Vitoria_(city), Grande_Vitoria_(Brazil)"
-  },
-  {
-    "file": "cities/largest-cities.csv",
-    "name": "Leon de los Aldamas",
-    "tried": "Leon_de_los_Aldamas, Leon_de_los_Aldamas,_Mexico, Leon_de_los_Aldamas_(city), Leon_de_los_Aldamas_(Mexico), Leon_de_los, Leon_de_los,_Mexico, Leon_de_los_(city)"
-  },
-  {
-    "file": "cities/largest-cities.csv",
-    "name": "Jingzhou Hubei",
-    "tried": "Jingzhou_Hubei, Jingzhou_Hubei,_China, Jingzhou_Hubei_(city), Jingzhou_Hubei_(China)"
-  },
-  {
-    "file": "cities/largest-cities.csv",
-    "name": "Pingxiang Jiangxi",
-    "tried": "Pingxiang_Jiangxi, Pingxiang_Jiangxi,_China, Pingxiang_Jiangxi_(city), Pingxiang_Jiangxi_(China)"
-  },
-  {
-    "file": "cities/largest-cities.csv",
-    "name": "Barcelona Puerto La Cruz",
-    "tried": "Barcelona_Puerto_La_Cruz, Barcelona_Puerto_La_Cruz,_Venezuela, Barcelona_Puerto_La_Cruz_(city), Barcelona_Puerto_La_Cruz_(Venezuela), Barcelona_Puerto_La, Barcelona_Puerto_La,_Venezuela, Barcelona_Puerto_La_(city)"
-  },
-  {
-    "file": "cities/largest-cities.csv",
-    "name": "Ar-Rayyan",
-    "tried": "Ar-Rayyan, Ar-Rayyan,_Qatar, Ar-Rayyan_(city), Ar-Rayyan_(Qatar)"
-  },
-  {
-    "file": "history/music/composers.csv",
-    "name": "Kineya Rokusaburō IV",
-    "tried": "Kineya_Rokusaburō_IV"
-  },
-  {
-    "file": "history/music/composers.csv",
-    "name": "Kim Chang-jo",
-    "tried": "Kim_Chang-jo"
-  },
-  {
-    "file": "history/music/composers.csv",
-    "name": "Abu Bakr Khusrau Khan",
-    "tried": "Abu_Bakr_Khusrau_Khan"
-  },
-  {
-    "file": "history/music/composers.csv",
-    "name": "Riyad al-Sunbati",
-    "tried": "Riyad_al-Sunbati"
-  },
-  {
-    "file": "history/music/composers.csv",
-    "name": "Stephen Osadebe",
-    "tried": "Stephen_Osadebe"
-  },
-  {
-    "file": "history/science/pandemics.csv",
-    "name": "First Cholera Pandemic",
-    "tried": "First_Cholera_Pandemic"
-  },
-  {
-    "file": "history/science/scientific-discoveries.csv",
-    "name": "Discovery of Radio Waves",
-    "tried": "Discovery_of_Radio_Waves"
-  },
-  {
-    "file": "history/science/scientific-discoveries.csv",
-    "name": "mRNA Vaccine Technology",
-    "tried": "mRNA_Vaccine_Technology"
-  },
-  {
-    "file": "history/science/species-evolution-all.csv",
-    "name": "First Archaea",
-    "tried": "First_Archaea"
-  },
-  {
-    "file": "history/science/species-evolution-major.csv",
-    "name": "First Fish",
-    "tried": "First_Fish"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "SpaceShipOne First Private Spaceflight",
-    "tried": "SpaceShipOne_First_Private_Spaceflight"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Huygens Titan Landing",
-    "tried": "Huygens_Titan_Landing"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "New Horizons Launch",
-    "tried": "New_Horizons_Launch"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Kepler Space Telescope Launch",
-    "tried": "Kepler_Space_Telescope_Launch"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Voyager 1 Enters Interstellar Space",
-    "tried": "Voyager_1_Enters_Interstellar_Space"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Chang'e 3 Moon Landing",
-    "tried": "Chang'e_3_Moon_Landing"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Rosetta Comet Orbit",
-    "tried": "Rosetta_Comet_Orbit"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Philae Comet Landing",
-    "tried": "Philae_Comet_Landing"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "SpaceX Falcon 9 First Landing",
-    "tried": "SpaceX_Falcon_9_First_Landing"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Juno Jupiter Orbit",
-    "tried": "Juno_Jupiter_Orbit"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "SpaceX Crew Dragon Demo-2",
-    "tried": "SpaceX_Crew_Dragon_Demo-2"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "James Webb Space Telescope Launch",
-    "tried": "James_Webb_Space_Telescope_Launch"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Perseverance Mars Rover Landing",
-    "tried": "Perseverance_Mars_Rover_Landing"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Ingenuity Mars Helicopter First Flight",
-    "tried": "Ingenuity_Mars_Helicopter_First_Flight"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Artemis 1 Launch",
-    "tried": "Artemis_1_Launch"
-  },
-  {
-    "file": "history/space/space-milestones.csv",
-    "name": "Chang'e 5 Moon Sample Return",
-    "tried": "Chang'e_5_Moon_Sample_Return"
-  },
-  {
-    "file": "history/technology/major-inventions.csv",
-    "name": "Controlled Fire",
-    "tried": "Controlled_Fire"
-  },
-  {
-    "file": "history/technology/major-inventions.csv",
-    "name": "Sewing Needle",
-    "tried": "Sewing_Needle"
-  },
-  {
-    "file": "history/technology/major-inventions.csv",
-    "name": "Iron Smelting",
-    "tried": "Iron_Smelting"
-  },
-  {
-    "file": "history/technology/major-inventions.csv",
-    "name": "Smallpox Vaccine",
-    "tried": "Smallpox_Vaccine"
-  },
-  {
-    "file": "history/technology/major-inventions.csv",
-    "name": "Electric Battery",
-    "tried": "Electric_Battery"
-  },
-  {
-    "file": "history/technology/major-inventions.csv",
-    "name": "Electric Light Bulb",
-    "tried": "Electric_Light_Bulb"
-  },
-  {
-    "file": "history/technology/major-inventions.csv",
-    "name": "DNA Double Helix",
-    "tried": "DNA_Double_Helix"
-  },
-  {
     "file": "rivers/world-rivers.csv",
     "name": "Bykovskaya Protoka",
     "tried": "Bykovskaya_Protoka_River, Bykovskaya_Protoka_(river), Bykovskaya_Protoka, Bykovskaya_Protoka_river"
@@ -223,6 +23,16 @@
     "file": "rivers/world-rivers.csv",
     "name": "Bratul Chillia",
     "tried": "Bratul_Chillia_River, Bratul_Chillia_(river), Bratul_Chillia, Bratul_Chillia_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bratul Sfintu Gheorghe",
+    "tried": "Bratul_Sfintu_Gheorghe_River, Bratul_Sfintu_Gheorghe_(river), Bratul_Sfintu_Gheorghe, Bratul_Sfintu_Gheorghe_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bratul Sulina",
+    "tried": "Bratul_Sulina_River, Bratul_Sulina_(river), Bratul_Sulina, Bratul_Sulina_river"
   },
   {
     "file": "rivers/world-rivers.csv",
@@ -368,6 +178,11 @@
     "file": "rivers/world-rivers.csv",
     "name": "Tom’",
     "tried": "Tom’_River, Tom’_(river), Tom’, Tom’_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bandama Blanc",
+    "tried": "Bandama_Blanc_River, Bandama_Blanc_(river), Bandama_Blanc, Bandama_Blanc_river"
   },
   {
     "file": "rivers/world-rivers.csv",
@@ -715,28 +530,1398 @@
     "tried": "Yanisyoki_River, Yanisyoki_(river), Yanisyoki, Yanisyoki_river"
   },
   {
-    "file": "science/biology/human-bones.csv",
-    "name": "Lateral Cuneiform",
-    "tried": "Lateral_Cuneiform_(bone), Lateral_Cuneiform_(anatomy), Lateral_Cuneiform"
+    "file": "rivers/world-rivers.csv",
+    "name": "Abitau",
+    "tried": "Abitau_River, Abitau_(river), Abitau, Abitau_river"
   },
   {
-    "file": "science/biology/human-bones.csv",
-    "name": "Intermediate Cuneiform",
-    "tried": "Intermediate_Cuneiform_(bone), Intermediate_Cuneiform_(anatomy), Intermediate_Cuneiform"
+    "file": "rivers/world-rivers.csv",
+    "name": "Avalik",
+    "tried": "Avalik_River, Avalik_(river), Avalik, Avalik_river"
   },
   {
-    "file": "science/biology/human-bones.csv",
-    "name": "Medial Cuneiform",
-    "tried": "Medial_Cuneiform_(bone), Medial_Cuneiform_(anatomy), Medial_Cuneiform"
+    "file": "rivers/world-rivers.csv",
+    "name": "Beaver Stone",
+    "tried": "Beaver_Stone_River, Beaver_Stone_(river), Beaver_Stone, Beaver_Stone_river"
   },
   {
-    "file": "subdivisions/russia.csv",
-    "name": "Maga Buryatdan",
-    "tried": "Maga_Buryatdan, Maga_Buryatdan_(Russia), Maga_Buryatdan_(state), Maga_Buryatdan_(province)"
+    "file": "rivers/world-rivers.csv",
+    "name": "Bebelamas",
+    "tried": "Bebelamas_River, Bebelamas_(river), Bebelamas, Bebelamas_river"
   },
   {
-    "file": "subdivisions/russia.csv",
-    "name": "Primor'ye",
-    "tried": "Primor'ye, Primor'ye_(Russia), Primor'ye_(state), Primor'ye_(province)"
+    "file": "rivers/world-rivers.csv",
+    "name": "Bityog",
+    "tried": "Bityog_River, Bityog_(river), Bityog, Bityog_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bramonas",
+    "tried": "Bramonas_River, Bramonas_(river), Bramonas, Bramonas_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Caopacho",
+    "tried": "Caopacho_River, Caopacho_(river), Caopacho, Caopacho_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chacte",
+    "tried": "Chacte_River, Chacte_(river), Chacte, Chacte_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Conie",
+    "tried": "Conie_River, Conie_(river), Conie, Conie_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "E.  Fk.  Andreafsky",
+    "tried": "E.__Fk.__Andreafsky_River, E.__Fk.__Andreafsky_(river), E.__Fk.__Andreafsky, E.__Fk.__Andreafsky_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Elm Fk.  Trinity",
+    "tried": "Elm_Fk.__Trinity_River, Elm_Fk.__Trinity_(river), Elm_Fk.__Trinity, Elm_Fk.__Trinity_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Feuilles",
+    "tried": "Feuilles_River, Feuilles_(river), Feuilles, Feuilles_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Geillini",
+    "tried": "Geillini_River, Geillini_(river), Geillini, Geillini_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Grande de Térraba",
+    "tried": "Grande_de_Térraba_River, Grande_de_Térraba_(river), Grande_de_Térraba, Grande_de_Térraba_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Grote Gete",
+    "tried": "Grote_Gete_River, Grote_Gete_(river), Grote_Gete, Grote_Gete_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Hare Indian",
+    "tried": "Hare_Indian_River, Hare_Indian_(river), Hare_Indian, Hare_Indian_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Joir",
+    "tried": "Joir_River, Joir_(river), Joir, Joir_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Júcar-Xúquer",
+    "tried": "Júcar-Xúquer_River, Júcar-Xúquer_(river), Júcar-Xúquer, Júcar-Xúquer_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Jungersen",
+    "tried": "Jungersen_River, Jungersen_(river), Jungersen, Jungersen_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kashunuk",
+    "tried": "Kashunuk_River, Kashunuk_(river), Kashunuk, Kashunuk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kawinogans",
+    "tried": "Kawinogans_River, Kawinogans_(river), Kawinogans, Kawinogans_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kingora",
+    "tried": "Kingora_River, Kingora_(river), Kingora, Kingora_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kognak",
+    "tried": "Kognak_River, Kognak_(river), Kognak, Kognak_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kotcho",
+    "tried": "Kotcho_River, Kotcho_(river), Kotcho, Kotcho_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kukalaya",
+    "tried": "Kukalaya_River, Kukalaya_(river), Kukalaya, Kukalaya_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kuujjua",
+    "tried": "Kuujjua_River, Kuujjua_(river), Kuujjua, Kuujjua_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "La Mariscala",
+    "tried": "La_Mariscala_River, La_Mariscala_(river), La_Mariscala, La_Mariscala_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "La Sauceda",
+    "tried": "La_Sauceda_River, La_Sauceda_(river), La_Sauceda, La_Sauceda_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Locust Fk.  of the Black Warrior",
+    "tried": "Locust_Fk.__of_the_Black_Warrior_River, Locust_Fk.__of_the_Black_Warrior_(river), Locust_Fk.__of_the_Black_Warrior, Locust_Fk.__of_the_Black_Warrior_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Lord Lindsay",
+    "tried": "Lord_Lindsay_River, Lord_Lindsay_(river), Lord_Lindsay, Lord_Lindsay_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mikkwa",
+    "tried": "Mikkwa_River, Mikkwa_(river), Mikkwa, Mikkwa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mistassibi Nord-Est",
+    "tried": "Mistassibi_Nord-Est_River, Mistassibi_Nord-Est_(river), Mistassibi_Nord-Est, Mistassibi_Nord-Est_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mohinora",
+    "tried": "Mohinora_River, Mohinora_(river), Mohinora, Mohinora_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ninemile Canal",
+    "tried": "Ninemile_Canal_River, Ninemile_Canal_(river), Ninemile_Canal, Ninemile_Canal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Nisling",
+    "tried": "Nisling_River, Nisling_(river), Nisling, Nisling_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Macmillan",
+    "tried": "North_Macmillan_River, North_Macmillan_(river), North_Macmillan, North_Macmillan_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Racoon",
+    "tried": "North_Racoon_River, North_Racoon_(river), North_Racoon, North_Racoon_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Seal",
+    "tried": "North_Seal_River, North_Seal_(river), North_Seal, North_Seal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Oneida River - Erie Canal",
+    "tried": "Oneida_River_-_Erie_Canal_River, Oneida_River_-_Erie_Canal_(river), Oneida_River_-_Erie_Canal, Oneida_River_-_Erie_Canal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Opinaca",
+    "tried": "Opinaca_River, Opinaca_(river), Opinaca, Opinaca_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Petite rivière de la Baleine",
+    "tried": "Petite_rivière_de_la_Baleine_River, Petite_rivière_de_la_Baleine_(river), Petite_rivière_de_la_Baleine, Petite_rivière_de_la_Baleine_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "pisuerga",
+    "tried": "pisuerga_River, pisuerga_(river), pisuerga, pisuerga_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Qotur/Ghotour Chai",
+    "tried": "Qotur/Ghotour_Chai_River, Qotur/Ghotour_Chai_(river), Qotur/Ghotour_Chai, Qotur/Ghotour_Chai_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Br.  Penobscot",
+    "tried": "S.__Br.__Penobscot_River, S.__Br.__Penobscot_(river), S.__Br.__Penobscot, S.__Br.__Penobscot_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Boise",
+    "tried": "S.__Fk.__Boise_River, S.__Fk.__Boise_(river), S.__Fk.__Boise, S.__Fk.__Boise_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Powder",
+    "tried": "S.__Fk.__Powder_River, S.__Fk.__Powder_(river), S.__Fk.__Powder, S.__Fk.__Powder_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Shenandoah",
+    "tried": "S.__Fk.__Shenandoah_River, S.__Fk.__Shenandoah_(river), S.__Fk.__Shenandoah, S.__Fk.__Shenandoah_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Shoshone",
+    "tried": "S.__Fk.__Shoshone_River, S.__Fk.__Shoshone_(river), S.__Fk.__Shoshone, S.__Fk.__Shoshone_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sinecapa",
+    "tried": "Sinecapa_River, Sinecapa_(river), Sinecapa, Sinecapa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sorehead",
+    "tried": "Sorehead_River, Sorehead_(river), Sorehead, Sorehead_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South Macmillan",
+    "tried": "South_Macmillan_River, South_Macmillan_(river), South_Macmillan, South_Macmillan_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South Seal",
+    "tried": "South_Seal_River, South_Seal_(river), South_Seal, South_Seal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sredny Ergolyk",
+    "tried": "Sredny_Ergolyk_River, Sredny_Ergolyk_(river), Sredny_Ergolyk, Sredny_Ergolyk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sukunka",
+    "tried": "Sukunka_River, Sukunka_(river), Sukunka, Sukunka_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Swampy Bay",
+    "tried": "Swampy_Bay_River, Swampy_Bay_(river), Swampy_Bay, Swampy_Bay_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tazin",
+    "tried": "Tazin_River, Tazin_(river), Tazin, Tazin_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tha-anne",
+    "tried": "Tha-anne_River, Tha-anne_(river), Tha-anne, Tha-anne_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tuxpn",
+    "tried": "Tuxpn_River, Tuxpn_(river), Tuxpn, Tuxpn_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tzanconeja",
+    "tried": "Tzanconeja_River, Tzanconeja_(river), Tzanconeja, Tzanconeja_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Upper Humber",
+    "tried": "Upper_Humber_River, Upper_Humber_(river), Upper_Humber, Upper_Humber_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Uša",
+    "tried": "Uša_River, Uša_(river), Uša, Uša_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Verkselv",
+    "tried": "Verkselv_River, Verkselv_(river), Verkselv, Verkselv_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "W.  Br.  Iowa",
+    "tried": "W.__Br.__Iowa_River, W.__Br.__Iowa_(river), W.__Br.__Iowa, W.__Br.__Iowa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "W.  Fk.  Gulkana",
+    "tried": "W.__Fk.__Gulkana_River, W.__Fk.__Gulkana_(river), W.__Fk.__Gulkana, W.__Fk.__Gulkana_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "W.  Fk.  Trinity",
+    "tried": "W.__Fk.__Trinity_River, W.__Fk.__Trinity_(river), W.__Fk.__Trinity, W.__Fk.__Trinity_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ahtavan",
+    "tried": "Ahtavan_River, Ahtavan_(river), Ahtavan, Ahtavan_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Amacuzlac",
+    "tried": "Amacuzlac_River, Amacuzlac_(river), Amacuzlac, Amacuzlac_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Angimajuq",
+    "tried": "Angimajuq_River, Angimajuq_(river), Angimajuq, Angimajuq_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Asheweig",
+    "tried": "Asheweig_River, Asheweig_(river), Asheweig, Asheweig_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Broken Skull",
+    "tried": "Broken_Skull_River, Broken_Skull_(river), Broken_Skull, Broken_Skull_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chiflón",
+    "tried": "Chiflón_River, Chiflón_(river), Chiflón, Chiflón_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chukotat",
+    "tried": "Chukotat_River, Chukotat_(river), Chukotat, Chukotat_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Clarks Fk.  Yellowstone",
+    "tried": "Clarks_Fk.__Yellowstone_River, Clarks_Fk.__Yellowstone_(river), Clarks_Fk.__Yellowstone, Clarks_Fk.__Yellowstone_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Clear Fk.  Brazos",
+    "tried": "Clear_Fk.__Brazos_River, Clear_Fk.__Brazos_(river), Clear_Fk.__Brazos, Clear_Fk.__Brazos_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Dahadinni",
+    "tried": "Dahadinni_River, Dahadinni_(river), Dahadinni, Dahadinni_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "East Creswell",
+    "tried": "East_Creswell_River, East_Creswell_(river), East_Creswell, East_Creswell_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ekatuk",
+    "tried": "Ekatuk_River, Ekatuk_(river), Ekatuk, Ekatuk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Falcoz",
+    "tried": "Falcoz_River, Falcoz_(river), Falcoz, Falcoz_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Faxa",
+    "tried": "Faxa_River, Faxa_(river), Faxa, Faxa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Goksu (northern branch)",
+    "tried": "Goksu_(northern_branch)_River, Goksu_(northern_branch)_(river), Goksu_(northern_branch), Goksu_(northern_branch)_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Gunisao",
+    "tried": "Gunisao_River, Gunisao_(river), Gunisao, Gunisao_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Hoholitna",
+    "tried": "Hoholitna_River, Hoholitna_(river), Hoholitna, Hoholitna_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Isurtuq",
+    "tried": "Isurtuq_River, Isurtuq_(river), Isurtuq, Isurtuq_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Jasieĺda",
+    "tried": "Jasieĺda_River, Jasieĺda_(river), Jasieĺda, Jasieĺda_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Johnny Hoe",
+    "tried": "Johnny_Hoe_River, Johnny_Hoe_(river), Johnny_Hoe, Johnny_Hoe_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Jökulsá í Fljótsdal",
+    "tried": "Jökulsá_í_Fljótsdal_River, Jökulsá_í_Fljótsdal_(river), Jökulsá_í_Fljótsdal, Jökulsá_í_Fljótsdal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kamilukuak",
+    "tried": "Kamilukuak_River, Kamilukuak_(river), Kamilukuak, Kamilukuak_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kanairiktok",
+    "tried": "Kanairiktok_River, Kanairiktok_(river), Kanairiktok, Kanairiktok_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kanasuta",
+    "tried": "Kanasuta_River, Kanasuta_(river), Kanasuta, Kanasuta_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kaskattama",
+    "tried": "Kaskattama_River, Kaskattama_(river), Kaskattama, Kaskattama_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kenamu",
+    "tried": "Kenamu_River, Kenamu_(river), Kenamu, Kenamu_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kimowin",
+    "tried": "Kimowin_River, Kimowin_(river), Kimowin, Kimowin_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kingurutik",
+    "tried": "Kingurutik_River, Kingurutik_(river), Kingurutik, Kingurutik_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kinojévis",
+    "tried": "Kinojévis_River, Kinojévis_(river), Kinojévis, Kinojévis_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kinosheo",
+    "tried": "Kinosheo_River, Kinosheo_(river), Kinosheo, Kinosheo_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kinushseo",
+    "tried": "Kinushseo_River, Kinushseo_(river), Kinushseo, Kinushseo_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kirchoffer",
+    "tried": "Kirchoffer_River, Kirchoffer_(river), Kirchoffer, Kirchoffer_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kogaluc",
+    "tried": "Kogaluc_River, Kogaluc_(river), Kogaluc, Kogaluc_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Koktac",
+    "tried": "Koktac_River, Koktac_(river), Koktac, Koktac_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Koroc",
+    "tried": "Koroc_River, Koroc_(river), Koroc, Koroc_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kugaluk",
+    "tried": "Kugaluk_River, Kugaluk_(river), Kugaluk, Kugaluk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kurinwas",
+    "tried": "Kurinwas_River, Kurinwas_(river), Kurinwas, Kurinwas_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kwetabohigan Rapids",
+    "tried": "Kwetabohigan_Rapids_River, Kwetabohigan_Rapids_(river), Kwetabohigan_Rapids, Kwetabohigan_Rapids_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "La Biche",
+    "tried": "La_Biche_River, La_Biche_(river), La_Biche, La_Biche_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Lepellé",
+    "tried": "Lepellé_River, Lepellé_(river), Lepellé, Lepellé_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Lilla Lule",
+    "tried": "Lilla_Lule_River, Lilla_Lule_(river), Lilla_Lule, Lilla_Lule_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Lower Crab",
+    "tried": "Lower_Crab_River, Lower_Crab_(river), Lower_Crab, Lower_Crab_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "M. Fk.  N. Fk.  Fortymile",
+    "tried": "M._Fk.__N._Fk.__Fortymile_River, M._Fk.__N._Fk.__Fortymile_(river), M._Fk.__N._Fk.__Fortymile, M._Fk.__N._Fk.__Fortymile_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Magpie Ouest",
+    "tried": "Magpie_Ouest_River, Magpie_Ouest_(river), Magpie_Ouest, Magpie_Ouest_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Maquatua",
+    "tried": "Maquatua_River, Maquatua_(river), Maquatua, Maquatua_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "McPhadyen",
+    "tried": "McPhadyen_River, McPhadyen_(river), McPhadyen, McPhadyen_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Middle Fk.  Fortymile",
+    "tried": "Middle_Fk.__Fortymile_River, Middle_Fk.__Fortymile_(river), Middle_Fk.__Fortymile, Middle_Fk.__Fortymile_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Middle Fk.  Salmon",
+    "tried": "Middle_Fk.__Salmon_River, Middle_Fk.__Salmon_(river), Middle_Fk.__Salmon, Middle_Fk.__Salmon_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mistanipisipou",
+    "tried": "Mistanipisipou_River, Mistanipisipou_(river), Mistanipisipou, Mistanipisipou_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Moson-Danube",
+    "tried": "Moson-Danube_River, Moson-Danube_(river), Moson-Danube, Moson-Danube_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mosquito Fork",
+    "tried": "Mosquito_Fork_River, Mosquito_Fork_(river), Mosquito_Fork, Mosquito_Fork_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mudjatik",
+    "tried": "Mudjatik_River, Mudjatik_(river), Mudjatik, Mudjatik_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Nagagami",
+    "tried": "Nagagami_River, Nagagami_(river), Nagagami, Nagagami_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Nałasìn",
+    "tried": "Nałasìn_River, Nałasìn_(river), Nałasìn, Nałasìn_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Niskibi",
+    "tried": "Niskibi_River, Niskibi_(river), Niskibi, Niskibi_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Fork of the Grand",
+    "tried": "North_Fork_of_the_Grand_River, North_Fork_of_the_Grand_(river), North_Fork_of_the_Grand, North_Fork_of_the_Grand_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Llano",
+    "tried": "North_Llano_River, North_Llano_(river), North_Llano, North_Llano_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Prong St. Marys",
+    "tried": "North_Prong_St._Marys_River, North_Prong_St._Marys_(river), North_Prong_St._Marys, North_Prong_St._Marys_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Salmon",
+    "tried": "North_Salmon_River, North_Salmon_(river), North_Salmon, North_Salmon_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Santium",
+    "tried": "North_Santium_River, North_Santium_(river), North_Santium, North_Santium_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Notakwanon",
+    "tried": "Notakwanon_River, Notakwanon_(river), Notakwanon, Notakwanon_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Old Channel",
+    "tried": "Old_Channel_River, Old_Channel_(river), Old_Channel, Old_Channel_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ontaratue",
+    "tried": "Ontaratue_River, Ontaratue_(river), Ontaratue, Ontaratue_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Opinnagau",
+    "tried": "Opinnagau_River, Opinnagau_(river), Opinnagau, Opinnagau_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Paalliq",
+    "tried": "Paalliq_River, Paalliq_(river), Paalliq, Paalliq_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Papigochi",
+    "tried": "Papigochi_River, Papigochi_(river), Papigochi, Papigochi_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Pescados",
+    "tried": "Pescados_River, Pescados_(river), Pescados, Pescados_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Pineimuta",
+    "tried": "Pineimuta_River, Pineimuta_(river), Pineimuta, Pineimuta_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Qikirtaluup Kuunga",
+    "tried": "Qikirtaluup_Kuunga_River, Qikirtaluup_Kuunga_(river), Qikirtaluup_Kuunga, Qikirtaluup_Kuunga_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Qurlutuq",
+    "tried": "Qurlutuq_River, Qurlutuq_(river), Qurlutuq, Qurlutuq_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Rita Blanca",
+    "tried": "Rita_Blanca_River, Rita_Blanca_(river), Rita_Blanca, Rita_Blanca_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  American",
+    "tried": "S.__Fk.__American_River, S.__Fk.__American_(river), S.__Fk.__American, S.__Fk.__American_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Edisto",
+    "tried": "S.__Fk.__Edisto_River, S.__Fk.__Edisto_(river), S.__Fk.__Edisto, S.__Fk.__Edisto_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Fortymile",
+    "tried": "S.__Fk.__Fortymile_River, S.__Fk.__Fortymile_(river), S.__Fk.__Fortymile, S.__Fk.__Fortymile_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Kentucky",
+    "tried": "S.__Fk.__Kentucky_River, S.__Fk.__Kentucky_(river), S.__Fk.__Kentucky, S.__Fk.__Kentucky_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Obion",
+    "tried": "S.__Fk.__Obion_River, S.__Fk.__Obion_(river), S.__Fk.__Obion, S.__Fk.__Obion_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Solomon",
+    "tried": "S.__Fk.__Solomon_River, S.__Fk.__Solomon_(river), S.__Fk.__Solomon, S.__Fk.__Solomon_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Saint-Augustin Nord-Ouest",
+    "tried": "Saint-Augustin_Nord-Ouest_River, Saint-Augustin_Nord-Ouest_(river), Saint-Augustin_Nord-Ouest, Saint-Augustin_Nord-Ouest_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "San Juan de Camarones",
+    "tried": "San_Juan_de_Camarones_River, San_Juan_de_Camarones_(river), San_Juan_de_Camarones, San_Juan_de_Camarones_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sarstún",
+    "tried": "Sarstún_River, Sarstún_(river), Sarstún, Sarstún_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Simonette",
+    "tried": "Simonette_River, Simonette_(river), Simonette, Simonette_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Siorak",
+    "tried": "Siorak_River, Siorak_(river), Siorak, Siorak_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Siquia",
+    "tried": "Siquia_River, Siquia_(river), Siquia, Siquia_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South Fork of the Grand",
+    "tried": "South_Fork_of_the_Grand_River, South_Fork_of_the_Grand_(river), South_Fork_of_the_Grand, South_Fork_of_the_Grand_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South McQuesten",
+    "tried": "South_McQuesten_River, South_McQuesten_(river), South_McQuesten, South_McQuesten_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South Prong St. Marys",
+    "tried": "South_Prong_St._Marys_River, South_Prong_St._Marys_(river), South_Prong_St._Marys, South_Prong_St._Marys_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tethul",
+    "tried": "Tethul_River, Tethul_(river), Tethul, Tethul_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tohma",
+    "tried": "Tohma_River, Tohma_(river), Tohma, Tohma_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Utikuma",
+    "tried": "Utikuma_River, Utikuma_(river), Utikuma, Utikuma_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Velero",
+    "tried": "Velero_River, Velero_(river), Velero, Velero_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wabassi",
+    "tried": "Wabassi_River, Wabassi_(river), Wabassi, Wabassi_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wathaman",
+    "tried": "Wathaman_River, Wathaman_(river), Wathaman, Wathaman_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wecho",
+    "tried": "Wecho_River, Wecho_(river), Wecho, Wecho_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wekweyaukastik",
+    "tried": "Wekweyaukastik_River, Wekweyaukastik_(river), Wekweyaukastik, Wekweyaukastik_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wenasaga",
+    "tried": "Wenasaga_River, Wenasaga_(river), Wenasaga, Wenasaga_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "West Montreal",
+    "tried": "West_Montreal_River, West_Montreal_(river), West_Montreal, West_Montreal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Willowlake",
+    "tried": "Willowlake_River, Willowlake_(river), Willowlake, Willowlake_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wopmay",
+    "tried": "Wopmay_River, Wopmay_(river), Wopmay, Wopmay_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Yusezyu",
+    "tried": "Yusezyu_River, Yusezyu_(river), Yusezyu, Yusezyu_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Agujas",
+    "tried": "Agujas_River, Agujas_(river), Agujas, Agujas_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Aigneau",
+    "tried": "Aigneau_River, Aigneau_(river), Aigneau, Aigneau_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Alluviaq",
+    "tried": "Alluviaq_River, Alluviaq_(river), Alluviaq, Alluviaq_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Armark",
+    "tried": "Armark_River, Armark_(river), Armark, Armark_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Aukpar",
+    "tried": "Aukpar_River, Aukpar_(river), Aukpar, Aukpar_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Balonne Minor",
+    "tried": "Balonne_Minor_River, Balonne_Minor_(river), Balonne_Minor, Balonne_Minor_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bayou D'Arbonne",
+    "tried": "Bayou_D'Arbonne_River, Bayou_D'Arbonne_(river), Bayou_D'Arbonne, Bayou_D'Arbonne_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Bear Lake Outlet",
+    "tried": "Bear_Lake_Outlet_River, Bear_Lake_Outlet_(river), Bear_Lake_Outlet, Bear_Lake_Outlet_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Brochant",
+    "tried": "Brochant_River, Brochant_(river), Brochant, Brochant_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Burnt Pond",
+    "tried": "Burnt_Pond_River, Burnt_Pond_(river), Burnt_Pond, Burnt_Pond_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Burrell Bayou",
+    "tried": "Burrell_Bayou_River, Burrell_Bayou_(river), Burrell_Bayou, Burrell_Bayou_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Cat Arm",
+    "tried": "Cat_Arm_River, Cat_Arm_(river), Cat_Arm, Cat_Arm_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chauvreulx",
+    "tried": "Chauvreulx_River, Chauvreulx_(river), Chauvreulx, Chauvreulx_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chicapa",
+    "tried": "Chicapa_River, Chicapa_(river), Chicapa, Chicapa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Chukuni",
+    "tried": "Chukuni_River, Chukuni_(river), Chukuni, Chukuni_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Contwoyto",
+    "tried": "Contwoyto_River, Contwoyto_(river), Contwoyto, Contwoyto_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Cowleech Fork",
+    "tried": "Cowleech_Fork_River, Cowleech_Fork_(river), Cowleech_Fork, Cowleech_Fork_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Daddys",
+    "tried": "Daddys_River, Daddys_(river), Daddys, Daddys_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "David Bayou",
+    "tried": "David_Bayou_River, David_Bayou_(river), David_Bayou, David_Bayou_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "De Pas",
+    "tried": "De_Pas_River, De_Pas_(river), De_Pas, De_Pas_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Deschambault Channel",
+    "tried": "Deschambault_Channel_River, Deschambault_Channel_(river), Deschambault_Channel, Deschambault_Channel_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Dezadeash",
+    "tried": "Dezadeash_River, Dezadeash_(river), Dezadeash, Dezadeash_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "E.  Br.  Delaware",
+    "tried": "E.__Br.__Delaware_River, E.__Br.__Delaware_(river), E.__Br.__Delaware, E.__Br.__Delaware_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "E.  Fk.  Chippewa",
+    "tried": "E.__Fk.__Chippewa_River, E.__Fk.__Chippewa_(river), E.__Fk.__Chippewa, E.__Fk.__Chippewa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "E.  Fk.  Kuskokwim",
+    "tried": "E.__Fk.__Kuskokwim_River, E.__Fk.__Kuskokwim_(river), E.__Fk.__Kuskokwim, E.__Fk.__Kuskokwim_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "E.  Fk.  White",
+    "tried": "E.__Fk.__White_River, E.__Fk.__White_(river), E.__Fk.__White, E.__Fk.__White_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "East Fork Kuskokwim",
+    "tried": "East_Fork_Kuskokwim_River, East_Fork_Kuskokwim_(river), East_Fork_Kuskokwim, East_Fork_Kuskokwim_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "East Natashquan",
+    "tried": "East_Natashquan_River, East_Natashquan_(river), East_Natashquan, East_Natashquan_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "East Porcupine",
+    "tried": "East_Porcupine_River, East_Porcupine_(river), East_Porcupine, East_Porcupine_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Esnagami",
+    "tried": "Esnagami_River, Esnagami_(river), Esnagami, Esnagami_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Fishbasket",
+    "tried": "Fishbasket_River, Fishbasket_(river), Fishbasket, Fishbasket_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ghùch Hîni",
+    "tried": "Ghùch_Hîni_River, Ghùch_Hîni_(river), Ghùch_Hîni, Ghùch_Hîni_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Grassberry",
+    "tried": "Grassberry_River, Grassberry_(river), Grassberry, Grassberry_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Gué",
+    "tried": "Gué_River, Gué_(river), Gué, Gué_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Hiukitak",
+    "tried": "Hiukitak_River, Hiukitak_(river), Hiukitak, Hiukitak_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Hossanj",
+    "tried": "Hossanj_River, Hossanj_(river), Hossanj, Hossanj_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Innuksuac",
+    "tried": "Innuksuac_River, Innuksuac_(river), Innuksuac, Innuksuac_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Juan de Haro",
+    "tried": "Juan_de_Haro_River, Juan_de_Haro_(river), Juan_de_Haro, Juan_de_Haro_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kahntah",
+    "tried": "Kahntah_River, Kahntah_(river), Kahntah, Kahntah_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kaldakvísl",
+    "tried": "Kaldakvísl_River, Kaldakvísl_(river), Kaldakvísl, Kaldakvísl_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kanaaupscow",
+    "tried": "Kanaaupscow_River, Kanaaupscow_(river), Kanaaupscow, Kanaaupscow_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kapikotongwa",
+    "tried": "Kapikotongwa_River, Kapikotongwa_(river), Kapikotongwa, Kapikotongwa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kaskawulsh",
+    "tried": "Kaskawulsh_River, Kaskawulsh_(river), Kaskawulsh, Kaskawulsh_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kississing",
+    "tried": "Kississing_River, Kississing_(river), Kississing, Kississing_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kogaluk",
+    "tried": "Kogaluk_River, Kogaluk_(river), Kogaluk, Kogaluk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kokwok",
+    "tried": "Kokwok_River, Kokwok_(river), Kokwok, Kokwok_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kugaluk",
+    "tried": "Kugaluk_River, Kugaluk_(river), Kugaluk, Kugaluk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kupchuk",
+    "tried": "Kupchuk_River, Kupchuk_(river), Kupchuk, Kupchuk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Kuzkwa",
+    "tried": "Kuzkwa_River, Kuzkwa_(river), Kuzkwa, Kuzkwa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "La Biche",
+    "tried": "La_Biche_River, La_Biche_(river), La_Biche, La_Biche_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Lakitusaki",
+    "tried": "Lakitusaki_River, Lakitusaki_(river), Lakitusaki, Lakitusaki_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Lapuanjoki",
+    "tried": "Lapuanjoki_River, Lapuanjoki_(river), Lapuanjoki, Lapuanjoki_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Machichi",
+    "tried": "Machichi_River, Machichi_(river), Machichi, Machichi_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Makoop",
+    "tried": "Makoop_River, Makoop_(river), Makoop, Makoop_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Marralik",
+    "tried": "Marralik_River, Marralik_(river), Marralik, Marralik_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "McPartlan Pass Canal",
+    "tried": "McPartlan_Pass_Canal_River, McPartlan_Pass_Canal_(river), McPartlan_Pass_Canal, McPartlan_Pass_Canal_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mélèzes",
+    "tried": "Mélèzes_River, Mélèzes_(river), Mélèzes, Mélèzes_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Metchin",
+    "tried": "Metchin_River, Metchin_(river), Metchin, Metchin_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Middle Fk.  Kentucky",
+    "tried": "Middle_Fk.__Kentucky_River, Middle_Fk.__Kentucky_(river), Middle_Fk.__Kentucky, Middle_Fk.__Kentucky_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Middle Fk.  Powder",
+    "tried": "Middle_Fk.__Powder_River, Middle_Fk.__Powder_(river), Middle_Fk.__Powder, Middle_Fk.__Powder_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Middle Fk.  Vermilion",
+    "tried": "Middle_Fk.__Vermilion_River, Middle_Fk.__Vermilion_(river), Middle_Fk.__Vermilion, Middle_Fk.__Vermilion_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Middle Fork Little Red",
+    "tried": "Middle_Fork_Little_Red_River, Middle_Fork_Little_Red_(river), Middle_Fork_Little_Red, Middle_Fork_Little_Red_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Minipi",
+    "tried": "Minipi_River, Minipi_(river), Minipi, Minipi_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mistastin",
+    "tried": "Mistastin_River, Mistastin_(river), Mistastin, Mistastin_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Mitlancingo",
+    "tried": "Mitlancingo_River, Mitlancingo_(river), Mitlancingo, Mitlancingo_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Muchalat",
+    "tried": "Muchalat_River, Muchalat_(river), Muchalat, Muchalat_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "N. Fk. S. Br. Potomac",
+    "tried": "N._Fk._S._Br._Potomac_River, N._Fk._S._Br._Potomac_(river), N._Fk._S._Br._Potomac, N._Fk._S._Br._Potomac_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ndu Tah Deh",
+    "tried": "Ndu_Tah_Deh_River, Ndu_Tah_Deh_(river), Ndu_Tah_Deh, Ndu_Tah_Deh_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Nexpa",
+    "tried": "Nexpa_River, Nexpa_(river), Nexpa, Nexpa_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Fork Crow",
+    "tried": "North_Fork_Crow_River, North_Fork_Crow_(river), North_Fork_Crow, North_Fork_Crow_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Fork Powder",
+    "tried": "North_Fork_Powder_River, North_Fork_Powder_(river), North_Fork_Powder, North_Fork_Powder_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North French",
+    "tried": "North_French_River, North_French_(river), North_French, North_French_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North Knife",
+    "tried": "North_Knife_River, North_Knife_(river), North_Knife, North_Knife_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "North McQuesten",
+    "tried": "North_McQuesten_River, North_McQuesten_(river), North_McQuesten, North_McQuesten_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Old Little Tallahatchie",
+    "tried": "Old_Little_Tallahatchie_River, Old_Little_Tallahatchie_(river), Old_Little_Tallahatchie, Old_Little_Tallahatchie_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Onaman",
+    "tried": "Onaman_River, Onaman_(river), Onaman, Onaman_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Osawin",
+    "tried": "Osawin_River, Osawin_(river), Osawin, Osawin_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ouasiemsca",
+    "tried": "Ouasiemsca_River, Ouasiemsca_(river), Ouasiemsca, Ouasiemsca_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Padle",
+    "tried": "Padle_River, Padle_(river), Padle, Padle_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Pagwachuan",
+    "tried": "Pagwachuan_River, Pagwachuan_(river), Pagwachuan, Pagwachuan_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Palos Altos",
+    "tried": "Palos_Altos_River, Palos_Altos_(river), Palos_Altos, Palos_Altos_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Panola Quitman Floodway",
+    "tried": "Panola_Quitman_Floodway_River, Panola_Quitman_Floodway_(river), Panola_Quitman_Floodway, Panola_Quitman_Floodway_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Punta de Agua",
+    "tried": "Punta_de_Agua_River, Punta_de_Agua_(river), Punta_de_Agua, Punta_de_Agua_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Purungueo",
+    "tried": "Purungueo_River, Purungueo_(river), Purungueo, Purungueo_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Racine de Bouleau",
+    "tried": "Racine_de_Bouleau_River, Racine_de_Bouleau_(river), Racine_de_Bouleau, Racine_de_Bouleau_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Ravens Throat",
+    "tried": "Ravens_Throat_River, Ravens_Throat_(river), Ravens_Throat, Ravens_Throat_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Red Sucker",
+    "tried": "Red_Sucker_River, Red_Sucker_(river), Red_Sucker, Red_Sucker_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Br.  Muskoka",
+    "tried": "S.__Br.__Muskoka_River, S.__Br.__Muskoka_(river), S.__Br.__Muskoka, S.__Br.__Muskoka_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  Forked Deer",
+    "tried": "S.__Fk.__Forked_Deer_River, S.__Fk.__Forked_Deer_(river), S.__Fk.__Forked_Deer, S.__Fk.__Forked_Deer_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "S.  Fk.  S.  Br.  Potomac",
+    "tried": "S.__Fk.__S.__Br.__Potomac_River, S.__Fk.__S.__Br.__Potomac_(river), S.__Fk.__S.__Br.__Potomac, S.__Fk.__S.__Br.__Potomac_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Santium",
+    "tried": "Santium_River, Santium_(river), Santium, Santium_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sásabe",
+    "tried": "Sásabe_River, Sásabe_(river), Sásabe, Sásabe_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Savonoski",
+    "tried": "Savonoski_River, Savonoski_(river), Savonoski, Savonoski_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Shipshaw",
+    "tried": "Shipshaw_River, Shipshaw_(river), Shipshaw, Shipshaw_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Sipsey Fk.  of the Black Warrior",
+    "tried": "Sipsey_Fk.__of_the_Black_Warrior_River, Sipsey_Fk.__of_the_Black_Warrior_(river), Sipsey_Fk.__of_the_Black_Warrior, Sipsey_Fk.__of_the_Black_Warrior_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South Flat",
+    "tried": "South_Flat_River, South_Flat_(river), South_Flat, South_Flat_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South Knife",
+    "tried": "South_Knife_River, South_Knife_(river), South_Knife, South_Knife_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "South Santium",
+    "tried": "South_Santium_River, South_Santium_(river), South_Santium, South_Santium_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Storkerson",
+    "tried": "Storkerson_River, Storkerson_(river), Storkerson, Storkerson_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Striding",
+    "tried": "Striding_River, Striding_(river), Striding, Striding_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Técpan",
+    "tried": "Técpan_River, Técpan_(river), Técpan, Técpan_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tehuehuetla",
+    "tried": "Tehuehuetla_River, Tehuehuetla_(river), Tehuehuetla, Tehuehuetla_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Tichégami",
+    "tried": "Tichégami_River, Tichégami_(river), Tichégami, Tichégami_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Titnuk",
+    "tried": "Titnuk_River, Titnuk_(river), Titnuk, Titnuk_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Travaillant",
+    "tried": "Travaillant_River, Travaillant_(river), Travaillant, Travaillant_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Troutlake",
+    "tried": "Troutlake_River, Troutlake_(river), Troutlake, Troutlake_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Turuachi",
+    "tried": "Turuachi_River, Turuachi_(river), Turuachi, Turuachi_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Vieux Comptoir",
+    "tried": "Vieux_Comptoir_River, Vieux_Comptoir_(river), Vieux_Comptoir, Vieux_Comptoir_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "W.  Fk.  Yentna",
+    "tried": "W.__Fk.__Yentna_River, W.__Fk.__Yentna_(river), W.__Fk.__Yentna, W.__Fk.__Yentna_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wakami",
+    "tried": "Wakami_River, Wakami_(river), Wakami, Wakami_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wapaseese",
+    "tried": "Wapaseese_River, Wapaseese_(river), Wapaseese, Wapaseese_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wapiskau",
+    "tried": "Wapiskau_River, Wapiskau_(river), Wapiskau, Wapiskau_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Waterfound",
+    "tried": "Waterfound_River, Waterfound_(river), Waterfound, Waterfound_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "Wenebegon",
+    "tried": "Wenebegon_River, Wenebegon_(river), Wenebegon, Wenebegon_river"
+  },
+  {
+    "file": "rivers/world-rivers.csv",
+    "name": "West Baines",
+    "tried": "West_Baines_River, West_Baines_(river), West_Baines, West_Baines_river"
   }
 ]

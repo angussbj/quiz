@@ -67,7 +67,7 @@ Takes either:
    ```
 2. Push the branch (use `git rev-parse --abbrev-ref HEAD` if you need the branch name).
 3. If the feature has visual output, take screenshots of it working in the browser. These can't be added to the PR, but we will share them with the user for review. Check that they look correct as you take them, and return to Phase 3 if needed to fix any issues.
-  3a. If it's all wired up, take screenshots using the dev server you started. Otherwise create a storybook, run it, and use it for screenshots.
+  3a. If it's all wired up, take screenshots using the dev server you started. Otherwise create a storybook, run it, and use it for screenshots. If the Playwright browser session dies (e.g. "Target page, context or browser has been closed"), restart it by running `mcp__plugin_playwright_playwright__browser_navigate` to a fresh URL — Playwright auto-launches a new browser. If that still fails, close any stale Playwright processes with `pkill -f playwright` and retry.
   3b. If it involves animations or interactions that can't be captured in a screenshot, create a screen recording.
   3c. Pure logic features (parsers, scoring, etc.) can skip screenshots. Save all screenshots and screen recordings to a `screenshots/` directory in the worktree root (create it if it doesn't exist).
 4. Create a PR with `gh pr create`. The PR description should read like a narrative — flowing from context/problem into what was done and why, so the reader always understands the motivation before the solution. Don't just list what changed; explain the reasoning at each step. Include:

@@ -62,6 +62,57 @@ describe('normalizeText', () => {
     expect(normalizeText('some_place')).toBe('someplace');
   });
 
+  describe('stopwords', () => {
+    it('strips English articles and conjunctions', () => {
+      expect(normalizeText('The Netherlands')).toBe('netherlands');
+      expect(normalizeText('Antigua and Barbuda')).toBe('antiguabarbuda');
+      expect(normalizeText('Republic of the Congo')).toBe('republiccongo');
+    });
+
+    it('strips Romance articles and prepositions', () => {
+      expect(normalizeText('Rio de Janeiro')).toBe('riojaneiro');
+      expect(normalizeText('Los Angeles')).toBe('angeles');
+      expect(normalizeText('La Paz')).toBe('paz');
+      expect(normalizeText('Leon de los Aldamas')).toBe('leonaldamas');
+    });
+
+    it('strips Arabic article al', () => {
+      expect(normalizeText('Al Hofuf')).toBe('hofuf');
+      expect(normalizeText('Al-Hudaydah')).toBe('hudaydah');
+    });
+
+    it('strips river descriptor', () => {
+      expect(normalizeText('Yellow River')).toBe('yellow');
+      expect(normalizeText('River Ouse')).toBe('ouse');
+    });
+
+    it('falls back to un-stripped form when input is only stopwords', () => {
+      expect(normalizeText('The')).toBe('the');
+      expect(normalizeText('de la')).toBe('dela');
+    });
+
+    it('does not strip stopwords embedded in larger words', () => {
+      expect(normalizeText('Andorra')).toBe('andorra');
+      expect(normalizeText('Theseus')).toBe('theseus');
+    });
+
+    it('matches input with stopwords against answer without them', () => {
+      const rows: ReadonlyArray<QuizDataRow> = [{ id: 'nl', country: 'Netherlands' }];
+      expect(matchAnswer('The Netherlands', rows, 'country')).toEqual({
+        elementId: 'nl',
+        displayAnswer: 'Netherlands',
+      });
+    });
+
+    it('matches input without stopwords against answer with them', () => {
+      const rows: ReadonlyArray<QuizDataRow> = [{ id: 'nl', country: 'The Netherlands' }];
+      expect(matchAnswer('Netherlands', rows, 'country')).toEqual({
+        elementId: 'nl',
+        displayAnswer: 'The Netherlands',
+      });
+    });
+  });
+
   describe('with whitespaceMatters', () => {
     const opts = { whitespaceMatters: true };
 

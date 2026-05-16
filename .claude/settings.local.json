@@ -110,7 +110,13 @@
       "WebFetch(domain:www.google.com)",
       "Bash(gh api:*)",
       "Skill(commit-commands:commit)",
-      "WebFetch(domain:www.naturalearthdata.com)"
+      "WebFetch(domain:www.naturalearthdata.com)",
+      "Bash(claude --print-conversations)",
+      "Bash(claude conversations:*)",
+      "Read(//Users/angusj/.claude/projects/-Users-angusj-work-quiz/**)",
+      "Read(//Users/angusj/.claude/**)",
+      "Bash(claude --resume list)",
+      "Bash(claude -p list --help)"
     ]
   }
 }

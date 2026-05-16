@@ -34,6 +34,40 @@ const transliterationPattern = new RegExp(
   'g',
 );
 
+/**
+ * Small grammatical words stripped during matching so users don't have to type
+ * them. Covers English ("the netherlands" \u2192 "netherlands"), Romance articles
+ * ("rio de janeiro" \u2192 "rio janeiro"), Germanic articles, the Arabic article
+ * "al", and the descriptor "river" ("yellow river" \u2192 "yellow").
+ *
+ * If stripping leaves the string empty (input was nothing but stopwords) we
+ * fall back to the un-stripped form so single-word answers like "The" still
+ * match themselves.
+ */
+const stopwords: ReadonlySet<string> = new Set([
+  'the',
+  'and',
+  'of',
+  'de',
+  'la',
+  'le',
+  'les',
+  'el',
+  'los',
+  'las',
+  'del',
+  'du',
+  'da',
+  'do',
+  'di',
+  'der',
+  'die',
+  'das',
+  'den',
+  'al',
+  'river',
+]);
+
 export function normalizeText(text: string, options?: NormalizeOptions): string {
   let result = text
     .toLowerCase()
@@ -42,7 +76,15 @@ export function normalizeText(text: string, options?: NormalizeOptions): string 
     .replace(transliterationPattern, (ch) => transliterations[ch] ?? ch);
 
   if (!options?.punctuationMatters) {
-    result = result.replace(/[^a-zA-Z0-9\s]/g, '');
+    result = result.replace(/[^a-zA-Z0-9\s]/g, ' ');
+  }
+
+  const withoutStopwords = result
+    .split(/\s+/)
+    .filter((word) => word !== '' && !stopwords.has(word))
+    .join(' ');
+  if (withoutStopwords !== '') {
+    result = withoutStopwords;
   }
 
   if (options?.whitespaceMatters) {
