@@ -18,6 +18,8 @@ import {
   reprojectBackgroundLabels,
   reprojectCameraRect,
 } from '@/visualizations/map/projections/reprojectMapData';
+import { computeOceanBoundary } from '@/visualizations/map/projections/computeOceanBoundary';
+import { computeGraticule } from '@/visualizations/map/projections/computeGraticule';
 import { computeAggregatedSortValues } from './computeAggregatedSortValues';
 import { computeSortRanks } from './computeSortRanks';
 import { normalizeText, type NormalizeOptions } from './free-recall/matchAnswer';
@@ -143,6 +145,15 @@ export function ActiveQuiz({
   const backgroundLabels = useMemo(
     () => reprojectBackgroundLabels(inputBackgroundLabels, projection),
     [inputBackgroundLabels, projection],
+  );
+  const worldBoundaryPath = useMemo(
+    () => visualizationType === 'map' ? computeOceanBoundary(projection) : undefined,
+    [visualizationType, projection],
+  );
+  const showGraticule = visualizationType === 'map' && config.toggleValues['showGraticule'] === true;
+  const graticulePath = useMemo(
+    () => showGraticule ? computeGraticule(projection) : undefined,
+    [showGraticule, projection],
   );
 
   // Build value→label and value→missingLabel lookups from all selectToggle definitions
@@ -714,6 +725,8 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
           backgroundLabels={filteredBackgroundLabels}
+          worldBoundaryPath={worldBoundaryPath}
+          graticulePath={graticulePath}
           onFinish={handleFinish}
           forceGiveUp={forceGiveUp}
           reviewing={isFinished}

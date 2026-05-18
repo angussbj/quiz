@@ -27,6 +27,8 @@ export function FreeRecallMode({
   backgroundPaths,
   lakePaths,
   backgroundLabels,
+  worldBoundaryPath,
+  graticulePath,
   clustering,
   initialCameraPosition,
   onFinish,
@@ -132,6 +134,8 @@ export function FreeRecallMode({
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
           backgroundLabels={backgroundLabels}
+          worldBoundaryPath={worldBoundaryPath}
+          graticulePath={graticulePath}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
           putInView={putInView}

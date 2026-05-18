@@ -54,20 +54,39 @@ whatever positions and bounds the elements carry.
 
 | Id                | Label             | Use                                           |
 | ----------------- | ----------------- | --------------------------------------------- |
-| `equirectangular` | Equirectangular   | Default. Lat/lng map directly to (x, y).      |
-| `web-mercator`    | Web Mercator      | Familiar tile-style stretch; clipped to ±85°. |
-| `equal-earth`     | Equal Earth       | Šavrič 2018 equal-area pseudocylindrical.     |
+| `web-mercator`    | Mercator          | Default. Familiar tile-style stretch; clipped to ±85°. |
+| `equal-earth`     | Area preserving   | Šavrič 2018 equal-area pseudocylindrical.     |
+| `equirectangular` | Equirectangular   | Raw lat/lng → (x, y). Used as the on-disk storage format. |
+
+The `id` values are persisted in URL/state. User-facing labels are simplified
+(no "Web", no "Earth") to keep the dropdown short and approachable; the about
+page (`/about/map-projections`) explains the technical names.
 
 All three projections produce viewBox output where 1° of longitude at the
 equator equals 1 viewBox unit. This means the projection switch never causes
 a wholesale change of unit scale — dot sizes, label sizes, and stroke widths
 read consistently across projections.
 
+## World boundary and graticule
+
+The ocean fill and the optional lat/lng grid both adapt to the active
+projection. `computeOceanBoundary(projection)` traces a closed SVG path along
+`latitudeRange.min`/`max` across the full longitude range — for Equal Earth
+this curves; for Mercator/equirectangular it collapses to a rectangle.
+`computeGraticule(projection)` draws meridians and parallels every 15° using
+the same projection so users can see how the projection bends the underlying
+coordinate system.
+
+The world boundary path replaces the previous "very wide rect" used to tint
+the ocean — the rect was fine for equirectangular but extended off-projection
+for Equal Earth. The boundary path always traces the actual map edge.
+
 ## Adding a projection
 
 1. Add a new file in `src/visualizations/map/projections/` (e.g.
-   `mollweide.ts`) exporting a `MapProjection` with a unique id and a `project`
-   function. Match the equirectangular x scale at the equator (1° = 1 unit).
+   `mollweide.ts`) exporting a `MapProjection` with a unique id, a `project`
+   function, and a `latitudeRange`. Match the equirectangular x scale at the
+   equator (1° = 1 unit).
 2. Register it in `getMapProjection.ts` and `ALL_MAP_PROJECTIONS`.
 3. Add an option entry in `mapProjectionSelectToggle` in `quizRegistry.ts`.
 4. Add a unit test under `tests/`.

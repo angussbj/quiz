@@ -27,4 +27,10 @@ export interface MapProjection {
   readonly label: string;
   /** Project a geographic point to a viewBox position. */
   readonly project: (coordinates: GeoCoordinates) => ViewBoxPosition;
+  /**
+   * Range of latitudes the projection can faithfully represent. Equirectangular
+   * and Equal Earth use the full ±90° range. Web Mercator clips at ±85° because
+   * the Mercator y formula diverges to infinity at the poles.
+   */
+  readonly latitudeRange: { readonly min: number; readonly max: number };
 }

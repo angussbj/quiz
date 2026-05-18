@@ -4,9 +4,9 @@ import { webMercatorProjection } from './webMercator';
 import { equalEarthProjection } from './equalEarth';
 
 const ALL_PROJECTIONS: ReadonlyArray<MapProjection> = [
-  equirectangularProjection,
   webMercatorProjection,
   equalEarthProjection,
+  equirectangularProjection,
 ];
 
 const PROJECTION_BY_ID: Readonly<Record<MapProjectionId, MapProjection>> = {

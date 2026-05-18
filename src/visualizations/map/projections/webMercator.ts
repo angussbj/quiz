@@ -15,7 +15,7 @@ const MAX_MERCATOR_LATITUDE = 85;
  */
 export const webMercatorProjection: MapProjection = {
   id: 'web-mercator',
-  label: 'Web Mercator',
+  label: 'Mercator',
   project: (coordinates) => {
     const lat = Math.max(-MAX_MERCATOR_LATITUDE, Math.min(MAX_MERCATOR_LATITUDE, coordinates.latitude));
     const phi = lat * DEG_TO_RAD;
@@ -25,4 +25,5 @@ export const webMercatorProjection: MapProjection = {
       y: -yRad * RAD_TO_DEG,
     };
   },
+  latitudeRange: { min: -MAX_MERCATOR_LATITUDE, max: MAX_MERCATOR_LATITUDE },
 };

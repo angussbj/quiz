@@ -33,6 +33,8 @@ export function OrderedRecallMode({
   Renderer,
   backgroundPaths,
   lakePaths,
+  worldBoundaryPath,
+  graticulePath,
   clustering,
   onFinish,
   forceGiveUp = false,
@@ -220,6 +222,8 @@ export function OrderedRecallMode({
           elementToggles={reviewElementToggles}
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
+          worldBoundaryPath={worldBoundaryPath}
+          graticulePath={graticulePath}
           clustering={clustering}
           putInView={putInView}
           autoRevealElementIds={revealingElementIds}

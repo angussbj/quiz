@@ -27,7 +27,7 @@ const OUTPUT_SCALE = (M * A1 * 180) / Math.PI;
  */
 export const equalEarthProjection: MapProjection = {
   id: 'equal-earth',
-  label: 'Equal Earth',
+  label: 'Area preserving',
   project: (coordinates) => {
     const lambda = wrapLng(coordinates.longitude) * DEG_TO_RAD;
     const phi = coordinates.latitude * DEG_TO_RAD;
@@ -42,4 +42,5 @@ export const equalEarthProjection: MapProjection = {
       y: -y * OUTPUT_SCALE,
     };
   },
+  latitudeRange: { min: -90, max: 90 },
 };

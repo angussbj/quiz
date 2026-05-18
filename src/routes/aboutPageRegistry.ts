@@ -28,6 +28,12 @@ export const aboutPageRegistry: ReadonlyArray<AboutPageEntry> = [
     description: 'Sources and methodology for 55 country statistics metrics used in the World Countries quiz.',
     component: () => import('./CountryStatisticsMethodology.tsx'),
   },
+  {
+    path: '/about/map-projections',
+    title: 'About Map Projections',
+    description: 'Why Mercator inflates Greenland, what an area-preserving projection does, and which one to pick.',
+    component: () => import('./MapProjectionsAbout.tsx'),
+  },
 ];
 
 /**

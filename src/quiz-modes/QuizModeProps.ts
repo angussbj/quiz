@@ -37,6 +37,10 @@ export interface QuizModeProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   readonly lakePaths?: ReadonlyArray<LakePath>;
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
+  /** Closed SVG path tracing the world boundary in viewBox space. Map quizzes only. */
+  readonly worldBoundaryPath?: string;
+  /** SVG path with all graticule (lat/lng grid) lines in viewBox space. Map quizzes only. */
+  readonly graticulePath?: string;
   readonly clustering?: ClusteringConfig;
   readonly initialCameraPosition?: VisualizationRendererProps['initialCameraPosition'];
   readonly onFinish: (score: ScoreResult) => void;

@@ -13,4 +13,5 @@ export const equirectangularProjection: MapProjection = {
     x: wrapLng(coordinates.longitude),
     y: -coordinates.latitude,
   }),
+  latitudeRange: { min: -90, max: 90 },
 };
