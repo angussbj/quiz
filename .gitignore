@@ -14,6 +14,7 @@ coverage
 
 .worktrees
 screenshots/
+.playwright-mcp/
 
 # Python venv for diagnostic scripts
 scripts/.venv/
