@@ -46,6 +46,8 @@ export interface SelectToggleDefinition {
     readonly value: string;
     readonly label: string;
     readonly infoUrl?: string;
+    /** Tooltip text for the info button next to a dropdown. */
+    readonly infoTitle?: string;
     readonly category?: string;
     /** Label to show when this column's data value is missing (e.g., "Stable", "Landlocked"). */
     readonly missingLabel?: string;

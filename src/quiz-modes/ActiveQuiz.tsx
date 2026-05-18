@@ -10,6 +10,16 @@ import type { ToggleDefinition, SelectToggleDefinition } from './ToggleDefinitio
 import type { SortColumnDefinition } from '@/quiz-definitions/QuizDefinition';
 import type { QuizConfig } from './QuizShell';
 import { computeGroupCameraPosition } from './computeGroupCameraPosition';
+import { getMapProjection } from '@/visualizations/map/projections/getMapProjection';
+import {
+  reprojectElements,
+  reprojectBackgroundPaths,
+  reprojectLakePaths,
+  reprojectBackgroundLabels,
+  reprojectCameraRect,
+} from '@/visualizations/map/projections/reprojectMapData';
+import { computeOceanBoundary } from '@/visualizations/map/projections/computeOceanBoundary';
+import { computeGraticule } from '@/visualizations/map/projections/computeGraticule';
 import { computeAggregatedSortValues } from './computeAggregatedSortValues';
 import { computeSortRanks } from './computeSortRanks';
 import { normalizeText, type NormalizeOptions } from './free-recall/matchAnswer';
@@ -87,15 +97,15 @@ export interface ActiveQuizProps {
 export function ActiveQuiz({
   config,
   visualizationType,
-  elements,
+  elements: inputElements,
   dataRows,
   columnMappings,
   toggleDefinitions,
   selectToggleDefinitions,
   Renderer,
-  backgroundPaths,
-  lakePaths,
-  backgroundLabels,
+  backgroundPaths: inputBackgroundPaths,
+  lakePaths: inputLakePaths,
+  backgroundLabels: inputBackgroundLabels,
   rangeColumn,
   sortColumns,
   groupFilterColumn,
@@ -113,6 +123,39 @@ export function ActiveQuiz({
   elementStateColorOverrides,
   normalizeOptions,
 }: ActiveQuizProps) {
+  // Apply the selected map projection (no-op for non-map quizzes and for the
+  // default equirectangular projection). Stored data is always equirectangular;
+  // re-projection happens here so the rest of the pipeline (filtering, merging,
+  // rendering) works with projected viewBox coordinates.
+  const projection = getMapProjection(
+    visualizationType === 'map' ? config.selectValues['mapProjection'] : undefined,
+  );
+  const elements = useMemo(
+    () => reprojectElements(inputElements, projection),
+    [inputElements, projection],
+  );
+  const backgroundPaths = useMemo(
+    () => reprojectBackgroundPaths(inputBackgroundPaths, projection),
+    [inputBackgroundPaths, projection],
+  );
+  const lakePaths = useMemo(
+    () => reprojectLakePaths(inputLakePaths, projection),
+    [inputLakePaths, projection],
+  );
+  const backgroundLabels = useMemo(
+    () => reprojectBackgroundLabels(inputBackgroundLabels, projection),
+    [inputBackgroundLabels, projection],
+  );
+  const worldBoundaryPath = useMemo(
+    () => visualizationType === 'map' ? computeOceanBoundary(projection) : undefined,
+    [visualizationType, projection],
+  );
+  const showGraticule = visualizationType === 'map' && config.toggleValues['showGraticule'] === true;
+  const graticulePath = useMemo(
+    () => showGraticule ? computeGraticule(projection) : undefined,
+    [showGraticule, projection],
+  );
+
   // Build value→label and value→missingLabel lookups from all selectToggle definitions
   const { selectValueLabels, selectValueMissingLabels } = useMemo(() => {
     if (!selectToggleDefinitions?.length) return { selectValueLabels: undefined, selectValueMissingLabels: undefined };
@@ -605,8 +648,8 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
       groupFilterCameraPositions,
       config.selectedGroups,
     );
-    return groupCamera ?? initialCameraPosition;
-  }, [groupFilterCameraPositions, config.selectedGroups, initialCameraPosition]);
+    return reprojectCameraRect(groupCamera ?? initialCameraPosition, projection);
+  }, [groupFilterCameraPositions, config.selectedGroups, initialCameraPosition, projection]);
 
   const filteredBackgroundLabels = useMemo(() => {
     if (!backgroundLabels || !groupFilterColumn || !config.selectedGroups) return backgroundLabels;
@@ -682,6 +725,8 @@ function buildMergeSubtitle(kinds: ReadonlySet<'tributary' | 'distributary' | 's
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
           backgroundLabels={filteredBackgroundLabels}
+          worldBoundaryPath={worldBoundaryPath}
+          graticulePath={graticulePath}
           onFinish={handleFinish}
           forceGiveUp={forceGiveUp}
           reviewing={isFinished}

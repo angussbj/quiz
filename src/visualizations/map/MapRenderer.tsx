@@ -91,6 +91,8 @@ export function MapRenderer({
   selectValueMissingLabels,
   elementStateColorOverrides,
   autoRevealElementIds,
+  worldBoundaryPath,
+  graticulePath,
 }: VisualizationRendererProps) {
   const uniqueGroups = useMemo(
     () => Array.from(new Set(elements.map((e) => e.group).filter((g): g is string => g !== undefined))),
@@ -143,6 +145,8 @@ export function MapRenderer({
         selectValues={selectValues}
         selectValueLabels={selectValueLabels}
         selectValueMissingLabels={selectValueMissingLabels}
+        worldBoundaryPath={worldBoundaryPath}
+        graticulePath={graticulePath}
       />
       {svgOverlay}
       <RevealPulseOverlay elements={elements} elementStates={elementStates} autoRevealElementIds={autoRevealElementIds} />
@@ -197,6 +201,8 @@ interface MapContentProps {
   readonly selectValues?: Readonly<Record<string, string>>;
   readonly selectValueLabels?: Readonly<Record<string, string>>;
   readonly selectValueMissingLabels?: Readonly<Record<string, string>>;
+  readonly worldBoundaryPath?: string;
+  readonly graticulePath?: string;
 }
 
 const MapContent = memo(function MapContent({
@@ -218,6 +224,8 @@ const MapContent = memo(function MapContent({
   selectValues,
   selectValueLabels,
   selectValueMissingLabels,
+  worldBoundaryPath,
+  graticulePath,
 }: MapContentProps) {
   const { clusteredElementIds, scale, basePixelsPerViewBoxUnit } = useZoomPan();
   const { resolved: theme } = useTheme();
@@ -463,11 +471,22 @@ const MapContent = memo(function MapContent({
         />
       )}
 
-      {/* Ocean background tint (clamped to ±90° latitude) */}
+      {/* Ocean background tint. Uses a projection-specific boundary path when
+          provided so pseudocylindrical projections (e.g. Equal Earth) get
+          correctly curved edges. Falls back to a wide rect for renderers
+          that don't supply a boundary. */}
       {toggles['showLakes'] !== false && (
-        <rect
-          x={-1e4} y={-90} width={2e4} height={180}
-          className={styles.oceanBackground}
+        worldBoundaryPath
+          ? <path d={worldBoundaryPath} className={styles.oceanBackground} />
+          : <rect x={-1e4} y={-90} width={2e4} height={180} className={styles.oceanBackground} />
+      )}
+
+      {/* Graticule (lat/lng grid) — drawn on top of the ocean but behind
+          country borders so it doesn't visually compete with land. */}
+      {graticulePath && (
+        <path
+          d={graticulePath}
+          className={styles.graticule}
         />
       )}
 

@@ -27,6 +27,8 @@ export function IdentifyMode({
   backgroundPaths,
   lakePaths,
   backgroundLabels,
+  worldBoundaryPath,
+  graticulePath,
   clustering,
   initialCameraPosition,
   onFinish,
@@ -203,6 +205,8 @@ export function IdentifyMode({
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
           backgroundLabels={backgroundLabels}
+          worldBoundaryPath={worldBoundaryPath}
+          graticulePath={graticulePath}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
           putInView={putInView}

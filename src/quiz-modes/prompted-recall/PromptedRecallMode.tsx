@@ -27,6 +27,8 @@ export function PromptedRecallMode({
   backgroundPaths,
   backgroundLabels,
   lakePaths,
+  worldBoundaryPath,
+  graticulePath,
   clustering,
   initialCameraPosition,
   onFinish,
@@ -199,6 +201,8 @@ export function PromptedRecallMode({
           backgroundPaths={backgroundPaths}
           backgroundLabels={backgroundLabels}
           lakePaths={lakePaths}
+          worldBoundaryPath={worldBoundaryPath}
+          graticulePath={graticulePath}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
           putInView={putInView}

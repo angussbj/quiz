@@ -59,6 +59,27 @@ function buildColorToggle(
  */
 
 /**
+ * Map projection dropdown shared across all map quizzes (capitals, countries,
+ * rivers). Web Mercator is the default since it matches the projection used by
+ * almost every web map tile service; users can switch to the area-preserving
+ * Equal Earth projection or the underlying equirectangular form. Each option
+ * carries the `/about/map-projections` infoUrl so the dropdown always shows
+ * an info button. See `src/visualizations/map/projections/`.
+ */
+const mapProjectionSelectToggle: SelectToggleDefinition = {
+  key: 'mapProjection',
+  label: 'Map projection',
+  group: 'display',
+  defaultValue: 'web-mercator',
+  renderAs: 'dropdown',
+  options: [
+    {value: 'web-mercator', label: 'Mercator', infoUrl: '/about/map-projections', infoTitle: 'About map projections'},
+    {value: 'equal-earth', label: 'Area preserving', infoUrl: '/about/map-projections', infoTitle: 'About map projections'},
+    {value: 'equirectangular', label: 'Equirectangular', infoUrl: '/about/map-projections', infoTitle: 'About map projections'},
+  ],
+};
+
+/**
  * Shared configuration for all capitals quizzes.
  * Individual definitions spread this and add id, title, description, and dataFilter.
  */
@@ -114,6 +135,13 @@ const capitalsQuizBase = {
     } as const,
     {key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never'} as const,
     {
+      key: 'showGraticule',
+      label: 'Lat/lng grid',
+      defaultValue: false,
+      group: 'display',
+      hiddenBehavior: 'never'
+    } as const,
+    {
       key: 'showPromptCountryNames',
       label: 'Country names in prompt',
       defaultValue: true,
@@ -141,6 +169,7 @@ const capitalsQuizBase = {
         {value: 'on', label: 'On'},
       ]
     },
+    mapProjectionSelectToggle,
   ],
   presets: [],
   columnMappings: {
@@ -194,8 +223,8 @@ const capitalsQuizBase = {
     ],
   },
   advancedPanel: {
-    toggleKeys: ['showMapFlags'],
-    selectToggleKeys: [],
+    toggleKeys: ['showMapFlags', 'showGraticule'],
+    selectToggleKeys: ['mapProjection'],
     forcedToggles: {showBorders: true, showLakes: true, showRegionColors: false, showCityDots: true},
   },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description'>;
@@ -643,10 +672,18 @@ const countriesQuizBase = {
       hiddenBehavior: {hintAfter: 2}
     } as const,
     {key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never'} as const,
+    {
+      key: 'showGraticule',
+      label: 'Lat/lng grid',
+      defaultValue: false,
+      group: 'display',
+      hiddenBehavior: 'never'
+    } as const,
   ],
   selectToggles: [
     buildDataDisplayToggle('countryData', 'Country data', countrySortColumns),
     buildColorToggle('countryColors', 'Country colors', countrySortColumns, [{value: 'region', label: 'Region'}]),
+    mapProjectionSelectToggle,
   ],
   presets: [],
   columnMappings: {
@@ -685,8 +722,8 @@ const countriesQuizBase = {
     ],
   },
   advancedPanel: {
-    toggleKeys: ['showMapFlags'],
-    selectToggleKeys: [],
+    toggleKeys: ['showMapFlags', 'showGraticule'],
+    selectToggleKeys: ['mapProjection'],
     forcedToggles: {showBorders: true, showLakes: true},
     linkedSelectToggleKeys: ['countryData', 'countryColors'],
     linkedDropdownMaxOptions: 10,
@@ -814,6 +851,13 @@ const riversQuizBase = {
     } as const,
     {key: 'showLakes', label: 'Lakes', defaultValue: true, group: 'display', hiddenBehavior: 'never'} as const,
     {
+      key: 'showGraticule',
+      label: 'Lat/lng grid',
+      defaultValue: false,
+      group: 'display',
+      hiddenBehavior: 'never'
+    } as const,
+    {
       key: 'includeSmallerRivers',
       label: 'Include smaller rivers',
       defaultValue: false,
@@ -842,7 +886,10 @@ const riversQuizBase = {
       hiddenBehavior: 'never'
     } as const,
   ],
-  selectToggles: [buildDataDisplayToggle('riverData', 'River data', riverSortColumns)],
+  selectToggles: [
+    buildDataDisplayToggle('riverData', 'River data', riverSortColumns),
+    mapProjectionSelectToggle,
+  ],
   presets: [],
   columnMappings: {
     answer: 'name',
@@ -909,8 +956,8 @@ const riversQuizBase = {
     ],
   },
   advancedPanel: {
-    toggleKeys: ['includeSmallerRivers', 'mergeTributaries'],
-    selectToggleKeys: [],
+    toggleKeys: ['includeSmallerRivers', 'mergeTributaries', 'showGraticule'],
+    selectToggleKeys: ['mapProjection'],
     forcedToggles: {showBorders: true, showLakes: true, mergeDistributaries: true, mergeSegmentNames: true},
     linkedSelectToggleKeys: ['riverData'],
   },

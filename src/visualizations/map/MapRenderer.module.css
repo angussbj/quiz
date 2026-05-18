@@ -4,6 +4,14 @@
   pointer-events: none;
 }
 
+.graticule {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 0.05;
+  stroke-opacity: 0.35;
+  pointer-events: none;
+}
+
 .borderPath {
   fill: var(--color-bg-primary);
   stroke: var(--color-border);

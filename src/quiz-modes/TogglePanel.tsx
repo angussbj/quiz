@@ -227,6 +227,8 @@ export interface DropdownOption {
   readonly value: string;
   readonly label: string;
   readonly infoUrl?: string;
+  /** Tooltip text for the info button. Defaults to "How is this calculated?". */
+  readonly infoTitle?: string;
   readonly category?: string;
 }
 
@@ -267,7 +269,7 @@ function DropdownSelect({
         ))}
       </select>
       {infoUrl && (
-        <a href={assetPath(infoUrl)} target="_blank" rel="noopener noreferrer" className={styles.dropdownInfoLink} title="How is this calculated?">
+        <a href={assetPath(infoUrl)} target="_blank" rel="noopener noreferrer" className={styles.dropdownInfoLink} title={selectedOption?.infoTitle ?? 'How is this calculated?'}>
           ?
         </a>
       )}

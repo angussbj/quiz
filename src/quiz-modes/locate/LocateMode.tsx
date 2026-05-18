@@ -25,6 +25,8 @@ export function LocateMode({
   backgroundPaths,
   lakePaths,
   backgroundLabels,
+  worldBoundaryPath,
+  graticulePath,
   clustering,
   onFinish,
   forceGiveUp = false,
@@ -186,6 +188,8 @@ export function LocateMode({
           backgroundPaths={backgroundPaths}
           lakePaths={lakePaths}
           backgroundLabels={backgroundLabels}
+          worldBoundaryPath={worldBoundaryPath}
+          graticulePath={graticulePath}
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
           putInView={putInView}

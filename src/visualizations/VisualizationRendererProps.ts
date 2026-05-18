@@ -88,6 +88,19 @@ export interface VisualizationRendererProps {
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
   /** Lake polygons rendered as background decoration */
   readonly lakePaths?: ReadonlyArray<LakePath>;
+  /**
+   * Closed SVG path describing the world boundary in viewBox coordinates.
+   * Used by map renderers to draw the ocean fill with the correct shape for
+   * the active projection (rectangular for equirectangular/Mercator,
+   * pseudocylindrical curve for Equal Earth). Currently set only by map
+   * quizzes — other visualizations can leave this undefined.
+   */
+  readonly worldBoundaryPath?: string;
+  /**
+   * Graticule (lat/lng grid) lines as a single SVG path string in viewBox
+   * coordinates. Map renderers stroke this when present. Undefined → no grid.
+   */
+  readonly graticulePath?: string;
   /** Labels positioned at background shape centroids (e.g., country names) */
   readonly backgroundLabels?: ReadonlyArray<BackgroundLabel>;
   /** Additional SVG content rendered behind all elements (e.g., path lines that cells cover) */
