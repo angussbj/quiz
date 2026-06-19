@@ -14,6 +14,7 @@ import { DifficultySelector } from './DifficultySelector';
 import { GroupFilterDropdown } from './GroupFilterDropdown';
 import { PanelLevelSwitcher } from './PanelLevelSwitcher';
 import { LinkedDataDropdown } from './LinkedDataDropdown';
+import { assetPath } from '@/utilities/assetPath';
 import styles from './QuizSetupPanel.module.css';
 
 const ORDERING_GROUP = 'ordering';
@@ -21,6 +22,8 @@ const ORDERING_GROUP = 'ordering';
 export interface QuizSetupPanelProps {
   readonly title: string;
   readonly description?: string;
+  /** Optional link to a methodology/about page, shown under the description. */
+  readonly infoUrl?: string;
   readonly availableModes: ReadonlyArray<QuizModeType>;
   readonly selectedMode: QuizModeType;
   readonly onModeChange: (mode: QuizModeType) => void;
@@ -74,6 +77,7 @@ export interface QuizSetupPanelProps {
 export function QuizSetupPanel({
   title,
   description,
+  infoUrl,
   availableModes,
   selectedMode,
   onModeChange,
@@ -261,6 +265,11 @@ export function QuizSetupPanel({
       <div className={styles.content}>
         <h1 className={styles.title}>{title}</h1>
         {description && <p className={styles.description}>{description}</p>}
+        {infoUrl && (
+          <p className={styles.infoLink}>
+            <a href={assetPath(infoUrl)}>About this quiz: sources, methodology &amp; feedback</a>
+          </p>
+        )}
 
         {/* ALWAYS: Difficulty presets */}
         {difficultyPresets && onDifficultySlotChange && (

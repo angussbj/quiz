@@ -40,6 +40,8 @@ export interface QuizDefinition<K extends string = string> {
    * Routing resolves by id (see getQuizById), independent of navigation.
    */
   readonly listed?: boolean;
+  /** Optional link to an /about methodology page, shown under the description on the setup screen. */
+  readonly infoUrl?: string;
   readonly visualizationType: VisualizationType;
   readonly availableModes: ReadonlyArray<QuizModeType>;
   readonly defaultMode: QuizModeType;

@@ -991,6 +991,7 @@ const aboriginalLanguagesQuiz = {
   initialCameraPosition: {x: 110, y: 8, width: 48, height: 40},
   // Hidden from nav/home for a soft, URL-only release pending community review.
   listed: false,
+  infoUrl: '/about/aboriginal-languages',
   // All 835 languages are included; the range narrows the map to the most
   // widely documented (a sorting aid, not a judgement of importance — see the
   // methodology page). prominence_rank 1 = most Wikipedia-documented.
