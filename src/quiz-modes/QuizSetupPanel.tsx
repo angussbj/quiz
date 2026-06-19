@@ -24,6 +24,8 @@ export interface QuizSetupPanelProps {
   readonly description?: string;
   /** Optional link to a methodology/about page, shown under the description. */
   readonly infoUrl?: string;
+  /** Optional data-source attribution, shown under the description (label is linked). */
+  readonly attribution?: { readonly label: string; readonly url: string };
   readonly availableModes: ReadonlyArray<QuizModeType>;
   readonly selectedMode: QuizModeType;
   readonly onModeChange: (mode: QuizModeType) => void;
@@ -78,6 +80,7 @@ export function QuizSetupPanel({
   title,
   description,
   infoUrl,
+  attribution,
   availableModes,
   selectedMode,
   onModeChange,
@@ -265,6 +268,12 @@ export function QuizSetupPanel({
       <div className={styles.content}>
         <h1 className={styles.title}>{title}</h1>
         {description && <p className={styles.description}>{description}</p>}
+        {attribution && (
+          <p className={styles.infoLink}>
+            Data:{' '}
+            <a href={attribution.url} target="_blank" rel="noopener noreferrer">{attribution.label}</a>
+          </p>
+        )}
         {infoUrl && (
           <p className={styles.infoLink}>
             <a href={assetPath(infoUrl)}>About this quiz: sources, methodology &amp; feedback</a>

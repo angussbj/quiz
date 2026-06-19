@@ -42,6 +42,11 @@ export interface QuizDefinition<K extends string = string> {
   readonly listed?: boolean;
   /** Optional link to an /about methodology page, shown under the description on the setup screen. */
   readonly infoUrl?: string;
+  /** Optional data-source attribution shown under the description on the setup screen (label is linked). */
+  readonly attribution?: {
+    readonly label: string;
+    readonly url: string;
+  };
   readonly visualizationType: VisualizationType;
   readonly availableModes: ReadonlyArray<QuizModeType>;
   readonly defaultMode: QuizModeType;

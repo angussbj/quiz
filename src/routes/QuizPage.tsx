@@ -168,6 +168,7 @@ function QuizPageLoaded({ definition, rows, backgroundPaths, lakePaths }: QuizPa
         title={definition.title}
         description={definition.description}
         infoUrl={definition.infoUrl}
+        attribution={definition.attribution}
         difficultyPresets={definition.difficultyPresets}
         advancedPanel={definition.advancedPanel}
         availableModes={definition.availableModes}
