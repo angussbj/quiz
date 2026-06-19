@@ -34,6 +34,12 @@ export interface QuizDefinition<K extends string = string> {
   readonly description: string;
   /** Breadcrumb segments (e.g., ["Geography", "Capitals", "Europe"]) */
   readonly path: ReadonlyArray<string>;
+  /**
+   * When false, the quiz is hidden from the navigation tree and home page but
+   * remains reachable by its direct URL. Use for soft/unlisted releases.
+   * Routing resolves by id (see getQuizById), independent of navigation.
+   */
+  readonly listed?: boolean;
   readonly visualizationType: VisualizationType;
   readonly availableModes: ReadonlyArray<QuizModeType>;
   readonly defaultMode: QuizModeType;
