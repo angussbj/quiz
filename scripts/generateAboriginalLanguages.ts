@@ -127,17 +127,23 @@ function buildRows(
 ): ReadonlyArray<OutputRow> {
   return austlang.map((row) => {
     const entry = wikidata[row.language_code];
-    const primary = normalise(row.language_name);
+    // Drop AUSTLANG "(retired)" suffixes from the display name (e.g. "Flinders Island (retired)").
+    const name = row.language_name.replace(/\s*\(retired\)\s*$/i, '').trim();
+    const primary = normalise(name);
     const alternates = new Set<string>();
     for (const synonym of (row.language_synonym ?? '').split('|')) {
       const trimmed = synonym.trim();
       if (trimmed && normalise(trimmed) !== primary) alternates.add(trimmed);
     }
     if (entry?.label && normalise(entry.label) !== primary) alternates.add(entry.label);
+    // Names like "Dharug / Darug" pack several spellings into one — accept each as an answer.
+    for (const part of name.split('/').map((s) => s.trim()).filter(Boolean)) {
+      if (normalise(part) && normalise(part) !== primary) alternates.add(part);
+    }
     const prefix = row.language_code.match(/^[A-Z]+/)?.[0] ?? '';
     return {
-      id: slugify(`${row.language_code}-${row.language_name}`),
-      name: row.language_name,
+      id: slugify(`${row.language_code}-${name}`),
+      name,
       region: REGION_BY_PREFIX[prefix] ?? prefix,
       lat: row.lat,
       lng: row.lng,
