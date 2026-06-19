@@ -6,6 +6,8 @@ export interface AboutPageEntry {
   readonly title: string;
   readonly description: string;
   readonly component: () => Promise<{ default: ComponentType }>;
+  /** When false, hidden from the /about index but still reachable by URL (mirrors an unlisted quiz). */
+  readonly listed?: boolean;
 }
 
 /**
@@ -27,6 +29,13 @@ export const aboutPageRegistry: ReadonlyArray<AboutPageEntry> = [
     title: 'Country Statistics: Sources',
     description: 'Sources and methodology for 55 country statistics metrics used in the World Countries quiz.',
     component: () => import('./CountryStatisticsMethodology.tsx'),
+  },
+  {
+    path: '/about/aboriginal-languages',
+    title: 'Aboriginal & Torres Strait Islander Languages: About',
+    description: 'Sources, spellings, sorting method, and feedback for the Aboriginal & Torres Strait Islander languages quiz.',
+    component: () => import('./AboriginalLanguagesMethodology.tsx'),
+    listed: false,
   },
 ];
 

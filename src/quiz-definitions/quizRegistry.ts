@@ -963,8 +963,58 @@ const subdivisionsQuizBase = {
   },
 } satisfies Omit<QuizDefinition, 'id' | 'title' | 'description' | 'dataPath'>;
 
+const aboriginalLanguagesQuiz = {
+  id: 'geo-aboriginal-languages',
+  title: 'Aboriginal & Torres Strait Islander Languages',
+  description:
+    'Locate Aboriginal and Torres Strait Islander languages across Australia. Locations are approximate and boundaries are contested — always defer to local knowledge and Traditional Owners.',
+  attribution: {label: 'AUSTLANG (AIATSIS), CC BY 4.0', url: 'https://data.gov.au/data/dataset/austlang-dataset-001'},
+  path: ['Geography'],
+  visualizationType: 'map' as const,
+  availableModes: ['free-recall-unordered', 'identify', 'prompted-recall'] as const,
+  defaultMode: 'identify' as const,
+  toggles: [
+    {key: 'showBorders', label: 'Country borders', defaultValue: true, group: 'display', hiddenBehavior: 'never'} as const,
+    {key: 'showCityDots', label: 'Language markers', defaultValue: true, group: 'display', hiddenBehavior: 'never'} as const,
+    {
+      key: 'showCityNames',
+      label: 'Language names',
+      defaultValue: false,
+      group: 'display',
+      hiddenBehavior: 'on-reveal',
+      revealsAnswer: true,
+    } as const,
+  ],
+  presets: [],
+  columnMappings: {answer: 'name', label: 'name', latitude: 'latitude', longitude: 'longitude'},
+  dataPath: '/data/languages/aboriginal-languages.csv',
+  supportingDataPaths: ['/data/borders/world-borders.csv', '/data/lakes/large-lakes.csv'],
+  initialCameraPosition: {x: 110, y: 8, width: 48, height: 40},
+  // Hidden from nav/home for a soft, URL-only release pending community review.
+  listed: false,
+  infoUrl: '/about/aboriginal-languages',
+  // All 835 languages are included; the range narrows the map to the most
+  // widely documented (a sorting aid, not a judgement of importance — see the
+  // methodology page). prominence_rank 1 = most Wikipedia-documented.
+  rangeColumn: 'prominence_rank',
+  rangeLabel: 'Languages shown',
+  hideFilteredElements: true,
+  difficultyPresets: {
+    slots: [
+      {label: 'Easy', mode: 'identify', description: 'Click each language when prompted', rangeMaxOverride: 20},
+      {label: 'Medium', mode: 'free-recall-unordered', description: 'Name them in any order', rangeMaxOverride: 50},
+      {label: 'Hard', mode: 'prompted-recall', description: 'See a marker, name the language', rangeMaxOverride: 100},
+    ],
+  },
+  // Advanced level exposes mode + range; full level additionally reveals the
+  // display toggles. Without this, advanced and full render identically and the
+  // "More settings" link looks like it does nothing.
+  advancedPanel: {toggleKeys: [], selectToggleKeys: [], forcedToggles: {showBorders: true}},
+} satisfies QuizDefinition;
+
 export const quizRegistry: ReadonlyArray<QuizDefinition> = [
   largestCitiesQuiz,
+  aboriginalLanguagesQuiz,
   {
     ...capitalsQuizBase,
     id: 'geo-capitals-world',

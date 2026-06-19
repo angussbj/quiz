@@ -97,4 +97,22 @@ describe('buildNavigationTree', () => {
     expect(tree.quizId).toBeUndefined();
     expect(tree.children[0].quizId).toBeUndefined();
   });
+
+  it('omits unlisted quizzes (listed: false) from the tree', () => {
+    const tree = buildNavigationTree([
+      makeDefinition({ id: 'shown', title: 'Shown', path: ['Geography'] }),
+      makeDefinition({ id: 'hidden', title: 'Hidden', path: ['Geography'], listed: false }),
+    ]);
+
+    const geo = tree.children[0];
+    expect(geo.children.map((c) => c.quizId)).toEqual(['shown']);
+  });
+
+  it('does not create an empty category for an unlisted-only path', () => {
+    const tree = buildNavigationTree([
+      makeDefinition({ id: 'hidden', title: 'Hidden', path: ['Secret'], listed: false }),
+    ]);
+
+    expect(tree.children).toEqual([]);
+  });
 });

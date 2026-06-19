@@ -12,6 +12,7 @@ export function buildNavigationTree(
   const root: MutableNode = { label: 'Quizzes', children: [] };
 
   for (const definition of definitions) {
+    if (definition.listed === false) continue;
     let current = root;
     for (const segment of definition.path) {
       let child = current.children.find((c) => c.label === segment);

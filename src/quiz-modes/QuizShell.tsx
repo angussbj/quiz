@@ -32,6 +32,8 @@ interface QuizShellProps {
   readonly quizId: string;
   readonly title: string;
   readonly description?: string;
+  readonly infoUrl?: string;
+  readonly attribution?: { readonly label: string; readonly url: string };
   readonly difficultyPresets?: DifficultyPresets;
   readonly advancedPanel?: AdvancedPanelConfig;
   readonly availableModes: ReadonlyArray<QuizModeType>;
@@ -78,6 +80,8 @@ export function QuizShell({
   quizId,
   title,
   description,
+  infoUrl,
+  attribution,
   difficultyPresets,
   advancedPanel,
   availableModes,
@@ -415,6 +419,8 @@ export function QuizShell({
       <QuizSetupPanel
         title={title}
         description={description}
+        infoUrl={infoUrl}
+        attribution={attribution}
         availableModes={availableModes}
         selectedMode={selectedMode}
         onModeChange={handleModeChange}

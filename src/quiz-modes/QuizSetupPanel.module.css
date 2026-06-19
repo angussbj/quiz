@@ -31,6 +31,21 @@
   line-height: 1.5;
 }
 
+.infoLink {
+  font-size: var(--font-size-sm);
+  margin: var(--spacing-xs) 0 0;
+}
+
+.infoLink a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.infoLink a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
 .section {
   display: flex;
   flex-direction: column;
