@@ -105,6 +105,25 @@ const normalise = (value: string): string => value.toLowerCase().replace(/[^a-z]
 
 const slugify = (value: string): string => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+// AUSTLANG synonyms include junk that should never be an accepted answer: bare
+// qualifier words (cause false matches, e.g. "Southern" -> Arrernte), meta
+// strings, and colonial "<placename> tribe" labels.
+const BARE_JUNK_ALTERNATES = new Set([
+  'western', 'eastern', 'southern', 'northern', 'north', 'south', 'east', 'west',
+  'central', 'upper', 'lower', 'none', 'etc', 'dialect', 'language', 'speech',
+  'people', 'tribe', 'nation', 'group', 'mob', 'clan', 'horde', 'other', 'unknown',
+  'various', 'the', 'sydney',
+]);
+
+function isJunkAlternate(alt: string): boolean {
+  const n = normalise(alt);
+  if (!n) return true;
+  if (BARE_JUNK_ALTERNATES.has(n)) return true;
+  if (n === 'otheraustralianindigenouslanguages') return true;
+  if (/\stribe$/i.test(alt.trim())) return true; // "Adelaide tribe", "Broken Bay tribe", ...
+  return false;
+}
+
 const escapeCsv = (value: string | number): string => {
   const text = String(value);
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
@@ -130,16 +149,35 @@ function buildRows(
     // Drop AUSTLANG "(retired)" suffixes from the display name (e.g. "Flinders Island (retired)").
     const name = row.language_name.replace(/\s*\(retired\)\s*$/i, '').trim();
     const primary = normalise(name);
-    const alternates = new Set<string>();
+
+    // Candidate alternates: AUSTLANG synonyms (split on both | and ; — the source
+    // glues some together with ;), the Wikipedia spelling, and each slash-variant
+    // of the name ("Dharug / Darug" -> "Dharug", "Darug").
+    const candidates: string[] = [];
     for (const synonym of (row.language_synonym ?? '').split('|')) {
-      const trimmed = synonym.trim();
-      if (trimmed && normalise(trimmed) !== primary) alternates.add(trimmed);
+      for (const part of synonym.split(';')) candidates.push(part.trim());
     }
-    if (entry?.label && normalise(entry.label) !== primary) alternates.add(entry.label);
-    // Names like "Dharug / Darug" pack several spellings into one — accept each as an answer.
-    for (const part of name.split('/').map((s) => s.trim()).filter(Boolean)) {
-      if (normalise(part) && normalise(part) !== primary) alternates.add(part);
+    if (entry?.label) candidates.push(entry.label);
+    for (const part of name.split('/')) candidates.push(part.trim());
+
+    const seen = new Set<string>();
+    const alternates = new Set<string>();
+    for (const candidate of candidates) {
+      if (!candidate || isJunkAlternate(candidate)) continue;
+      const n = normalise(candidate);
+      if (!n || n === primary || seen.has(n)) continue;
+      seen.add(n);
+      alternates.add(candidate);
     }
+    // Accept the core of "<X> language" names (e.g. "Western Desert language" -> "Western Desert").
+    const coreMatch = name.match(/^(.*\S)\s+language$/i);
+    if (coreMatch) {
+      const core = coreMatch[1].trim();
+      if (normalise(core) && normalise(core) !== primary && !seen.has(normalise(core))) {
+        alternates.add(core);
+      }
+    }
+
     const prefix = row.language_code.match(/^[A-Z]+/)?.[0] ?? '';
     return {
       id: slugify(`${row.language_code}-${name}`),
