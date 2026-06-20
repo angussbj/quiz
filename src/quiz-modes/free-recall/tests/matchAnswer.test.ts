@@ -256,6 +256,26 @@ describe('matchAnswer ambiguous cases', () => {
   });
 });
 
+describe('matchAnswer primary-name precedence', () => {
+  // "Mamu" is a real language AND listed as an alternate of two others.
+  const rows = [
+    { id: 'mamu', language: 'Mamu', language_alternates: '' },
+    { id: 'dyirbal', language: 'Dyirbal', language_alternates: 'Mamu|Giramay' },
+    { id: 'djiru', language: 'Djiru', language_alternates: 'Mamu' },
+  ];
+
+  it('scores the primary name, not languages that list it as an alternate', () => {
+    const result = matchAnswer('Mamu', rows, 'language');
+    expect(result).toEqual({ elementId: 'mamu', displayAnswer: 'Mamu' });
+  });
+
+  it('falls back to alternates only when no primary matches', () => {
+    const remaining = rows.filter((r) => r['id'] !== 'mamu');
+    const result = matchAnswer('Mamu', remaining, 'language');
+    expect(result).toEqual({ type: 'ambiguous', candidates: ['Dyirbal', 'Djiru'] });
+  });
+});
+
 describe('matchAnswer with whitespaceMatters', () => {
   const opts = { whitespaceMatters: true };
 
