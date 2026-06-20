@@ -256,6 +256,46 @@ describe('matchAnswer ambiguous cases', () => {
   });
 });
 
+describe('matchAnswer primary-name precedence', () => {
+  // "Mamu" is a real language AND listed as an alternate of two others.
+  const rows = [
+    { id: 'mamu', language: 'Mamu', language_alternates: '' },
+    { id: 'dyirbal', language: 'Dyirbal', language_alternates: 'Mamu|Giramay' },
+    { id: 'djiru', language: 'Djiru', language_alternates: 'Mamu' },
+  ];
+
+  it('scores the primary name, not languages that list it as an alternate', () => {
+    const result = matchAnswer('Mamu', rows, 'language');
+    expect(result).toEqual({ elementId: 'mamu', displayAnswer: 'Mamu' });
+  });
+
+  it('falls back to alternates only when no primary matches', () => {
+    const remaining = rows.filter((r) => r['id'] !== 'mamu');
+    const result = matchAnswer('Mamu', remaining, 'language');
+    expect(result).toEqual({ type: 'ambiguous', candidates: ['Dyirbal', 'Djiru'] });
+  });
+});
+
+describe('matchAnswer identical-name handling', () => {
+  // Two genuinely distinct languages that share the same name.
+  const rows = [
+    { id: 'ngarla-a', language: 'Ngarla', language_alternates: '' },
+    { id: 'ngarla-w', language: 'Ngarla', language_alternates: '' },
+    { id: 'other', language: 'Warlpiri', language_alternates: '' },
+  ];
+
+  it('accepts one match instead of dead-ending on identical names', () => {
+    const result = matchAnswer('Ngarla', rows, 'language');
+    expect(result).toEqual({ elementId: 'ngarla-a', displayAnswer: 'Ngarla' });
+  });
+
+  it('scores the second identical-named row once the first is answered', () => {
+    const remaining = rows.filter((r) => r['id'] !== 'ngarla-a');
+    const result = matchAnswer('Ngarla', remaining, 'language');
+    expect(result).toEqual({ elementId: 'ngarla-w', displayAnswer: 'Ngarla' });
+  });
+});
+
 describe('matchAnswer with whitespaceMatters', () => {
   const opts = { whitespaceMatters: true };
 

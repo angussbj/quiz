@@ -128,14 +128,19 @@ export function matchAnswer(
   if (normalizedInput === '') return undefined;
 
   const alternatesColumn = `${answerColumn}_alternates`;
-  const matches: AnswerMatch[] = [];
+  // A primary name always wins over an alternate: many datasets list sibling
+  // names as each other's synonyms (e.g. AUSTLANG cross-lists dialects), so
+  // typing a real name must score that name, not a language that merely lists
+  // it as an alternate. Alternate matches are only used when no primary matches.
+  const primaryMatches: AnswerMatch[] = [];
+  const alternateMatches: AnswerMatch[] = [];
 
   for (const row of remainingRows) {
     const primaryAnswer = row[answerColumn];
     if (primaryAnswer === undefined) continue;
 
     if (normalizeText(primaryAnswer, options) === normalizedInput) {
-      matches.push({ elementId: row['id'] ?? '', displayAnswer: primaryAnswer });
+      primaryMatches.push({ elementId: row['id'] ?? '', displayAnswer: primaryAnswer });
       continue;
     }
 
@@ -144,14 +149,21 @@ export function matchAnswer(
       const alternateValues = alternates.split('|').map((s) => s.trim());
       for (const alt of alternateValues) {
         if (normalizeText(alt, options) === normalizedInput) {
-          matches.push({ elementId: row['id'] ?? '', displayAnswer: primaryAnswer });
+          alternateMatches.push({ elementId: row['id'] ?? '', displayAnswer: primaryAnswer });
           break;
         }
       }
     }
   }
 
+  const matches = primaryMatches.length > 0 ? primaryMatches : alternateMatches;
   if (matches.length === 0) return undefined;
   if (matches.length === 1) return matches[0];
+  // Identical display names (e.g. two distinct languages both named "Ngarla")
+  // can't be disambiguated by typing, so an "ambiguous" prompt would dead-end
+  // the user. Accept one; because answered rows leave remainingRows, typing the
+  // same name again scores the next. Only genuinely distinct names stay ambiguous.
+  const distinctNames = new Set(matches.map((m) => normalizeText(m.displayAnswer, options)));
+  if (distinctNames.size === 1) return matches[0];
   return { type: 'ambiguous', candidates: matches.map((m) => m.displayAnswer) };
 }
