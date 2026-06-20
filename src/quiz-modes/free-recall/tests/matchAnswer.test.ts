@@ -276,6 +276,26 @@ describe('matchAnswer primary-name precedence', () => {
   });
 });
 
+describe('matchAnswer identical-name handling', () => {
+  // Two genuinely distinct languages that share the same name.
+  const rows = [
+    { id: 'ngarla-a', language: 'Ngarla', language_alternates: '' },
+    { id: 'ngarla-w', language: 'Ngarla', language_alternates: '' },
+    { id: 'other', language: 'Warlpiri', language_alternates: '' },
+  ];
+
+  it('accepts one match instead of dead-ending on identical names', () => {
+    const result = matchAnswer('Ngarla', rows, 'language');
+    expect(result).toEqual({ elementId: 'ngarla-a', displayAnswer: 'Ngarla' });
+  });
+
+  it('scores the second identical-named row once the first is answered', () => {
+    const remaining = rows.filter((r) => r['id'] !== 'ngarla-a');
+    const result = matchAnswer('Ngarla', remaining, 'language');
+    expect(result).toEqual({ elementId: 'ngarla-w', displayAnswer: 'Ngarla' });
+  });
+});
+
 describe('matchAnswer with whitespaceMatters', () => {
   const opts = { whitespaceMatters: true };
 

@@ -159,5 +159,11 @@ export function matchAnswer(
   const matches = primaryMatches.length > 0 ? primaryMatches : alternateMatches;
   if (matches.length === 0) return undefined;
   if (matches.length === 1) return matches[0];
+  // Identical display names (e.g. two distinct languages both named "Ngarla")
+  // can't be disambiguated by typing, so an "ambiguous" prompt would dead-end
+  // the user. Accept one; because answered rows leave remainingRows, typing the
+  // same name again scores the next. Only genuinely distinct names stay ambiguous.
+  const distinctNames = new Set(matches.map((m) => normalizeText(m.displayAnswer, options)));
+  if (distinctNames.size === 1) return matches[0];
   return { type: 'ambiguous', candidates: matches.map((m) => m.displayAnswer) };
 }
