@@ -61,7 +61,7 @@ When a countdown timer expires: Timer `onExpire` → ActiveQuiz sets `forceGiveU
 - `TimelineTimestamp` is a variable-precision array `[year, month?, day?, hour?, minute?, second?]` — not just years. Start timestamps round to period start, end timestamps round to period end.
 - The locate mode date parser accepts multiple formats: ISO (`1944-06-06`), `M/D/Y` (`6/6/1944`), and natural language (`6 Jun 1944`, `June 1944`). Scoring tolerance scales with precision level.
 - `buildTimelineElements()` uses `UNITS_PER_YEAR` (20) as the X-axis scale factor. Track height is dynamically computed to maintain a landscape viewBox aspect ratio.
-- Categories map to theme `--color-group-N` colors (first 8), then generate random vibrant HSL colors for overflow.
+- Categories map to theme `--color-group-N` colors (first 8), then generate vibrant HSL colors for overflow. The palette and index→colour logic live in `src/visualizations/groupColors.ts` — the single source for group/category colours across all renderers.
 - Inside labels are shown when bars are wide enough; otherwise labels appear beside the bar (truncated to fit gap before next bar).
 - TimelineRenderer supports `showLabels` (hide/show bar labels) and `showBars` (full opacity vs dimmed) toggle keys. Quiz definitions for timeline quizzes should include these in their `ToggleDefinition[]`.
 

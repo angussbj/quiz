@@ -83,6 +83,18 @@
   --color-group-7: #e74c8b;
   --color-group-8: #8d6e63;
 
+  /* Area-fill variants of the group palette, hue-matched to --color-group-N:
+     pastel in light mode, deep in dark mode, so --viz-on-color-fill text
+     stays readable on them */
+  --color-group-1-surface: hsl(215, 45%, 82%);
+  --color-group-2-surface: hsl(20, 50%, 82%);
+  --color-group-3-surface: hsl(150, 40%, 82%);
+  --color-group-4-surface: hsl(280, 40%, 82%);
+  --color-group-5-surface: hsl(45, 50%, 82%);
+  --color-group-6-surface: hsl(175, 45%, 82%);
+  --color-group-7-surface: hsl(335, 45%, 82%);
+  --color-group-8-surface: hsl(15, 35%, 82%);
+
   /* Typography */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -154,6 +166,15 @@
   --viz-label-halo: #1a1a1a;
   --viz-hover-overlay: rgba(0, 0, 0, 0.2);
   --viz-on-color-fill: #e8e8e6;
+
+  --color-group-1-surface: hsl(215, 45%, 28%);
+  --color-group-2-surface: hsl(20, 50%, 28%);
+  --color-group-3-surface: hsl(150, 40%, 28%);
+  --color-group-4-surface: hsl(280, 40%, 28%);
+  --color-group-5-surface: hsl(45, 50%, 28%);
+  --color-group-6-surface: hsl(175, 45%, 28%);
+  --color-group-7-surface: hsl(335, 45%, 28%);
+  --color-group-8-surface: hsl(15, 35%, 28%);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);

@@ -48,34 +48,19 @@ function gradientColor(t: number, darkMode: boolean): string {
   return hslColor(hue, 50, lightness);
 }
 
-/** Fixed category colors — 8 distinguishable hues. */
-const CATEGORY_HUES: ReadonlyArray<readonly [number, number]> = [
-  [215, 45],  // blue
-  [20, 50],   // orange
-  [150, 40],  // green
-  [280, 40],  // purple
-  [45, 50],   // yellow
-  [175, 45],  // teal
-  [335, 45],  // pink
-  [15, 35],   // brown
-];
-
-function categoryColor(index: number, darkMode: boolean): string {
-  const [hue, sat] = CATEGORY_HUES[index % CATEGORY_HUES.length];
-  return hslColor(hue, sat, darkMode ? DARK_LIGHTNESS : LIGHT_LIGHTNESS);
-}
+const GROUP_SURFACE_COUNT = 8;
 
 export interface ElementColorMap {
   readonly get: (elementId: string) => string | undefined;
 }
 
 /** Compute category-based color map using element group assignments. */
-function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, darkMode: boolean): ElementColorMap {
+function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>): ElementColorMap {
   const groupIndexMap = new Map<string, number>();
   let index = 0;
   for (const element of elements) {
     if (element.group && !groupIndexMap.has(element.group)) {
-      groupIndexMap.set(element.group, index % CATEGORY_HUES.length);
+      groupIndexMap.set(element.group, index % GROUP_SURFACE_COUNT);
       index++;
     }
   }
@@ -85,7 +70,7 @@ function computeCategoryColors(elements: ReadonlyArray<VisualizationElement>, da
     if (element.group) {
       const groupIndex = groupIndexMap.get(element.group);
       if (groupIndex !== undefined) {
-        colorMap.set(element.id, categoryColor(groupIndex, darkMode));
+        colorMap.set(element.id, `var(--color-group-${groupIndex + 1}-surface)`);
       }
     }
   }
@@ -122,8 +107,8 @@ function computeGradientColors(
 
 /**
  * Compute a color map for all elements based on a field.
- * 'category' / 'region' uses fixed distinguishable hues; numeric fields use a gradient.
- * In dark mode, colors use low lightness with light text; in light mode, high lightness with dark text.
+ * 'category' / 'region' uses the theme's group surface tokens; numeric fields
+ * use a gradient computed in JS (darkMode picks the gradient lightness).
  */
 export function computeElementColors(
   elements: ReadonlyArray<VisualizationElement>,
@@ -131,7 +116,7 @@ export function computeElementColors(
   darkMode: boolean,
 ): ElementColorMap {
   if (field === 'category' || field === 'region') {
-    return computeCategoryColors(elements, darkMode);
+    return computeCategoryColors(elements);
   }
   return computeGradientColors(elements, field, darkMode);
 }

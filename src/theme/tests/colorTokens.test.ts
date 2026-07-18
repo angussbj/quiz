@@ -86,27 +86,27 @@ describe('colour tokens', () => {
     expect(darkTokens.size).toBeGreaterThan(10);
   });
 
+  // Template literals (and prose like "--color-group-N") yield a name ending
+  // in '-'; those pass if at least one defined token starts with the prefix.
+  function isDefined(name: string): boolean {
+    if (rootTokens.has(name)) return true;
+    return name.endsWith('-') && [...rootTokens].some((defined) => defined.startsWith(name));
+  }
+
   it('every referenced token is defined in theme.css :root', () => {
-    const definedNames = [...rootTokens];
     const undefinedReferences: FileMatch[] = [];
     for (const file of sourceFiles) {
       if (file === THEME_CSS_PATH) continue;
-      for (const reference of findTokenReferences(file)) {
-        const definedExactly = rootTokens.has(reference.text);
-        const definedAsPrefix =
-          reference.text.endsWith('-') &&
-          definedNames.some((name) => name.startsWith(reference.text));
-        if (!definedExactly && !definedAsPrefix) {
-          undefinedReferences.push(reference);
-        }
-      }
+      undefinedReferences.push(
+        ...findTokenReferences(file).filter((reference) => !isDefined(reference.text)),
+      );
     }
     expect(formatMatches(undefinedReferences)).toBe('');
   });
 
   it('theme.css itself only references tokens it defines', () => {
     const undefinedReferences = findTokenReferences(THEME_CSS_PATH).filter(
-      (reference) => !rootTokens.has(reference.text),
+      (reference) => !isDefined(reference.text),
     );
     expect(formatMatches(undefinedReferences)).toBe('');
   });

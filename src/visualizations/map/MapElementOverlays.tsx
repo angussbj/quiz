@@ -8,26 +8,10 @@ import type { VisualizationRendererProps } from '../VisualizationRendererProps';
 import type { ElementColorMap } from '../elementColorScale';
 import type { ElementVisualState } from '../VisualizationElement';
 import { STATUS_COLORS } from '../elementStateColors';
+import { groupColor } from '../groupColors';
 import { isMapElement } from './MapElement';
 import type { MapElement } from './MapElement';
 import styles from './MapRenderer.module.css';
-
-const GROUP_COLORS = [
-  'var(--color-group-1)',
-  'var(--color-group-2)',
-  'var(--color-group-3)',
-  'var(--color-group-4)',
-  'var(--color-group-5)',
-  'var(--color-group-6)',
-  'var(--color-group-7)',
-  'var(--color-group-8)',
-];
-
-function groupColor(group: string | undefined, groups: ReadonlyArray<string>): string {
-  if (!group) return GROUP_COLORS[0];
-  const index = groups.indexOf(group);
-  return GROUP_COLORS[index >= 0 ? index % GROUP_COLORS.length : 0];
-}
 
 function stateFillOpacity(state: ElementVisualState | undefined): number {
   switch (state) {
