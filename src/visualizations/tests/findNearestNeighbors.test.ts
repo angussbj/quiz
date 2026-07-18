@@ -91,4 +91,41 @@ describe('findNearestNeighbors', () => {
     const result = findNearestNeighbors(new Set(['focus']), elements, 1);
     expect(result).toEqual(['b']);
   });
+
+  it('measures candidate distance by bbox center, not viewBoxCenter', () => {
+    // Models Kiribati vs Marshall Islands: Kiribati's capital (Tarawa) is at
+    // x=173 (close to Marshall's x=171), but its polygon's bbox spans the
+    // Line Islands out to x=205 after antimeridian wrapping. If we used
+    // viewBoxCenter, Kiribati looks close; using bbox center, its polygon
+    // centroid at ~189 correctly ranks it further away than a genuinely-near
+    // country at x=175.
+    const marshall: VisualizationElement = {
+      id: 'marshall',
+      label: 'Marshall Islands',
+      viewBoxCenter: { x: 171, y: -7 },
+      viewBoxBounds: { minX: 170, minY: -8, maxX: 172, maxY: -6 },
+      interactive: true,
+    };
+    const kiribati: VisualizationElement = {
+      id: 'kiribati',
+      label: 'Kiribati',
+      viewBoxCenter: { x: 173, y: -1 },
+      viewBoxBounds: { minX: 173, minY: -3, maxX: 205, maxY: 12 },
+      interactive: true,
+    };
+    const nearNeighbor: VisualizationElement = {
+      id: 'near',
+      label: 'Near',
+      viewBoxCenter: { x: 175, y: -5 },
+      viewBoxBounds: { minX: 174, minY: -6, maxX: 176, maxY: -4 },
+      interactive: true,
+    };
+
+    const result = findNearestNeighbors(
+      new Set(['marshall']),
+      [marshall, kiribati, nearNeighbor],
+      1,
+    );
+    expect(result).toEqual(['near']);
+  });
 });
