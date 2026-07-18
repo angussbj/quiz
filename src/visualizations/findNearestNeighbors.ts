@@ -4,6 +4,12 @@ import type { VisualizationElement } from './VisualizationElement';
  * Find the n nearest non-focus elements to the focus target's combined-bbox
  * centroid, by Euclidean distance in viewBox coordinates.
  *
+ * Distances are measured between viewBoxBounds centers — the same coordinate
+ * the framing pass uses. Measuring from viewBoxCenter (e.g. the capital's
+ * lat/lng) would pick up e.g. Kiribati as a Marshall Islands neighbor because
+ * Tarawa is close, even though Kiribati's polygon extends to the Line Islands
+ * on the far side of the map and would blow the framing zoom out.
+ *
  * Hidden elements are intentionally included: in modes like locate where most
  * quiz elements start hidden, those hidden elements still mark where the user
  * will eventually need to navigate, so they provide useful framing context.
@@ -24,8 +30,10 @@ export function findNearestNeighbors(
   const candidates: { id: string; distance: number }[] = [];
   for (const el of elements) {
     if (focusIds.has(el.id)) continue;
-    const dx = el.viewBoxCenter.x - center.x;
-    const dy = el.viewBoxCenter.y - center.y;
+    const bx = (el.viewBoxBounds.minX + el.viewBoxBounds.maxX) / 2;
+    const by = (el.viewBoxBounds.minY + el.viewBoxBounds.maxY) / 2;
+    const dx = bx - center.x;
+    const dy = by - center.y;
     candidates.push({ id: el.id, distance: Math.sqrt(dx * dx + dy * dy) });
   }
 
