@@ -33,6 +33,13 @@
   /* City dot marker (uniform, not group-coded) */
   --color-city-dot: #4a6fa5;
 
+  /* 3D skeleton bone materials (resolved to hex for WebGL at render time) */
+  --viz-bone-default: #e4ccb1;
+  --viz-bone-context: #aaaaaa;
+
+  /* Focus ring around keyboard-focused controls */
+  --color-focus-ring: color-mix(in srgb, var(--color-accent) 35%, transparent);
+
   /* Label text halo (translucent background for readability over map fills) */
   --color-label-halo: #fafaf9;
 

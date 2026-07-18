@@ -30,7 +30,7 @@ const FOV_DEG = 45;
 
 // ─── State colours ────────────────────────────────────────────────────────────
 // Mirrors element-states.md rules; using CSS custom property names for theme support.
-// Three.js materials use hex, so we resolve via a hidden DOM element at init.
+// Three.js materials use hex, so we resolve computed CSS variable values at apply time.
 
 function resolveVar(name: string, fallback: string): string {
   if (typeof window === 'undefined') return fallback;
@@ -38,30 +38,47 @@ function resolveVar(name: string, fallback: string): string {
   return val || fallback;
 }
 
+/**
+ * Increments whenever the document's data-theme attribute changes.
+ * Mesh colours are resolved from CSS variables outside React's rendering, so
+ * effects that apply them must re-run on theme change; ThemeProvider sets the
+ * attribute in a parent effect (after this component's effects), which rules
+ * out reading getComputedStyle from a theme-prop-driven effect.
+ */
+function useThemeAttributeVersion(): number {
+  const [version, setVersion] = useState(0);
+  useEffect(() => {
+    const observer = new MutationObserver(() => setVersion((v) => v + 1));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+  return version;
+}
+
 type ColorSet = { mesh: string; emissive: string; opacity: number };
 
 function stateColorSet(state: ElementVisualState | undefined): ColorSet {
   switch (state) {
     case 'default':
-      return { mesh: resolveVar('--color-bone-default', '#e4ccb1'), emissive: '#000000', opacity: 1 };
+      return { mesh: resolveVar('--viz-bone-default', '#e4ccb1'), emissive: '#000000', opacity: 1 };
     case 'hidden':
       return { mesh: '#888888', emissive: '#000000', opacity: 0 };
     case 'highlighted':
-      return { mesh: resolveVar('--color-highlighted', '#ffdd00'), emissive: '#443300', opacity: 1 };
+      return { mesh: resolveVar('--color-highlight', '#f0c040'), emissive: '#443300', opacity: 1 };
     case 'context':
-      return { mesh: resolveVar('--color-bone-context', '#aaaaaa'), emissive: '#000000', opacity: 0.55 };
+      return { mesh: resolveVar('--viz-bone-context', '#aaaaaa'), emissive: '#000000', opacity: 0.55 };
     case 'correct':
-      return { mesh: resolveVar('--color-correct', '#22c55e'), emissive: '#003311', opacity: 1 };
+      return { mesh: resolveVar('--color-correct', '#4a8c6f'), emissive: '#003311', opacity: 1 };
     case 'correct-second':
-      return { mesh: resolveVar('--color-correct-second', '#86efac'), emissive: '#002200', opacity: 1 };
+      return { mesh: resolveVar('--color-correct-second', '#9c8515'), emissive: '#002200', opacity: 1 };
     case 'correct-third':
-      return { mesh: resolveVar('--color-correct-third', '#bbf7d0'), emissive: '#001100', opacity: 1 };
+      return { mesh: resolveVar('--color-correct-third', '#c07200'), emissive: '#001100', opacity: 1 };
     case 'incorrect':
-      return { mesh: resolveVar('--color-incorrect', '#ef4444'), emissive: '#330000', opacity: 1 };
+      return { mesh: resolveVar('--color-incorrect', '#c0392b'), emissive: '#330000', opacity: 1 };
     case 'missed':
-      return { mesh: resolveVar('--color-missed', '#f97316'), emissive: '#221100', opacity: 1 };
+      return { mesh: resolveVar('--color-missed', '#8b1a1a'), emissive: '#221100', opacity: 1 };
     default:
-      return { mesh: resolveVar('--color-bone-default', '#e4ccb1'), emissive: '#000000', opacity: 1 };
+      return { mesh: resolveVar('--viz-bone-default', '#e4ccb1'), emissive: '#000000', opacity: 1 };
   }
 }
 
@@ -353,6 +370,7 @@ function SkeletonMeshes({
 }: SkeletonMeshesProps) {
   const { scene } = useGLTF(MODEL_URL);
   const { gl, viewport } = useThree();
+  const themeVersion = useThemeAttributeVersion();
   const canvasRef = useRef<HTMLElement | null>(null);
   useEffect(() => { canvasRef.current = gl.domElement; }, [gl]);
 
@@ -506,7 +524,7 @@ function SkeletonMeshes({
     };
     applyColors(scene, 'original');
     applyColors(mirroredScene, 'mirrored');
-  }, [scene, mirroredScene, meshMap, elementStates]);
+  }, [scene, mirroredScene, meshMap, elementStates, themeVersion]);
 
   // Drag detection (suppress click during camera drag)
   const dragRef = useRef({ startX: 0, startY: 0, wasDrag: false });
