@@ -1,21 +1,21 @@
 .oceanBackground {
-  fill: var(--color-lake);
+  fill: var(--viz-ocean);
   fill-opacity: 0.15;
   pointer-events: none;
 }
 
 .borderPath {
-  fill: var(--color-bg-primary);
-  stroke: var(--color-border);
+  fill: var(--viz-country-fill);
+  stroke: var(--viz-country-border);
   stroke-width: 0.075;
   stroke-linejoin: round;
   pointer-events: none;
 }
 
 .lakePath {
-  fill: var(--color-lake);
+  fill: var(--viz-lake);
   fill-opacity: 0.3;
-  stroke: var(--color-lake);
+  stroke: var(--viz-lake);
   stroke-width: 0.05;
   stroke-opacity: 0.4;
   pointer-events: none;

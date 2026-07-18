@@ -107,7 +107,9 @@ Source files are gitignored (too large). Download URLs are in each script's head
 ### CSS
 - Use CSS modules for component styles: `Component.module.css`
 - All colors, spacing, typography via CSS custom properties from `src/theme/theme.css`
-- Never hardcode color values. Always use `var(--color-*)`.
+- Never hardcode color values. Always use `var(--color-*)` / `var(--viz-*)`. A Jest suite (`src/theme/tests/colorTokens.test.ts`) fails on raw hex/rgb/hsl in CSS modules and on references to tokens theme.css doesn't define.
+- Colour tokens are split by domain — UI chrome uses `--color-*`, colours drawn inside SVG/WebGL visualizations use `--viz-*`. Don't cross domains: country borders are `--viz-country-border`, not a UI border token.
+- Borders are split by intent: `--color-border-subtle` for panel/card/section separation, `--color-border-input` for interactive control outlines (inputs, selects, buttons). Same value today, tunable independently.
 - Light/dark mode via `data-theme` attribute on `<html>`.
 - `--color-overlay` for modal/dialog backdrops (light: `rgba(0,0,0,0.4)`, dark: `rgba(0,0,0,0.6)`) — don't hardcode rgba values.
 

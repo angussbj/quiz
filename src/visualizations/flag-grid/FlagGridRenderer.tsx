@@ -53,7 +53,7 @@ function FlagCell({
   const x = element.column * FLAG_CELL_STEP_X;
   const y = element.row * FLAG_CELL_STEP_Y;
   const fill = state === 'hidden' ? 'transparent' : STATUS_COLORS[state].background;
-  const stroke = state === 'hidden' ? 'var(--color-border)' : STATUS_COLORS[state].main;
+  const stroke = state === 'hidden' ? 'var(--color-default)' : STATUS_COLORS[state].main;
   const nameVisible = isAnswered(state) || showCountryName;
 
   const handleLabelMouseEnter = useCallback(

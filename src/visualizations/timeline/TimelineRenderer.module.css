@@ -34,7 +34,7 @@
   height: 32px;
   flex-shrink: 0;
   background: var(--color-bg-primary);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .axisLine {
@@ -43,7 +43,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--color-border);
+  background: var(--viz-timeline-grid);
 }
 
 .tick {
@@ -66,7 +66,7 @@
 .tickMarkMinor {
   composes: tickMark;
   height: 5px;
-  background: var(--color-border);
+  background: var(--viz-timeline-grid);
 }
 
 .tickLabel {
@@ -115,7 +115,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: var(--color-border);
+  background: var(--viz-timeline-grid);
   opacity: 0.3;
   pointer-events: none;
 }

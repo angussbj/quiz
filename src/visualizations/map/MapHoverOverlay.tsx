@@ -5,7 +5,7 @@
  * sibling elements.
  *
  * The overlay is theme-aware: white wash in light mode, dark wash in dark mode
- * (controlled by --color-hover-overlay CSS variable).
+ * (controlled by --viz-hover-overlay CSS variable).
  */
 import { memo } from 'react';
 import type { VisualizationElement } from '../VisualizationElement';
@@ -60,7 +60,7 @@ export const MapHoverOverlay = memo(function MapHoverOverlay({
         d={strokeD}
         style={{
           fill: 'none',
-          stroke: 'var(--color-hover-overlay)',
+          stroke: 'var(--viz-hover-overlay)',
           strokeWidth: RIVER_STROKE_WIDTH,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
@@ -75,8 +75,8 @@ export const MapHoverOverlay = memo(function MapHoverOverlay({
       d={element.svgPathData ?? ''}
       fillRule="evenodd"
       style={{
-        fill: 'var(--color-hover-overlay)',
-        stroke: 'var(--color-hover-overlay)',
+        fill: 'var(--viz-hover-overlay)',
+        stroke: 'var(--viz-hover-overlay)',
         strokeWidth: 0.075,
       }}
       pointerEvents="none"

@@ -18,7 +18,7 @@
   align-items: stretch;
   gap: 0.5rem;
   padding: 0.75rem 0.5rem;
-  border-right: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border-subtle);
   background: var(--color-surface-raised);
   width: 120px;
   flex-shrink: 0;
@@ -50,7 +50,7 @@
   padding: 0.35rem 0.5rem;
   font-size: 0.8rem;
   border-radius: 6px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   background: var(--color-surface-raised);
   color: var(--color-text-primary);
   cursor: pointer;
@@ -78,7 +78,7 @@
   font-weight: 600;
   color: var(--color-text-muted);
   background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 3px;
   padding: 0 0.3rem;
   line-height: 1.4;
@@ -95,7 +95,7 @@
 .labelToggle {
   display: flex;
   border-radius: 6px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   overflow: hidden;
 }
 
@@ -112,7 +112,7 @@
 }
 
 .labelButton:not(:last-child) {
-  border-right: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border-input);
 }
 
 .labelButton:hover:not(.labelButtonActive) {
@@ -138,7 +138,7 @@
 .attribution a {
   color: var(--color-text-muted);
   text-decoration: underline;
-  text-decoration-color: var(--color-border);
+  text-decoration-color: var(--color-border-subtle);
   text-underline-offset: 1px;
 }
 
@@ -162,7 +162,7 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   background: var(--color-surface-raised);
   color: var(--color-text-primary);
   font-size: 1.1rem;
@@ -183,7 +183,7 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.75rem 0.5rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 8px;
   background: var(--color-surface-raised);
   box-shadow: var(--shadow-md);

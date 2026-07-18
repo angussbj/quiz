@@ -94,7 +94,7 @@ export function ClusterBadge({
           cy={0}
           r={viewBoxRadius}
           fill={fillColor}
-          stroke="var(--color-bg-primary)"
+          stroke="var(--viz-dot-halo)"
           strokeWidth={strokeWidth}
         />
         <text

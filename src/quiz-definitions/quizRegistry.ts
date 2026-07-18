@@ -864,8 +864,8 @@ const riversQuizBase = {
     values: ['0', '1', '2', '3', '4', '5', '6'],
   },
   elementStateColorOverrides: {
-    default: 'var(--color-lake)',
-    context: 'var(--color-lake)',
+    default: 'var(--viz-lake)',
+    context: 'var(--viz-lake)',
   },
   orderedRecallSortColumns: riverSortColumns,
   difficultyPresets: {

@@ -68,15 +68,17 @@ Each visual state maps to a `{mesh, emissive, opacity}` triple applied to `MeshS
 
 | State | Mesh Color | Emissive | Opacity |
 |---|---|---|---|
-| `default` | `--color-bone-default` (#e4ccb1) | black | 1.0 |
+| `default` | `--viz-bone-default` (#e4ccb1) | black | 1.0 |
 | `hidden` | grey | black | 0.0 |
-| `highlighted` | `--color-highlighted` | #443300 | 1.0 |
-| `context` | `--color-bone-context` | black | 0.55 |
+| `highlighted` | `--color-highlight` | #443300 | 1.0 |
+| `context` | `--viz-bone-context` | black | 0.55 |
 | `correct` | `--color-correct` | #003311 | 1.0 |
 | `correct-second` | `--color-correct-second` | #002200 | 1.0 |
 | `correct-third` | `--color-correct-third` | #001100 | 1.0 |
 | `incorrect` | `--color-incorrect` | #330000 | 1.0 |
 | `missed` | `--color-missed` | #221100 | 1.0 |
+
+Colours are resolved from CSS variables to hex when applied (WebGL materials can't consume `var()`), and re-applied when the document's `data-theme` attribute changes.
 
 Meshes not in the quiz element list (e.g. teeth when `showTeeth` is off) use a hardcoded context style: `#c8bba8` at 50% opacity.
 

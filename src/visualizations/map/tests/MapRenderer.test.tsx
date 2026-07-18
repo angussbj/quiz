@@ -158,7 +158,7 @@ describe('MapRenderer', () => {
     const { container } = renderMap();
     const circles = container.querySelectorAll('circle');
     for (const circle of circles) {
-      expect(circle.getAttribute('fill')).toBe('var(--color-city-dot)');
+      expect(circle.getAttribute('fill')).toBe('var(--viz-city-dot)');
     }
   });
 

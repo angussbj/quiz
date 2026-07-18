@@ -63,7 +63,7 @@ function isAnswered(state: ElementVisualState): boolean {
 }
 
 /** Text color for cells with a custom color fill — always dark for contrast. */
-const COLOR_FILL_TEXT = 'var(--color-on-color-fill)';
+const COLOR_FILL_TEXT = 'var(--viz-on-color-fill)';
 
 function GridCell({
   element,

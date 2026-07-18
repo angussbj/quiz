@@ -208,7 +208,7 @@ const ElementShape = memo(function ElementShape({
     ? colorFill
     : (state !== undefined && state !== 'hidden')
       ? (elementStateColorOverrides?.[state] ?? STATUS_COLORS[state].main)
-      : (isStrokePath ? 'var(--color-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--color-bg-primary)'));
+      : (isStrokePath ? 'var(--viz-lake)' : (showRegionColors ? groupColor(element.group, uniqueGroups) : 'var(--viz-country-fill)'));
 
   if (isStrokePath) {
     const subpaths = splitSubpaths(element.svgPathData ?? '');

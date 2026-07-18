@@ -126,7 +126,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                 style={{
                   userSelect: 'none',
                   paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
+                  stroke: 'var(--viz-label-halo)',
                   strokeWidth: fontSize * 0.5,
                   strokeLinejoin: 'round',
                 }}
@@ -150,7 +150,7 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                 style={{
                   userSelect: 'none',
                   paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
+                  stroke: 'var(--viz-label-halo)',
                   strokeWidth: dataFontSize * 0.5,
                   strokeLinejoin: 'round',
                 }}

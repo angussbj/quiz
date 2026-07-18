@@ -11,7 +11,7 @@
 }
 
 .header {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-subtle);
   background: var(--color-bg-primary);
   transition: background-color var(--transition-normal), border-color var(--transition-normal);
   position: sticky;

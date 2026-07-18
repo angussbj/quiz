@@ -28,7 +28,7 @@
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-subtle);
   flex-shrink: 0;
   gap: var(--spacing-md);
 }
@@ -67,7 +67,7 @@
   flex: 1;
   min-width: 0;
   padding: var(--spacing-xs) var(--spacing-sm);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
   background: var(--color-bg-primary);
   color: var(--color-text-primary);
@@ -111,7 +111,7 @@
 
 .reconfigureButton {
   padding: var(--spacing-xs) var(--spacing-sm);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
   background: var(--color-bg-primary);
   color: var(--color-text-secondary);
@@ -128,7 +128,7 @@
 
 .controlButton {
   padding: var(--spacing-xs) var(--spacing-sm);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
   background: var(--color-bg-primary);
   color: var(--color-text-secondary);
@@ -161,7 +161,7 @@
   gap: var(--spacing-md);
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--color-bg-secondary);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-subtle);
   flex-shrink: 0;
   max-width: 900px;
   margin: 0 auto;
@@ -211,7 +211,7 @@
   gap: var(--spacing-md);
   padding: var(--spacing-xl);
   background: var(--color-bg-primary);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   min-width: 240px;
@@ -245,7 +245,7 @@
 
 .resultsClose {
   padding: var(--spacing-xs) var(--spacing-md);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
   background: var(--color-bg-primary);
   color: var(--color-text-secondary);

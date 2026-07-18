@@ -143,7 +143,7 @@ export interface QuizDefinition<K extends string = string> {
   readonly hideUnfocusedElements?: boolean;
   /**
    * Override element state colors for this quiz. Maps visual states to CSS variable references
-   * (e.g., `{ default: 'var(--color-lake)' }`). Renderers use these instead of STATUS_COLORS.main
+   * (e.g., `{ default: 'var(--viz-lake)' }`). Renderers use these instead of STATUS_COLORS.main
    * for the specified states.
    */
   readonly elementStateColorOverrides?: Readonly<Partial<Record<ElementVisualState, string>>>;

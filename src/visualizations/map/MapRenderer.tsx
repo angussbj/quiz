@@ -551,7 +551,7 @@ const MapContent = memo(function MapContent({
                   fill: color,
                   strokeOpacity: 0.75,
                   paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
+                  stroke: 'var(--viz-label-halo)',
                   strokeWidth: 0.5,
                   strokeLinejoin: 'round',
                 }}
@@ -571,7 +571,7 @@ const MapContent = memo(function MapContent({
                   fontSize: '75%',
                   strokeOpacity: 0.75,
                   paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
+                  stroke: 'var(--viz-label-halo)',
                   strokeWidth: 0.4,
                   strokeLinejoin: 'round',
                   opacity: 0.7,
@@ -619,7 +619,7 @@ const MapContent = memo(function MapContent({
         if (!elementToggle(elementToggles, toggles, element.id, 'showCityDots')) return null;
         const state = elementStates[element.id];
         if (state === 'hidden') return null;
-        const color = state !== undefined ? STATUS_COLORS[state].main : 'var(--color-city-dot)';
+        const color = state !== undefined ? STATUS_COLORS[state].main : 'var(--viz-city-dot)';
         return (
           <circle
             key={`dot-${element.id}`}
@@ -627,7 +627,7 @@ const MapContent = memo(function MapContent({
             cy={element.viewBoxCenter.y}
             r={dotRadius}
             fill={color}
-            stroke={'var(--color-bg-primary)'}
+            stroke={'var(--viz-dot-halo)'}
             strokeWidth={dotRadius * 0.27}
             className={onElementClick ? styles.interactiveDot : onElementHoverStart ? styles.hoverableDot : undefined}
             onClick={
