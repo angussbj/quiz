@@ -57,36 +57,93 @@ export const sampleCityElements: ReadonlyArray<MapElement> = [
 
 /**
  * Simplified country border paths for testing.
- * These are rough outlines in equirectangular viewBox coordinates (lng, -lat).
+ * Non-overlapping tiles in equirectangular viewBox coordinates (lng, -lat).
+ * Arranged as a rough grid covering western/central Europe.
  */
 export const sampleBackgroundPaths: ReadonlyArray<BackgroundPath> = [
   {
     id: 'border-france',
-    svgPathData:
-      'M -1.8,-48.5 L 2.5,-51.1 L 8.2,-49 L 7.7,-47.4 L 6.2,-43.3 L 3,-42.4 L -1.8,-43.4 L -1.8,-48.5 Z',
+    svgPathData: 'M -5 -42 L 5 -42 L 5 -50 L -5 -50 L -5 -42 Z',
     group: 'Western Europe',
     name: 'France',
   },
   {
     id: 'border-germany',
-    svgPathData:
-      'M 6,-47.3 L 6,-54.8 L 14.7,-54.3 L 15.1,-51 L 13.8,-47.5 L 10.5,-47.3 L 6,-47.3 Z',
+    svgPathData: 'M 5 -42 L 16 -42 L 16 -50 L 5 -50 L 5 -42 Z',
     group: 'Central Europe',
     name: 'Germany',
   },
   {
     id: 'border-spain',
-    svgPathData:
-      'M -9.3,-43.8 L -1.8,-43.4 L 3.3,-42.4 L 4.3,-40.5 L 0.3,-36.2 L -6,-36.7 L -9.5,-37 L -9.3,-43.8 Z',
+    svgPathData: 'M -10 -34 L -1 -34 L -1 -42 L -10 -42 L -10 -34 Z',
     group: 'Southern Europe',
     name: 'Spain',
   },
   {
     id: 'border-italy',
-    svgPathData:
-      'M 6.6,-46.7 L 12.3,-47 L 18.5,-40 L 15.5,-38 L 12.4,-37.5 L 9,-40.8 L 7,-43.8 L 6.6,-46.7 Z',
+    svgPathData: 'M 5 -34 L 16 -34 L 16 -42 L 5 -42 L 5 -34 Z',
     group: 'Southern Europe',
     name: 'Italy',
+  },
+];
+
+/**
+ * Extended set of country borders for stories that need all 8 element states.
+ * 8 non-overlapping tiles arranged in a 4x2 grid.
+ */
+/**
+ * 8 tiles in a 4x2 grid with shared/touching borders.
+ * Wide cells (10 units) so "correct-second" etc. fit without label collision.
+ * Grid: 4 columns spanning x=-20..20, 2 rows spanning y=-34..-50.
+ */
+export const extendedBackgroundPaths: ReadonlyArray<BackgroundPath> = [
+  {
+    id: 'border-france',
+    svgPathData: 'M -20 -34 L -10 -34 L -10 -42 L -20 -42 L -20 -34 Z',
+    group: 'Western Europe',
+    name: 'correct',
+  },
+  {
+    id: 'border-germany',
+    svgPathData: 'M -10 -34 L 0 -34 L 0 -42 L -10 -42 L -10 -34 Z',
+    group: 'Central Europe',
+    name: 'highlighted',
+  },
+  {
+    id: 'border-spain',
+    svgPathData: 'M 0 -34 L 10 -34 L 10 -42 L 0 -42 L 0 -34 Z',
+    group: 'Southern Europe',
+    name: 'incorrect',
+  },
+  {
+    id: 'border-italy',
+    svgPathData: 'M 10 -34 L 20 -34 L 20 -42 L 10 -42 L 10 -34 Z',
+    group: 'Southern Europe',
+    name: 'missed',
+  },
+  {
+    id: 'border-portugal',
+    svgPathData: 'M -20 -42 L -10 -42 L -10 -50 L -20 -50 L -20 -42 Z',
+    group: 'Southern Europe',
+    name: 'correct-second',
+  },
+  {
+    id: 'border-uk',
+    svgPathData: 'M -10 -42 L 0 -42 L 0 -50 L -10 -50 L -10 -42 Z',
+    group: 'Western Europe',
+    name: 'correct-third',
+  },
+  {
+    id: 'border-switzerland',
+    svgPathData: 'M 0 -42 L 10 -42 L 10 -50 L 0 -50 L 0 -42 Z',
+    group: 'Central Europe',
+    name: 'context',
+  },
+  {
+    id: 'border-belgium',
+    svgPathData: 'M 10 -42 L 20 -42 L 20 -50 L 10 -50 L 10 -42 Z',
+    group: 'Western Europe',
+    name: 'default',
   },
 ];
 
