@@ -14,6 +14,7 @@ import { computeElementLabels } from './computeElementLabels';
 import { shouldShowLabel } from '../shouldShowLabel';
 import { MapElementShapes } from './MapElementOverlays';
 import { MapHoverOverlay } from './MapHoverOverlay';
+import { LabelHaloFilter } from './LabelHaloFilter';
 import { useDragDetector } from './useDragDetector';
 import { useStrokePathCache } from './useStrokePathCache';
 import { findClosestStrokeElement } from './findClosestStrokeElement';
@@ -452,6 +453,10 @@ const MapContent = memo(function MapContent({
 
   return (
     <g onPointerDown={onPointerDown} onClick={handleBackgroundClick} onMouseMove={handleStrokeMouseMove}>
+      <defs>
+        <LabelHaloFilter id="river-label-halo" radius={0.2} />
+        <LabelHaloFilter id="river-label-data-halo" radius={0.15} />
+      </defs>
       {/* Invisible rect to catch clicks and mousemove on empty SVG space.
           Without this, events on areas with no visible children
           don't trigger the <g>'s handlers. Also needed for stroke
@@ -547,14 +552,8 @@ const MapContent = memo(function MapContent({
               <text
                 {...labelProps}
                 className={onElementHoverStart ? styles.riverLabelHoverable : styles.riverLabel}
-                style={{
-                  fill: color,
-                  strokeOpacity: 0.75,
-                  paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
-                  strokeWidth: 0.5,
-                  strokeLinejoin: 'round',
-                }}
+                style={{ fill: color }}
+                filter="url(#river-label-halo)"
                 onMouseEnter={onElementHoverStart ? () => handleElementHoverStart(element.id) : undefined}
                 onMouseLeave={onElementHoverStart ? handleElementHoverEnd : undefined}
               >
@@ -566,16 +565,8 @@ const MapContent = memo(function MapContent({
                 {...labelProps}
                 y={labelProps.y + (showName ? 1.0 : 0)}
                 className={styles.riverLabel}
-                style={{
-                  fill: color,
-                  fontSize: '75%',
-                  strokeOpacity: 0.75,
-                  paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
-                  strokeWidth: 0.4,
-                  strokeLinejoin: 'round',
-                  opacity: 0.7,
-                }}
+                style={{ fill: color, fontSize: '75%', opacity: 0.7 }}
+                filter="url(#river-label-data-halo)"
               >
                 {dataValue}
               </text>
