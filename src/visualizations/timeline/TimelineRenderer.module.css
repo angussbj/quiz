@@ -140,7 +140,7 @@
   overflow: visible;
   /* Subtle edge outline so overlapping same-colour bars remain distinguishable.
      Status-specific outlines (correct, incorrect, etc.) override this. */
-  outline: 1px solid rgba(0, 0, 0, 0.25);
+  outline: 1px solid var(--viz-timeline-bar-outline);
   outline-offset: -1px;
 }
 

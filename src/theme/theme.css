@@ -37,6 +37,9 @@
   --viz-bone-default: #e4ccb1;
   --viz-bone-context: #aaaaaa;
 
+  /* Edge outline so overlapping same-colour timeline bars stay distinguishable */
+  --viz-timeline-bar-outline: rgba(0, 0, 0, 0.25);
+
   /* Focus ring around keyboard-focused controls */
   --color-focus-ring: color-mix(in srgb, var(--color-accent) 35%, transparent);
 
