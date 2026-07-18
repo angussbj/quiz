@@ -8,9 +8,14 @@ import { computePathCentroid, computePathArea, computePolylabel, computeBounding
  * can be rendered through the same label placement system as background country labels
  * (area-based font sizing, multi-candidate positioning, collision detection).
  *
- * For elements with multiple subpaths (e.g. a country whose territory paths have been
- * merged in), polylabel and centroid are computed from the largest subpath only —
- * matching the behaviour of computeBackgroundLabels for multi-path countries.
+ * The label is placed on the largest sovereign-country subpath, ignoring any
+ * territory paths that were merged in. mainlandSvgPathData (set by
+ * buildMapElements) holds those mainland-only paths; if absent, falls back to
+ * the full svgPathData. This keeps Denmark's label on Jutland rather than
+ * Greenland.
+ *
+ * Label sizing uses the chosen subpath's area, not the multi-path total, so
+ * merged territories don't inflate the rendered font.
  */
 export function computeElementLabels(
   elements: ReadonlyArray<VisualizationElement>,
@@ -20,31 +25,28 @@ export function computeElementLabels(
   for (const el of elements) {
     if (!isMapElement(el) || !el.svgPathData || el.pathRenderStyle === 'stroke') continue;
 
-    // Split combined path and use the largest subpath for label positioning.
-    // Elements may have multiple subpaths (e.g. a country with merged territory paths).
-    const subpaths = el.svgPathData.split(/(?=M\s)/).filter((s) => s.trim());
-    let largestPath = el.svgPathData;
-    let largestArea = 0;
-    let totalArea = 0;
-    for (const sub of subpaths) {
-      const area = computePathArea(sub);
-      totalArea += area;
-      if (area > largestArea) {
-        largestArea = area;
-        largestPath = sub;
+    const sourcePath = el.mainlandSvgPathData ?? el.svgPathData;
+    const subpaths = sourcePath.split(/(?=M\s)/).filter((s) => s.trim());
+    let labelPath = subpaths[0] ?? sourcePath;
+    let labelArea = computePathArea(labelPath);
+    for (let i = 1; i < subpaths.length; i++) {
+      const a = computePathArea(subpaths[i]);
+      if (a > labelArea) {
+        labelArea = a;
+        labelPath = subpaths[i];
       }
     }
 
-    const centroid = computePathCentroid(largestPath);
-    const bboxCenter = computeBoundingBoxCenter(largestPath);
-    const polylabelCenter = computePolylabel(largestPath);
-    const rectCenter = computeLargestInscribedRectCenter(largestPath);
+    const centroid = computePathCentroid(labelPath);
+    const bboxCenter = computeBoundingBoxCenter(labelPath);
+    const polylabelCenter = computePolylabel(labelPath);
+    const rectCenter = computeLargestInscribedRectCenter(labelPath);
 
     // Sort centers by text clearance (most room for estimated text rectangle first).
     const centers = [rectCenter, polylabelCenter, bboxCenter, centroid]
       .filter((c): c is ViewBoxPosition => c !== null)
       .sort((a, b) =>
-        computeTextClearance(largestPath, b, el.label) - computeTextClearance(largestPath, a, el.label),
+        computeTextClearance(labelPath, b, el.label) - computeTextClearance(labelPath, a, el.label),
       );
 
     labels.push({
@@ -52,7 +54,7 @@ export function computeElementLabels(
       name: el.label,
       center: centroid,
       centers: centers.length > 0 ? centers : [centroid],
-      area: totalArea,
+      area: labelArea,
       group: el.group,
     });
   }

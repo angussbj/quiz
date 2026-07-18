@@ -54,12 +54,15 @@ describe('computeBackgroundLabels', () => {
     expect(labels[0].area).toBeCloseTo(100, 0);
   });
 
-  it('sums area across multi-path segments', () => {
+  it('uses the largest subpath area (not the sum) for label sizing', () => {
+    // Mainland (area 100) + small island (area 25). Label is placed on the
+    // mainland, so its area should drive label sizing — not the sum.
+    const small = 'M 20 0 L 25 0 L 25 5 L 20 5 Z';
     const paths: ReadonlyArray<BackgroundPath> = [
       { id: 'fr-0', svgPathData: squarePath, name: 'France' },
-      { id: 'fr-1', svgPathData: 'M 20 0 L 30 0 L 30 10 L 20 10 Z', name: 'France' },
+      { id: 'fr-1', svgPathData: small, name: 'France' },
     ];
     const labels = computeBackgroundLabels(paths);
-    expect(labels[0].area).toBeCloseTo(200, 0);
+    expect(labels[0].area).toBeCloseTo(100, 0);
   });
 });

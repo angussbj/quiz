@@ -27,13 +27,13 @@ export function computeBackgroundLabels(
 
   const labels: BackgroundLabel[] = [];
   for (const [name, namePaths] of byName) {
-    // Find the largest path and compute total area across all segments
+    // Pick the largest path — the label is placed on that one, so its area
+    // (not the multi-path total) drives label sizing. France-mainland sets the
+    // size, not France-mainland-plus-Corsica.
     let largest = namePaths[0];
     let largestArea = 0;
-    let totalArea = 0;
     for (const path of namePaths) {
       const pathArea = computePathArea(path.svgPathData);
-      totalArea += pathArea;
       if (pathArea > largestArea) {
         largestArea = pathArea;
         largest = path;
@@ -59,7 +59,7 @@ export function computeBackgroundLabels(
       centers: centers.length > 0 ? centers : [centroid],
       code: largest.code,
       sovereign: largest.sovereign,
-      area: totalArea,
+      area: largestArea,
       region: largest.region,
       group: largest.group,
     });
