@@ -76,4 +76,62 @@ describe('buildMapElements', () => {
     const elements = buildMapElements(rows, {});
     expect(elements[0].interactive).toBe(true);
   });
+
+  it('frames bounds on the largest subpath when there are multiple', () => {
+    const tiny = 'M 0 -2 L 2 -2 L 2 0 L 0 0 Z';
+    const huge = 'M 100 -200 L 200 -200 L 200 -100 L 100 -100 Z';
+    const rows: ReadonlyArray<QuizDataRow> = [
+      makeRow({ latitude: '0', longitude: '0', paths: `${tiny}|${huge}` }),
+    ];
+
+    const elements = buildMapElements(rows, {});
+    const b = elements[0].viewBoxBounds;
+
+    expect(b.minX).toBeCloseTo(100, 0);
+    expect(b.maxX).toBeCloseTo(200, 0);
+  });
+
+  it('excludes merged territory paths when picking the largest subpath for bounds', () => {
+    // Denmark/Greenland-style: Greenland's row has sovereign_parent="Denmark", so
+    // its paths get merged into Denmark's element. Bounds should still frame on
+    // Denmark's mainland (Jutland), not on Greenland's much larger polygon.
+    const denmarkJutland = 'M 0 0 L 4 0 L 4 4 L 0 4 Z'; // mainland, area 16
+    const denmarkIsland = 'M 5 0 L 7 0 L 7 2 L 5 2 Z'; // smaller mainland-side island, area 4
+    const greenland = 'M 100 100 L 200 100 L 200 200 L 100 200 Z'; // huge, area 10000
+    const rows: ReadonlyArray<QuizDataRow> = [
+      {
+        id: 'denmark',
+        name: 'Denmark',
+        is_sovereign: 'true',
+        sovereign_parent: '',
+        latitude: '2',
+        longitude: '2',
+        paths: `${denmarkJutland}|${denmarkIsland}`,
+      } as QuizDataRow,
+      {
+        id: 'greenland',
+        name: 'Greenland',
+        is_sovereign: 'false',
+        sovereign_parent: 'Denmark',
+        latitude: '150',
+        longitude: '150',
+        paths: greenland,
+      } as QuizDataRow,
+    ];
+
+    const elements = buildMapElements(rows, {});
+    expect(elements).toHaveLength(1);
+
+    const denmark = elements[0];
+    const b = denmark.viewBoxBounds;
+    expect(b.minX).toBeCloseTo(0, 0);
+    expect(b.maxX).toBeCloseTo(4, 0);
+    expect(b.minY).toBeCloseTo(0, 0);
+    expect(b.maxY).toBeCloseTo(4, 0);
+
+    // svgPathData includes Greenland; mainlandSvgPathData does not.
+    expect(denmark.svgPathData).toContain('100 100');
+    expect(denmark.mainlandSvgPathData).toBeDefined();
+    expect(denmark.mainlandSvgPathData!).not.toContain('100 100');
+  });
 });

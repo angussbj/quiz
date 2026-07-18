@@ -13,6 +13,8 @@ import { ZoomPanContext } from './ZoomPanContext';
 import { computeClusters } from './computeClusters';
 import { computeViewBox } from './computeViewBox';
 import type { ViewBox } from './computeViewBox';
+import { computeFocusFrame } from './computeFocusFrame';
+import { findNearestNeighbors } from './findNearestNeighbors';
 import { ClusterBadge } from './ClusterBadge';
 import styles from './ZoomPanContainer.module.css';
 
@@ -25,7 +27,7 @@ interface ZoomPanContainerProps {
   readonly initialCameraPosition?: ViewBox;
   /** Background paths used to expand the viewBox so panning reveals all content. */
   readonly backgroundPaths?: ReadonlyArray<BackgroundPath>;
-  /** Element IDs to bring into view when this array reference changes. Only pans if the target is off-screen; never zooms in. */
+  /** Element IDs to bring into view when this array reference changes. Re-frames so the focus and its 4 nearest neighbors fit, but only when the current frame doesn't already satisfy the rule. */
   readonly putInView?: ReadonlyArray<string>;
 }
 
@@ -425,10 +427,20 @@ function ZoomPanInner({
   );
 
   // Bring specified elements into view when putInView changes.
-  // No-ops if the target is already visible. Zooms out if needed to fit. One-shot.
-  const putInViewLatestRef = useRef({ elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform });
-  putInViewLatestRef.current = { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform };
+  // Re-frames so the focus and its 4 nearest non-hidden neighbors fit, but only
+  // when the current frame doesn't already satisfy the rule.
+  const putInViewLatestRef = useRef({ elements, elementStates, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform });
+  putInViewLatestRef.current = { elements, elementStates, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform };
   const pendingPutInViewRef = useRef(false);
+
+  /** Number of neighbors to include around the focus target. */
+  const NEIGHBOR_COUNT = 4;
+  /** Minimum screen pixels for an element to be considered visible during putInView. */
+  const PUT_IN_VIEW_MIN_VISIBLE_PX = 8;
+  /** Re-frame if the focus target's larger dimension exceeds this fraction of the viewport. */
+  const TARGET_TOO_BIG_FRACTION = 0.5;
+  /** Padding when fitting focus + neighbors into the viewport. */
+  const FRAME_PADDING = 0.7;
 
   /** Compute the bounding box of the given element IDs. Returns undefined if no elements match. */
   const computeTargetBBox = useCallback((ids: ReadonlyArray<string>) => {
@@ -447,18 +459,19 @@ function ZoomPanInner({
   }, []);
 
   /**
-   * Check whether elements with the given bounding box are fully on-screen
-   * and at least `minPx` pixels in diagonal size.
+   * Decide whether the camera should re-frame for this focus target.
+   * Returns true if any of:
+   * - target is not fully on-screen
+   * - target's screen diagonal is below the visibility floor
+   * - fewer than NEIGHBOR_COUNT non-focus elements are visible on-screen
+   * - target fills more than TARGET_TOO_BIG_FRACTION of the smaller viewport dimension
    */
-  const isBBoxVisible = useCallback((
+  const shouldReframe = useCallback((
     bbox: { minX: number; minY: number; maxX: number; maxY: number },
-    minPx: number,
+    focusIds: ReadonlySet<string>,
   ): boolean => {
-    const { containerSize, viewBox, basePixelsPerViewBoxUnit } = putInViewLatestRef.current;
-    if (containerSize.width === 0) return false;
-
-    const bboxWidth = bbox.maxX - bbox.minX;
-    const bboxHeight = bbox.maxY - bbox.minY;
+    const { elements, containerSize, viewBox, basePixelsPerViewBoxUnit } = putInViewLatestRef.current;
+    if (containerSize.width === 0) return true;
 
     const { posX, posY, scale } = currentTransformRef.current;
     const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
@@ -469,88 +482,71 @@ function ZoomPanInner({
     const visMaxX = ((containerSize.width - posX) / scale - ox) / basePixelsPerViewBoxUnit + viewBox.x;
     const visMinY = ((0 - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
     const visMaxY = ((containerSize.height - posY) / scale - oy) / basePixelsPerViewBoxUnit + viewBox.y;
-    const isFullyOnScreen = bbox.minX >= visMinX && bbox.maxX <= visMaxX && bbox.minY >= visMinY && bbox.maxY <= visMaxY;
 
+    if (!(bbox.minX >= visMinX && bbox.maxX <= visMaxX && bbox.minY >= visMinY && bbox.maxY <= visMaxY)) {
+      return true;
+    }
+
+    const bboxWidth = bbox.maxX - bbox.minX;
+    const bboxHeight = bbox.maxY - bbox.minY;
     const bboxDiagonal = Math.sqrt(bboxWidth * bboxWidth + bboxHeight * bboxHeight);
-    const screenDiagonal = bboxDiagonal * basePixelsPerViewBoxUnit * scale;
-    return isFullyOnScreen && screenDiagonal >= minPx;
+    if (bboxDiagonal * basePixelsPerViewBoxUnit * scale < PUT_IN_VIEW_MIN_VISIBLE_PX) return true;
+
+    const bboxMaxDim = Math.max(bboxWidth, bboxHeight);
+    const minViewportDim = Math.min(containerSize.width, containerSize.height);
+    if (bboxMaxDim * basePixelsPerViewBoxUnit * scale > minViewportDim * TARGET_TOO_BIG_FRACTION) return true;
+
+    let visibleCount = 0;
+    for (const el of elements) {
+      if (focusIds.has(el.id)) continue;
+      const { x, y } = el.viewBoxCenter;
+      if (x >= visMinX && x <= visMaxX && y >= visMinY && y <= visMaxY) {
+        visibleCount++;
+        if (visibleCount >= NEIGHBOR_COUNT) break;
+      }
+    }
+    if (visibleCount < NEIGHBOR_COUNT) return true;
+
+    return false;
   }, []);
 
-  /** Minimum screen pixels for an element to be considered visible during putInView. */
-  const PUT_IN_VIEW_MIN_VISIBLE_PX = 8;
-
-  /**
-   * Pan/zoom to bring elements into view.
-   * @param minScreenFraction — if set, zoom in so the element fills at least this
-   *   fraction of the smaller viewport dimension (e.g. 0.5 = half the screen).
-   *   Without this, the function never zooms in past the current scale.
-   */
   const executePutInView = useCallback((
     ids: ReadonlyArray<string>,
     animationMs: number,
-    options?: { readonly force?: boolean; readonly minScreenFraction?: number },
+    options?: { readonly force?: boolean },
   ) => {
-    const { containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform } = putInViewLatestRef.current;
+    const { elements, containerSize, viewBox, basePixelsPerViewBoxUnit, setTransform } = putInViewLatestRef.current;
 
     const bbox = computeTargetBBox(ids);
     if (!bbox || containerSize.width === 0) return false;
 
-    if (!options?.force && isBBoxVisible(bbox, PUT_IN_VIEW_MIN_VISIBLE_PX)) return true;
+    const focusIds = new Set(ids);
+    if (!options?.force && !shouldReframe(bbox, focusIds)) return true;
 
-    const cx = (bbox.minX + bbox.maxX) / 2;
-    const cy = (bbox.minY + bbox.maxY) / 2;
-    const bboxWidth = bbox.maxX - bbox.minX;
-    const bboxHeight = bbox.maxY - bbox.minY;
+    const neighborIds = findNearestNeighbors(focusIds, elements, NEIGHBOR_COUNT);
+    const neighborBBoxes = elements
+      .filter((el) => neighborIds.includes(el.id))
+      .map((el) => el.viewBoxBounds);
 
-    // Scale to zoom OUT if bbox is larger than the screen (same as handleClusterClick).
-    const ZOOM_PADDING = 0.7;
-    const fitScale = (bboxWidth > 0 || bboxHeight > 0)
-      ? Math.min(
-          MAX_CLUSTER_SCALE,
-          ZOOM_PADDING * Math.min(
-            containerSize.width / (bboxWidth * basePixelsPerViewBoxUnit),
-            containerSize.height / (bboxHeight * basePixelsPerViewBoxUnit),
-          ),
-        )
-      : scaleRef.current;
-
-    // Scale to zoom IN until the element is at least MIN_VISIBLE_PX on screen.
-    const bboxDiagonal = Math.sqrt(bboxWidth * bboxWidth + bboxHeight * bboxHeight);
-    const minVisibleScale = bboxDiagonal > 0
-      ? PUT_IN_VIEW_MIN_VISIBLE_PX / (bboxDiagonal * basePixelsPerViewBoxUnit)
-      : 0;
-
-    // If a minimum screen fraction is requested, compute the scale that achieves it.
-    const minViewportDim = Math.min(containerSize.width, containerSize.height);
-    const bboxMaxDim = Math.max(bboxWidth, bboxHeight);
-    const fractionScale = (options?.minScreenFraction && bboxMaxDim > 0)
-      ? (minViewportDim * options.minScreenFraction) / (bboxMaxDim * basePixelsPerViewBoxUnit)
-      : 0;
-
-    // Without minScreenFraction: zoom out if needed (cap at current scale), zoom in if below min size.
-    // With minScreenFraction: also zoom in to meet the requested fraction.
-    const floorScale = Math.max(minVisibleScale, fractionScale);
-    const finalScale = Math.min(
-      MAX_CLUSTER_SCALE,
-      Math.max(Math.min(fitScale, scaleRef.current), floorScale),
+    const transform = computeFocusFrame(
+      bbox,
+      neighborBBoxes,
+      containerSize,
+      viewBox,
+      basePixelsPerViewBoxUnit,
+      currentTransformRef.current.scale,
+      {
+        padding: FRAME_PADDING,
+        maxScale: MAX_CLUSTER_SCALE,
+        minVisiblePixels: PUT_IN_VIEW_MIN_VISIBLE_PX,
+        maxScreenFraction: TARGET_TOO_BIG_FRACTION,
+      },
     );
+    if (!transform) return false;
 
-    const svgPixelWidth = viewBox.width * basePixelsPerViewBoxUnit;
-    const svgPixelHeight = viewBox.height * basePixelsPerViewBoxUnit;
-    const ox = (containerSize.width - svgPixelWidth) / 2;
-    const oy = (containerSize.height - svgPixelHeight) / 2;
-    const contentX = ox + (cx - viewBox.x) * basePixelsPerViewBoxUnit;
-    const contentY = oy + (cy - viewBox.y) * basePixelsPerViewBoxUnit;
-
-    setTransform(
-      containerSize.width / 2 - contentX * finalScale,
-      containerSize.height / 2 - contentY * finalScale,
-      finalScale,
-      animationMs,
-      'easeOut',
-    );
+    setTransform(transform.posX, transform.posY, transform.scale, animationMs, 'easeOut');
     return true;
-  }, [computeTargetBBox, isBBoxVisible]);
+  }, [computeTargetBBox, shouldReframe]);
 
   useEffect(() => {
     if (!putInView || putInView.length === 0) return;
@@ -566,25 +562,22 @@ function ZoomPanInner({
     if (executed) pendingPutInViewRef.current = false;
   }, [containerSize, putInView, executePutInView]);
 
-  // Show "Focus" when putInView targets are off-screen or small relative to the viewport.
-  // Threshold: element must fill at least 25% of the smaller viewport dimension to hide the button.
-  const FOCUS_SCREEN_FRACTION = 0.25;
-  const FOCUS_SHOW_THRESHOLD = 0.125;
+  // Show "Focus" button when the current frame doesn't satisfy the rule.
+  // We re-evaluate on every transform change so the button appears/disappears
+  // as the user pans/zooms; shouldReframe reads the live transform internally.
   const showFocusButton = useMemo(() => {
     if (!putInView || putInView.length === 0) return false;
+    if (currentTransform.scale <= 0) return false;
     const bbox = computeTargetBBox(putInView);
     if (!bbox) return false;
-    const { containerSize, basePixelsPerViewBoxUnit } = putInViewLatestRef.current;
+    const { containerSize } = putInViewLatestRef.current;
     if (containerSize.width === 0) return false;
-    const bboxMaxDim = Math.max(bbox.maxX - bbox.minX, bbox.maxY - bbox.minY);
-    const screenSize = bboxMaxDim * basePixelsPerViewBoxUnit * currentTransform.scale;
-    const minViewportDim = Math.min(containerSize.width, containerSize.height);
-    return screenSize < minViewportDim * FOCUS_SHOW_THRESHOLD;
-  }, [putInView, computeTargetBBox, currentTransform]);
+    return shouldReframe(bbox, new Set(putInView));
+  }, [putInView, computeTargetBBox, shouldReframe, currentTransform]);
 
   const handleFocus = useCallback(() => {
     if (!putInView || putInView.length === 0) return;
-    executePutInView(putInView, 400, { force: true, minScreenFraction: FOCUS_SCREEN_FRACTION });
+    executePutInView(putInView, 400, { force: true });
   }, [putInView, executePutInView]);
 
   const viewBoxString = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;

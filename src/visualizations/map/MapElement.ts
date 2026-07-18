@@ -5,6 +5,11 @@ export interface MapElement extends VisualizationElement {
   readonly geoCoordinates: GeoCoordinates;
   /** SVG path data for the country/region shape or river line */
   readonly svgPathData: string;
+  /** SVG path data for the sovereign country's own territory only — without
+   *  merged-in dependencies/territories (e.g. Greenland excluded for Denmark).
+   *  Used to pick the "main" subpath for label placement and camera framing.
+   *  Equal to svgPathData for elements with no merged territories. */
+  readonly mainlandSvgPathData?: string;
   /** ISO code or similar machine-readable identifier */
   readonly code: string;
   /** How to render the SVG path: 'fill' for closed polygons (countries), 'stroke' for lines (rivers). Defaults to 'fill'. */

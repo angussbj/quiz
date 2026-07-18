@@ -6,6 +6,7 @@ import { computeLabelPlacements } from './computeLabelPlacements';
 import { shouldShowLabel } from '../shouldShowLabel';
 import { STATUS_COLORS } from '../elementStateColors';
 import { assetPath } from '../../utilities/assetPath';
+import { LabelHaloFilter, haloBinKey } from './LabelHaloFilter';
 
 /**
  * Base for exponential zoom thresholds at which label positions are recomputed
@@ -70,8 +71,24 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
     return result.placements;
   }, [filteredLabels, quantizedScale, showFlags, avoidPoints]);
 
+  const haloFilters = useMemo(() => {
+    const byId = new Map<string, number>();
+    for (const { fontSize } of visibleItems) {
+      const name = haloBinKey(fontSize * 0.2, 'country-label-halo');
+      byId.set(name.id, name.radius);
+      const data = haloBinKey(fontSize * 0.75 * 0.2, 'country-label-halo');
+      byId.set(data.id, data.radius);
+    }
+    return Array.from(byId, ([id, radius]) => ({ id, radius }));
+  }, [visibleItems]);
+
   return (
     <g className="country-labels">
+      <defs>
+        {haloFilters.map(({ id, radius }) => (
+          <LabelHaloFilter key={id} id={id} radius={radius} />
+        ))}
+      </defs>
       {visibleItems.map(({ label, fontSize, flagHeight, gapSize, width, x, y, lines }) => {
         const state = elementNameToState?.[label.name];
         const isAnswered = state === 'correct' || state === 'correct-second'
@@ -97,6 +114,8 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
         const dataFontSize = fontSize * 0.75;
         const dataY = textBaseY + fontSize * 0.85 + nameLineCount * lineHeight + dataFontSize * 0.3;
 
+        const nameHaloId = haloBinKey(fontSize * 0.2, 'country-label-halo').id;
+        const dataHaloId = haloBinKey(dataFontSize * 0.2, 'country-label-halo').id;
         return (
           <g
             key={`country-label-${label.id}`}
@@ -123,13 +142,8 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                 fill={textColor}
                 opacity={0.8}
                 pointerEvents={canHover ? 'auto' : 'none'}
-                style={{
-                  userSelect: 'none',
-                  paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
-                  strokeWidth: fontSize * 0.5,
-                  strokeLinejoin: 'round',
-                }}
+                filter={`url(#${nameHaloId})`}
+                style={{ userSelect: 'none' }}
               >
                 {lines.length <= 1 ? label.name : lines.map((line, i) => (
                   <tspan key={i} x={cx} dy={i === 0 ? 0 : lineHeight}>
@@ -147,13 +161,8 @@ export function MapCountryLabels({ labels, showNames, showFlags, avoidPoints, el
                 fill={textColor}
                 opacity={0.7}
                 pointerEvents={canHover ? 'auto' : 'none'}
-                style={{
-                  userSelect: 'none',
-                  paintOrder: 'stroke',
-                  stroke: 'var(--color-label-halo)',
-                  strokeWidth: dataFontSize * 0.5,
-                  strokeLinejoin: 'round',
-                }}
+                filter={`url(#${dataHaloId})`}
+                style={{ userSelect: 'none' }}
               >
                 {dataValue}
               </text>
