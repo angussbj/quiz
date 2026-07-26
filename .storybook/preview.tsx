@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/react';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { ThemeProvider } from '../src/theme/ThemeProvider';
 import '../src/styles/global.css';
 
@@ -10,7 +10,6 @@ const preview: Preview = {
   globalTypes: {
     theme: {
       description: 'Colour scheme',
-      defaultValue: 'light',
       toolbar: {
         title: 'Theme',
         icon: 'paintbrush',
@@ -22,10 +21,13 @@ const preview: Preview = {
       },
     },
   },
+  initialGlobals: {
+    theme: 'light',
+  },
   decorators: [
     (Story, context) => {
       const theme: 'light' | 'dark' = context.globals.theme ?? 'light';
-      useMemo(() => {
+      useEffect(() => {
         if (typeof document !== 'undefined') {
           document.documentElement.setAttribute('data-theme', theme);
         }

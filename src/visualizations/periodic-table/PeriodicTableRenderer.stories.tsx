@@ -13,6 +13,7 @@ function makeElement(
   return {
     id, label, symbol, atomicNumber, row, column, group, interactive: true,
     trueRow: trueRow ?? row, trueColumn: trueColumn ?? column, atomicWeight,
+    dataColumns: { density: String(atomicNumber) },
     viewBoxCenter: { x: x + CELL_SIZE / 2, y: y + CELL_SIZE / 2 },
     viewBoxBounds: { minX: x, minY: y, maxX: x + CELL_SIZE, maxY: y + CELL_SIZE },
   };
@@ -32,6 +33,9 @@ function makeSampleElements(): ReadonlyArray<GridElement> {
 }
 
 const sampleElements = makeSampleElements();
+const defaultElementStates = Object.fromEntries(
+  sampleElements.map((element) => [element.id, 'default' as const]),
+);
 
 const meta: Meta<typeof PeriodicTableRenderer> = {
   title: 'Visualizations/PeriodicTableRenderer',
@@ -65,6 +69,24 @@ export const AllStates: Story = {
       N: 'highlighted',
       O: 'default',
     },
-    toggles: { showGroups: true },
+    toggles: {},
+  },
+};
+
+export const CategoryColours: Story = {
+  args: {
+    elements: sampleElements,
+    elementStates: defaultElementStates,
+    toggles: {},
+    selectValues: { elementColors: 'category' },
+  },
+};
+
+export const NumericGradient: Story = {
+  args: {
+    elements: sampleElements,
+    elementStates: defaultElementStates,
+    toggles: {},
+    selectValues: { elementColors: 'density' },
   },
 };
