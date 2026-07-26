@@ -90,6 +90,17 @@ const COUNTRY_CODES: Readonly<Record<string, string>> = {
   portugal: 'pt', uk: 'gb', switzerland: 'ch', belgium: 'be',
 };
 
+const COUNTRY_POPULATIONS: Readonly<Record<string, string>> = {
+  france: '68.4',
+  germany: '84.7',
+  spain: '48.6',
+  italy: '59.0',
+  portugal: '10.6',
+  uk: '68.3',
+  switzerland: '8.9',
+  belgium: '11.8',
+};
+
 const sampleCountryElements: ReadonlyArray<MapElement> = extendedBackgroundPaths.map((bg) => {
   const id = bg.id.replace('border-', '');
   const nums = bg.svgPathData.match(/-?\d+\.?\d*/g)?.map(Number) ?? [];
@@ -114,8 +125,13 @@ const sampleCountryElements: ReadonlyArray<MapElement> = extendedBackgroundPaths
     interactive: true,
     svgPathData: bg.svgPathData,
     pathRenderStyle: 'fill' as const,
+    dataColumns: { population_millions: COUNTRY_POPULATIONS[id] ?? '' },
   };
 });
+
+const defaultCountryStates = Object.fromEntries(
+  sampleCountryElements.map((element) => [element.id, 'default' as const]),
+);
 
 const sampleRiverElements: ReadonlyArray<MapElement> = [
   {
@@ -225,6 +241,47 @@ export const Countries: Story = {
       belgium: 'default',
     },
     toggles: { showBorders: true, showCityDots: false, showCountryNames: true, showMapFlags: false, showRegionColors: true },
+    backgroundPaths: extendedBackgroundPaths,
+    initialCameraPosition: { x: -14, y: -60, width: 36, height: 32 },
+  } satisfies VisualizationRendererProps,
+};
+
+/**
+ * Category fills travel through computeElementColors rather than the legacy
+ * showRegionColors path. Keeping this separate makes token/palette regressions
+ * visible even when feedback-state colours are unchanged.
+ */
+export const CountryCategoryColours: Story = {
+  args: {
+    elements: sampleCountryElements,
+    elementStates: defaultCountryStates,
+    toggles: {
+      showBorders: true,
+      showCityDots: false,
+      showCountryNames: true,
+      showMapFlags: false,
+    },
+    selectValues: { countryColors: 'region' },
+    backgroundPaths: extendedBackgroundPaths,
+    initialCameraPosition: { x: -14, y: -60, width: 36, height: 32 },
+  } satisfies VisualizationRendererProps,
+};
+
+/**
+ * Numeric fills exercise the adaptive scale, including the low/high ends of
+ * the population range, in both Storybook themes.
+ */
+export const CountryNumericGradient: Story = {
+  args: {
+    elements: sampleCountryElements,
+    elementStates: defaultCountryStates,
+    toggles: {
+      showBorders: true,
+      showCityDots: false,
+      showCountryNames: true,
+      showMapFlags: false,
+    },
+    selectValues: { countryColors: 'population_millions' },
     backgroundPaths: extendedBackgroundPaths,
     initialCameraPosition: { x: -14, y: -60, width: 36, height: 32 },
   } satisfies VisualizationRendererProps,

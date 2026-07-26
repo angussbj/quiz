@@ -51,3 +51,28 @@ const defaultProps: VisualizationRendererProps = {
 export const AllStates: Story = {
   args: defaultProps,
 };
+
+const extendedCategoryElements = buildTimelineElements(
+  Array.from({ length: 12 }, (_, index) => ({
+    id: `category-${index + 1}`,
+    label: `Category ${index + 1}`,
+    start: [1400 + index * 35] as const,
+    end: [1430 + index * 35] as const,
+    category: `Category ${index + 1}`,
+    track: index % 3,
+  })),
+);
+
+/**
+ * The first eight bars use theme tokens; the remaining bars exercise the
+ * generated golden-ratio hues used when a quiz has more palette categories.
+ */
+export const ExtendedCategoryPalette: Story = {
+  args: {
+    elements: extendedCategoryElements,
+    elementStates: Object.fromEntries(
+      extendedCategoryElements.map((element) => [element.id, 'default' as const]),
+    ),
+    toggles: { showColours: true, showBars: true, showLabels: true },
+  },
+};
