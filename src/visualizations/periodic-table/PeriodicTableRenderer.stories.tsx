@@ -22,19 +22,33 @@ function makeElement(
 function makeSampleElements(): ReadonlyArray<GridElement> {
   return [
     makeElement('H', 'correct', 'H', 1, 0, 0, 'nonmetal', '1.008'),
-    makeElement('He', 'context', 'He', 2, 0, 17, 'noble-gas', '4.003'),
-    makeElement('Li', 'correct-second', 'Li', 3, 1, 0, 'alkali-metal', '6.941'),
-    makeElement('Be', 'correct-third', 'Be', 4, 1, 1, 'alkaline-earth', '9.012'),
-    makeElement('B', 'incorrect', 'B', 5, 1, 12, 'metalloid', '10.81'),
-    makeElement('C', 'missed', 'C', 6, 1, 13, 'nonmetal', '12.01'),
-    makeElement('N', 'highlighted', 'N', 7, 1, 14, 'nonmetal', '14.01'),
-    makeElement('O', 'default', 'O', 8, 1, 15, 'nonmetal', '16.00'),
+    makeElement('He', 'context', 'He', 2, 0, 1, 'noble-gas', '4.003'),
+    makeElement('Li', 'correct-second', 'Li', 3, 0, 2, 'alkali-metal', '6.941'),
+    makeElement('Be', 'correct-third', 'Be', 4, 0, 3, 'alkaline-earth', '9.012'),
+    makeElement('B', 'incorrect', 'B', 5, 1, 0, 'metalloid', '10.81'),
+    makeElement('C', 'missed', 'C', 6, 1, 1, 'nonmetal', '12.01'),
+    makeElement('N', 'highlighted', 'N', 7, 1, 2, 'nonmetal', '14.01'),
+    makeElement('O', 'default', 'O', 8, 1, 3, 'nonmetal', '16.00'),
   ];
 }
 
 const sampleElements = makeSampleElements();
+const ELEMENT_NAMES: Readonly<Record<string, string>> = {
+  H: 'Hydrogen',
+  He: 'Helium',
+  Li: 'Lithium',
+  Be: 'Beryllium',
+  B: 'Boron',
+  C: 'Carbon',
+  N: 'Nitrogen',
+  O: 'Oxygen',
+};
+const dataElements = sampleElements.map((element) => ({
+  ...element,
+  label: ELEMENT_NAMES[element.id] ?? element.id,
+}));
 const defaultElementStates = Object.fromEntries(
-  sampleElements.map((element) => [element.id, 'default' as const]),
+  dataElements.map((element) => [element.id, 'default' as const]),
 );
 
 const meta: Meta<typeof PeriodicTableRenderer> = {
@@ -75,7 +89,7 @@ export const AllStates: Story = {
 
 export const CategoryColours: Story = {
   args: {
-    elements: sampleElements,
+    elements: dataElements,
     elementStates: defaultElementStates,
     toggles: {},
     selectValues: { elementColors: 'category' },
@@ -84,7 +98,7 @@ export const CategoryColours: Story = {
 
 export const NumericGradient: Story = {
   args: {
-    elements: sampleElements,
+    elements: dataElements,
     elementStates: defaultElementStates,
     toggles: {},
     selectValues: { elementColors: 'density' },

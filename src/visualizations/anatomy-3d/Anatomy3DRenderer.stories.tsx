@@ -5,13 +5,13 @@ import type { ElementVisualState } from '../VisualizationElement';
 
 const BONES = [
   ['frontal-bone', 'Frontal bone', 'Frontal bone', 'midline', 0, 165, 5],
+  ['parietal-bone-right', 'Parietal bone', 'Parietal bone right', 'right', -3.5, 165, -3],
+  ['occipital-bone', 'Occipital bone', 'Occipital bone', 'midline', 0, 160, -5],
+  ['ethmoid-bone', 'Ethmoid bone', 'Ethmoid Bone', 'midline', 0, 159, 6],
+  ['sphenoid-bone', 'Sphenoid bone', 'Sphenoid bone', 'midline', 0, 158, 3],
+  ['vomer', 'Vomer', 'Vomer', 'midline', 0, 157, 5],
   ['mandible', 'Mandible', 'Mandible bone', 'midline', 0, 154, 4],
-  ['body-of-sternum', 'Body of sternum', 'Body of sternum', 'midline', 0, 130, 9],
-  ['sacrum', 'Sacrum', 'Sacrum', 'midline', 0, 92, -5],
-  ['clavicle-right', 'Clavicle', 'Clavicle.r', 'right', -8, 141, 0],
-  ['humerus-right', 'Humerus', 'Humerus.r', 'right', -20, 125, -3],
-  ['femur-right', 'Femur', 'Femur.r', 'right', -9, 66, -2],
-  ['tibia-right', 'Tibia', 'Tibia.r', 'right', -8, 26, -3],
+  ['temporal-bone-right', 'Temporal bone', 'Temporal bone.r', 'right', -4, 159, 0],
 ] as const;
 
 const STATES: ReadonlyArray<ElementVisualState> = [
@@ -30,7 +30,7 @@ const elements: ReadonlyArray<Anatomy3DElement> = BONES.map(
     id,
     label,
     interactive: true,
-    group: y > 145 ? 'Skull' : y > 85 ? 'Torso' : 'Limbs',
+    group: 'Skull',
     meshEntries: [{ meshName, side, directMesh: true }],
     preferredView: 'front',
     viewBoxCenter: { x, y, z },

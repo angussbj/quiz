@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 coverage
+.storybook-static-test
+playwright-report
+test-results
 
 .worktrees
 screenshots/

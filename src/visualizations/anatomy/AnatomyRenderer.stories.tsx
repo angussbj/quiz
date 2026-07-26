@@ -40,6 +40,16 @@ const elementStates = Object.fromEntries(
   STATES.map((state) => [state, state]),
 ) as Readonly<Record<string, ElementVisualState>>;
 
+const perElementColourElements = elements.map((element, index) => ({
+  ...element,
+  label: `Element ${index + 1}`,
+}));
+
+const groupColourElements = elements.map((element) => ({
+  ...element,
+  label: element.group ?? 'Ungrouped',
+}));
+
 const meta: Meta<typeof AnatomyRenderer> = {
   title: 'Visualizations/AnatomyRenderer',
   component: AnatomyRenderer,
@@ -76,9 +86,9 @@ export const AllStates: Story = {
 
 export const PerElementColours: Story = {
   args: {
-    elements,
+    elements: perElementColourElements,
     elementStates: Object.fromEntries(
-      elements.map((element) => [element.id, 'default' as const]),
+      perElementColourElements.map((element) => [element.id, 'default' as const]),
     ),
     toggles: { showLabels: true, showGroupColors: true },
     initialCameraPosition: { x: -8, y: -8, width: 130, height: 112 },
@@ -87,7 +97,7 @@ export const PerElementColours: Story = {
 
 export const GroupColours: Story = {
   args: {
-    elements,
+    elements: groupColourElements,
     elementStates: {},
     toggles: { showLabels: true, showGroupColors: false },
     initialCameraPosition: { x: -8, y: -8, width: 130, height: 112 },

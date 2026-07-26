@@ -12,8 +12,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:visual": "playwright test --config playwright.visual.config.ts",
+    "test:visual:update": "playwright test --config playwright.visual.config.ts --update-snapshots",
     "storybook": "storybook dev",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "storybook:test-server": "node scripts/serveStorybook.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
