@@ -90,6 +90,17 @@ const COUNTRY_CODES: Readonly<Record<string, string>> = {
   portugal: 'pt', uk: 'gb', switzerland: 'ch', belgium: 'be',
 };
 
+const COUNTRY_NAMES: Readonly<Record<string, string>> = {
+  france: 'France',
+  germany: 'Germany',
+  spain: 'Spain',
+  italy: 'Italy',
+  portugal: 'Portugal',
+  uk: 'United Kingdom',
+  switzerland: 'Switzerland',
+  belgium: 'Belgium',
+};
+
 const COUNTRY_POPULATIONS: Readonly<Record<string, string>> = {
   france: '68.4',
   germany: '84.7',
@@ -129,8 +140,13 @@ const sampleCountryElements: ReadonlyArray<MapElement> = extendedBackgroundPaths
   };
 });
 
+const dataCountryElements = sampleCountryElements.map((element) => ({
+  ...element,
+  label: COUNTRY_NAMES[element.id] ?? element.id,
+}));
+
 const defaultCountryStates = Object.fromEntries(
-  sampleCountryElements.map((element) => [element.id, 'default' as const]),
+  dataCountryElements.map((element) => [element.id, 'default' as const]),
 );
 
 const sampleRiverElements: ReadonlyArray<MapElement> = [
@@ -253,7 +269,7 @@ export const Countries: Story = {
  */
 export const CountryCategoryColours: Story = {
   args: {
-    elements: sampleCountryElements,
+    elements: dataCountryElements,
     elementStates: defaultCountryStates,
     toggles: {
       showBorders: true,
@@ -273,7 +289,7 @@ export const CountryCategoryColours: Story = {
  */
 export const CountryNumericGradient: Story = {
   args: {
-    elements: sampleCountryElements,
+    elements: dataCountryElements,
     elementStates: defaultCountryStates,
     toggles: {
       showBorders: true,
@@ -305,6 +321,10 @@ export const Rivers: Story = {
       garonne: 'default',
     },
     toggles: { showBorders: true, showCityDots: false, showCountryNames: true },
+    elementStateColorOverrides: {
+      default: 'var(--color-lake)',
+      context: 'var(--color-lake)',
+    },
     backgroundPaths: extendedBackgroundPaths,
     initialCameraPosition: { x: -14, y: -60, width: 36, height: 32 },
   } satisfies VisualizationRendererProps,
