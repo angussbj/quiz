@@ -3,7 +3,6 @@ import type { QuizModeProps } from '../QuizModeProps';
 import { buildReviewElementStates, buildReviewElementToggles } from '../buildReviewStates';
 import { RecallInputBar } from '../RecallInputBar';
 import { useFreeRecallSession } from './useFreeRecallSession';
-import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import styles from './FreeRecallMode.module.css';
 
 /**
@@ -36,7 +35,7 @@ export function FreeRecallMode({
   normalizeOptions,
   onReconfigure,
 }: QuizModeProps) {
-  const { session, elementToggles, handleTextAnswer, handleGiveUp: rawHandleGiveUp, ambiguousMessage } = useFreeRecallSession({
+  const { session, elementToggles, handleTextAnswer, handleGiveUp, ambiguousMessage } = useFreeRecallSession({
     elements,
     dataRows,
     answerColumn: columnMappings['answer'] ?? 'answer',
@@ -44,18 +43,6 @@ export function FreeRecallMode({
     toggleValues,
     normalizeOptions,
   });
-  const { revealingElementIds, triggerReveal } = useRevealPulse();
-
-  const totalInteractive = useMemo(
-    () => elements.filter((e) => e.interactive !== false).length,
-    [elements],
-  );
-
-  const handleGiveUp = useCallback(() => {
-    const remainingIds = session.remainingElementIds;
-    triggerReveal(remainingIds, totalInteractive);
-    rawHandleGiveUp();
-  }, [session.remainingElementIds, totalInteractive, rawHandleGiveUp, triggerReveal]);
 
   const [inputText, setInputText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -135,7 +122,6 @@ export function FreeRecallMode({
           clustering={clustering}
           initialCameraPosition={initialCameraPosition}
           putInView={putInView}
-          autoRevealElementIds={revealingElementIds}
         />
       </div>
 

@@ -6,7 +6,6 @@ import { RecallInputBar } from '../RecallInputBar';
 import { useOrderedRecallSession } from './useOrderedRecallSession';
 import { sortDataRows } from './sortDataRows';
 import { groupByTiedValue } from './groupByTiedValue';
-import { useRevealPulse } from '@/visualizations/useRevealPulse';
 import { useWindowSize } from '@/utilities/useWindowSize';
 import { NARROW_WIDTH } from '@/utilities/breakpoints';
 import styles from './OrderedRecallMode.module.css';
@@ -73,22 +72,6 @@ export function OrderedRecallMode({
     orderedGroups,
     highlightNext,
   });
-  const { revealingElementIds, triggerReveal } = useRevealPulse();
-
-  const wrappedHandleSkip = useCallback(() => {
-    if (quiz.remainingGroupIds.length > 0) {
-      triggerReveal([...quiz.remainingGroupIds], quiz.totalPrompts);
-    }
-    quiz.handleSkip();
-  }, [quiz.remainingGroupIds, quiz.totalPrompts, quiz.handleSkip, triggerReveal]);
-
-  const wrappedHandleGiveUp = useCallback(() => {
-    const remainingIds = elements
-      .filter((e) => e.interactive !== false && !quiz.answeredElementIds.has(e.id))
-      .map((e) => e.id);
-    triggerReveal(remainingIds, quiz.totalPrompts);
-    quiz.handleGiveUp();
-  }, [elements, quiz.answeredElementIds, quiz.totalPrompts, quiz.handleGiveUp, triggerReveal]);
 
   const [inputText, setInputText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -222,7 +205,6 @@ export function OrderedRecallMode({
           lakePaths={lakePaths}
           clustering={clustering}
           putInView={putInView}
-          autoRevealElementIds={revealingElementIds}
         />
       </div>
 
@@ -236,8 +218,8 @@ export function OrderedRecallMode({
         onKeyDown={handleKeyDown}
         placeholder="Type the name..."
         flashIncorrect={quiz.flashIncorrect}
-        onSkip={wrappedHandleSkip}
-        onGiveUp={wrappedHandleGiveUp}
+        onSkip={quiz.handleSkip}
+        onGiveUp={quiz.handleGiveUp}
         onReconfigure={onReconfigure}
         lastMatchedElementId={quiz.lastMatchedElementId}
         lastMatchedAnswer={quiz.lastMatchedAnswer}
