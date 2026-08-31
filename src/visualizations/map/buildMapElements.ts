@@ -1,6 +1,8 @@
 import type { MapElement } from './MapElement';
 import { projectGeo, wrapPathCoordinates } from './projectGeo';
 import { extractDataColumns } from '../extractDataColumns';
+import { computePathArea } from './computePathCentroid';
+import type { ViewBoxPosition } from '../VisualizationElement';
 
 const DOT_RADIUS = 0.3;
 
@@ -64,11 +66,21 @@ function pointAlongStrokePaths(svgPathData: string, t: number): { x: number; y: 
   return coords[coords.length - 1];
 }
 
+/** CSV-only column. Holds the sovereign country's own paths after territories
+ *  have been pipe-appended into `paths`, so label/bounds code can find the
+ *  "mainland" without scanning territory paths. */
+const MAINLAND_PATHS_COLUMN = 'mainland_paths';
+
 /**
  * Merge territory rows into their sovereign parent rows by appending paths.
  * Territories are identified by a non-empty `sovereign_parent` column whose value
  * matches the `name` column of another row. Territory rows are removed from the
  * output; their paths are pipe-appended to the parent's `paths` column.
+ *
+ * Before any territory paths are appended, the parent's original `paths` are
+ * snapshotted into a `mainland_paths` column so downstream code can pick the
+ * largest *mainland* subpath rather than the largest overall (e.g. Denmark's
+ * Jutland, not Greenland).
  *
  * If the parent row is not present (e.g. filtered out by region), the territory
  * row is kept as-is (it won't merge into nothing).
@@ -82,10 +94,15 @@ function mergeTerritoryRows(
   const parentNameToIndex = new Map<string, number>();
   const mergedRows: Array<Record<string, string>> = [];
 
-  // First pass: index sovereign (parent) rows
+  // First pass: index sovereign (parent) rows and snapshot their original paths
+  // into mainland_paths before any merge happens.
   for (const row of rows) {
     const index = mergedRows.length;
-    mergedRows.push({ ...row });
+    const copy: Record<string, string> = { ...row };
+    if (!row['sovereign_parent']) {
+      copy[MAINLAND_PATHS_COLUMN] = row['paths'] ?? '';
+    }
+    mergedRows.push(copy);
     if (!row['sovereign_parent']) {
       parentNameToIndex.set(row['name'], index);
     }
@@ -143,12 +160,18 @@ export function buildMapElements(
     const center = projectGeo({ latitude: lat, longitude: lng });
     const svgPathData = (row['paths'] ?? '').split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' ');
 
-    // For elements with SVG path data, compute bounds from the largest path
-    // segment only. This prevents far-flung territories (or secondary landmasses
-    // like Alaska/Hawaii) from expanding viewBoxBounds and causing the camera
-    // to zoom out too far during putInView.
+    // mainlandSvgPathData holds the sovereign's own paths (territories excluded).
+    // Set during mergeTerritoryRows. Defaults to the full path data for rows
+    // that didn't go through the merge (no sovereign_parent column in dataset).
+    const rawMainlandPaths = row[MAINLAND_PATHS_COLUMN];
+    const mainlandSvgPathData = rawMainlandPaths !== undefined
+      ? rawMainlandPaths.split('|').map((s) => wrapPathCoordinates(s.trim())).filter(Boolean).join(' ')
+      : svgPathData;
+
+    // Frame the camera on the largest mainland subpath (excluding any merged
+    // territories). For Denmark this picks Jutland, not Greenland.
     const bounds = svgPathData
-      ? computeLargestPathBounds(svgPathData)
+      ? computeMainSubpathBounds(mainlandSvgPathData || svgPathData, center)
       : {
           minX: center.x - DOT_RADIUS,
           minY: center.y - DOT_RADIUS,
@@ -177,6 +200,7 @@ export function buildMapElements(
       group: groupColumn ? row[groupColumn] : undefined,
       labelPosition: parseLabelPosition(row['label_position']),
       svgPathData,
+      mainlandSvgPathData: mainlandSvgPathData !== svgPathData ? mainlandSvgPathData : undefined,
       code: row[codeColumn] ?? '',
       pathRenderStyle: pathStyle,
       labelAnchor,
@@ -220,28 +244,35 @@ function computePathBounds(svgPathData: string): Bounds {
   return { minX, minY, maxX, maxY };
 }
 
-function boundsArea(b: Bounds): number {
-  return (b.maxX - b.minX) * (b.maxY - b.minY);
-}
-
 /**
- * Find the bounding box of the largest individual subpath (by area) in a
- * combined SVG path string. Each subpath starts with 'M'. This focuses
- * camera framing on the main landmass rather than distant islands/territories.
+ * Pick the bounds of the largest subpath (by polygon area) in a combined SVG
+ * path string. Caller passes mainland-only path data so this picks the largest
+ * mainland landmass, ignoring merged territories.
+ *
+ * The center is used only as a fallback when no subpath has a positive area
+ * (e.g. degenerate path) — frames a small box around the center.
  */
-function computeLargestPathBounds(svgPathData: string): Bounds {
+function computeMainSubpathBounds(
+  svgPathData: string,
+  center: ViewBoxPosition,
+): Bounds {
   const subpaths = svgPathData.split(/(?=M\s)/).filter((s) => s.trim());
-  if (subpaths.length <= 1) return computePathBounds(svgPathData);
+  if (subpaths.length === 0) {
+    return {
+      minX: center.x - DOT_RADIUS, minY: center.y - DOT_RADIUS,
+      maxX: center.x + DOT_RADIUS, maxY: center.y + DOT_RADIUS,
+    };
+  }
+  if (subpaths.length === 1) return computePathBounds(subpaths[0]);
 
   let largestBounds = computePathBounds(subpaths[0]);
-  let largestArea = boundsArea(largestBounds);
+  let largestArea = computePathArea(subpaths[0]);
 
   for (let i = 1; i < subpaths.length; i++) {
-    const b = computePathBounds(subpaths[i]);
-    const a = boundsArea(b);
+    const a = computePathArea(subpaths[i]);
     if (a > largestArea) {
-      largestBounds = b;
       largestArea = a;
+      largestBounds = computePathBounds(subpaths[i]);
     }
   }
 
