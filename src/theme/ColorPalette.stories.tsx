@@ -8,7 +8,7 @@ const COLOR_GROUPS: ReadonlyArray<{ readonly title: string; readonly vars: Reado
   },
   {
     title: 'Text',
-    vars: ['--color-text-primary', '--color-text-secondary', '--color-text-muted', '--color-on-color-fill', '--color-on-accent'],
+    vars: ['--color-text-primary', '--color-text-secondary', '--color-text-muted', '--color-on-accent'],
   },
   {
     title: 'Interactive',
@@ -17,6 +17,7 @@ const COLOR_GROUPS: ReadonlyArray<{ readonly title: string; readonly vars: Reado
   {
     title: 'Feedback',
     vars: [
+      '--color-default',
       '--color-correct', '--color-correct-bg',
       '--color-correct-second', '--color-correct-second-bg',
       '--color-correct-third', '--color-correct-third-bg',
@@ -27,14 +28,37 @@ const COLOR_GROUPS: ReadonlyArray<{ readonly title: string; readonly vars: Reado
     ],
   },
   {
-    title: 'Map & labels',
-    vars: ['--color-city-dot', '--color-label-halo', '--color-lake', '--color-border'],
+    title: 'UI chrome',
+    vars: [
+      '--color-border-subtle', '--color-border-input', '--color-focus-ring',
+      '--color-surface-raised', '--color-overlay',
+    ],
   },
   {
-    title: 'Groups',
+    title: 'Visualization canvas',
+    vars: [
+      '--viz-country-border', '--viz-country-fill',
+      '--viz-lake', '--viz-ocean',
+      '--viz-city-dot', '--viz-dot-halo',
+      '--viz-label-halo', '--viz-hover-overlay', '--viz-on-color-fill',
+      '--viz-bone-default', '--viz-bone-context',
+      '--viz-timeline-bar-outline', '--viz-timeline-grid',
+    ],
+  },
+  {
+    title: 'Group accents',
     vars: [
       '--color-group-1', '--color-group-2', '--color-group-3', '--color-group-4',
       '--color-group-5', '--color-group-6', '--color-group-7', '--color-group-8',
+    ],
+  },
+  {
+    title: 'Group surfaces',
+    vars: [
+      '--color-group-1-surface', '--color-group-2-surface',
+      '--color-group-3-surface', '--color-group-4-surface',
+      '--color-group-5-surface', '--color-group-6-surface',
+      '--color-group-7-surface', '--color-group-8-surface',
     ],
   },
 ];
@@ -72,7 +96,7 @@ function Swatch({ variable }: { readonly variable: string }) {
     height: 32,
     borderRadius: 4,
     background: `var(${variable})`,
-    border: '1px solid var(--color-border)',
+    border: '1px solid var(--color-border-subtle)',
     flexShrink: 0,
   };
   return (

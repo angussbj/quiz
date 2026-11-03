@@ -322,8 +322,8 @@ export const Rivers: Story = {
     },
     toggles: { showBorders: true, showCityDots: false, showCountryNames: true },
     elementStateColorOverrides: {
-      default: 'var(--color-lake)',
-      context: 'var(--color-lake)',
+      default: 'var(--viz-lake)',
+      context: 'var(--viz-lake)',
     },
     backgroundPaths: extendedBackgroundPaths,
     initialCameraPosition: { x: -14, y: -60, width: 36, height: 32 },

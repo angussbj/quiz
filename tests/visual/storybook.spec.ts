@@ -6,12 +6,17 @@ interface VisualStory {
   readonly id: string;
   readonly title: string;
   readonly model3d?: boolean;
+  readonly fullPage?: boolean;
 }
 
 const THEMES: ReadonlyArray<Theme> = ['light', 'dark'];
 
 const STORIES: ReadonlyArray<VisualStory> = [
-  { id: 'theme-colour-palette--side-by-side', title: 'colour palette' },
+  {
+    id: 'theme-colour-palette--side-by-side',
+    title: 'colour palette',
+    fullPage: true,
+  },
   { id: 'visualizations-maprenderer--capitals', title: 'map capitals states' },
   { id: 'visualizations-maprenderer--countries', title: 'map country states' },
   {
@@ -98,7 +103,9 @@ for (const theme of THEMES) {
         { waitUntil: 'networkidle' },
       );
       await waitForStory(page, story, theme);
-      await expect(page).toHaveScreenshot(`${story.id}-${theme}.png`);
+      await expect(page).toHaveScreenshot(`${story.id}-${theme}.png`, {
+        fullPage: story.fullPage,
+      });
     });
   }
 }
