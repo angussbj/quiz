@@ -102,18 +102,24 @@ export function reprojectCameraRect(
   projection: MapProjection,
 ): { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined {
   if (!rect || projection.id === 'equirectangular') return rect;
-  const corners: ReadonlyArray<{ x: number; y: number }> = [
+  const midX = rect.x + rect.width / 2;
+  const midY = rect.y + rect.height / 2;
+  const samples: ReadonlyArray<{ x: number; y: number }> = [
     { x: rect.x, y: rect.y },
+    { x: midX, y: rect.y },
     { x: rect.x + rect.width, y: rect.y },
-    { x: rect.x, y: rect.y + rect.height },
+    { x: rect.x + rect.width, y: midY },
     { x: rect.x + rect.width, y: rect.y + rect.height },
+    { x: midX, y: rect.y + rect.height },
+    { x: rect.x, y: rect.y + rect.height },
+    { x: rect.x, y: midY },
   ];
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-  for (const corner of corners) {
-    const projected = projection.project({ longitude: corner.x, latitude: -corner.y });
+  for (const point of samples) {
+    const projected = projection.project({ longitude: point.x, latitude: -point.y });
     if (projected.x < minX) minX = projected.x;
     if (projected.y < minY) minY = projected.y;
     if (projected.x > maxX) maxX = projected.x;

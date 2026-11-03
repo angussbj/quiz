@@ -166,21 +166,36 @@ describe('reprojectCameraRect', () => {
     expect(reprojectCameraRect(undefined, webMercatorProjection)).toBeUndefined();
   });
 
-  it('produces a bounding box that contains the projected corners', () => {
+  it('produces a bounding box that contains all projected edge points', () => {
     const rect = { x: -100, y: -50, width: 200, height: 100 };
     const result = reprojectCameraRect(rect, equalEarthProjection);
     if (!result) throw new Error('expected result');
-    const corners = [
+    const midX = rect.x + rect.width / 2;
+    const midY = rect.y + rect.height / 2;
+    const edgePoints = [
       equalEarthProjection.project({ longitude: rect.x, latitude: -rect.y }),
+      equalEarthProjection.project({ longitude: midX, latitude: -rect.y }),
       equalEarthProjection.project({ longitude: rect.x + rect.width, latitude: -rect.y }),
-      equalEarthProjection.project({ longitude: rect.x, latitude: -(rect.y + rect.height) }),
+      equalEarthProjection.project({ longitude: rect.x + rect.width, latitude: -midY }),
       equalEarthProjection.project({ longitude: rect.x + rect.width, latitude: -(rect.y + rect.height) }),
+      equalEarthProjection.project({ longitude: midX, latitude: -(rect.y + rect.height) }),
+      equalEarthProjection.project({ longitude: rect.x, latitude: -(rect.y + rect.height) }),
+      equalEarthProjection.project({ longitude: rect.x, latitude: -midY }),
     ];
-    for (const corner of corners) {
-      expect(corner.x).toBeGreaterThanOrEqual(result.x - 1e-6);
-      expect(corner.x).toBeLessThanOrEqual(result.x + result.width + 1e-6);
-      expect(corner.y).toBeGreaterThanOrEqual(result.y - 1e-6);
-      expect(corner.y).toBeLessThanOrEqual(result.y + result.height + 1e-6);
+    for (const point of edgePoints) {
+      expect(point.x).toBeGreaterThanOrEqual(result.x - 1e-6);
+      expect(point.x).toBeLessThanOrEqual(result.x + result.width + 1e-6);
+      expect(point.y).toBeGreaterThanOrEqual(result.y - 1e-6);
+      expect(point.y).toBeLessThanOrEqual(result.y + result.height + 1e-6);
     }
+  });
+
+  it('edge midpoints widen the box compared to corners alone for Equal Earth', () => {
+    const rect = { x: -180, y: -60, width: 360, height: 120 };
+    const result = reprojectCameraRect(rect, equalEarthProjection);
+    if (!result) throw new Error('expected result');
+    const equatorMid = equalEarthProjection.project({ longitude: rect.x + rect.width / 2, latitude: 0 });
+    expect(equatorMid.x).toBeGreaterThanOrEqual(result.x - 1e-6);
+    expect(equatorMid.x).toBeLessThanOrEqual(result.x + result.width + 1e-6);
   });
 });

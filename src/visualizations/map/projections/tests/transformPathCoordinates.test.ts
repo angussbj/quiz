@@ -42,4 +42,26 @@ describe('transformPathCoordinates', () => {
     const out = transformPathCoordinates(input, equirectangularProjection);
     expect(out).toBe(input);
   });
+
+  it('clips paths that cross the wrap meridian into separate sub-paths', () => {
+    // Path goes from -165 (above WRAP=-169) to -175 (below) and back to -160.
+    // Should produce two sub-paths: the above pieces and the below piece (shifted +360).
+    const input = 'M -165 -80 L -175 -80 L -160 -80 Z';
+    const result = transformPathCoordinates(input, webMercatorProjection);
+    // Should have multiple M commands (one per sub-path)
+    const mCount = (result.match(/M /g) ?? []).length;
+    expect(mCount).toBeGreaterThan(1);
+    // No L command should connect x-values more than 180° apart
+    const parts = result.split(/(?=[ML])/);
+    let prevX: number | undefined;
+    for (const part of parts) {
+      const nums = part.match(/-?\d+(?:\.\d+)?/g);
+      if (!nums) continue;
+      const x = parseFloat(nums[0]);
+      if (part.trimStart().startsWith('L') && prevX !== undefined) {
+        expect(Math.abs(x - prevX)).toBeLessThan(180);
+      }
+      prevX = x;
+    }
+  });
 });

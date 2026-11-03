@@ -5,7 +5,7 @@ const DEG_TO_RAD = Math.PI / 180;
 const RAD_TO_DEG = 180 / Math.PI;
 
 /** Latitudes near the poles approach infinite y under Mercator. Clip them. */
-const MAX_MERCATOR_LATITUDE = 85;
+const MAX_MERCATOR_LATITUDE = 78;
 
 /**
  * Web Mercator projection: x stays linear in longitude; y is the standard
