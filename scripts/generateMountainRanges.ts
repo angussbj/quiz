@@ -147,6 +147,10 @@ const WIKIDATA_RANGE_MAP: Readonly<Record<string, string>> = {
   'Cordillera Central': 'andes',
   'Cordillera Oriental': 'andes',
   'Chilean Coast Range': 'andes',
+  'Cordillera Real': 'cordillera-real',
+  'Cordillera Apolobamba': 'cordillera-real',
+  'Cordillera Blanca': 'cordillera-blanca',
+  'Cordillera Huayhuash': 'cordillera-blanca',
   'Sierra Nevada de Santa Marta': 'sierra-nevada-de-santa-marta',
   'Brazilian Highlands': 'serra-da-mantiqueira',
 
@@ -201,6 +205,7 @@ interface WikidataPeak {
   readonly lng: number;
   readonly lat: number;
   readonly elevation: number;
+  readonly name: string;
 }
 
 /**
@@ -226,11 +231,19 @@ interface WikidataJson {
 function loadWikidataPeaks(
   filePaths: ReadonlyArray<string>,
   ranges: ReadonlyArray<RangeDefinition>,
-): ReadonlyMap<string, ReadonlyArray<readonly [number, number]>> {
+  labelMappingPath?: string,
+): ReadonlyMap<string, ReadonlyArray<WikidataPeak>> {
   const existingFiles = filePaths.filter(f => existsSync(f));
   if (existingFiles.length === 0) {
     console.log('No WikiData peaks files found, using manual seeds only.');
     return new Map();
+  }
+
+  // Load GMBA-derived label mapping (maps sub-range names like "Pennine Alps" -> "alps")
+  let extendedLabelMap: Readonly<Record<string, string>> = {};
+  if (labelMappingPath && existsSync(labelMappingPath)) {
+    extendedLabelMap = JSON.parse(readFileSync(labelMappingPath, 'utf-8')) as Record<string, string>;
+    console.log(`  Loaded ${Object.keys(extendedLabelMap).length} extended label mappings from GMBA hierarchy.`);
   }
 
   // Build lookup from range ID to definition for distance validation
@@ -263,7 +276,8 @@ function loadWikidataPeaks(
 
     if (isNaN(lng) || isNaN(lat)) continue;
 
-    let rangeId = WIKIDATA_RANGE_MAP[rangeLabel];
+    // Try hardcoded map first, then GMBA-derived extended mapping, then Sierra Nevada disambiguation
+    let rangeId = WIKIDATA_RANGE_MAP[rangeLabel] ?? extendedLabelMap[rangeLabel];
 
     // Handle "Sierra Nevada" ambiguity
     if (!rangeId && rangeLabel === 'Sierra Nevada') {
@@ -292,7 +306,8 @@ function loadWikidataPeaks(
       arr = [];
       peaksByRange.set(rangeId, arr);
     }
-    arr.push({ lng, lat, elevation });
+    const name = binding.peakLabel?.value ?? '';
+    arr.push({ lng, lat, elevation, name });
   }
 
   console.log(`  Matched ${matchedCount} peaks, ${unmatchedCount} unmatched, ${distanceRejected} rejected (too far).`);
@@ -303,7 +318,7 @@ function loadWikidataPeaks(
   const CELL_SIZE = 0.5; // degrees
   const MAX_PEAKS_PER_RANGE = 50;
 
-  const result = new Map<string, ReadonlyArray<readonly [number, number]>>();
+  const result = new Map<string, ReadonlyArray<WikidataPeak>>();
 
   for (const [rangeId, peaks] of peaksByRange) {
     // Grid cells: key = "gridX,gridY", value = best peak
@@ -322,7 +337,7 @@ function loadWikidataPeaks(
 
     if (gridPeaks.length <= MAX_PEAKS_PER_RANGE) {
       // Few enough peaks — use all of them
-      result.set(rangeId, gridPeaks.map(p => [p.lng, p.lat] as const));
+      result.set(rangeId, gridPeaks);
       continue;
     }
 
@@ -343,7 +358,7 @@ function loadWikidataPeaks(
     }
 
     if (selected.length > 0) {
-      result.set(rangeId, selected.map(p => [p.lng, p.lat] as const));
+      result.set(rangeId, selected);
     }
   }
 
@@ -352,6 +367,67 @@ function loadWikidataPeaks(
     console.log(`    ${rangeId}: ${peaks.length} seed(s)`);
   }
 
+  return result;
+}
+
+// ------------------------------------------------------------------
+// GMBA sub-range centroids
+// ------------------------------------------------------------------
+
+interface GmbaSeedEntry {
+  readonly seeds: ReadonlyArray<{ readonly lng: number; readonly lat: number; readonly name: string }>;
+}
+
+/**
+ * Load GMBA Mountain Inventory sub-range centroids as additional seed points.
+ * These supplement WikiData peaks with centroids of named sub-ranges from the
+ * GMBA hierarchy, improving coverage for ranges with sparse WikiData data.
+ */
+function loadGmbaCentroids(
+  filePath: string,
+  ranges: ReadonlyArray<RangeDefinition>,
+): ReadonlyMap<string, ReadonlyArray<WikidataPeak>> {
+  if (!existsSync(filePath)) {
+    console.log('No GMBA centroids file found, skipping.');
+    return new Map();
+  }
+
+  console.log(`Loading GMBA sub-range centroids from ${filePath}...`);
+  const raw = JSON.parse(readFileSync(filePath, 'utf-8')) as Record<string, GmbaSeedEntry>;
+
+  // Build lookup for distance validation
+  const rangeById = new Map<string, RangeDefinition>();
+  for (const r of ranges) {
+    rangeById.set(r.id, r);
+  }
+
+  const result = new Map<string, ReadonlyArray<WikidataPeak>>();
+  let totalCount = 0;
+  let rejectedCount = 0;
+
+  for (const [rangeId, entry] of Object.entries(raw)) {
+    const rangeDef = rangeById.get(rangeId);
+    if (!rangeDef) continue;
+
+    const maxDist = maxPeakDistanceDeg(rangeDef);
+    const valid: Array<WikidataPeak> = [];
+
+    for (const seed of entry.seeds) {
+      const dist = degDistance(seed.lng, seed.lat, rangeDef.longitude, rangeDef.latitude);
+      if (dist > maxDist) {
+        rejectedCount++;
+        continue;
+      }
+      valid.push({ lng: seed.lng, lat: seed.lat, elevation: 0, name: seed.name });
+    }
+
+    if (valid.length > 0) {
+      result.set(rangeId, valid);
+      totalCount += valid.length;
+    }
+  }
+
+  console.log(`  Loaded ${totalCount} GMBA centroids for ${result.size} ranges (${rejectedCount} rejected as too far).`);
   return result;
 }
 
@@ -523,8 +599,11 @@ function minSeedDistanceSq(
 }
 
 /**
- * BFS flood-fill from a seed pixel with Voronoi partitioning, optional bridge
- * radius, and maximum distance from seed points.
+ * Multi-source BFS flood-fill from ALL seed pixels simultaneously.
+ *
+ * Every seed is a starting point, ensuring all seeds are inside the filled
+ * region (assuming they're above threshold). Seeds below threshold are nudged
+ * to the nearest above-threshold pixel in the same Voronoi cell.
  *
  * Pixels can only join the flood if they're:
  * 1. In the same Voronoi cell as the range
@@ -540,43 +619,45 @@ function floodFill(
   dem: Float32Array,
   voronoi: Uint16Array,
   rangeIndex: number,
-  seedPx: number,
-  seedPy: number,
   threshold: number,
   radius: number,
   allSeeds: ReadonlyArray<readonly [number, number]>,
   maxSeedDistPx: number,
 ): Set<number> {
   const filled = new Set<number>();
-  const seedIdx = seedPy * DS_WIDTH + seedPx;
   const maxDistSq = maxSeedDistPx * maxSeedDistPx;
 
-  // Verify seed is above threshold
-  if (dem[seedIdx] < threshold) {
-    // Try to find a nearby pixel above threshold within our Voronoi cell
-    let bestIdx = seedIdx;
-    let bestElev = dem[seedIdx];
-    const searchRadius = Math.max(5, radius);
-    for (let dy = -searchRadius; dy <= searchRadius; dy++) {
-      for (let dx = -searchRadius; dx <= searchRadius; dx++) {
-        const nx = seedPx + dx;
-        const ny = seedPy + dy;
-        if (nx < 0 || nx >= DS_WIDTH || ny < 0 || ny >= DS_HEIGHT) continue;
-        const idx = ny * DS_WIDTH + nx;
-        if (voronoi[idx] !== rangeIndex) continue;
-        if (dem[idx] > bestElev) {
-          bestElev = dem[idx];
-          bestIdx = idx;
+  // Add all seeds as starting points. Seeds below threshold are nudged
+  // to the nearest above-threshold pixel in the same Voronoi cell.
+  for (const [seedPx, seedPy] of allSeeds) {
+    const seedIdx = seedPy * DS_WIDTH + seedPx;
+    if (dem[seedIdx] >= threshold) {
+      filled.add(seedIdx);
+    } else {
+      // Find nearest above-threshold pixel in same Voronoi cell
+      const searchRadius = Math.max(5, radius);
+      let bestIdx = -1;
+      let bestElev = -Infinity;
+      for (let dy = -searchRadius; dy <= searchRadius; dy++) {
+        for (let dx = -searchRadius; dx <= searchRadius; dx++) {
+          const nx = seedPx + dx;
+          const ny = seedPy + dy;
+          if (nx < 0 || nx >= DS_WIDTH || ny < 0 || ny >= DS_HEIGHT) continue;
+          const idx = ny * DS_WIDTH + nx;
+          if (voronoi[idx] !== rangeIndex) continue;
+          if (dem[idx] > bestElev) {
+            bestElev = dem[idx];
+            bestIdx = idx;
+          }
         }
       }
+      if (bestIdx >= 0 && bestElev >= threshold) {
+        filled.add(bestIdx);
+      }
     }
-    if (bestElev < threshold) {
-      return filled;
-    }
-    filled.add(bestIdx);
-  } else {
-    filled.add(seedIdx);
   }
+
+  if (filled.size === 0) return filled;
 
   // Pre-compute the neighbor offset list for the given radius
   const offsets = buildOffsets(radius);
@@ -667,16 +748,16 @@ function dilate(
 // Keep only the largest connected component
 // ------------------------------------------------------------------
 
-function largestComponent(filled: Set<number>): Set<number> {
-  if (filled.size === 0) return filled;
+/** Find all connected components in a filled pixel set (4-connected). */
+function allComponents(filled: Set<number>): Array<Set<number>> {
+  if (filled.size === 0) return [];
 
   const visited = new Set<number>();
-  let largestSet = new Set<number>();
+  const result: Array<Set<number>> = [];
 
   for (const idx of filled) {
     if (visited.has(idx)) continue;
 
-    // BFS to find this component
     const component = new Set<number>();
     const queue = [idx];
     component.add(idx);
@@ -688,28 +769,21 @@ function largestComponent(filled: Set<number>): Set<number> {
       const py = Math.floor(cur / DS_WIDTH);
       const px = cur % DS_WIDTH;
 
-      const dx4 = [1, -1, 0, 0];
-      const dy4 = [0, 0, 1, -1];
-
-      for (let d = 0; d < 4; d++) {
-        const nx = px + dx4[d];
-        const ny = py + dy4[d];
+      for (const [ddx, ddy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        const nx = px + ddx;
+        const ny = py + ddy;
         const nIdx = ny * DS_WIDTH + nx;
-
         if (!filled.has(nIdx) || visited.has(nIdx)) continue;
-
         visited.add(nIdx);
         component.add(nIdx);
         queue.push(nIdx);
       }
     }
 
-    if (component.size > largestSet.size) {
-      largestSet = component;
-    }
+    result.push(component);
   }
 
-  return largestSet;
+  return result;
 }
 
 // ------------------------------------------------------------------
@@ -1933,23 +2007,67 @@ async function main(): Promise<void> {
   console.log('  Done.');
 
   // Load WikiData peaks to use as seeds (falls back to manual seeds when unavailable)
-  const wikidataPeaks = loadWikidataPeaks([
-    resolve('scripts/source-data/wikidata-mountain-peaks.json'),
-    resolve('scripts/source-data/wikidata-mountain-peaks-extra.json'),
-  ], RANGES);
+  const wikidataPeaks = loadWikidataPeaks(
+    [
+      resolve('scripts/source-data/wikidata-mountain-peaks.json'),
+      resolve('scripts/source-data/wikidata-mountain-peaks-extra.json'),
+    ],
+    RANGES,
+    resolve('scripts/source-data/wikidata-range-label-mapping.json'),
+  );
 
-  // Build seed groups: use WikiData peaks when available, otherwise manual seeds.
-  // When WikiData peaks exist, they replace the manual seeds entirely — the manual
-  // seeds were approximations that the real peak data supersedes.
+  // Load GMBA sub-range centroids as supplementary seeds
+  const gmbaCentroids = loadGmbaCentroids(
+    resolve('scripts/source-data/gmba-subrange-centroids.json'),
+    RANGES,
+  );
+
+  // Build seed groups by merging sources: WikiData peaks + GMBA centroids + manual seeds.
+  // All available sources are combined (deduplicated by 0.5° grid cell, highest elevation wins).
+  // Manual seeds are only used when neither WikiData nor GMBA provides any data.
   console.log('\nBuilding seed groups...');
   const seedGroups: Array<ReadonlyArray<readonly [number, number]>> = [];
+  const seedNames: Array<ReadonlyArray<string>> = [];
   for (const range of RANGES) {
-    const wdSeeds = wikidataPeaks.get(range.id);
-    if (wdSeeds && wdSeeds.length > 0) {
-      seedGroups.push(wdSeeds.map(([lng, lat]) => geoToPixel(lng, lat)));
-      console.log(`  ${range.name}: ${wdSeeds.length} WikiData seed(s)`);
+    const wdSeeds = wikidataPeaks.get(range.id) ?? [];
+    const gmbaSeeds = gmbaCentroids.get(range.id) ?? [];
+    const combined = [...wdSeeds, ...gmbaSeeds];
+
+    if (combined.length > 0) {
+      // Deduplicate by 0.5° grid cell (same logic as loadWikidataPeaks subsampling).
+      // WikiData peaks have real elevations; GMBA centroids have elevation 0, so
+      // WikiData wins in shared cells.
+      const CELL_SIZE = 0.5;
+      const MAX_SEEDS = 50;
+      const cells = new Map<string, WikidataPeak>();
+      for (const peak of combined) {
+        const gx = Math.floor(peak.lng / CELL_SIZE);
+        const gy = Math.floor(peak.lat / CELL_SIZE);
+        const key = `${gx},${gy}`;
+        const existing = cells.get(key);
+        if (!existing || peak.elevation > existing.elevation) {
+          cells.set(key, peak);
+        }
+      }
+      let merged = Array.from(cells.values());
+
+      if (merged.length > MAX_SEEDS) {
+        // Prioritise convex hull + highest elevation (same as loadWikidataPeaks)
+        const hullIndices = convexHull(merged.map(p => [p.lng, p.lat] as const));
+        const hullSet = new Set(hullIndices);
+        const hull = merged.filter((_, i) => hullSet.has(i));
+        const interior = merged.filter((_, i) => !hullSet.has(i)).sort((a, b) => b.elevation - a.elevation);
+        merged = [...hull, ...interior.slice(0, MAX_SEEDS - hull.length)];
+      }
+
+      seedGroups.push(merged.map(p => geoToPixel(p.lng, p.lat)));
+      seedNames.push(merged.map(p => p.name));
+      const wdCount = wdSeeds.length;
+      const gmbaCount = gmbaSeeds.length;
+      console.log(`  ${range.name}: ${merged.length} seed(s) (${wdCount} WikiData + ${gmbaCount} GMBA, deduplicated from ${combined.length})`);
     } else {
       seedGroups.push(range.seeds.map(s => geoToPixel(s[0], s[1])));
+      seedNames.push(range.seeds.map(() => ''));
       console.log(`  ${range.name}: ${range.seeds.length} manual seed(s)`);
     }
   }
@@ -1970,32 +2088,17 @@ async function main(): Promise<void> {
     const range = RANGES[i];
     console.log(`\n[${i + 1}/${RANGES.length}] ${range.name}...`);
 
-    // Pick the seed with the highest elevation for flood-fill start
-    // Use the actual seed group (which may be WikiData peaks or manual seeds)
     const seeds = seedGroups[i];
-    let bestSeedPx = 0;
-    let bestSeedPy = 0;
-    let bestSeedElev = -Infinity;
-    for (const [px, py] of seeds) {
-      const elev = dem[py * DS_WIDTH + px];
-      if (elev > bestSeedElev) {
-        bestSeedElev = elev;
-        bestSeedPx = px;
-        bestSeedPy = py;
-      }
-    }
-    console.log(`  Seed pixel: (${bestSeedPx}, ${bestSeedPy}), elevation at seed: ${bestSeedElev.toFixed(0)}m (${seeds.length} seed(s))`);
     const radius = range.radius ?? 0;
 
     // Max distance from seeds: use explicit value or auto-calculate from range length.
     // 1° ≈ 111km at equator; convert lengthKm to degrees and add generous padding.
-    // The idea: the flood shouldn't extend much beyond where the peaks/seeds are.
     const maxSeedDistDeg = range.maxSeedDistDeg ?? Math.max(2, range.lengthKm / 111 * 0.4);
     const maxSeedDistPx = Math.round(maxSeedDistDeg / 360 * DS_WIDTH);
-    console.log(`  Threshold: ${range.threshold}m, radius: ${radius}px, maxSeedDist: ${maxSeedDistDeg.toFixed(1)}° (${maxSeedDistPx}px)`);
+    console.log(`  ${seeds.length} seed(s), threshold: ${range.threshold}m, radius: ${radius}px, maxSeedDist: ${maxSeedDistDeg.toFixed(1)}° (${maxSeedDistPx}px)`);
 
-    // Flood fill constrained by Voronoi partition and max distance from seeds
-    const filled = floodFill(dem, voronoi, i, bestSeedPx, bestSeedPy, range.threshold, radius, seeds, maxSeedDistPx);
+    // Multi-source flood fill from ALL seeds, constrained by Voronoi + max distance
+    const filled = floodFill(dem, voronoi, i, range.threshold, radius, seeds, maxSeedDistPx);
     console.log(`  Flood fill: ${filled.size} pixels`);
 
     if (filled.size === 0) {
@@ -2004,16 +2107,58 @@ async function main(): Promise<void> {
       continue;
     }
 
-    // Keep largest connected component
-    const largest = largestComponent(filled);
-    if (largest.size < filled.size) {
-      console.log(`  Largest component: ${largest.size} pixels (dropped ${filled.size - largest.size} disconnected)`);
+    // Find all connected components and select the one containing the most seeds
+    const components = allComponents(filled);
+    components.sort((a, b) => b.size - a.size); // largest first for display
+
+    // Count seeds in each component
+    const seedCountPerComponent: Array<number> = components.map((comp) => {
+      let count = 0;
+      for (const [spx, spy] of seeds) {
+        const sIdx = spy * DS_WIDTH + spx;
+        if (comp.has(sIdx)) count++;
+      }
+      return count;
+    });
+
+    // Select the component with the most seeds (fall back to largest if no seeds found)
+    let bestComponentIdx = 0;
+    let bestSeedCount = seedCountPerComponent[0];
+    for (let ci = 1; ci < components.length; ci++) {
+      if (seedCountPerComponent[ci] > bestSeedCount) {
+        bestSeedCount = seedCountPerComponent[ci];
+        bestComponentIdx = ci;
+      }
+    }
+    const selected = components[bestComponentIdx];
+
+    if (components.length > 1) {
+      console.log(`  ${components.length} connected components: ${components.map(c => c.size).join(', ')} pixels`);
+      // Report which seeds are in each component
+      for (let ci = 0; ci < components.length; ci++) {
+        const comp = components[ci];
+        const seedsInComp: Array<string> = [];
+        for (const [spx, spy] of seeds) {
+          const sIdx = spy * DS_WIDTH + spx;
+          if (comp.has(sIdx)) {
+            const [lng, lat] = pixelToGeo(spx, spy);
+            seedsInComp.push(`(${lng.toFixed(1)},${lat.toFixed(1)})`);
+          }
+        }
+        const marker = ci === bestComponentIdx ? ' ← SELECTED' : '';
+        if (seedsInComp.length > 0) {
+          console.log(`    Component ${ci} (${comp.size}px): ${seedsInComp.length} seed(s)${marker} — ${seedsInComp.join(', ')}`);
+        } else {
+          console.log(`    Component ${ci} (${comp.size}px): no seeds (orphaned fill region)${marker}`);
+        }
+      }
+      console.log(`  Keeping component with most seeds (${selected.size} pixels, ${bestSeedCount} seeds), dropped ${filled.size - selected.size}`);
     }
 
     // Extract boundary
     // Compute tight bounds from the filled pixels for boundary extraction
     let fMinPx = DS_WIDTH, fMaxPx = 0, fMinPy = DS_HEIGHT, fMaxPy = 0;
-    for (const idx of largest) {
+    for (const idx of selected) {
       const py = Math.floor(idx / DS_WIDTH);
       const px = idx % DS_WIDTH;
       if (px < fMinPx) fMinPx = px;
@@ -2021,7 +2166,7 @@ async function main(): Promise<void> {
       if (py < fMinPy) fMinPy = py;
       if (py > fMaxPy) fMaxPy = py;
     }
-    const polygons = extractBoundary(largest, fMinPx, fMaxPx, fMinPy, fMaxPy);
+    const polygons = extractBoundary(selected, fMinPx, fMaxPx, fMinPy, fMaxPy);
     console.log(`  Extracted ${polygons.length} boundary polygon(s)`);
 
     if (polygons.length === 0) {
@@ -2091,13 +2236,17 @@ async function main(): Promise<void> {
   }
 
   // Write seed points JSON for debug visualization.
-  // Each seed is stored as [lng, lat] in geographic coordinates.
-  const seedPointsData: Record<string, ReadonlyArray<readonly [number, number]>> = {};
+  // Each seed is stored as { lng, lat, name } in geographic coordinates.
+  const seedPointsData: Record<string, ReadonlyArray<{ readonly lng: number; readonly lat: number; readonly name: string }>> = {};
   for (let i = 0; i < RANGES.length; i++) {
     const range = RANGES[i];
     const pixels = seedGroups[i];
+    const names = seedNames[i];
     // Convert pixel coordinates back to geographic
-    seedPointsData[range.id] = pixels.map(([px, py]) => pixelToGeo(px, py));
+    seedPointsData[range.id] = pixels.map(([px, py], j) => {
+      const [lng, lat] = pixelToGeo(px, py);
+      return { lng, lat, name: names[j] };
+    });
   }
   const seedOutPath = resolve('public/data/mountains/mountain-range-seeds.json');
   writeFileSync(seedOutPath, JSON.stringify(seedPointsData), 'utf-8');
